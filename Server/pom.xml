@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>at.aau.serg</groupId>
-    <artifactId>WebSocketDemo-Server</artifactId>
+    <artifactId>Server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>WebSocketDemo-Server</name>
+    <name>Server</name>
     <description>WebSocketDemo-Server</description>
     <properties>
         <java.version>17</java.version>

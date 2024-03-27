@@ -1,4 +1,4 @@
-package at.aau.serg.websocketdemoserver.websocket.broker;
+package at.aau.anti_mon.server.websocket.broker;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
