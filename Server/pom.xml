@@ -20,7 +20,7 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.exclusions>**/server/*</sonar.exclusions>
+        <sonar.exclusions>**/server/*, **/server/**/*</sonar.exclusions>
     </properties>
 
     <dependencies>
