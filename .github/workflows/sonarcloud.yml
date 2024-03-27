@@ -36,7 +36,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_SERVER }}
         run: |
             cd Server
-            mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=dapopovic_SE2_Anti-Monopoly
+            mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=dapopovic_SE2_Anti-Monopoly_Server
   Analyze-client:
     name: Build and analyze client
     runs-on: ubuntu-latest
