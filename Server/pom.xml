@@ -20,7 +20,7 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.exclusions>at.aau.anti_mon.server/**</sonar.exclusions>
+        <sonar.exclusions>at.aau.anti_mon.server.ServerApplication</sonar.exclusions>
     </properties>
 
     <dependencies>
