@@ -56,7 +56,7 @@ tasks.register('jacocoTestReport', JacocoReport) {
 
 sonar {
   properties {
-    property "sonar.projectKey", "dapopovic_SE2_Anti-Monopoly"
+    property "sonar.projectKey", "dapopovic_SE2_Anti-Monopoly_Client"
     property "sonar.organization", "dapopovic"
     property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.java.coveragePlugin", "jacoco"
