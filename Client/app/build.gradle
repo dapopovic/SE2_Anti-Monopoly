@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'at.aau.serg.websocketdemoapp'
+    namespace 'at.aau.anti_mon.client'
     compileSdk 34
 
     defaultConfig {
-        applicationId "at.aau.serg.websocketdemoapp"
+        applicationId "at.aau.anti_mon.client"
         minSdk 29
         targetSdk 34
         versionCode 1

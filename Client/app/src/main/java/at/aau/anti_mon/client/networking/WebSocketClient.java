@@ -1,4 +1,4 @@
-package at.aau.serg.websocketdemoapp.networking;
+package at.aau.anti_mon.client.networking;
 
 import android.util.Log;
 

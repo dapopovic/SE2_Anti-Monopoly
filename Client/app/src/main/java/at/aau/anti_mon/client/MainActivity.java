@@ -1,4 +1,4 @@
-package at.aau.serg.websocketdemoapp;
+package at.aau.anti_mon.client;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import at.aau.serg.websocketdemoapp.networking.WebSocketClient;
+import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class MainActivity extends AppCompatActivity {
 
