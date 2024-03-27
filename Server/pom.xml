@@ -9,17 +9,18 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>at.aau.serg</groupId>
-    <artifactId>WebSocketDemo-Server</artifactId>
+    <artifactId>Server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>WebSocketDemo-Server</name>
-    <description>WebSocketDemo-Server</description>
+    <name>Server</name>
+    <description>AntiMonopoly-Server</description>
     <properties>
         <java.version>17</java.version>
-        <sonar.organization>aau-se2</sonar.organization>
+        <sonar.organization>dapopovic</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>**/server/*, **/server/**/*</sonar.exclusions>
     </properties>
 
     <dependencies>

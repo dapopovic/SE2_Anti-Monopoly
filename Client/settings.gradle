@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WebSocketDemo-App"
+rootProject.name = "Client"
 include ':app'

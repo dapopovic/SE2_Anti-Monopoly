@@ -1,18 +1,18 @@
 # WebSocket Server demo project 
 
-This repository contains two implementations for WebSocket communication in Java Spring Boot. The first implementation utilizes a broker with STOMP protocol in the package `at.aau.serg.websocketdemoserver.websocket.broker`, and the second implementation uses a basic WebSocket handler in the package `at.aau.serg.websocketdemoserver.websocket.handler`. Additionally, integration tests have been provided for each implementation.
+This repository contains two implementations for WebSocket communication in Java Spring Boot. The first implementation utilizes a broker with STOMP protocol in the package `at.aau.anti_mon.server.websocket.broker`, and the second implementation uses a basic WebSocket handler in the package `at.aau.anti_mon.server.websocket.handler`. Additionally, integration tests have been provided for each implementation.
 
 ## Broker Implementation with STOMP Protocol
 
-The `at.aau.serg.websocketdemoserver.websocket.broker` package contains a WebSocket implementation that utilizes a broker with the STOMP protocol. STOMP (Simple Text Oriented Messaging Protocol) is a lightweight messaging protocol that defines the format and rules for data exchange. 
+The `at.aau.anti_mon.server.websocket.broker` package contains a WebSocket implementation that utilizes a broker with the STOMP protocol. STOMP (Simple Text Oriented Messaging Protocol) is a lightweight messaging protocol that defines the format and rules for data exchange. 
 
-To explore the code for the broker implementation, navigate to the `at.aau.serg.websocketdemoserver.websocket.broker` package [here](./src/main/java/at/aau/serg/websocketdemoserver/websocket/broker).
+To explore the code for the broker implementation, navigate to the `at.aau.anti_mon.server.websocket.broker` package [here](./src/main/java/at/aau/anti_mon/server/websocket/broker).
 
 ## Basic WebSocket Handler Implementation
 
-The `at.aau.serg.websocketdemoserver.websocket.handler` package contains a basic WebSocket implementation that utilizes a simple WebSocket handler. This implementation is straightforward and suitable for scenarios where a lightweight solution is preferred without the overhead of a full-fledged broker like STOMP.
+The `at.aau.anti_mon.server.websocket.handler` package contains a basic WebSocket implementation that utilizes a simple WebSocket handler. This implementation is straightforward and suitable for scenarios where a lightweight solution is preferred without the overhead of a full-fledged broker like STOMP.
 
-To explore the code for the basic WebSocket handler implementation, navigate to the `at.aau.serg.websocketdemoserver.websocket.handler` package [here](./src/main/java/at/aau/serg/websocketdemoserver/websocket/handler).
+To explore the code for the basic WebSocket handler implementation, navigate to the `at.aau.anti_mon.server.websocket.handler` package [here](./src/main/java/at/aau/anti_mon/server/websocket/handler).
 
 ## Integration Tests
 

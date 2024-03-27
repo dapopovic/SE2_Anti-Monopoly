@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'at.aau.serg.websocketdemoapp'
+    namespace 'at.aau.anti_mon.client'
     compileSdk 34
 
     defaultConfig {
-        applicationId "at.aau.serg.websocketdemoapp"
+        applicationId "at.aau.anti_mon.client"
         minSdk 29
         targetSdk 34
         versionCode 1
@@ -56,11 +56,12 @@ tasks.register('jacocoTestReport', JacocoReport) {
 
 sonar {
   properties {
-    property "sonar.projectKey", "AAU-SE2_WebSocketDemo-App"
-    property "sonar.organization", "aau-se2"
+    property "sonar.projectKey", "dapopovic_SE2_Anti-Monopoly_Client"
+    property "sonar.organization", "dapopovic"
     property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.java.coveragePlugin", "jacoco"
     property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+      property "sonar.exclusions", "**/client/*, **/client/**/*"
   }
 }
 
