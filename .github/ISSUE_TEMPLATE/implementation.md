@@ -1,3 +1,11 @@
+---
+name: Implementation
+about: Use this template for creating a new implementation
+title: ''
+labels: 'implementation'
+assignees: ''
+---
+
 ## Where is it located?
 - Frontend
 - Backend
