@@ -1,5 +1,10 @@
-# Title: <What this user story is about>
-
+---
+name: User Story
+about: Use this template for creating a new user story
+title: '<What this user story is about>'
+labels: 'user-story'
+assignees: ''
+---
 ## Story
 
 As a <type of user>, 
@@ -28,5 +33,3 @@ then <such outcomes are expected to occur>.
 * [ ] All Testcases included 
 * [ ] All Testcases green
 
-
-/label ~Userstory
