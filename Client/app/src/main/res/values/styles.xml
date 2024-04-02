@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppName_Style">
+        <item name="android:textSize">50sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:background">#000000</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#FF0000</item> <!-- Set shadow color to red -->
+        <item name="android:shadowDx">8</item> <!-- Set horizontal shadow offset to 0 -->
+        <item name="android:shadowDy">-8</item> <!-- Set vertical shadow offset to 0 -->
+        <item name="android:shadowRadius">10</item> <!-- Set shadow radius -->
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">0dp</item>
+    </style>
+
+    <style name="Buttons_Style">
+        <item name="android:background">@drawable/rounded_btn</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_width">300dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:cursorVisible">true</item>
+    </style>
+</resources>
