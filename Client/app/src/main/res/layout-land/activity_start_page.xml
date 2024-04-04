@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Start_Page">
+
+    <TextView
+        android:id="@+id/app_name"
+        android:text="@string/app_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/AppName_Style"/>
+
+    <Button
+        android:id="@+id/start_new_game"
+
+        android:layout_height="wrap_content"
+        android:text="@string/start_new_game"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_name"
+        android:layout_marginTop="30dp"
+        style="@style/Buttons_Style"/>
+
+    <Button
+        android:id="@+id/join_game"
+
+        android:layout_height="wrap_content"
+        android:text="@string/join_game"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_new_game"
+        android:layout_marginTop="10dp"
+        style="@style/Buttons_Style"/>
+
+    <Button
+        android:id="@+id/load_game"
+
+        android:layout_height="wrap_content"
+        android:text="@string/load_game"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/join_game"
+        android:layout_marginTop="10dp"
+        style="@style/Buttons_Style"/>
+
+    <Button
+        android:id="@+id/game_instr"
+
+        android:layout_height="wrap_content"
+        android:text="@string/game_instr"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/load_game"
+        android:layout_marginTop="10dp"
+        style="@style/Buttons_Style"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
