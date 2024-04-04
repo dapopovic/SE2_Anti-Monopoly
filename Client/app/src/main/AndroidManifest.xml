@@ -19,6 +19,9 @@
             android:name=".Start_Page"
             android:exported="false" />
         <activity
+            android:name=".Start_new_Game"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 
