@@ -22,6 +22,9 @@
             android:name=".Start_new_Game"
             android:exported="false" />
         <activity
+            android:name=".Lobby"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 

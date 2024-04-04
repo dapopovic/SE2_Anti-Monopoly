@@ -6,4 +6,5 @@
     <string name="game_instr">Game instructions</string>
     <string name="cancel" >Cancel</string>
     <string name="create" >Create</string>
+    <string name="Startgame" >Start game</string>
 </resources>

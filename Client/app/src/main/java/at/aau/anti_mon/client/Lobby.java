@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,12 +13,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class Start_new_Game extends AppCompatActivity {
+public class Lobby extends AppCompatActivity {
+    public static String username;
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_start_new_game);
+        setContentView(R.layout.activity_lobby);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -26,26 +27,26 @@ public class Start_new_Game extends AppCompatActivity {
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        EditText username = findViewById(R.id.username);
-
-
-
-        Button cancel = findViewById(R.id.newGame_cancel);
+        Button cancel = findViewById(R.id.lobby_cancel);
         cancel.setOnClickListener(
                 v ->{
-                    Intent intent = new Intent(Start_new_Game.this, Start_Page.class);
+                    Intent intent = new Intent(Lobby.this, Start_new_Game.class);
                     startActivity(intent);
                 });
 
-        Button create = findViewById(R.id.newGame_create);
-        create.setOnClickListener(
-                v ->{
-                    String name = username.getText().toString();
-                    if(!name.isEmpty()){
-                        Lobby.username = name;
-                        Intent intent = new Intent(Start_new_Game.this, Lobby.class);
-                        startActivity(intent);
-                    }
-                });
+        TextView coll1 = findViewById(R.id.coll1);
+        coll1.setText(username);
+
+        //Ist nur zum zeigen wie es auschaut wenn mehrere spieler beitretten
+        TextView coll2 = findViewById(R.id.coll2);
+        coll2.setText(username);
+        TextView coll3 = findViewById(R.id.coll3);
+        coll3.setText(username);
+        TextView coll4 = findViewById(R.id.coll4);
+        coll4.setText(username);
+        TextView coll5 = findViewById(R.id.coll5);
+        coll5.setText(username);
+        TextView coll6 = findViewById(R.id.coll6);
+        coll6.setText(username);
     }
 }
