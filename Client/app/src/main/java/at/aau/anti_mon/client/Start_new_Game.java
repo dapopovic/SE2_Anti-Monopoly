@@ -1,7 +1,9 @@
 package at.aau.anti_mon.client;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +22,12 @@ public class Start_new_Game extends AppCompatActivity {
             return insets;
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        Button cancel = findViewById(R.id.newGame_cancel);
+        cancel.setOnClickListener(
+                v ->{
+                    Intent intent = new Intent(Start_new_Game.this, Start_Page.class);
+                    startActivity(intent);
+                });
     }
 }

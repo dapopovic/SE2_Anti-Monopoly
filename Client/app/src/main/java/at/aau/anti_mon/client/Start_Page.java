@@ -25,8 +25,8 @@ public class Start_Page extends AppCompatActivity {
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        Button StartnewGame = findViewById(R.id.start_new_game);
-        StartnewGame.setOnClickListener(
+        Button newGame = findViewById(R.id.start_new_game);
+        newGame.setOnClickListener(
                 v ->{
                     Intent intent = new Intent(Start_Page.this, Start_new_Game.class);
                     startActivity(intent);
