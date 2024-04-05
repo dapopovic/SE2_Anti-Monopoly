@@ -1,6 +1,7 @@
 package at.aau.anti_mon.server;
 
 import at.aau.anti_mon.server.websocket.WebSocketHandlerClientImpl;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,7 +59,7 @@ class WebSocketHandlerIntegrationTest {
 //        return session;
 //    }
 
-    @Test
+    @RepeatedTest(50)
     public void testHandleCommandCreateGame() throws Exception {
         WebSocketClient client = new StandardWebSocketClient();
         WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), String.format(WEBSOCKET_URI, port)).get(1, TimeUnit.SECONDS);

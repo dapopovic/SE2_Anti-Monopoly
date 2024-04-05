@@ -18,7 +18,7 @@ public class Lobby {
 
     public Lobby() {
         SecureRandom random = new SecureRandom();
-        this.pin = random.nextInt(10000);
+        this.pin = random.nextInt(9000) + 1000;
         this.players = new ArrayList<>();
         this.gameState = new GameState();
     }
