@@ -31,31 +31,43 @@ class WebSocketHandlerIntegrationTest {
      */
     BlockingQueue<String> messages = new LinkedBlockingDeque<>();
 
+//    @Test
+//    public void testWebSocketMessageBroker() throws Exception {
+//        WebSocketSession session = initStompSession();
+//
+//        // send a message to the server
+//        String message = "Test message";
+//        session.sendMessage(new TextMessage(message));
+//
+//        var expectedResponse = "echo from handler: " + message;
+//        assertThat(messages.poll(1, TimeUnit.SECONDS)).isEqualTo(expectedResponse);
+//    }
+//
+//    /**
+//     * @return The basic session for the WebSocket connection.
+//     */
+//    public WebSocketSession initStompSession() throws Exception {
+//        WebSocketClient client = new StandardWebSocketClient();
+//
+//        // connect client to the websocket server
+//        WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), // pass the message list
+//                        String.format(WEBSOCKET_URI, port))
+//                // wait 1 sec for the client to be connected
+//                .get(1, TimeUnit.SECONDS);
+//
+//        return session;
+//    }
+
     @Test
-    public void testWebSocketMessageBroker() throws Exception {
-        WebSocketSession session = initStompSession();
+    public void testHandleCommandCreateGame() throws Exception {
+        WebSocketClient client = new StandardWebSocketClient();
+        WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), String.format(WEBSOCKET_URI, port)).get(1, TimeUnit.SECONDS);
 
         // send a message to the server
-        String message = "Test message";
+        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"name\":\"Test\"}}";
         session.sendMessage(new TextMessage(message));
 
-        var expectedResponse = "echo from handler: " + message;
-        assertThat(messages.poll(1, TimeUnit.SECONDS)).isEqualTo(expectedResponse);
+        var expectedResponse = "Game created with pin: ";
+        assertThat(messages.poll(1, TimeUnit.SECONDS)).contains(expectedResponse);
     }
-
-    /**
-     * @return The basic session for the WebSocket connection.
-     */
-    public WebSocketSession initStompSession() throws Exception {
-        WebSocketClient client = new StandardWebSocketClient();
-
-        // connect client to the websocket server
-        WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), // pass the message list
-                        String.format(WEBSOCKET_URI, port))
-                // wait 1 sec for the client to be connected
-                .get(1, TimeUnit.SECONDS);
-
-        return session;
-    }
-
 }
