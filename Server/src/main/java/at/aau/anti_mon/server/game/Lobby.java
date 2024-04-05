@@ -5,6 +5,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,7 +17,8 @@ public class Lobby {
     private final GameState gameState;
 
     public Lobby() {
-        this.pin = (int) (Math.random() * 10000);
+        SecureRandom random = new SecureRandom();
+        this.pin = random.nextInt(10000);
         this.players = new ArrayList<>();
         this.gameState = new GameState();
     }
