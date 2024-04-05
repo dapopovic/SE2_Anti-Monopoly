@@ -6,11 +6,10 @@ import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 @Getter
+@Setter
 public class Player {
     private final String name;
-    private final WebSocketSession session;
-
-    @Setter
+    private WebSocketSession session;
     private boolean isReady;
 
     public Player(String name, WebSocketSession session) {

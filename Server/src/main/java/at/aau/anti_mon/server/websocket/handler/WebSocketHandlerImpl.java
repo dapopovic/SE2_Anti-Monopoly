@@ -4,6 +4,7 @@ import at.aau.anti_mon.server.game.Command;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.web.socket.*;
 
 import java.util.ArrayList;
@@ -21,11 +22,13 @@ public class WebSocketHandlerImpl implements WebSocketHandler {
         Gson gson = new Gson();
         String json = message.getPayload().toString();
         Command command = gson.fromJson(json, Command.class);
-        String data = command.getData();
+        JsonObject data = command.getData();
         switch (command.getCommand()) {
             case CREATE_GAME -> {
                 Lobby lobby = new Lobby();
-                lobby.addPlayer(new Player(data, session));
+                Player player = gson.fromJson(data, Player.class);
+                player.setSession(session);
+                lobby.addPlayer(player);
                 lobbies.add(lobby);
                 TextMessage response = new TextMessage(Integer.toString(lobby.getPin()));
                 session.sendMessage(response);
