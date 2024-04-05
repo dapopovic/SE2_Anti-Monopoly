@@ -67,7 +67,7 @@ class WebSocketHandlerIntegrationTest {
         String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"name\":\"Test\"}}";
         session.sendMessage(new TextMessage(message));
 
-        var expectedResponse = "Game created with pin: ";
-        assertThat(messages.poll(1, TimeUnit.SECONDS)).contains(expectedResponse);
+        String messageResponse = messages.poll(1, TimeUnit.SECONDS);
+        assertThat(messageResponse).matches("\\d{4}");
     }
 }

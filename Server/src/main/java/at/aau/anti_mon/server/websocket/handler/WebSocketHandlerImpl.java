@@ -30,7 +30,7 @@ public class WebSocketHandlerImpl implements WebSocketHandler {
                 player.setSession(session);
                 lobby.addPlayer(player);
                 lobbies.add(lobby);
-                TextMessage response = new TextMessage("Game created with pin: " + lobby.getPin());
+                TextMessage response = new TextMessage(Integer.toString(lobby.getPin()));
                 session.sendMessage(response);
             }
         }
