@@ -36,10 +36,7 @@ public class Start_new_Game extends AppCompatActivity {
         networkHandler = new WebSocketClient();
         networkHandler.connectToServer(this::messageReceivedFromServer);
 
-
         EditText username = findViewById(R.id.username);
-
-
 
         Button cancel = findViewById(R.id.newGame_cancel);
         cancel.setOnClickListener(
