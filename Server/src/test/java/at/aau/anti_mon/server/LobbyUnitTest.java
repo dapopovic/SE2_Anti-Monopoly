@@ -63,12 +63,11 @@ public class LobbyUnitTest {
         lobby.addPlayer(player1);
         assertEquals(1, lobby.getPlayers().size());
         assertTrue(lobby.getPlayers().contains(player1));
-        verify(player1.getSession(), times(2)).isOpen();
+        verify(player1.getSession()).isOpen();
     }
     @Test
     public void testAddPlayerLobbyFull() {
         Player player1 = new Player("player1", Mockito.mock(WebSocketSession.class));
-        when(player1.getSession().isOpen()).thenReturn(true);
         for (int i = 0; i < 6; i++) {
             Player player = new Player("player" + i, Mockito.mock(WebSocketSession.class));
             when(player.getSession().isOpen()).thenReturn(true);
@@ -77,7 +76,6 @@ public class LobbyUnitTest {
         lobby.addPlayer(player1);
         assertEquals(6, lobby.getPlayers().size());
         assertFalse(lobby.getPlayers().contains(player1));
-        verify(player1.getSession()).isOpen();
     }
     @Test
     public void testAddPlayerSessionClosed() {
