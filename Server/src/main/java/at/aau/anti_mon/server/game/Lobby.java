@@ -12,6 +12,7 @@ import java.util.Collection;
 public class Lobby {
     private final int pin;
     private final ArrayList<Player> players;
+    private static final int MAX_PLAYERS = 6;
     private final GameState gameState;
 
     public Lobby() {
@@ -21,6 +22,9 @@ public class Lobby {
     }
 
     public void addPlayer(Player player) {
+        if (players.size() >= MAX_PLAYERS) {
+            return;
+        }
         for (Player p : players) {
             if (p.equals(player)) {
                 return;
@@ -32,14 +36,10 @@ public class Lobby {
         players.add(player);
     }
 
-    public void disconnectPlayer(Player player) throws IOException {
-        player.getSession().close();
-        removePlayer(player);
-    }
     public void removePlayer(Player player) {
         players.remove(player);
     }
     public Player getPlayerWithSession(WebSocketSession session) {
-        return players.stream().filter(player -> player.getSession().equals(session)).findFirst().orElse(null);
+        return players.stream().filter(player -> player.getSession().getId().equals(session.getId())).findFirst().orElse(null);
     }
 }
