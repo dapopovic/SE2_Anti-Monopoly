@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class Lobby extends AppCompatActivity {
     public static String username;
+    public static String Pin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,19 +35,10 @@ public class Lobby extends AppCompatActivity {
                     startActivity(intent);
                 });
 
+        TextView pincode = findViewById(R.id.Pin);
+        pincode.setText(Pin);
+
         TextView coll1 = findViewById(R.id.coll1);
         coll1.setText(username);
-
-        //Ist nur zum zeigen wie es auschaut wenn mehrere spieler beitretten
-        TextView coll2 = findViewById(R.id.coll2);
-        coll2.setText(username);
-        TextView coll3 = findViewById(R.id.coll3);
-        coll3.setText(username);
-        TextView coll4 = findViewById(R.id.coll4);
-        coll4.setText(username);
-        TextView coll5 = findViewById(R.id.coll5);
-        coll5.setText(username);
-        TextView coll6 = findViewById(R.id.coll6);
-        coll6.setText(username);
     }
 }
