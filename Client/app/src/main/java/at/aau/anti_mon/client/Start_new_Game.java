@@ -3,6 +3,7 @@ package at.aau.anti_mon.client;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,7 +14,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.gson.Gson;
+
+import at.aau.anti_mon.client.networking.WebSocketClient;
+
 public class Start_new_Game extends AppCompatActivity {
+
+    WebSocketClient networkHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -26,9 +33,10 @@ public class Start_new_Game extends AppCompatActivity {
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        networkHandler = new WebSocketClient();
+        networkHandler.connectToServer(this::messageReceivedFromServer);
+
         EditText username = findViewById(R.id.username);
-
-
 
         Button cancel = findViewById(R.id.newGame_cancel);
         cancel.setOnClickListener(
@@ -43,9 +51,21 @@ public class Start_new_Game extends AppCompatActivity {
                     String name = username.getText().toString();
                     if(!name.isEmpty()){
                         Lobby.username = name;
+                        Data d = new Data(name);
+                        CreateGame createGame = new CreateGame("CREATE_GAME",d);
+                        Gson gson = new Gson();
+                        networkHandler.sendMessageToServer(gson.toJson(createGame));
+                        //Start_Page.networkHandler.sendMessageToServer(gson.toJson(createGame));
+                        //Lobby.Pin = Start_Page.Receivedmessage;
                         Intent intent = new Intent(Start_new_Game.this, Lobby.class);
                         startActivity(intent);
                     }
                 });
+    }
+
+    private void messageReceivedFromServer(String message) {
+        // TODO handle received messages
+        Log.d("Network", message);
+        Lobby.Pin = message;
     }
 }

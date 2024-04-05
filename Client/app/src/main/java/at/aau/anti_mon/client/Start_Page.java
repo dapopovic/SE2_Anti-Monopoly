@@ -3,6 +3,7 @@ package at.aau.anti_mon.client;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -10,9 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class Start_Page extends AppCompatActivity {
 
+    //public static WebSocketClient networkHandler;
+    //public static String Receivedmessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +29,9 @@ public class Start_Page extends AppCompatActivity {
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        //networkHandler = new WebSocketClient();
+        //networkHandler.connectToServer(this::messageReceivedFromServer);
+
         Button newGame = findViewById(R.id.start_new_game);
         newGame.setOnClickListener(
                 v ->{
@@ -32,4 +39,10 @@ public class Start_Page extends AppCompatActivity {
                     startActivity(intent);
         });
     }
+    /*public void messageReceivedFromServer(String message){
+        // TODO handle received messages
+        Log.d("Network", message);
+        Receivedmessage = message;
+    }*/
 }
+

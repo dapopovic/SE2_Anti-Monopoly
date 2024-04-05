@@ -57,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        Data d = new Data("Alexander");
-        CreateGame createGame = new CreateGame("CREATE_GAME",d);
-        Gson gson = new Gson();
-        //gson.toJson(createGame);
-        networkHandler.sendMessageToServer(gson.toJson(createGame));
+        //Test für Server communication
+        //Data d = new Data("Alexander");
+        //CreateGame createGame = new CreateGame("CREATE_GAME",d);
+        //Gson gson = new Gson();
+        //networkHandler.sendMessageToServer(gson.toJson(createGame));
 
-        //networkHandler.sendMessageToServer("test message");
+        networkHandler.sendMessageToServer("test message");
     }
 
     private void messageReceivedFromServer(String message) {
