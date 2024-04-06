@@ -3,6 +3,7 @@ package at.aau.anti_mon.client;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -28,17 +29,15 @@ public class Lobby extends AppCompatActivity {
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        Button cancel = findViewById(R.id.lobby_cancel);
-        cancel.setOnClickListener(
-                v ->{
-                    Intent intent = new Intent(Lobby.this, Start_new_Game.class);
-                    startActivity(intent);
-                });
-
         TextView pincode = findViewById(R.id.Pin);
         pincode.setText(Pin);
 
         TextView coll1 = findViewById(R.id.coll1);
         coll1.setText(username);
+    }
+
+    public void Cancell(View view) {
+        Intent intent = new Intent(Lobby.this, Start_new_Game.class);
+        startActivity(intent);
     }
 }

@@ -9,110 +9,106 @@
 
     <TextView
         android:id="@+id/textView"
+        style="@style/AppName_Style"
         android:text="@string/app_name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/AppName_Style"/>
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <Button
         android:id="@+id/lobby_start_game"
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="80dp"
-        android:layout_marginBottom="40dp"
         android:text="@string/Startgame"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8" />
 
     <Button
         android:id="@+id/lobby_cancel"
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginBottom="40dp"
+        android:onClick="Cancell"
         android:text="@string/cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline7" />
 
     <TableLayout
         android:id="@+id/table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintStart_toStartOf="@+id/guideline6"
+        app:layout_constraintTop_toTopOf="@+id/guideline5">
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/coll1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:gravity="center_vertical"
+                android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/coll4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:gravity="center_vertical"
+                android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold"  />
+                android:textStyle="bold" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/coll2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:gravity="center_vertical"
+                android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/coll5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:gravity="center_vertical"
+                android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold"  />
+                android:textStyle="bold" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/coll3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:gravity="center_vertical"
+                android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold"  />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/coll6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:gravity="center_vertical"
+                android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold"  />
+                android:textStyle="bold" />
         </TableRow>
 
     </TableLayout>
@@ -121,23 +117,63 @@
         android:id="@+id/textPin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:text="Pin:"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/Pin"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <TextView
         android:id="@+id/Pin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="100dp"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="40dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="0dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="70dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="80dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="80dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

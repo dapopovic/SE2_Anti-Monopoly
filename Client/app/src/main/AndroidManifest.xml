@@ -16,17 +16,20 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Start_Page"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".Start_new_Game"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"/>
         <activity
             android:name=".Lobby"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"/>
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".Start_Page"
+            android:exported="true"
+            android:screenOrientation="sensorLandscape">
 
             <!-- Define this activity as the default/main activity -->
             <intent-filter>
