@@ -44,7 +44,7 @@ public class Start_new_Game extends AppCompatActivity {
         Lobby.Pin = message;
     }
 
-    public void Cancelsng(View view) {
+    public void onCancel_StartNewGame(View view) {
         Intent intent = new Intent(Start_new_Game.this, Start_Page.class);
         startActivity(intent);
     }

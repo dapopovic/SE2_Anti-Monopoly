@@ -30,7 +30,7 @@
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:onClick="Cancell"
+        android:onClick="onCancel_Lobby"
         android:text="@string/cancel"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline7" />
@@ -53,7 +53,8 @@
                 android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:minWidth="150dp"/>
 
             <TextView
                 android:id="@+id/coll4"
@@ -62,7 +63,8 @@
                 android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:minWidth="150dp"/>
         </TableRow>
 
         <TableRow
@@ -76,7 +78,8 @@
                 android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:minWidth="150dp"/>
 
             <TextView
                 android:id="@+id/coll5"
@@ -85,7 +88,8 @@
                 android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:minWidth="150dp"/>
         </TableRow>
 
         <TableRow
@@ -99,7 +103,8 @@
                 android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:minWidth="150dp"/>
 
             <TextView
                 android:id="@+id/coll6"
@@ -108,7 +113,8 @@
                 android:gravity="center"
                 android:padding="20sp"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:minWidth="150dp"/>
         </TableRow>
 
     </TableLayout>

@@ -30,7 +30,7 @@
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:onClick="Cancelsng"
+        android:onClick="onCancel_StartNewGame"
         android:text="@string/cancel"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="@+id/guideline9" />

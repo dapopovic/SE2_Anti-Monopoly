@@ -36,7 +36,7 @@ public class Lobby extends AppCompatActivity {
         coll1.setText(username);
     }
 
-    public void Cancell(View view) {
+    public void onCancel_Lobby(View view) {
         Intent intent = new Intent(Lobby.this, Start_new_Game.class);
         startActivity(intent);
     }
