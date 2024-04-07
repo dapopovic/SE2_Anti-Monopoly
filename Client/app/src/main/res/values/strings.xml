@@ -4,4 +4,6 @@
     <string name="join_game">Join game</string>
     <string name="load_game">Load game</string>
     <string name="game_instr">Game instructions</string>
+    <string name="name">Name:</string>
+    <string name="game_pin">Game PIN:</string>
 </resources>
