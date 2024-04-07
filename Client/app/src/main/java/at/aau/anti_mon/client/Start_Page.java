@@ -31,5 +31,10 @@ public class Start_Page extends AppCompatActivity {
         Intent intent = new Intent(Start_Page.this, Start_new_Game.class);
         startActivity(intent);
     }
+
+    public void Join_game(View view) {
+        Intent intent = new Intent(Start_Page.this, Join_Game.class);
+        startActivity(intent);
+    }
 }
 
