@@ -20,7 +20,7 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.exclusions>**/server/*, **/server/**/*</sonar.exclusions>
+        <sonar.exclusions>**/server/*, **/broker/*, **/messaging/*</sonar.exclusions>
     </properties>
 
     <dependencies>
@@ -56,6 +56,11 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.9.1</version>
         </dependency>
     </dependencies>
 

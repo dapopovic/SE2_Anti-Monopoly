@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.google.gson.Gson;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
+        //Test für Server communication
+        //Data d = new Data("Alexander");
+        //CreateGame createGame = new CreateGame("CREATE_GAME",d);
+        //Gson gson = new Gson();
+        //networkHandler.sendMessageToServer(gson.toJson(createGame));
+
         networkHandler.sendMessageToServer("test message");
     }
 

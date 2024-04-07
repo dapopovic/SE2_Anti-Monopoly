@@ -1,6 +1,7 @@
 package at.aau.anti_mon.server;
 
 import at.aau.anti_mon.server.websocket.WebSocketHandlerClientImpl;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,31 +32,43 @@ class WebSocketHandlerIntegrationTest {
      */
     BlockingQueue<String> messages = new LinkedBlockingDeque<>();
 
-    @Test
-    public void testWebSocketMessageBroker() throws Exception {
-        WebSocketSession session = initStompSession();
+//    @Test
+//    public void testWebSocketMessageBroker() throws Exception {
+//        WebSocketSession session = initStompSession();
+//
+//        // send a message to the server
+//        String message = "Test message";
+//        session.sendMessage(new TextMessage(message));
+//
+//        var expectedResponse = "echo from handler: " + message;
+//        assertThat(messages.poll(1, TimeUnit.SECONDS)).isEqualTo(expectedResponse);
+//    }
+//
+//    /**
+//     * @return The basic session for the WebSocket connection.
+//     */
+//    public WebSocketSession initStompSession() throws Exception {
+//        WebSocketClient client = new StandardWebSocketClient();
+//
+//        // connect client to the websocket server
+//        WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), // pass the message list
+//                        String.format(WEBSOCKET_URI, port))
+//                // wait 1 sec for the client to be connected
+//                .get(1, TimeUnit.SECONDS);
+//
+//        return session;
+//    }
+
+    @RepeatedTest(50)
+    public void testHandleCommandCreateGame() throws Exception {
+        WebSocketClient client = new StandardWebSocketClient();
+        WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), String.format(WEBSOCKET_URI, port)).get(1, TimeUnit.SECONDS);
 
         // send a message to the server
-        String message = "Test message";
+        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"name\":\"Test\"}}";
         session.sendMessage(new TextMessage(message));
 
-        var expectedResponse = "echo from handler: " + message;
-        assertThat(messages.poll(1, TimeUnit.SECONDS)).isEqualTo(expectedResponse);
+        String messageResponse = messages.poll(1, TimeUnit.SECONDS);
+        assertThat(messageResponse).matches("\\d{4}");
     }
-
-    /**
-     * @return The basic session for the WebSocket connection.
-     */
-    public WebSocketSession initStompSession() throws Exception {
-        WebSocketClient client = new StandardWebSocketClient();
-
-        // connect client to the websocket server
-        WebSocketSession session = client.execute(new WebSocketHandlerClientImpl(messages), // pass the message list
-                        String.format(WEBSOCKET_URI, port))
-                // wait 1 sec for the client to be connected
-                .get(1, TimeUnit.SECONDS);
-
-        return session;
-    }
-
 }
