@@ -27,7 +27,7 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape"/>
         <activity android:name=".Join_Game"
-            android:exported="true"
+            android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
             android:name=".Start_Page"
