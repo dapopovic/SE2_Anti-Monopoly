@@ -9,7 +9,7 @@ public enum Commands {
     // usw
 
 
-    private String command;
+    private final String command;
 
     Commands(String command) {
         this.command = command;

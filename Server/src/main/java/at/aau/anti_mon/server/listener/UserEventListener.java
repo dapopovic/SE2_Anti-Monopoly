@@ -45,7 +45,7 @@ public class UserEventListener {
     public void onCreateLobby(CreateLobbyEvent event) {
         Lobby newLobby = lobbyService.createLobby(event.getPlayer());
         //sendResponse(event.getSession(), "Spiel erstellt mit PIN: " + newLobby.getPin());
-        Logger.info("Spiel erstellt mit PIN: " + newLobby.getPin());;
+        Logger.info("Spiel erstellt mit PIN: " + newLobby.getPin());
         sendResponse(event.getSession(), String.valueOf(newLobby.getPin()));
     }
 

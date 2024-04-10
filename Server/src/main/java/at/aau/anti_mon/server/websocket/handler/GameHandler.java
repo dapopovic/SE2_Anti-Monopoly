@@ -47,7 +47,7 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        Logger.info("handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload().toString());
+        Logger.info("handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
         ObjectMapper mapper = new ObjectMapper();
         String json = message.getPayload().toString();
         JsonNode rootNode = mapper.readTree(message.getPayload().toString());
@@ -60,7 +60,7 @@ public class GameHandler implements WebSocketHandler {
                 Commands commands = data.getCommand();
 
                 Logger.info("Command: " + commands.getCommand());
-                Logger.info("Data: " + data.toString());
+                Logger.info("Data: " + data);
 
                 switch (commands) {
                     case CREATE_GAME -> {

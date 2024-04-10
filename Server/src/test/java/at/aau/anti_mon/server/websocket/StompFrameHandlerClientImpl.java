@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.concurrent.BlockingQueue;
 
 public class StompFrameHandlerClientImpl implements StompFrameHandler {
-    private BlockingQueue<String> messagesQueue;
+    private final BlockingQueue<String> messagesQueue;
 
     public StompFrameHandlerClientImpl(BlockingQueue<String> receivedMessagesQueue) {
         messagesQueue = receivedMessagesQueue;

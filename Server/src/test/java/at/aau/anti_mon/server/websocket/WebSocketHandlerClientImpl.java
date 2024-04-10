@@ -9,7 +9,7 @@ import org.tinylog.Logger;
 import java.util.concurrent.BlockingQueue;
 
 public class WebSocketHandlerClientImpl implements WebSocketHandler {
-    private BlockingQueue<String> messagesQueue;
+    private final BlockingQueue<String> messagesQueue;
 
     public WebSocketHandlerClientImpl(BlockingQueue<String> receivedMessagesQueue){
         messagesQueue = receivedMessagesQueue;
