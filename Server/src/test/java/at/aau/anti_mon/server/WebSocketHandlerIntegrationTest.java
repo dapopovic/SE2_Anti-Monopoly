@@ -3,7 +3,6 @@ package at.aau.anti_mon.server;
 import at.aau.anti_mon.server.websocket.WebSocketHandlerClientImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

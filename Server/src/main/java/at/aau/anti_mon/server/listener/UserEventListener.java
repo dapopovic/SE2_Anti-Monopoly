@@ -7,7 +7,6 @@ import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.service.LobbyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

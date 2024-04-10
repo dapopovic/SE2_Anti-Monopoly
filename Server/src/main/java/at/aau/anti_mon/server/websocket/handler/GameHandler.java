@@ -124,7 +124,7 @@ public class GameHandler implements WebSocketHandler {
      * @throws Exception  TODO: Exception
      */
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         Logger.info("Neue WebSocket-Sitzung: " + session.getId());
         //sessionManagementService.registerSession(session);
         eventPublisher.publishEvent(new SessionConnectEvent(session));
@@ -137,7 +137,7 @@ public class GameHandler implements WebSocketHandler {
      * @throws Exception  TODO: Exception
      */
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         Logger.info("WebSocket-Sitzung geschlossen: " + session.getId());
         //sessionManagementService.removeSession(session);
         eventPublisher.publishEvent(new SessionDisconnectEvent(session));

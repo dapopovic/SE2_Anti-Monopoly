@@ -22,7 +22,7 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) {
+    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) {
         String payload = (String) message.getPayload();
         Logger.info("Client received message: " + payload);
         messagesQueue.add(payload);
