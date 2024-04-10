@@ -5,9 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
+/**
+ * Represents a player in the game
+ */
 @Getter
 @Setter
 public class Player {
+
     private final String name;
     private WebSocketSession session;
     private boolean isReady;

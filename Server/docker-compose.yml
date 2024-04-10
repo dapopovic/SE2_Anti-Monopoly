@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+    restart: on-failure
+    container_name: app-server
+    ports:
+      - 6666:8080
