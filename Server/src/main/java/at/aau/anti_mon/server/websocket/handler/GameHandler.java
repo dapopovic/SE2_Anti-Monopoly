@@ -11,7 +11,6 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -43,7 +42,7 @@ public class GameHandler implements WebSocketHandler {
      * Diese Methode behandelt eingehende WebSocket-Nachrichten.
      * @param session WebSocket-Sitzung
      * @param message WebSocket-Nachricht
-     * @throws Exception
+     * @throws Exception  TODO: Exception
      */
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
@@ -108,7 +107,7 @@ public class GameHandler implements WebSocketHandler {
      * Sie schließt die WebSocket-Sitzung und entfernt sie aus der Session-Verwaltung.
      * @param session WebSocket-Sitzung
      * @param exception Ausnahme
-     * @throws Exception
+     * @throws Exception TODO: Exception
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
@@ -122,7 +121,7 @@ public class GameHandler implements WebSocketHandler {
     /**
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung hergestellt wird.
      * @param session WebSocket-Sitzung
-     * @throws Exception
+     * @throws Exception  TODO: Exception
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -135,7 +134,7 @@ public class GameHandler implements WebSocketHandler {
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung geschlossen wird.
      * @param session WebSocket-Sitzung
      * @param closeStatus Status
-     * @throws Exception
+     * @throws Exception  TODO: Exception
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
@@ -146,7 +145,7 @@ public class GameHandler implements WebSocketHandler {
 
     /**
      * Diese Methode gibt an, ob die WebSocket-Handler-Implementierung
-     * @return
+     * @return true, wenn die Implementierung das Empfangen von Teilmeldungen unterstützt, andernfalls false
      */
     @Override
     public boolean supportsPartialMessages() {

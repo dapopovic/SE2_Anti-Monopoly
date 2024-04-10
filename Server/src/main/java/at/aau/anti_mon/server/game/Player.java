@@ -1,6 +1,5 @@
 package at.aau.anti_mon.server.game;
 
-import jakarta.websocket.Session;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;

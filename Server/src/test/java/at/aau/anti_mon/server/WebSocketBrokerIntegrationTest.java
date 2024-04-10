@@ -1,14 +1,12 @@
 package at.aau.anti_mon.server;
 
 import at.aau.anti_mon.server.websocket.StompFrameHandlerClientImpl;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -27,9 +25,6 @@ class WebSocketBrokerIntegrationTest {
 
     @LocalServerPort
     private int port;
-
-    private final String WEBSOCKET_URI = "ws://localhost:%d/websocket-example-broker";
-    private final String WEBSOCKET_TOPIC = "/topic/hello-response";
 
     /**
      * Queue of messages from the server.
@@ -53,7 +48,7 @@ class WebSocketBrokerIntegrationTest {
         stompClient.setMessageConverter(new StringMessageConverter());
         stompClient.setTaskScheduler(new ConcurrentTaskScheduler()); // notwendig für das Senden von Herzschlägen
 
-        String url = "ws://localhost:" + port + "/websocket-example-broker";
+        String WEBSOCKET_URI = "ws://localhost:%d/websocket-example-broker";
         StompSession session = stompClient.connectAsync(String.format(WEBSOCKET_URI, port),
                         new StompSessionHandlerAdapter() {
                         })
@@ -62,6 +57,7 @@ class WebSocketBrokerIntegrationTest {
 
         // subscribes to the topic defined in WebSocketBrokerController
         // and adds received messages to WebSocketBrokerIntegrationTest#messages
+        String WEBSOCKET_TOPIC = "/topic/hello-response";
         session.subscribe(WEBSOCKET_TOPIC, new StompFrameHandlerClientImpl(messages));
         return session;
     }

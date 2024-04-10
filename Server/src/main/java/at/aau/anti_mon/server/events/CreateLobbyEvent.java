@@ -1,7 +1,6 @@
 package at.aau.anti_mon.server.events;
 
 
-import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import lombok.Getter;
 import lombok.Setter;

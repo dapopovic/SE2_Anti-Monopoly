@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.websocket;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -14,12 +15,12 @@ public class StompFrameHandlerClientImpl implements StompFrameHandler {
     }
 
     @Override
-    public Type getPayloadType(StompHeaders headers) {
+    public @NotNull Type getPayloadType(@NotNull StompHeaders headers) {
         return String.class;
     }
 
     @Override
-    public void handleFrame(StompHeaders headers, Object payload) {
+    public void handleFrame(@NotNull StompHeaders headers, Object payload) {
         // add the new message to the queue of received messages
         messagesQueue.add((String) payload);
     }

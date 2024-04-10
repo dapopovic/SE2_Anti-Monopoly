@@ -3,18 +3,13 @@ package at.aau.anti_mon.server;
 import at.aau.anti_mon.server.websocket.WebSocketHandlerClientImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
@@ -31,17 +26,14 @@ public class WebSocketHandlerIntegrationTest {
     @LocalServerPort
     private int port;
 
-    private final String WEBSOCKET_URI = "ws://localhost:%d/game";
-
-
     private BlockingQueue<String> messages;
     private WebSocketSession session;
-    private WebSocketClient client;
 
     @BeforeEach
     public void setup() throws Exception {
         messages = new LinkedBlockingQueue<>();
-        client = new StandardWebSocketClient();
+        WebSocketClient client = new StandardWebSocketClient();
+        String WEBSOCKET_URI = "ws://localhost:%d/game";
         session = client.execute(new WebSocketHandlerClientImpl(messages ), String.format(WEBSOCKET_URI, port)).get(1, TimeUnit.SECONDS);
     }
 
@@ -64,44 +56,11 @@ public class WebSocketHandlerIntegrationTest {
         Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
     }
 
-
-
-    /**
-     *  Testet die Erstellung eines JSON-Objekts mit GSON.
-     *
-     * {
-     *     "command": "CREATE_GAME",
-     *     "data": {
-     *         "name": "Test"
-     *     }
-     * }
-     *
-     * @throws JSONException
-     */
-    /*@org.junit.Test
-    public void simpleGsonTest() throws JSONException {
-        String expected = "{\n" +
-                "\"command\": \"CREATE_GAME\",\n" +
-                "\"data\": {\n"+
-                "\"name\": \"Test\"\n"+
-                "}\n" +
-                "}";
-
-        Gson gson = new GsonBuilder().create();
-        String data= gson.toJson(player);
-
-        JSONAssert.assertEquals(expected,data,false);
-    }
-
-     */
-
     @AfterEach
     public void tearDown() throws Exception {
         if (session != null) {
             session.close();
         }
     }
-
-
 
 }

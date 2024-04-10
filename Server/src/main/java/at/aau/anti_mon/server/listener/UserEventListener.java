@@ -28,12 +28,10 @@ public class UserEventListener {
 
     private final LobbyService lobbyService;
     private final Lock lock = new ReentrantLock();
-    private final Gson gson;
 
     @Autowired
-    UserEventListener(LobbyService lobbyService, Gson gson) {
+    UserEventListener(LobbyService lobbyService) {
         this.lobbyService = lobbyService;
-        this.gson = gson;
     }
 
     /**
