@@ -4,6 +4,6 @@ services:
     build:
       context: .
     restart: on-failure
-    container_name: app-server
+    container_name: qwertzuiop
     ports:
-      - 6666:8080
+      - 4444:8080
