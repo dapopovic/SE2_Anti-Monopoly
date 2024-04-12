@@ -14,6 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.greenrobot.eventbus.EventBus;
+
 import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,15 +35,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Button buttonConnect = findViewById(R.id.buttonConnect);
-        buttonConnect.setOnClickListener(v -> connectToWebSocketServer());
+        EventBus.getDefault().register(this);
 
-        Button buttonSendMsg = findViewById(R.id.buttonSendMsg);
-        buttonSendMsg.setOnClickListener(v -> sendMessage());
 
         textViewServerResponse = findViewById(R.id.textViewResponse);
 
         networkHandler = new WebSocketClient();
+        networkHandler.connectToServer();
 
         Button toMainMenu = findViewById(R.id.buttonToStartPage);
         toMainMenu.setOnClickListener(
@@ -49,26 +49,13 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, Start_Page.class);
                     startActivity(intent);
                 });
+
     }
 
-    private void connectToWebSocketServer() {
-        // register a handler for received messages when setting up the connection
-        networkHandler.connectToServer(this::messageReceivedFromServer);
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
-    private void sendMessage() {
-        //Test für Server communication
-        //Data d = new Data("Alexander");
-        //CreateGame createGame = new CreateGame("CREATE_GAME",d);
-        //Gson gson = new Gson();
-        //networkHandler.sendMessageToServer(gson.toJson(createGame));
-
-        networkHandler.sendMessageToServer("test message");
-    }
-
-    private void messageReceivedFromServer(String message) {
-        // TODO handle received messages
-        Log.d("Network", message);
-        textViewServerResponse.setText(message);
-    }
 }

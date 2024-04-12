@@ -1,6 +1,11 @@
 package at.aau.anti_mon.server.websocket;
 
-import org.jetbrains.annotations.NotNull;
+import at.aau.anti_mon.server.enums.Commands;
+import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.JsonSyntaxException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
@@ -9,6 +14,9 @@ import org.tinylog.Logger;
 
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * This class is responsible for handling the WebSocket communication on the client side (for Tests).
+ */
 public class WebSocketHandlerClientImpl implements WebSocketHandler {
     private final BlockingQueue<String> messagesQueue;
 
@@ -22,10 +30,41 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
     }
 
     @Override
-    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) {
-        String payload = (String) message.getPayload();
-        Logger.info("Client received message: " + payload);
-        messagesQueue.add(payload);
+    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
+        String json = (String) message.getPayload();
+        Logger.info("CLIENT : Nachricht empfangen: " + json);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
+        Commands command = jsonDataDTO.getCommand();
+
+        if (command != null) {
+            try {
+
+                JsonDataDTO  data = JsonDataManager.parseJsonMessage(json);
+                Commands commands = data.getCommand();
+
+                Logger.info("CLIENT : Command: " + commands.getCommand());
+                Logger.info("CLIENT : Data: " + data);
+
+                switch (commands) {
+                    case ANSWER -> {
+                        messagesQueue.add(json);
+                        break;
+                    }
+                    case HEARTBEAT -> {
+                        Logger.info("CLIENT : Heartbeat received");
+                        break;
+                    }
+                    default -> {
+                        Logger.error("CLIENT :  Unbekannter oder nicht unterstützter Befehl: " + commands);
+                        break;
+                    }
+                }
+            } catch (JsonSyntaxException e) {
+                Logger.error("CLIENT : Fehler beim Parsen der JSON-Nachricht: " + json);
+            }
+        } else { // Wenn kein Befehl vorhanden ist
+            Logger.error("CLIENT : Kein Befehl in der Nachricht: " + json);
+        }
     }
 
     @Override

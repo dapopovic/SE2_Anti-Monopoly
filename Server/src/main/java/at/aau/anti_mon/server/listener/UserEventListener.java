@@ -1,10 +1,14 @@
 package at.aau.anti_mon.server.listener;
 
+import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.CreateLobbyEvent;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
+import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.service.LobbyService;
+import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +19,13 @@ import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Event-Listener für Benutzeraktionen
+ * Event-Listener for user interactions
  */
 @Component
 public class UserEventListener {
@@ -39,7 +44,7 @@ public class UserEventListener {
      * @param event Ereignis
      */
     @EventListener
-    public void onCreateLobby(CreateLobbyEvent event) {
+    public void onCreateLobby(CreateLobbyEvent event) throws JsonProcessingException {
         Lobby newLobby = lobbyService.createLobby(event.getPlayer());
         //sendResponse(event.getSession(), "Spiel erstellt mit PIN: " + newLobby.getPin());
         Logger.info("Spiel erstellt mit PIN: " + newLobby.getPin());
@@ -100,12 +105,14 @@ public class UserEventListener {
      * @param session WebSocket-Sitzung
      * @param message Nachricht
      */
-    private void sendResponse(WebSocketSession session, String message) {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode responseNode = mapper.createObjectNode();
-        responseNode.put("pin", message);
+    private void sendResponse(WebSocketSession session, String message) throws JsonProcessingException {
 
-        String jsonResponse = responseNode.toString();
+
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.ANSWER, new HashMap<>());
+        jsonData.putData("pin", message);
+
+        String jsonResponse =   JsonDataManager.createJsonMessage(jsonData);
+
 
         try {
             synchronized (session) {

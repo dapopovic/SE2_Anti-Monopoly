@@ -3,6 +3,10 @@ package at.aau.anti_mon.server.websocket.manager;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Manager for the lobbies
+ * Todo: Test
+ */
 public class LobbyManager {
     private static final Map<String, Integer> userLobbyMap = new ConcurrentHashMap<>();
 

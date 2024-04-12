@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Service-Klasse für die Verwaltung von Lobbies
+ * Service-Class for handling Lobby-Operations
  */
 @Service
 public class LobbyService {

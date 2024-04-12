@@ -1,13 +1,16 @@
-package at.aau.anti_mon.server.game;
+package at.aau.anti_mon.client.json;
 
-import at.aau.anti_mon.server.enums.Commands;
+
+
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import at.aau.anti_mon.client.command.Commands;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Data transfer object that is used to send data between the server and the clients

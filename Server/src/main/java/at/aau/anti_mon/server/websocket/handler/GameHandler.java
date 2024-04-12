@@ -9,6 +9,7 @@ import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
+import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonSyntaxException;
@@ -19,21 +20,21 @@ import org.springframework.web.socket.*;
 import org.tinylog.Logger;
 
 /**
- * Diese Klasse implementiert die WebSocketHandler-Schnittstelle und behandelt eingehende WebSocket-Nachrichten.
+ * This class handles incoming WebSocket messages and delegates them to the appropriate service.
  */
 @Component
 public class GameHandler implements WebSocketHandler {
 
     private final LobbyService lobbyService;
-    private final SessionManagementService sessionManagementService;
+    //private final SessionManagementService sessionManagementService;
     private final  ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public GameHandler(LobbyService lobbyService,
-                       SessionManagementService sessionManagementService,
+                       //SessionManagementService sessionManagementService,
                        ApplicationEventPublisher eventPublisher) {
         this.lobbyService = lobbyService;
-        this.sessionManagementService = sessionManagementService;
+        //this.sessionManagementService = sessionManagementService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -46,25 +47,31 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        Logger.info("handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
-        ObjectMapper mapper = new ObjectMapper();
+        Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
+        //ObjectMapper mapper = new ObjectMapper();
         String json = message.getPayload().toString();
-        JsonNode rootNode = mapper.readTree(message.getPayload().toString());
-        Logger.info("Nachricht empfangen: " + json);
+        //JsonNode rootNode = mapper.readTree(message.getPayload().toString());
 
-        if (rootNode.has("command")) {
+
+        Logger.info("SERVER : Nachricht empfangen: " + json);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
+        Commands command = jsonDataDTO.getCommand();
+
+        if (command != null) {
 
             try {
-                JsonDataDTO data = mapper.readValue(json, JsonDataDTO.class);
-                Commands commands = data.getCommand();
+                //JsonDataDTO data = mapper.readValue(json, JsonDataDTO.class);
+                //Commands commands = data.getCommand();
 
-                Logger.info("Command: " + commands.getCommand());
-                Logger.info("Data: " + data);
 
-                switch (commands) {
+                Logger.info("SERVER : Command: " + command.getCommand());
+                Logger.info("SERVER : Data: " + jsonDataDTO.getData());
+
+                switch (command) {
                     case CREATE_GAME -> {
                         // data = username
-                        String playerName = data.getData().get("name");
+                        //String playerName = data.getData().get("name");
+                        String playerName = jsonDataDTO.getData().get("name");
                         if (playerName != null) {
                             Player player = new Player(playerName, session);
                             eventPublisher.publishEvent(new CreateLobbyEvent(session, player));
@@ -75,8 +82,11 @@ public class GameHandler implements WebSocketHandler {
                     }
                     case JOIN_GAME -> {
                         // data = {"pin": 1234 , "name": "Test"}
-                        String pinString = data.getData().get("pin");
-                        String playerName = data.getData().get("name");
+                        //String pinString = data.getData().get("pin");
+                        //String playerName = data.getData().get("name");
+                        String pinString = jsonDataDTO.getData().get("pin");
+                        String playerName = jsonDataDTO.getData().get("name");
+
                         if (pinString != null && playerName != null) {
                             int pin = Integer.parseInt(pinString);
                             Player player = new Player(playerName, session);
@@ -84,20 +94,20 @@ public class GameHandler implements WebSocketHandler {
                                 eventPublisher.publishEvent(new UserJoinedLobbyEvent(session, lobby, player));
                             });
                         } else {
-                            Logger.error("Erforderliche Daten für 'JOIN_GAME' fehlen.");
+                            Logger.error("SERVER : Erforderliche Daten für 'JOIN_GAME' fehlen.");
                         }
                         break;
                     }
                     default -> {
-                        Logger.error("Unbekannter oder nicht unterstützter Befehl: " + commands);
+                        Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + command);
                         break;
                     }
                 }
             } catch (JsonSyntaxException e) {
-                Logger.error("Fehler beim Parsen der JSON-Nachricht: " + json);
+                Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
             }
         } else {
-            Logger.error("JSON-Nachricht enthält kein 'command'-Attribut.");
+            Logger.error("SERVER : JSON-Nachricht enthält kein 'command'-Attribut.");
         }
     }
 
@@ -126,7 +136,6 @@ public class GameHandler implements WebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         Logger.info("Neue WebSocket-Sitzung: " + session.getId());
-        //sessionManagementService.registerSession(session);
         eventPublisher.publishEvent(new SessionConnectEvent(session));
     }
 

@@ -1,4 +1,6 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.json;
+
+import at.aau.anti_mon.client.command.Commands;
 
 public class CreateGame {
     private Commands command;

@@ -1,12 +1,21 @@
 package at.aau.anti_mon.server.service;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
+import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Service for managing WebSocket sessions
+ */
+@Getter
+@Setter
 @Service
 public class SessionManagementService {
 
@@ -19,17 +28,35 @@ public class SessionManagementService {
 
     public void registerSession(WebSocketSession session) {
         sessions.put(session.getId(), session);
+        Logger.info("Session registered: {}", session.getId());
     }
 
     public void removeSession(WebSocketSession session) {
         sessions.remove(session.getId());
+        Logger.info("Session removed: {}", session.getId());
     }
+
 
     public WebSocketSession getSession(String sessionId) {
         return sessions.get(sessionId);
     }
 
     public void removeSessionById(String sessionId) {
-        sessions.remove(sessionId);
+        try (WebSocketSession session = sessions.get(sessionId)) {
+            if (session != null) {
+                sessions.remove(sessionId);
+            }
+        } catch (IOException e) {
+            System.err.println("Error closing session " + sessionId);
+        }
     }
+
+    public Map<String, WebSocketSession> getAllSessions() {
+        return sessions;
+    }
+
+    public int getNumberOfSessions() {
+        return sessions.size();
+    }
+
 }

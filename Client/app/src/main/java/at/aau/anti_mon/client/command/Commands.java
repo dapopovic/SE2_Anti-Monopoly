@@ -1,7 +1,9 @@
-package at.aau.anti_mon.server.enums;
+package at.aau.anti_mon.client.command;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
+
+
 
 /**
  * Enum that represents the different commands that can be sent to the server
@@ -26,3 +28,4 @@ public enum Commands {
         return command;
     }
 }
+

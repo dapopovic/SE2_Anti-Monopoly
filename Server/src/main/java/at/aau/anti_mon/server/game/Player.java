@@ -5,7 +5,8 @@ import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * Represents a player in the game
+ * Represents a User of the App
+ * TODO: Rename User?
  */
 @Getter
 @Setter

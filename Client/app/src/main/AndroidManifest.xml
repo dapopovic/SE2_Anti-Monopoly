@@ -19,7 +19,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Start_new_Game"
+            android:name=".StartNewGameActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape"/>
         <activity

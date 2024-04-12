@@ -9,4 +9,6 @@
     <string name="Startgame" >Start game</string>
     <string name="game_pin">Game PIN:</string>
     <string name="name">Name:</string>
+    <string name="enter_your_name">Enter your Name:</string>
+    <string name="username">username</string>
 </resources>

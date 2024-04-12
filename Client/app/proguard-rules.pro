@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.android.tools.profiler.** { *; }
+-keep class okhttp3.** { *; }
+-keep class com.squareup.okhttp3.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*

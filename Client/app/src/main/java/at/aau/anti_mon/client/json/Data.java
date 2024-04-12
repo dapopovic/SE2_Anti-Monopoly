@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.json;
 
 public class Data {
     private String name;

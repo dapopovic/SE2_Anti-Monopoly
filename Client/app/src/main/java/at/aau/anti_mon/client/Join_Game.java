@@ -14,6 +14,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class Join_Game extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

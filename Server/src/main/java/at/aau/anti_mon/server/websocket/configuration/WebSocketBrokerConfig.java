@@ -9,8 +9,12 @@ import org.springframework.web.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.socket.server.standard.TomcatRequestUpgradeStrategy;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
+/**
+ * Configuration for the WebSocket Broker
+ */
 @Configuration
 @EnableWebSocketMessageBroker
+//@ConfigurationProperties(prefix = "websocketbroker")
 public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
@@ -22,7 +26,11 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket-example-broker").setAllowedOrigins("*").setHandshakeHandler(new DefaultHandshakeHandler());
+        registry.addEndpoint("/websocket-example-broker")
+                .setAllowedOrigins("*")
+                .setHandshakeHandler(new DefaultHandshakeHandler());
+
+
         RequestUpgradeStrategy upgradeStrategy = new TomcatRequestUpgradeStrategy();
         registry.addEndpoint("/hello");
 
