@@ -18,17 +18,18 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        release {
+    //signingConfigs {
+    //    release {
             // storeFile KeyStoreFile zum Signieren etc.
             // storePassword Passwort für den Keystore
             // keyAlias Name des Schlüssels der App im KeyStore
             // keyPassword Passwort des Schlüssels der App
-        }
-    }
+    //    }
+    //}
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
