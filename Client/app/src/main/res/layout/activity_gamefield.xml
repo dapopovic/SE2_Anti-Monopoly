@@ -105,4 +105,36 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+         />
+
+    <ImageView
+        android:id="@+id/field_square"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/field_square" />
+
+    <ImageView
+        android:id="@+id/start_field"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/guideline15"
+        app:srcCompat="@drawable/start" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
