@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class Start_Page extends AppCompatActivity {
+import at.aau.anti_mon.client.R;
+
+public class StartMenuActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +25,13 @@ public class Start_Page extends AppCompatActivity {
             return insets;
         });
     }
-    public void Start_new_game(View view) {
-        Intent intent = new Intent(Start_Page.this, StartNewGameActivity.class);
+    public void chooseStartNewGame(View view) {
+        Intent intent = new Intent(StartMenuActivity.this, StartNewGameActivity.class);
         startActivity(intent);
     }
 
-    public void Join_game(View view) {
-        Intent intent = new Intent(Start_Page.this, Join_Game.class);
+    public void chooseJoinGame(View view) {
+        Intent intent = new Intent(StartMenuActivity.this, JoinGameActivity.class);
         startActivity(intent);
     }
 }

@@ -9,8 +9,6 @@ import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -30,9 +28,21 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 public class UserEventListener {
 
+    /**
+     * Lobby service
+     */
     private final LobbyService lobbyService;
+
+    /**
+     * TODO: TEST
+     */
     private final Lock lock = new ReentrantLock();
 
+    /**
+     * Konstruktor für UserEventListener
+     * Dependency Injection für LobbyService
+     * @param lobbyService
+     */
     @Autowired
     UserEventListener(LobbyService lobbyService) {
         this.lobbyService = lobbyService;
@@ -48,7 +58,7 @@ public class UserEventListener {
         Lobby newLobby = lobbyService.createLobby(event.getPlayer());
         //sendResponse(event.getSession(), "Spiel erstellt mit PIN: " + newLobby.getPin());
         Logger.info("Spiel erstellt mit PIN: " + newLobby.getPin());
-        sendResponse(event.getSession(), String.valueOf(newLobby.getPin()));
+        sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
     }
 
     /**
@@ -63,12 +73,12 @@ public class UserEventListener {
             if (joinedLobby.canAddPlayer()) {
                 joinedLobby.addPlayer(event.getPlayer());
                 lobbyService.notifyPlayersInLobby(joinedLobby);
-                sendResponse(event.getSession(), "Erfolgreich der Lobby beigetreten.");
+                sendInfo(event.getSession(), "Erfolgreich der Lobby beigetreten.");
             } else {
-                sendResponse(event.getSession(), "Fehler: Lobby ist voll.");
+                sendError(event.getSession(), "Fehler: Lobby ist voll.");
             }
         } else {
-            sendResponse(event.getSession(), "Fehler: Lobby nicht gefunden.");
+            sendError(event.getSession(), "Fehler: Lobby nicht gefunden.");
         }
     }
 
@@ -98,22 +108,51 @@ public class UserEventListener {
         }
     }
 
-
+    /**
+     * Sendet eine Nachricht an den Benutzer
+     * @param session WebSocket-Sitzung
+     * @param message Nachricht
+     */
+    private void sendAnswer(WebSocketSession session, String message) throws JsonProcessingException {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.ANSWER, new HashMap<>());
+        send(session, message, jsonData);
+    }
 
     /**
      * Sendet eine Nachricht an den Benutzer
      * @param session WebSocket-Sitzung
      * @param message Nachricht
      */
-    private void sendResponse(WebSocketSession session, String message) throws JsonProcessingException {
-
-
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ANSWER, new HashMap<>());
+    private void sendPin(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.PIN, new HashMap<>());
         jsonData.putData("pin", message);
+        send(session, message, jsonData);
+    }
 
+
+    private void sendJoinedUser(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
+        jsonData.putData("name", message);
+        send(session, message, jsonData);
+    }
+
+    private void sendError(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
+        jsonData.putData("message", message);
+        send(session, message, jsonData);
+    }
+
+    private void sendInfo(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
+        jsonData.putData("message", message);
+        send(session, message, jsonData);
+    }
+
+
+
+
+    private void send(WebSocketSession session, String message, JsonDataDTO jsonData) {
         String jsonResponse =   JsonDataManager.createJsonMessage(jsonData);
-
-
         try {
             synchronized (session) {
                 if (session.isOpen()) {
@@ -129,9 +168,6 @@ public class UserEventListener {
             e.printStackTrace();
         }
     }
-
-
-
 
 
     // OLD CODE

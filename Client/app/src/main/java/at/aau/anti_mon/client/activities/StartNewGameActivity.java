@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 
+import javax.inject.Inject;
+
+import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
@@ -34,10 +38,10 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
  */
 public class StartNewGameActivity extends AppCompatActivity {
 
-    private WebSocketClient networkHandler;
-    private CommandFactory commandFactory;
-
     EditText usernameEditText;
+
+    @Inject
+    WebSocketClient webSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -52,61 +56,53 @@ public class StartNewGameActivity extends AppCompatActivity {
 
         usernameEditText = findViewById(R.id.username);
 
-
-        /*
-         * EventBus für Messages registrieren
-         */
-        EventBus.getDefault().register(this);
-        networkHandler = new WebSocketClient();
-        commandFactory = new CommandFactory();
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
     }
-
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onReceiveMessage(ReceiveMessageEvent event) {
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(event.getMessage());
-        Commands commandEnum = jsonDataDTO.getCommand();
-        Command command = commandFactory.getCommand(commandEnum.getCommand());
-        if (command != null) {
-            command.execute(jsonDataDTO);
-        } else {
-            Log.w("Network", "Unbekannter oder nicht unterstützter Befehl.");
-        }
-    }
-
-
 
     public void onCreateGameClicked(View view) {
         String username = usernameEditText.getText().toString();
 
         if (!username.isEmpty()) {
+            /*
+             * Communication with Server -> send username to server -> get Pin
+             */
             JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
             jsonData.putData("name", username);
-            String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+            String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+            webSocketClient.sendMessageToServer(jsonDataString);
+            Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
 
-            EventBus.getDefault().post(new SendMessageEvent(jsonMessage));
 
-            // Den Username nutzen:
-            Intent intent = new Intent(this, Lobby.class);
+            // Den Username an die LobbyActivity übergeben:
+            Intent intent = new Intent(this, LobbyActivity.class);
             intent.putExtra("username", username);
             startActivity(intent);
         }
     }
 
     public void onCancelStartNewGame(View view) {
-        Intent intent = new Intent(StartNewGameActivity.this, Start_Page.class);
+        Intent intent = new Intent(StartNewGameActivity.this, StartMenuActivity.class);
         startActivity(intent);
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (webSocketClient != null) {
+            webSocketClient.connectToServer();
+        }
+    }
 
     @Override
-    protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
+    protected void onStop() {
+        if (webSocketClient != null) {
+            webSocketClient.disconnect();
+        }
+        super.onStop();
     }
+
 
     @Override
     protected void attachBaseContext(Context base) {

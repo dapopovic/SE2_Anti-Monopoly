@@ -44,9 +44,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
 
-        // WTF? Wir hatten gesagt JAVA 17, das sollte auch jeder lokal bei sich auf der Maschine haben.
-        //sourceCompatibility JavaVersion.VERSION_1_8
-        //targetCompatibility JavaVersion.VERSION_1_8
     }
 
     testOptions {
@@ -82,8 +79,10 @@ sonar {
     property "sonar.organization", "dapopovic"
     property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.java.coveragePlugin", "jacoco"
+      property "sonar.gradle.skipCompiler", "true"
     property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
       property "sonar.exclusions", "**/client/*, **/client/**/*"
+
   }
 }
 
@@ -105,6 +104,12 @@ dependencies {
     implementation libs.eventbus
     //implementation(libs.okhttp.v490)
 
+    // Dagger Dependency Injection
+    implementation libs.dagger.android
+    implementation libs.dagger.android.support
+    annotationProcessor libs.dagger.android.processor
+    annotationProcessor libs.dagger.compiler
+
 
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
@@ -117,3 +122,4 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 }
+

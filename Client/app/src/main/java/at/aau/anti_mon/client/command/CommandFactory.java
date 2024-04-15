@@ -9,8 +9,14 @@ public class CommandFactory {
     public CommandFactory() {
         commandMap = new HashMap<>();
         commandMap.put("ANSWER", new AnswerCommand());
-        commandMap.put("Test", new JoinGameCommand());
+        commandMap.put("PIN", new PinCommand());
+        commandMap.put("JOIN", new JoinGameCommand());
+        commandMap.put("TEST", new TestCommand());
         commandMap.put("HEARTBEAT", new HeartBeatCommand());
+        commandMap.put("CREATE_GAME", new CreateGameCommand());
+        commandMap.put("NEW_USER", new JoinGameCommand());
+        commandMap.put("INFO", new InfoCommand());
+        commandMap.put("ERROR", new ErrorCommand());
         // weitere Commands hinzufügen
     }
 

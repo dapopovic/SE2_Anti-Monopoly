@@ -9,11 +9,15 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Commands {
     ANSWER("ANSWER"),
+    PIN("PIN"),
+    NEW_USER("NEW_USER"),
     CREATE_GAME("CREATE_GAME"),
     JOIN_GAME("JOIN_GAME"),
-    HEARTBEAT("HEARTBEAT");
+    JOIN("JOIN"),
+    HEARTBEAT("HEARTBEAT"),
+    INFO("INFO"),
+    ERROR("ERROR");
     // usw
-
 
     private final String command;
 

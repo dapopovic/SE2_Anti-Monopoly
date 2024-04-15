@@ -1,13 +1,20 @@
 package at.aau.anti_mon.server.service;
 
+import at.aau.anti_mon.server.enums.Commands;
+import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
+import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.tinylog.Logger;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,10 +82,12 @@ public class LobbyService {
         List<String> playerNames = lobby.getPlayers().stream()
                 .map(Player::getName)
                 .collect(Collectors.toList());
-        String message = new Gson().toJson(playerNames);
+        //String message = new Gson().toJson(playerNames);
+
         for (Player player : lobby.getPlayers()) {
             if (player.getSession().isOpen()) {
-                player.getSession().sendMessage(new TextMessage(message));
+                //player.getSession().sendMessage(new TextMessage(message));
+                sendJoinedUser(player.getSession(), player.getName());
             }
         }
     }
@@ -115,5 +124,43 @@ public class LobbyService {
         String destination = "/user/" + username + "/queue/notifications";
         messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
     }
+
+    private void sendJoinedUser(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
+        jsonData.putData("name", message);
+        send(session, message, jsonData);
+    }
+
+    private void sendError(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
+        jsonData.putData("message", message);
+        send(session, message, jsonData);
+    }
+
+    private void sendInfo(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
+        jsonData.putData("message", message);
+        send(session, message, jsonData);
+    }
+
+
+    private void send(WebSocketSession session, String message, JsonDataDTO jsonData) {
+        String jsonResponse =   JsonDataManager.createJsonMessage(jsonData);
+        try {
+            synchronized (session) {
+                if (session.isOpen()) {
+                    Logger.info("Nachricht senden: " + jsonResponse);
+                    session.sendMessage(new TextMessage(jsonResponse));
+                } else {
+                    System.err.println("Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
+                    throw new IOException("Session is closed");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Fehler beim Senden der Nachricht: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
 }

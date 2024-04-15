@@ -48,29 +48,20 @@ public class GameHandler implements WebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
-        //ObjectMapper mapper = new ObjectMapper();
         String json = message.getPayload().toString();
-        //JsonNode rootNode = mapper.readTree(message.getPayload().toString());
-
 
         Logger.info("SERVER : Nachricht empfangen: " + json);
         JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
         Commands command = jsonDataDTO.getCommand();
 
         if (command != null) {
-
             try {
-                //JsonDataDTO data = mapper.readValue(json, JsonDataDTO.class);
-                //Commands commands = data.getCommand();
-
-
                 Logger.info("SERVER : Command: " + command.getCommand());
                 Logger.info("SERVER : Data: " + jsonDataDTO.getData());
 
                 switch (command) {
                     case CREATE_GAME -> {
-                        // data = username
-                        //String playerName = data.getData().get("name");
+                        // data = {"name": "username" }
                         String playerName = jsonDataDTO.getData().get("name");
                         if (playerName != null) {
                             Player player = new Player(playerName, session);
@@ -82,8 +73,6 @@ public class GameHandler implements WebSocketHandler {
                     }
                     case JOIN_GAME -> {
                         // data = {"pin": 1234 , "name": "Test"}
-                        //String pinString = data.getData().get("pin");
-                        //String playerName = data.getData().get("name");
                         String pinString = jsonDataDTO.getData().get("pin");
                         String playerName = jsonDataDTO.getData().get("name");
 
