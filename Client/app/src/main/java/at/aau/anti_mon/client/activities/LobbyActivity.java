@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -29,6 +30,7 @@ import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.ReceiveMessageEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
@@ -46,14 +48,9 @@ public class LobbyActivity extends AppCompatActivity{
 
     //////////////////////////////////// Android UI
     TextView textView_pin;
-    //TextView[] userTextViews;
+    TextView[] userTextViews;
 
-    TextView textView_coll1;
-    TextView textView_coll2;
-    TextView textView_coll3;
-    TextView textView_coll4;
-    TextView textView_coll5;
-
+    HashMap<TextView, Boolean> availableTextViews = new HashMap<>();
 
 
     ///////////////////////////////////// Variablen
@@ -69,13 +66,28 @@ public class LobbyActivity extends AppCompatActivity{
     @Inject
     WebSocketClient webSocketClient;
 
+    /**
+     * Dependency Injection of GlobalEventQueue
+     */
+    @Inject
+    GlobalEventQueue globalEventQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_lobby);
+
+        // Setup der UI und andere Initialisierungen
+        initializeUI();
+
+        // Nachdem die UI initialisiert wurde und der EventBus registriert ist, Netzwerkdienste starten
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+    }
+
+    private void initializeUI() {
+        EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -83,45 +95,62 @@ public class LobbyActivity extends AppCompatActivity{
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        /// UI
-
-        textView_pin = findViewById(R.id.Pin);
-        /*userTextViews = new TextView[]{
+        userTextViews = new TextView[]{
                 findViewById(R.id.coll1),
                 findViewById(R.id.coll2),
                 findViewById(R.id.coll3),
                 findViewById(R.id.coll4),
-                findViewById(R.id.coll5)
+                findViewById(R.id.coll5),
+                findViewById(R.id.coll6),
         };
-         */
-        textView_coll1 = findViewById(R.id.coll1);
-        textView_coll2 = findViewById(R.id.coll2);
-        textView_coll3 = findViewById(R.id.coll3);
-        textView_coll4 = findViewById(R.id.coll4);
-        textView_coll5 = findViewById(R.id.coll5);
 
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
-        EventBus.getDefault().register(this);
-        Log.d("LobbyActivity", "EventBus registered");
-
-
-
-        //////////////////////////////////////////////////  Empfange Daten von StartNewGameActivity / JoinGameActivity
-        if (getIntent().hasExtra("username")) {
-            username = getIntent().getStringExtra("username");
-            textView_coll1.setText(username);
-        } else {
-            Log.e("LobbyActivity", "Old Intent has no username");
+        // Alle TextViews als verfügbar markieren:
+        for (TextView tv : userTextViews) {
+            availableTextViews.put(tv, true);
         }
 
+        textView_pin = findViewById(R.id.Pin);
+
+        processIntent();
+    }
+
+    private void processIntent() {
+        if (getIntent().hasExtra("username")) {
+            username = getIntent().getStringExtra("username");
+            addUserToTable(username);
+        } else {
+            Log.e("LobbyActivity", "Old Intent has no username");
+            // Todo: Error handling
+        }
         if(getIntent().hasExtra("pin")) {
             pin = getIntent().getStringExtra("pin");
             textView_pin.setText(pin);
         } else {
             Log.e("LobbyActivity", "Old Intent has no pin");
+            // Todo: Error handling
         }
-        ///////////////////////////////////////////////////
+    }
 
+    private void addUserToTable(String username) {
+        for (Map.Entry<TextView, Boolean> entry : availableTextViews.entrySet()) {
+            if (entry.getValue()) {  // Prüfe, ob der TextView verfügbar ist
+                entry.getKey().setText(username);
+                availableTextViews.put(entry.getKey(), false);  // Markiere als besetzt
+                return;
+            }
+        }
+        Log.e("LobbyActivity", "Kein verfügbarer Platz für neuen Benutzer.");
+    }
+
+    private void removeUserFromTable(String username) {
+        for (Map.Entry<TextView, Boolean> entry : availableTextViews.entrySet()) {
+            if (entry.getKey().getText().toString().equals(username)) {
+                entry.getKey().setText("");
+                availableTextViews.put(entry.getKey(), true);  // Markiere als verfügbar
+                return;
+            }
+        }
+        Log.e("LobbyActivity", "Benutzername nicht gefunden.");
     }
 
 
@@ -129,43 +158,14 @@ public class LobbyActivity extends AppCompatActivity{
      * TODO: Use HashMap to store the users and use operations to add and remove users
      * @param event
      */
-    @Subscribe(threadMode = ThreadMode.ASYNC)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserLeftLobbyEvent(UserLeftLobbyEvent event) {
-        if (numberOfUsers > 1) {
-            //userTextViews[numberOfUsers].setText("");
-            numberOfUsers--;
-            Log.w("LobbyActivity", "Number of users: " + numberOfUsers);
-        }else {
-            Log.w("LobbyActivity", "Minimum number of users reached.");
-        }
+        removeUserFromTable(event.getName());
     }
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
-        if (numberOfUsers < 6){  //userTextViews.length - 1) {
-            //userTextViews[numberOfUsers + 1].setText(event.getName());
-            numberOfUsers++;
-            Log.w("LobbyActivity", "Number of users: " + numberOfUsers);
-
-        }else {
-            Log.w("LobbyActivity", "Maximum number of users reached.");
-        }
-    }
-
-    /**
-     * Event to receive a message
-     * -> MAIN Thread to update UI
-     * @param event
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onPinReceivedEvent(PinReceivedEvent event) {
-        Log.d("LobbyActivity", "Pin received: " + event.getPin());
-        if (!isFinishing()) {
-            textView_pin.setText(event.getPin());
-            Log.d("LobbyActivity", "Pin set on textView: " + event.getPin());
-        } else {
-            Log.d("LobbyActivity", "Activity is finishing. Cannot set pin.");
-        }
+        addUserToTable(event.getName());
     }
 
     public void onCancelLobby(View view) {
@@ -186,12 +186,13 @@ public class LobbyActivity extends AppCompatActivity{
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+        Log.d("LobbyActivity", "EventBus registered");
+        globalEventQueue.setEventBusReady(true);
+
         if (webSocketClient != null) {
             webSocketClient.connectToServer();
         }
-
-        // Eventbus wird in OnCreate registriert
-
     }
 
     @Override
@@ -199,8 +200,10 @@ public class LobbyActivity extends AppCompatActivity{
         if (webSocketClient != null) {
             webSocketClient.disconnect();
         }
+
         EventBus.getDefault().unregister(this);
         Log.d("LobbyActivity", "EventBus unregistered");
+        globalEventQueue.setEventBusReady(false);
         super.onStop();
     }
 

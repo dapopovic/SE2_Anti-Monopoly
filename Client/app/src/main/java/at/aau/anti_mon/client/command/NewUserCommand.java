@@ -5,12 +5,12 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 
-public class ErrorCommand implements Command{
+public class NewUserCommand implements Command{
 
-    private final GlobalEventQueue queue;
+    private GlobalEventQueue queue;
 
     @Inject
-    public ErrorCommand(GlobalEventQueue queue) {
+    public NewUserCommand(GlobalEventQueue queue) {
         this.queue = queue;
     }
 

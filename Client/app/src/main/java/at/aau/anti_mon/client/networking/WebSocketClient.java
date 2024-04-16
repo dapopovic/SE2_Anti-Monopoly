@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
+import javax.inject.Inject;
+
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
@@ -37,7 +39,7 @@ public class WebSocketClient {
      * localhost from the Android emulator is reachable as 10.0.2.2
      * https://developer.android.com/studio/run/emulator-networking
      */
-    private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
+    private static final String WEBSOCKET_URI = "ws://10.0.2.2:51234/game";
    // private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
 
     /**
@@ -48,7 +50,7 @@ public class WebSocketClient {
 
     private WebSocket webSocket;
     private OkHttpClient client = new OkHttpClient();
-    private CommandFactory commandFactory = new CommandFactory();
+    private CommandFactory commandFactory;
 
     private boolean isConnected = false;
 
@@ -59,9 +61,10 @@ public class WebSocketClient {
     // TODO : Debug if Events not working
     //private WebSocketMessageHandler<JsonDataDTO> messageHandler;
 
-    public WebSocketClient(OkHttpClient client) {
+    @Inject
+    public WebSocketClient(OkHttpClient client, CommandFactory commandFactory) {
         this.client = client;
-        this.commandFactory = new CommandFactory();
+        this.commandFactory = commandFactory;
         //connectToServer(); // -> keine dauerhafte Verbindung
     }
 

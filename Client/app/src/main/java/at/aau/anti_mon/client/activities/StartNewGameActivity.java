@@ -27,6 +27,8 @@ import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.ReceiveMessageEvent;
 import at.aau.anti_mon.client.events.SendMessageEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
@@ -40,8 +42,17 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     EditText usernameEditText;
 
+    String pin;
+
     @Inject
     WebSocketClient webSocketClient;
+
+    /**
+     * Dependency Injection of GlobalEventQueue
+     */
+    @Inject
+    GlobalEventQueue globalEventQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -60,26 +71,60 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Event when the button "Create Game" is clicked
+     * Todo: better Intent handling
+     * @param view
+     */
     public void onCreateGameClicked(View view) {
         String username = usernameEditText.getText().toString();
 
-        if (!username.isEmpty()) {
-            /*
-             * Communication with Server -> send username to server -> get Pin
-             */
-            JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-            jsonData.putData("name", username);
-            String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-            webSocketClient.sendMessageToServer(jsonDataString);
-            Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
-
-
-            // Den Username an die LobbyActivity übergeben:
+        if (pin != null) {
             Intent intent = new Intent(this, LobbyActivity.class);
             intent.putExtra("username", username);
+            intent.putExtra("pin", pin);
             startActivity(intent);
+        }else {
+            if (!username.isEmpty()) {
+                /*
+                 * Communication with Server -> send username to server -> get Pin
+                 */
+                JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
+                jsonData.putData("username", username);
+                String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+                webSocketClient.sendMessageToServer(jsonDataString);
+                Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
+
+                if (pin != null) {
+                    // Den Username an die LobbyActivity übergeben:
+                    Intent intent = new Intent(this, LobbyActivity.class);
+                    intent.putExtra("username", username);
+                    intent.putExtra("pin", pin);
+                    startActivity(intent);
+                } else {
+                    Log.println(Log.DEBUG, "Network", "Pin is null");
+                    //Todo: Pop up message to user
+                }
+            }
         }
     }
+
+    /**
+     * Event to receive a message
+     * -> MAIN Thread to update UI
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPinReceivedEvent(PinReceivedEvent event) {
+        Log.d("LobbyActivity", "Pin received: " + event.getPin());
+        if (!isFinishing()) {
+            pin = event.getPin();
+        } else {
+            Log.d("LobbyActivity", "Activity is finishing. Cannot set pin.");
+        }
+    }
+
 
     public void onCancelStartNewGame(View view) {
         Intent intent = new Intent(StartNewGameActivity.this, StartMenuActivity.class);
@@ -88,8 +133,21 @@ public class StartNewGameActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onDestroy() {
+        if (webSocketClient != null) {
+            webSocketClient.disconnect();
+        }
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+        Log.d("LobbyActivity", "EventBus registered");
+        globalEventQueue.setEventBusReady(true);
+
         if (webSocketClient != null) {
             webSocketClient.connectToServer();
         }
@@ -100,9 +158,12 @@ public class StartNewGameActivity extends AppCompatActivity {
         if (webSocketClient != null) {
             webSocketClient.disconnect();
         }
+
+        EventBus.getDefault().unregister(this);
+        Log.d("LobbyActivity", "EventBus unregistered");
+        globalEventQueue.setEventBusReady(false);
         super.onStop();
     }
-
 
     @Override
     protected void attachBaseContext(Context base) {

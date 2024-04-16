@@ -46,7 +46,7 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
                 Logger.info("CLIENT : Data: " + data);
 
                 switch (commands) {
-                    case ANSWER -> {
+                    case PIN -> {
                         messagesQueue.add(json);
                         break;
                     }

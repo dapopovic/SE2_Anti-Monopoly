@@ -3,9 +3,17 @@ package at.aau.anti_mon.client.command;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class CommandFactory {
     private Map<String, Command> commandMap;
 
+    @Inject
+    public CommandFactory(Map<String, Command> commandMap) {
+        this.commandMap = new HashMap<>(commandMap);
+    }
+
+    /*
     public CommandFactory() {
         commandMap = new HashMap<>();
         commandMap.put("ANSWER", new AnswerCommand());
@@ -19,6 +27,8 @@ public class CommandFactory {
         commandMap.put("ERROR", new ErrorCommand());
         // weitere Commands hinzufügen
     }
+
+     */
 
     public Command getCommand(String commandType) {
         return commandMap.get(commandType);
