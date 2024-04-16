@@ -54,6 +54,8 @@ public class GameHandler implements WebSocketHandler {
         JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
         Commands command = jsonDataDTO.getCommand();
 
+
+        // Todo: Ersetzen ähnlich wie im Frontend mit CommandFactory
         if (command != null) {
             try {
                 Logger.info("SERVER : Command: " + command.getCommand());
@@ -62,7 +64,7 @@ public class GameHandler implements WebSocketHandler {
                 switch (command) {
                     case CREATE_GAME -> {
                         // data = {"name": "username" }
-                        String playerName = jsonDataDTO.getData().get("name");
+                        String playerName = jsonDataDTO.getData().get("username");
                         if (playerName != null) {
                             Player player = new Player(playerName, session);
                             eventPublisher.publishEvent(new CreateLobbyEvent(session, player));
@@ -74,7 +76,7 @@ public class GameHandler implements WebSocketHandler {
                     case JOIN_GAME -> {
                         // data = {"pin": 1234 , "name": "Test"}
                         String pinString = jsonDataDTO.getData().get("pin");
-                        String playerName = jsonDataDTO.getData().get("name");
+                        String playerName = jsonDataDTO.getData().get("username");
 
                         if (pinString != null && playerName != null) {
                             int pin = Integer.parseInt(pinString);

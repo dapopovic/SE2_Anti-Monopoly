@@ -73,6 +73,8 @@ public class UserEventListener {
             if (joinedLobby.canAddPlayer()) {
                 joinedLobby.addPlayer(event.getPlayer());
                 lobbyService.notifyPlayersInLobby(joinedLobby);
+
+                sendAnswer(event.getSession(), "SUCCESS");
                 sendInfo(event.getSession(), "Erfolgreich der Lobby beigetreten.");
             } else {
                 sendError(event.getSession(), "Fehler: Lobby ist voll.");
@@ -132,7 +134,7 @@ public class UserEventListener {
 
     private void sendJoinedUser(WebSocketSession session, String message) {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
-        jsonData.putData("name", message);
+        jsonData.putData("username", message);
         send(session, message, jsonData);
     }
 
@@ -143,7 +145,7 @@ public class UserEventListener {
     }
 
     private void sendInfo(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.INFO, new HashMap<>());
         jsonData.putData("message", message);
         send(session, message, jsonData);
     }

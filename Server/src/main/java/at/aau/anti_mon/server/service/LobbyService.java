@@ -81,7 +81,7 @@ public class LobbyService {
     public void notifyPlayersInLobby(Lobby lobby) throws Exception {
         List<String> playerNames = lobby.getPlayers().stream()
                 .map(Player::getName)
-                .collect(Collectors.toList());
+                .toList();
         //String message = new Gson().toJson(playerNames);
 
         for (Player player : lobby.getPlayers()) {
@@ -127,7 +127,7 @@ public class LobbyService {
 
     private void sendJoinedUser(WebSocketSession session, String message) {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
-        jsonData.putData("name", message);
+        jsonData.putData("username", message);
         send(session, message, jsonData);
     }
 

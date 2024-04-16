@@ -46,7 +46,7 @@ public class WebSocketHandlerIntegrationTest {
 
     @Test
     public void testCreateGameAndGetPin() throws Exception {
-        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"name\":\"Test\"}}";
+        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
         Logger.info("TEST - sending message: " + message);
         session.sendMessage(new TextMessage(message));
 
@@ -68,7 +68,7 @@ public class WebSocketHandlerIntegrationTest {
         // Beispiel: Verwendung der JsonDataDTO Klasse
 
         JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-        jsonData.putData("name", "Test");
+        jsonData.putData("username", "Test");
 
         //ObjectMapper mapper = new ObjectMapper();
         //String jsonMessage = mapper.writeValueAsString(jsonData);
