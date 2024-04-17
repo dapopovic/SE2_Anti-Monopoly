@@ -5,7 +5,6 @@ import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 /**
@@ -84,6 +82,7 @@ public class LobbyService {
                 .toList();
         //String message = new Gson().toJson(playerNames);
 
+
         for (Player player : lobby.getPlayers()) {
             if (player.getSession().isOpen()) {
                 //player.getSession().sendMessage(new TextMessage(message));
@@ -126,25 +125,22 @@ public class LobbyService {
     }
 
     private void sendJoinedUser(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
-        jsonData.putData("username", message);
-        send(session, message, jsonData);
+        JsonDataDTO jsonData = JsonDataManager.createJsonDataDTO(Commands.JOIN, message, "username");
+        send(session, jsonData);
     }
 
     private void sendError(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
-        jsonData.putData("message", message);
-        send(session, message, jsonData);
+        JsonDataDTO jsonData = JsonDataManager.createJsonDataDTO(Commands.ERROR, message, "message");
+        send(session, jsonData);
     }
 
     private void sendInfo(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
-        jsonData.putData("message", message);
-        send(session, message, jsonData);
+        JsonDataDTO jsonData = JsonDataManager.createJsonDataDTO(Commands.INFO, message, "message");
+        send(session, jsonData);
     }
 
 
-    private void send(WebSocketSession session, String message, JsonDataDTO jsonData) {
+    private void send(WebSocketSession session, JsonDataDTO jsonData) {
         String jsonResponse =   JsonDataManager.createJsonMessage(jsonData);
         try {
             synchronized (session) {

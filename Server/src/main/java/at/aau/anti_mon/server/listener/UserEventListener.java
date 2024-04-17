@@ -58,7 +58,7 @@ public class UserEventListener {
         Lobby newLobby = lobbyService.createLobby(event.getPlayer());
         //sendResponse(event.getSession(), "Spiel erstellt mit PIN: " + newLobby.getPin());
         Logger.info("Spiel erstellt mit PIN: " + newLobby.getPin());
-        sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
+        JsonDataManager.sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
     }
 
     /**
@@ -74,13 +74,13 @@ public class UserEventListener {
                 joinedLobby.addPlayer(event.getPlayer());
                 lobbyService.notifyPlayersInLobby(joinedLobby);
 
-                sendAnswer(event.getSession(), "SUCCESS");
-                sendInfo(event.getSession(), "Erfolgreich der Lobby beigetreten.");
+                JsonDataManager.sendAnswer(event.getSession(), "SUCCESS");
+                JsonDataManager.sendInfo(event.getSession(), "Erfolgreich der Lobby beigetreten.");
             } else {
-                sendError(event.getSession(), "Fehler: Lobby ist voll.");
+                JsonDataManager.sendError(event.getSession(), "Fehler: Lobby ist voll.");
             }
         } else {
-            sendError(event.getSession(), "Fehler: Lobby nicht gefunden.");
+            JsonDataManager.sendError(event.getSession(), "Fehler: Lobby nicht gefunden.");
         }
     }
 
@@ -107,67 +107,6 @@ public class UserEventListener {
             }
         } finally {
             lock.unlock();
-        }
-    }
-
-    /**
-     * Sendet eine Nachricht an den Benutzer
-     * @param session WebSocket-Sitzung
-     * @param message Nachricht
-     */
-    private void sendAnswer(WebSocketSession session, String message) throws JsonProcessingException {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ANSWER, new HashMap<>());
-        send(session, message, jsonData);
-    }
-
-    /**
-     * Sendet eine Nachricht an den Benutzer
-     * @param session WebSocket-Sitzung
-     * @param message Nachricht
-     */
-    private void sendPin(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.PIN, new HashMap<>());
-        jsonData.putData("pin", message);
-        send(session, message, jsonData);
-    }
-
-
-    private void sendJoinedUser(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
-        jsonData.putData("username", message);
-        send(session, message, jsonData);
-    }
-
-    private void sendError(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
-        jsonData.putData("message", message);
-        send(session, message, jsonData);
-    }
-
-    private void sendInfo(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.INFO, new HashMap<>());
-        jsonData.putData("message", message);
-        send(session, message, jsonData);
-    }
-
-
-
-
-    private void send(WebSocketSession session, String message, JsonDataDTO jsonData) {
-        String jsonResponse =   JsonDataManager.createJsonMessage(jsonData);
-        try {
-            synchronized (session) {
-                if (session.isOpen()) {
-                    Logger.info("Nachricht senden: " + jsonResponse);
-                    session.sendMessage(new TextMessage(jsonResponse));
-                } else {
-                    System.err.println("Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
-                    throw new IOException("Session is closed");
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Fehler beim Senden der Nachricht: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
