@@ -105,6 +105,14 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.88" />
+
+
     <ImageView
         android:id="@+id/background"
         android:layout_width="wrap_content"
@@ -133,8 +141,107 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintTop_toTopOf="@id/guideline15"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
         app:srcCompat="@drawable/start" />
 
+    <ImageView
+        android:id="@+id/prison"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:srcCompat="@drawable/start" />
 
+    <ImageView
+        android:id="@+id/rom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/start_field"
+        app:layout_constraintLeft_toRightOf="@id/rom2"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+
+    <ImageView
+        android:id="@+id/rom2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom"
+        app:layout_constraintLeft_toRightOf="@id/rom3"/>
+
+    <ImageView
+        android:id="@+id/rom3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom2"
+        app:layout_constraintLeft_toRightOf="@id/rom4"/>
+
+    <ImageView
+        android:id="@+id/rom4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom3"
+        app:layout_constraintLeft_toRightOf="@id/rom5"/>
+
+    <ImageView
+        android:id="@+id/rom5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom4"
+        app:layout_constraintLeft_toRightOf="@id/rom6"/>
+
+    <ImageView
+        android:id="@+id/rom6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom5"
+        app:layout_constraintLeft_toRightOf="@id/rom7"/>
+
+    <ImageView
+        android:id="@+id/rom7"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom6"
+        app:layout_constraintLeft_toRightOf="@id/rom8"/>
+
+    <ImageView
+        android:id="@+id/rom8"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom7"
+        app:layout_constraintLeft_toRightOf="@id/rom9"/>
+
+    <ImageView
+        android:id="@+id/rom9"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/rom_corso_impero"
+        app:layout_constraintTop_toTopOf="@id/guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintRight_toLeftOf="@id/rom8"
+        app:layout_constraintLeft_toRightOf="@id/prison"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
