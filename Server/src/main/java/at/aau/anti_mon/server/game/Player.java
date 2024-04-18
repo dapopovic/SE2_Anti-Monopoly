@@ -14,11 +14,13 @@ public class Player {
 
     private final String name;
     private WebSocketSession session;
+    private Lobby lobby;
     private boolean isReady;
 
     public Player(String name, WebSocketSession session) {
         this.name = name;
         this.session = session;
         this.isReady = false;
+        this.lobby = null;
     }
 }

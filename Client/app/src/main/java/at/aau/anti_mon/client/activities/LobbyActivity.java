@@ -2,6 +2,7 @@ package at.aau.anti_mon.client.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -73,11 +74,19 @@ public class LobbyActivity extends AppCompatActivity{
     GlobalEventQueue globalEventQueue;
 
 
+    SharedPreferences sharedPreferences;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_lobby);
+
+        // TODO:
+        // SharedPreferences für zu speichernde Key-Value Paare
+        sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();

@@ -23,9 +23,12 @@ okhttpprofiler = "1.0.8"
 okhttpVersion = "5.0.0-alpha.12"
 okio = "3.9.0"
 retrofit = "(insert latest version)"
+retrofitVersion = "2.9.0"
+squareupRetrofit = "2.1.0"
 
 [libraries]
 converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "converterJackson" }
+converter-name = { module = "com.squareup.retrofit2:converter-name", version.ref = "retrofitVersion" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessor" }
 dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupport" }
@@ -52,6 +55,8 @@ okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref 
 okhttpprofiler = { module = "com.localebro:okhttpprofiler", version.ref = "okhttpprofiler" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-v210 = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
+retrofit-v290 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

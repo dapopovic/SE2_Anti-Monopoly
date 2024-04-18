@@ -26,6 +26,13 @@ public class SessionManagementService {
      */
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
+    /**
+     * Map of all session keys
+     * Key: User ID
+     * Value: session key
+     */
+    private final Map<String, String> sessionKeys = new ConcurrentHashMap<>();
+
     public void registerSession(WebSocketSession session) {
         sessions.put(session.getId(), session);
         Logger.info("Session registered: {}", session.getId());

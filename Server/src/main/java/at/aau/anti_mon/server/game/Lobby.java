@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Represents a lobby in the game
@@ -16,14 +16,14 @@ import java.util.ArrayList;
 public class Lobby {
 
     private final Integer pin;
-    private final ArrayList<Player> players;
+    private final HashSet<Player> players;
     private static final int MAX_PLAYERS = 6;
     private final GameState gameState;
 
     public Lobby() {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
-        this.players = new ArrayList<>();
+        this.players = new HashSet<>();
         this.gameState = GameState.LOBBY;
     }
 
@@ -48,6 +48,10 @@ public class Lobby {
 
     public Player getPlayerWithSession(WebSocketSession session) {
         return players.stream().filter(player -> player.getSession().getId().equals(session.getId())).findFirst().orElse(null);
+    }
+
+    public boolean isPlayerInLobby(Player player) {
+        return players.contains(player);
     }
 
     public boolean canAddPlayer() {

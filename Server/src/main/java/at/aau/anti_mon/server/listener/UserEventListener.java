@@ -6,6 +6,7 @@ import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
+import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +19,8 @@ import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -56,7 +59,6 @@ public class UserEventListener {
     @EventListener
     public void onCreateLobby(CreateLobbyEvent event) throws JsonProcessingException {
         Lobby newLobby = lobbyService.createLobby(event.getPlayer());
-        //sendResponse(event.getSession(), "Spiel erstellt mit PIN: " + newLobby.getPin());
         Logger.info("Spiel erstellt mit PIN: " + newLobby.getPin());
         JsonDataManager.sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
     }
@@ -71,9 +73,25 @@ public class UserEventListener {
         if (lobby.isPresent()) {
             Lobby joinedLobby = lobby.get();
             if (joinedLobby.canAddPlayer()) {
-                joinedLobby.addPlayer(event.getPlayer());
-                lobbyService.notifyPlayersInLobby(joinedLobby);
 
+                HashSet<Player> players = joinedLobby.getPlayers();
+                for (Player player : players) {
+
+                    // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler beigetreten ist
+                    JsonDataManager.sendJoinedUser(player.getSession(), event.getPlayer().getName());
+
+                    // Sende dem neuen Spieler alle Spieler, die bereits in der Lobby sind
+                    JsonDataManager.sendJoinedUser(event.getSession(), player.getName());
+                }
+
+                joinedLobby.addPlayer(event.getPlayer());
+
+
+                // TODO: something like this
+                //lobbyService.notifyPlayersInLobby(joinedLobby);
+
+
+                // TODO: TEST
                 JsonDataManager.sendAnswer(event.getSession(), "SUCCESS");
                 JsonDataManager.sendInfo(event.getSession(), "Erfolgreich der Lobby beigetreten.");
             } else {
@@ -83,6 +101,9 @@ public class UserEventListener {
             JsonDataManager.sendError(event.getSession(), "Fehler: Lobby nicht gefunden.");
         }
     }
+
+
+
 
     /**
      * Entfernt den Benutzer aus der Lobby
@@ -109,25 +130,5 @@ public class UserEventListener {
             lock.unlock();
         }
     }
-
-
-    // OLD CODE
-
-    /*
-
-    @EventListener
-    public void handleUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
-        lobbyService.addUserToLobby(event.getPlayer().getName(), String.valueOf(event.getLobby().getPin()));
-    }
-
-    @EventListener
-    public void handleUserLeftLobbyEvent(UserLeftLobbyEvent event) {
-        lobbyService.removeUserFromLobby(event.getUserId(), event.getLobbyId());
-    }
-
-
-     */
-
-
 
 }

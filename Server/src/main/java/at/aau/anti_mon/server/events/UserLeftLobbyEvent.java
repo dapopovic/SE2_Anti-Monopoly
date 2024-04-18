@@ -17,7 +17,6 @@ public class UserLeftLobbyEvent {
     private final Player player;
     private final WebSocketSession session;
 
-
     public UserLeftLobbyEvent(WebSocketSession session, Lobby lobby, Player player) {
         this.session = session;
         this.lobby = lobby;
