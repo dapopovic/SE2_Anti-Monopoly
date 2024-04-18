@@ -1,17 +1,21 @@
 package at.aau.anti_mon.server.game;
 
+import at.aau.anti_mon.server.enums.GameState;
 import lombok.Getter;
-import org.springframework.web.socket.WebSocketMessage;
+import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collection;
 
+/**
+ * Represents a lobby in the game
+ */
 @Getter
+@Setter
 public class Lobby {
-    private final int pin;
+
+    private final Integer pin;
     private final ArrayList<Player> players;
     private static final int MAX_PLAYERS = 6;
     private final GameState gameState;
@@ -20,7 +24,7 @@ public class Lobby {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.players = new ArrayList<>();
-        this.gameState = new GameState();
+        this.gameState = GameState.LOBBY;
     }
 
     public void addPlayer(Player player) {
@@ -41,7 +45,12 @@ public class Lobby {
     public void removePlayer(Player player) {
         players.remove(player);
     }
+
     public Player getPlayerWithSession(WebSocketSession session) {
         return players.stream().filter(player -> player.getSession().getId().equals(session.getId())).findFirst().orElse(null);
+    }
+
+    public boolean canAddPlayer() {
+        return this.players.size() < MAX_PLAYERS;
     }
 }

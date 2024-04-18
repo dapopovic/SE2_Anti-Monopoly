@@ -1,27 +1,57 @@
 [versions]
 agp = "8.3.0"
+converterJackson = "2.7.2"
+daggerCompiler = "2.20"
+daggerAndroidProcessor = "2.20"
+daggerAndroidSupport = "2.20"
+daggerAndroid = "2.20"
+eventbus = "3.2.0"
+hiltCompiler = "2.44"
+hiltAndroid = "2.44"
+jacksonDatabind = "2.10.3"
 junit = "4.13.2"
-junitJupiterApi = "5.7.0"
+junitJupiterApi = "5.10.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
-material = "1.10.0"
-activity = "1.8.0"
+lombok = "1.18.32"
+material = "1.11.0"
+activity = "1.8.2"
 constraintlayout = "2.1.4"
-okhttp = "4.10.0"
+multidex = "2.0.1"
+okhttpprofiler = "1.0.8"
+okhttpVersion = "5.0.0-alpha.12"
+okio = "3.9.0"
+retrofit = "(insert latest version)"
 
 [libraries]
+converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "converterJackson" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
+dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessor" }
+dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupport" }
+dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroid" }
+eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jacksonDatabind" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jacksonDatabind" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterApi" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 gson = "com.google.code.gson:gson:2.10.1"
+okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttpVersion" }
+okhttpprofiler = { module = "com.localebro:okhttpprofiler", version.ref = "okhttpprofiler" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
