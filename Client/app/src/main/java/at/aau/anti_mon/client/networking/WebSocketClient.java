@@ -18,8 +18,10 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.ReceiveMessageEvent;
 import at.aau.anti_mon.client.events.SendMessageEvent;
+import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import okhttp3.OkHttpClient;
@@ -220,6 +222,8 @@ public class WebSocketClient {
         // TODO: Implement isConnected
         return webSocket != null;
     }
+
+
 
 
 

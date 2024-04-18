@@ -32,6 +32,7 @@ import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.ReceiveMessageEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
@@ -190,6 +191,14 @@ public class LobbyActivity extends AppCompatActivity{
         }
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onHeartBeatEvent(HeartBeatEvent event) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
+        jsonData.putData("msg", "PONG");
+        String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonMessage);
     }
 
     @Override
