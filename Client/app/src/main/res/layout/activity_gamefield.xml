@@ -159,7 +159,7 @@
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintStart_toStartOf="@id/field_square"
         app:layout_constraintTop_toTopOf="@id/guideline19"
-        app:srcCompat="@drawable/start" />
+        app:srcCompat="@drawable/price_war" />
 
     <ImageView
         android:id="@+id/sitting_field"
@@ -169,7 +169,7 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintStart_toStartOf="@id/field_square"
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
-        app:srcCompat="@drawable/start" />
+        app:srcCompat="@drawable/sitting" />
 
     <ImageView
         android:id="@+id/unlucky_field"
@@ -179,7 +179,7 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintEnd_toEndOf="@id/field_square"
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
-        app:srcCompat="@drawable/start" />
+        app:srcCompat="@drawable/unlucky_field" />
 
     <ImageView
         android:id="@+id/rom"
@@ -334,7 +334,7 @@
         android:id="@+id/left_6"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:srcCompat="@drawable/take_90_grad"
+        app:srcCompat="@drawable/madrid_3"
         app:layout_constraintTop_toBottomOf="@id/left_5"
         app:layout_constraintBottom_toTopOf="@id/left_7"
         app:layout_constraintEnd_toEndOf="@id/sitting_field"
@@ -345,7 +345,7 @@
         android:id="@+id/left_7"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:srcCompat="@drawable/take_90_grad"
+        app:srcCompat="@drawable/madrid_2"
         app:layout_constraintTop_toBottomOf="@id/left_6"
         app:layout_constraintBottom_toTopOf="@id/left_8"
         app:layout_constraintEnd_toEndOf="@id/sitting_field"
@@ -356,7 +356,7 @@
         android:id="@+id/left_8"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:srcCompat="@drawable/take_90_grad"
+        app:srcCompat="@drawable/madrid_2"
         app:layout_constraintTop_toBottomOf="@id/left_7"
         app:layout_constraintBottom_toTopOf="@id/left_9"
         app:layout_constraintEnd_toEndOf="@id/sitting_field"
@@ -367,7 +367,7 @@
         android:id="@+id/left_9"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:srcCompat="@drawable/take_90_grad"
+        app:srcCompat="@drawable/madrid_1"
         app:layout_constraintTop_toBottomOf="@id/left_8"
         app:layout_constraintBottom_toTopOf="@id/prison"
         app:layout_constraintEnd_toEndOf="@id/sitting_field"
