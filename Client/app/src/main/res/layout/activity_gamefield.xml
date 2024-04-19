@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activityGamefield">
+    tools:context=".activityGamefield"
+    android:background="@drawable/background">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline13"
@@ -127,15 +128,6 @@
         app:layout_constraintGuide_percent="0.285" />
 
 
-    <ImageView
-        android:id="@+id/background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-         />
 
     <ImageView
         android:id="@+id/field_square"
@@ -290,8 +282,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/sitting_field"
         app:layout_constraintBottom_toTopOf="@id/left_2"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -301,8 +293,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_1"
         app:layout_constraintBottom_toTopOf="@id/left_3"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -312,8 +304,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_2"
         app:layout_constraintBottom_toTopOf="@id/left_4"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -323,8 +315,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_3"
         app:layout_constraintBottom_toTopOf="@id/left_5"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -334,8 +326,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_4"
         app:layout_constraintBottom_toTopOf="@id/left_6"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -345,8 +337,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_5"
         app:layout_constraintBottom_toTopOf="@id/left_7"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -356,8 +348,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_6"
         app:layout_constraintBottom_toTopOf="@id/left_8"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -367,8 +359,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_7"
         app:layout_constraintBottom_toTopOf="@id/left_9"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
@@ -378,8 +370,8 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_8"
         app:layout_constraintBottom_toTopOf="@id/prison"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintLeft_toLeftOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
