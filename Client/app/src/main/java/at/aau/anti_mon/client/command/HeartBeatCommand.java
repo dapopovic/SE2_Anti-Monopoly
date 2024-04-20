@@ -21,7 +21,7 @@ public class HeartBeatCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        Log.println(Log.INFO,"Network", "CLIENT : HeartBeat empfangen: ");
+        Log.println(Log.INFO,"Network", "CLIENT : HeartBeat empfangen: "+data.getData().get("msg"));
         queue.enqueueEvent(new HeartBeatEvent(data.getData().get("msg")));
     }
 }
