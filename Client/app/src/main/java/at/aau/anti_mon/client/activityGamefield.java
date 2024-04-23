@@ -1,6 +1,9 @@
 package at.aau.anti_mon.client;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +23,20 @@ public class activityGamefield extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    public void onSettings(View view) {
+        Intent i = new Intent(getApplicationContext(),PopActivitySettings.class);
+        startActivity(i);
+    }
+
+    public void onHandel(View view) {
+        Intent i = new Intent(getApplicationContext(),PopActivityHandel.class);
+        startActivity(i);
+    }
+
+    public void onObjects(View view) {
+        Intent i = new Intent(getApplicationContext(),PopActivityObjects.class);
+        startActivity(i);
     }
 }

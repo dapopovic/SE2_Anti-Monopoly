@@ -16,6 +16,18 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".PopActivityObjects"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp"/>
+        <activity
+            android:name=".PopActivityHandel"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp" />
+        <activity
+            android:name=".PopActivitySettings"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp" />
+        <activity
             android:name=".activityGamefield"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />

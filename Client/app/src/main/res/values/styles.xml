@@ -25,4 +25,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:cursorVisible">true</item>
     </style>
+
+    <style name="AppTheme_PopUp">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
 </resources>
