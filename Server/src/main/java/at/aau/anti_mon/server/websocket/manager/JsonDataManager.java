@@ -18,59 +18,40 @@ import java.util.Map;
  */
 public class JsonDataManager {
 
-    public static String  createJsonMessage(Commands command, Map<String, String> data) {
-        try{
-            JsonDataDTO jsonDataDTO = new JsonDataDTO(command, data);
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(jsonDataDTO);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static String  createJsonMessage(Commands command, Map<String, String> data) throws JsonProcessingException {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(command, data);
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(jsonDataDTO);
     }
 
-    public static JsonDataDTO createJsonDataDTO(Commands commands, String message, String datafield) {
+    public static JsonDataDTO createJsonDataDTO (Commands commands, String message, String datafield) {
         JsonDataDTO jsonData = new JsonDataDTO(commands, new HashMap<>());
         jsonData.putData(datafield, message);
         return jsonData;
     }
 
-    public static JsonDataDTO parseJsonMessage(String json) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(json, JsonDataDTO.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static JsonDataDTO parseJsonMessage(String json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, JsonDataDTO.class);
     }
 
-    public static String createJsonMessage( JsonDataDTO jsonData)  {
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(jsonData);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static String createJsonMessage( JsonDataDTO jsonData) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(jsonData);
     }
 
     public static void send(WebSocketSession session, JsonDataDTO jsonData) {
-        String jsonResponse = createJsonMessage(jsonData);
         try {
-            synchronized (session) {
-                if (session.isOpen()) {
-                    Logger.info("Nachricht senden: " + jsonResponse);
-                    session.sendMessage(new TextMessage(jsonResponse));
-                    //session.sendMessage(new TextMessage(jsonData.toString()));
-                } else {
-                    System.err.println("Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
-                    throw new IOException("Session is closed");
-                }
+            String jsonResponse = createJsonMessage(jsonData);
+            if (session.isOpen()) {
+                Logger.info("Nachricht senden: " + jsonResponse);
+                session.sendMessage(new TextMessage(jsonResponse));
+            } else {
+                Logger.error("Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
+                throw new IOException("Session is closed");
             }
         } catch (IOException e) {
-            System.err.println("Fehler beim Senden der Nachricht: " + e.getMessage());
-            e.printStackTrace();
+            Logger.error("Fehler beim Senden der Nachricht: " + e.getMessage());
         }
     }
 

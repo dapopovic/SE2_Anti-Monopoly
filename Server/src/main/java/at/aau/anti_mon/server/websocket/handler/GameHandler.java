@@ -8,6 +8,7 @@ import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonSyntaxException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,14 +40,16 @@ public class GameHandler implements WebSocketHandler {
      * @param message WebSocket-Nachricht
      */
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
         String json = message.getPayload().toString();
 
         Logger.info("SERVER : Nachricht empfangen: " + json);
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
-        if (jsonDataDTO == null) {
-            Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht.");
+        JsonDataDTO jsonDataDTO;
+        try {
+            jsonDataDTO = JsonDataManager.parseJsonMessage(json);
+        } catch (JsonProcessingException e) {
+            Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
             JsonDataManager.sendError(session, "Fehler beim Parsen der JSON-Nachricht.");
             return;
         }
