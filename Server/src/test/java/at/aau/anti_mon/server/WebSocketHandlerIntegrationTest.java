@@ -25,6 +25,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"logging.level.org.springframework=DEBUG"})
 public class WebSocketHandlerIntegrationTest {
@@ -51,7 +53,7 @@ public class WebSocketHandlerIntegrationTest {
         session.sendMessage(new TextMessage(message));
 
         String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
-        Assertions.assertNotNull(messageResponse, "Response should not be null");
+        assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +62,7 @@ public class WebSocketHandlerIntegrationTest {
         Logger.debug("Extracted PIN: " + pin);
 
         Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
-        Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
+        assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
     }
 
     @Test
@@ -80,7 +82,7 @@ public class WebSocketHandlerIntegrationTest {
         session.sendMessage(new TextMessage(jsonMessage));
 
         String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
-        Assertions.assertNotNull(messageResponse, "Response should not be null");
+        assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
 
 
@@ -98,7 +100,42 @@ public class WebSocketHandlerIntegrationTest {
         Logger.info("Received name: " + pin);
 
         Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
-        Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
+        assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
+    }
+
+    @Test
+    public void testJoinGame() throws Exception {
+        // first create Lobby
+        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
+        Logger.info("TEST - sending message: " + message);
+        session.sendMessage(new TextMessage(message));
+
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+        assertNotNull(messageResponse, "Response should not be null");
+        Logger.info("TEST - received messageResponse: " + messageResponse);
+
+        JsonDataDTO jsonData = JsonDataManager.parseJsonMessage(messageResponse);
+
+        assertNotNull(jsonData, "jsonData should not be null");
+        String pin = jsonData.getData().get("pin");
+        assertNotNull(pin, "pin should not be null");
+        assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
+
+        // now join Lobby
+        message = "{\"command\":\"JOIN_GAME\",\"data\":{\"username\":\"Test2\",\"pin\":\"" + pin + "\"}}";
+        Logger.info("TEST - sending message: " + message);
+        session.sendMessage(new TextMessage(message));
+
+        messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+        assertNotNull(messageResponse, "Response should not be null");
+        Logger.info("TEST - received messageResponse: " + messageResponse);
+
+        jsonData = JsonDataManager.parseJsonMessage(messageResponse);
+
+        assertNotNull(jsonData, "jsonData should not be null");
+        String receivedMessage = jsonData.getData().get("message");
+        assertNotNull(receivedMessage, "message should not be null");
+        assertEquals("Erfolgreich der Lobby beigetreten.", receivedMessage, "Message should be 'Erfolgreich der Lobby beigetreten.'");
     }
 
     @AfterEach
