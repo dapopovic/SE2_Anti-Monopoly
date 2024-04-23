@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"logging.level.org.springframework=DEBUG"})
-public class WebSocketHandlerIntegrationTest {
+class WebSocketHandlerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -45,35 +45,10 @@ public class WebSocketHandlerIntegrationTest {
         session = client.execute(new WebSocketHandlerClientImpl(messages ), String.format(WEBSOCKET_URI, port)).get(3, TimeUnit.SECONDS);
     }
 
-
     @Test
-    public void testCreateGameAndGetPin() throws Exception {
-        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
-        Logger.info("TEST - sending message: " + message);
-        session.sendMessage(new TextMessage(message));
-
-        String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
-        assertNotNull(messageResponse, "Response should not be null");
-        Logger.info("TEST - received messageResponse: " + messageResponse);
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(messageResponse);
-        String pin = rootNode.path("pin").asText();  // Sicherstellen, dass 'pin' existiert und ein String ist
-        Logger.debug("Extracted PIN: " + pin);
-
-        Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
-        assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
-    }
-
-    @Test
-    public void testNewCreateGameAndGetPin() throws Exception {
-        // Beispiel: Verwendung der JsonDataDTO Klasse
-
+    void testNewCreateGameAndGetPin() throws Exception {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
         jsonData.putData("username", "Test");
-
-        //ObjectMapper mapper = new ObjectMapper();
-        //String jsonMessage = mapper.writeValueAsString(jsonData);
 
         String jsonMessage =  JsonDataManager.createJsonMessage(jsonData);
 
@@ -85,13 +60,9 @@ public class WebSocketHandlerIntegrationTest {
         assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
 
-
-        //JsonDataDTO receivedData = mapper.readValue(messageResponse, JsonDataDTO.class);
         JsonDataDTO receivedData = JsonDataManager.parseJsonMessage(messageResponse);
 
-
-        // Zugriff auf die Daten
-        assert receivedData != null;
+        assertNotNull(receivedData, "receivedData should not be null");
         Commands command = receivedData.getCommand();
         Map<String, String> data = receivedData.getData();
         String pin = data.get("pin");
@@ -104,7 +75,7 @@ public class WebSocketHandlerIntegrationTest {
     }
 
     @Test
-    public void testJoinGame() throws Exception {
+    void testJoinGame() throws Exception {
         // first create Lobby
         String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
         Logger.info("TEST - sending message: " + message);

@@ -1,19 +1,12 @@
 package at.aau.anti_mon.server.service;
 
-import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.tinylog.Logger;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,21 +32,16 @@ public class LobbyService {
      * Erstellt eine neue Lobby und fügt den Spieler hinzu
      * @param player Spieler
      */
-    public Lobby createLobby(Player player) {
+    public Lobby createLobby(Player player) throws Exception {
         Lobby newLobby = new Lobby();
-        Lobby existing = lobbies.putIfAbsent(newLobby.getPin(), newLobby);
-        if (existing != null) {
-            throw new IllegalStateException("Lobby mit PIN " + newLobby.getPin() + " existiert bereits.");
-        }
+        lobbies.putIfAbsent(newLobby.getPin(), newLobby);
         newLobby.addPlayer(player);
         return newLobby;
     }
 
-    public void joinLobby(Integer lobbyPin, Player player) {
-        Lobby lobby = lobbies.get(lobbyPin);
-        if (lobby != null) {
-            lobby.removePlayer(player);
-        }
+    public void joinLobby(Integer lobbyPin, Player player) throws Exception {
+        Lobby lobby = findLobbyByPin(lobbyPin).orElseThrow(() -> new IllegalArgumentException("Lobby mit PIN " + lobbyPin + " existiert nicht."));
+        lobby.addPlayer(player);
     }
 
     public void leaveLobby(Integer lobbyPin, Player player) {

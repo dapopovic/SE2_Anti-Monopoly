@@ -1,6 +1,9 @@
 package at.aau.anti_mon.server.game;
 
 import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
+import at.aau.anti_mon.server.exceptions.NotConnectedException;
+import at.aau.anti_mon.server.exceptions.PlayerAlreadyInLobbyException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
@@ -27,17 +30,17 @@ public class Lobby {
         this.gameState = GameState.LOBBY;
     }
 
-    public void addPlayer(Player player) {
+    public void addPlayer(Player player) throws LobbyIsFullException, PlayerAlreadyInLobbyException, NotConnectedException {
         if (players.size() >= MAX_PLAYERS) {
-            return;
+            throw new LobbyIsFullException();
         }
         for (Player p : players) {
             if (p.equals(player)) {
-                return;
+                throw new PlayerAlreadyInLobbyException();
             }
         }
         if (!player.getSession().isOpen()) {
-            return;
+            throw new NotConnectedException();
         }
         players.add(player);
     }
