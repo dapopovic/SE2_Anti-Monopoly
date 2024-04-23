@@ -37,7 +37,6 @@ public class GameHandler implements WebSocketHandler {
      *
      * @param session WebSocket-Sitzung
      * @param message WebSocket-Nachricht
-     * @throws Exception TODO: Exception
      */
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
@@ -46,47 +45,54 @@ public class GameHandler implements WebSocketHandler {
 
         Logger.info("SERVER : Nachricht empfangen: " + json);
         JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
+        if (jsonDataDTO == null) {
+            Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht.");
+            JsonDataManager.sendError(session, "Fehler beim Parsen der JSON-Nachricht.");
+            return;
+        }
         Commands command = jsonDataDTO.getCommand();
+        if (command == null) {
+            Logger.error("SERVER : JSON-Nachricht enthält kein 'command'-Attribut.");
+            JsonDataManager.sendError(session, "JSON-Nachricht enthält kein 'command'-Attribut.");
+            return;
+        }
+        try {
+            Logger.info("SERVER : Command: " + command.getCommand());
+            Logger.info("SERVER : Data: " + jsonDataDTO.getData());
 
-
-        // Todo: Ersetzen ähnlich wie im Frontend mit CommandFactory
-        if (command != null) {
-            try {
-                Logger.info("SERVER : Command: " + command.getCommand());
-                Logger.info("SERVER : Data: " + jsonDataDTO.getData());
-
-                switch (command) {
-                    case CREATE_GAME -> {
-                        String playerName = jsonDataDTO.getData().get("username");
-                        if (playerName != null) {
-                            Player player = new Player(playerName, session);
-                            eventPublisher.publishEvent(new CreateLobbyEvent(session, player));
-                        } else {
-                            Logger.error("JSON 'data' ist null oder 'name' ist nicht vorhanden.");
-                        }
-                    }
-                    case JOIN_GAME -> {
-                        String pinString = jsonDataDTO.getData().get("pin");
-                        String playerName = jsonDataDTO.getData().get("username");
-
-                        if (pinString != null && playerName != null) {
-                            int pin = Integer.parseInt(pinString);
-                            Player player = new Player(playerName, session);
-                            eventPublisher.publishEvent(new UserJoinedLobbyEvent(session, pin, player));
-
-                        } else {
-                            Logger.error("SERVER : Erforderliche Daten für 'JOIN_GAME' fehlen.");
-                        }
-                    }
-                    default -> {
-                        Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + command);
+            switch (command) {
+                case CREATE_GAME -> {
+                    String playerName = jsonDataDTO.getData().get("username");
+                    if (playerName != null) {
+                        Player player = new Player(playerName, session);
+                        eventPublisher.publishEvent(new CreateLobbyEvent(session, player));
+                    } else {
+                        Logger.error("JSON 'data' ist null oder 'name' ist nicht vorhanden.");
+                        JsonDataManager.sendError(session, "JSON 'data' ist null oder 'name' ist nicht vorhanden.");
                     }
                 }
-            } catch (JsonSyntaxException e) {
-                Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
+                case JOIN_GAME -> {
+                    String pinString = jsonDataDTO.getData().get("pin");
+                    String playerName = jsonDataDTO.getData().get("username");
+
+                    if (pinString != null && playerName != null) {
+                        int pin = Integer.parseInt(pinString);
+                        Player player = new Player(playerName, session);
+                        eventPublisher.publishEvent(new UserJoinedLobbyEvent(session, pin, player));
+
+                    } else {
+                        Logger.error("SERVER : Erforderliche Daten für 'JOIN_GAME' fehlen.");
+                        JsonDataManager.sendError(session, "Erforderliche Daten für 'JOIN_GAME' fehlen.");
+                    }
+                }
+                default -> {
+                    Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + command);
+                    JsonDataManager.sendError(session, "Unbekannter oder nicht unterstützter Befehl: " + command);
+                }
             }
-        } else {
-            Logger.error("SERVER : JSON-Nachricht enthält kein 'command'-Attribut.");
+        } catch (JsonSyntaxException e) {
+            Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
+            JsonDataManager.sendError(session, "Fehler beim Parsen der JSON-Nachricht.");
         }
     }
 
