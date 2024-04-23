@@ -1,7 +1,6 @@
 package at.aau.anti_mon.server.events;
 
 
-import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,19 +14,15 @@ import org.springframework.web.socket.WebSocketSession;
 @Setter
 public class UserJoinedLobbyEvent {
 
-    private final Lobby lobby;
+    private final int pin;
     private final Player player;
     private final WebSocketSession session;
 
 
-    public UserJoinedLobbyEvent(WebSocketSession session, Lobby lobby, Player player) {
+    public UserJoinedLobbyEvent(WebSocketSession session, int pin, Player player) {
         this.session = session;
-        this.lobby = lobby;
+        this.pin = pin;
         this.player = player;
-    }
-
-    public int getPin(){
-        return lobby.getPin();
     }
 
 }

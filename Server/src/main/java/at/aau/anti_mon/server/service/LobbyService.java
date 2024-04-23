@@ -1,5 +1,8 @@
 package at.aau.anti_mon.server.service;
 
+import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
+import at.aau.anti_mon.server.exceptions.NotConnectedException;
+import at.aau.anti_mon.server.exceptions.PlayerAlreadyInLobbyException;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
@@ -32,14 +35,14 @@ public class LobbyService {
      * Erstellt eine neue Lobby und fügt den Spieler hinzu
      * @param player Spieler
      */
-    public Lobby createLobby(Player player) throws Exception {
+    public Lobby createLobby(Player player) throws LobbyIsFullException, PlayerAlreadyInLobbyException, NotConnectedException {
         Lobby newLobby = new Lobby();
         lobbies.putIfAbsent(newLobby.getPin(), newLobby);
         newLobby.addPlayer(player);
         return newLobby;
     }
 
-    public void joinLobby(Integer lobbyPin, Player player) throws Exception {
+    public void joinLobby(Integer lobbyPin, Player player) throws LobbyIsFullException, PlayerAlreadyInLobbyException, NotConnectedException, IllegalArgumentException {
         Lobby lobby = findLobbyByPin(lobbyPin).orElseThrow(() -> new IllegalArgumentException("Lobby mit PIN " + lobbyPin + " existiert nicht."));
         lobby.addPlayer(player);
     }
@@ -77,7 +80,7 @@ public class LobbyService {
      * @param pin PIN der Lobby
      * @return Lobby oder null, wenn keine Lobby mit der gegebenen PIN gefunden wurde
      */
-    public Optional<Lobby> findLobbyByPin(int pin) {
+    private Optional<Lobby> findLobbyByPin(int pin) {
         for (Lobby lobby : lobbies.values()) {
             if (lobby.getPin() == pin) {
                 return Optional.of(lobby);

@@ -109,6 +109,26 @@ class WebSocketHandlerIntegrationTest {
         assertEquals("Erfolgreich der Lobby beigetreten.", receivedMessage, "Message should be 'Erfolgreich der Lobby beigetreten.'");
     }
 
+    @Test
+    void testJoinGameWithWrongPin() throws Exception {
+
+        // now join Lobby with wrong pin
+        String message = "{\"command\":\"JOIN_GAME\",\"data\":{\"username\":\"Test\", \"pin\":\"1234\"}}";
+        Logger.info("TEST - sending message: " + message);
+        session.sendMessage(new TextMessage(message));
+
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+        assertNotNull(messageResponse, "Response should not be null");
+        Logger.info("TEST - received messageResponse: " + messageResponse);
+
+        JsonDataDTO jsonData = JsonDataManager.parseJsonMessage(messageResponse);
+
+        assertNotNull(jsonData, "jsonData should not be null");
+        String receivedMessage = jsonData.getData().get("message");
+        assertNotNull(receivedMessage, "message should not be null");
+        assertEquals("Lobby mit PIN 1234 existiert nicht.", receivedMessage, "Message should be 'Lobby mit PIN 1234 existiert nicht.'");
+    }
+
     @AfterEach
     public void tearDown() throws Exception {
         if (session != null) {
