@@ -2,7 +2,6 @@ package at.aau.anti_mon.server.listener;
 
 import at.aau.anti_mon.server.events.CreateLobbyEvent;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.NotConnectedException;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.service.LobbyService;
