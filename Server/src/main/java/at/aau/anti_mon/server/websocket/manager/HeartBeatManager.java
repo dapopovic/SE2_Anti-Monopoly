@@ -60,7 +60,7 @@ public class HeartBeatManager {
                 session.sendMessage(heartbeatMessage);
             }
         } catch (IOException e) {
-            System.err.println("Error sending heartbeat to session " + session.getId());
+            Logger.error("Error sending heartbeat to session " + session.getId());
         }
     }
 

@@ -47,32 +47,12 @@ public class LobbyService {
         lobby.addPlayer(player);
     }
 
-    public void leaveLobby(Integer lobbyPin, Player player) {
-        Lobby lobby = lobbies.get(lobbyPin);
-        if (lobby != null) {
-            lobby.removePlayer(player);
-        }
-    }
-
-    /**
-     * Erstellt eine Liste mit Spielern in der Lobby und sendet diese an alle Spieler in der Lobby
-     * @param lobby Lobby
-     * @throws Exception wenn das Senden der Nachricht fehlschlägt
-     */
-    public void notifyPlayersInLobby(Lobby lobby){
-        List<String> playerNames = lobby.getPlayers().stream()
-                .map(Player::getName)
-                .toList();
-
-        // TODO List to JSON -> LOBBY_PLAYERS Command
-
-        for (Player player : lobby.getPlayers()) {
-            if (player.getSession().isOpen()) {
-                JsonDataManager.sendJoinedUser(player.getSession(), player.getName());
-            }
-        }
-    }
-
+//    public void leaveLobby(Integer lobbyPin, Player player) {
+//        Lobby lobby = lobbies.get(lobbyPin);
+//        if (lobby != null) {
+//            lobby.removePlayer(player);
+//        }
+//    }
 
 
     /**
@@ -89,22 +69,44 @@ public class LobbyService {
         return Optional.empty();
     }
 
-    /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an alle Clients im Lobby-Channel
-     * @param lobbyId ID der Lobby
-     * @param message Nachrichtenobjekt
-     */
-    public void sendToLobby(String lobbyId, Object message) {
-        String destination = "/topic/lobby." + lobbyId;
-        messagingTemplate.convertAndSend(destination, message);
-    }
-
-    /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an einem bestimmten User
-     * @param message Nachrichtenobjekt
-     */
-    public void sendToUser(String username, Object message) {
-        String destination = "/user/" + username + "/queue/notifications";
-        messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
-    }
+//    /**
+//     * Erstellt eine Liste mit Spielern in der Lobby und sendet diese an alle Spieler in der Lobby
+//     * @param lobby Lobby
+//     * @throws Exception wenn das Senden der Nachricht fehlschlägt
+//     */
+//    public void notifyPlayersInLobby(Lobby lobby){
+//        List<String> playerNames = lobby.getPlayers().stream()
+//                .map(Player::getName)
+//                .toList();
+//
+//        // TODO List to JSON -> LOBBY_PLAYERS Command
+//
+//        for (Player player : lobby.getPlayers()) {
+//            if (player.getSession().isOpen()) {
+//                JsonDataManager.sendJoinedUser(player.getSession(), player.getName());
+//            }
+//        }
+//    }
+//
+//
+//
+//
+//    /**
+//     * Konvertiert Nachrichtenobjekt in JSON und sendet es an alle Clients im Lobby-Channel
+//     * @param lobbyId ID der Lobby
+//     * @param message Nachrichtenobjekt
+//     */
+//    public void sendToLobby(String lobbyId, Object message) {
+//        String destination = "/topic/lobby." + lobbyId;
+//        messagingTemplate.convertAndSend(destination, message);
+//    }
+//
+//    /**
+//     * Konvertiert Nachrichtenobjekt in JSON und sendet es an einem bestimmten User
+//     * @param message Nachrichtenobjekt
+//     */
+//    public void sendToUser(String username, Object message) {
+//        String destination = "/user/" + username + "/queue/notifications";
+//        messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
+//    }
 }
