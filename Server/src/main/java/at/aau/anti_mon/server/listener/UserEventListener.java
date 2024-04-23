@@ -81,19 +81,6 @@ public class UserEventListener {
         }
     }
 
-
-
-
-    /**
-     * Entfernt den Benutzer aus der Lobby
-     * @param event Ereignis
-     */
-    @EventListener
-    public void onLeaveLobby(UserLeftLobbyEvent event) {
-        lobbyService.leaveLobby(event.getLobby().getPin(), event.getPlayer());
-    }
-
-
     /** TODO: TEST TEST TEST
      * Sendet eine Nachricht an den Benutzer
      * @param session WebSocket-Sitzung

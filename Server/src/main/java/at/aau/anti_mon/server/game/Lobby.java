@@ -34,10 +34,8 @@ public class Lobby {
         if (players.size() >= MAX_PLAYERS) {
             throw new LobbyIsFullException();
         }
-        for (Player p : players) {
-            if (p.equals(player)) {
-                throw new PlayerAlreadyInLobbyException();
-            }
+        if (players.contains(player)) {
+            throw new PlayerAlreadyInLobbyException();
         }
         if (!player.getSession().isOpen()) {
             throw new NotConnectedException();
@@ -51,13 +49,5 @@ public class Lobby {
 
     public Player getPlayerWithSession(WebSocketSession session) {
         return players.stream().filter(player -> player.getSession().getId().equals(session.getId())).findFirst().orElse(null);
-    }
-
-    public boolean isPlayerInLobby(Player player) {
-        return players.contains(player);
-    }
-
-    public boolean canAddPlayer() {
-        return this.players.size() < MAX_PLAYERS;
     }
 }
