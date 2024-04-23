@@ -19,6 +19,7 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.tinylog.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -127,6 +128,47 @@ class WebSocketHandlerIntegrationTest {
         String receivedMessage = jsonData.getData().get("message");
         assertNotNull(receivedMessage, "message should not be null");
         assertEquals("Lobby mit PIN 1234 existiert nicht.", receivedMessage, "Message should be 'Lobby mit PIN 1234 existiert nicht.'");
+    }
+
+    @Test
+    void testJoinGameLobbyFull() throws Exception {
+        // first create Lobby
+        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
+        Logger.info("TEST - sending message: " + message);
+        session.sendMessage(new TextMessage(message));
+
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+        assertNotNull(messageResponse, "Response should not be null");
+        Logger.info("TEST - received messageResponse: " + messageResponse);
+
+        JsonDataDTO jsonData = JsonDataManager.parseJsonMessage(messageResponse);
+
+        assertNotNull(jsonData, "jsonData should not be null");
+        String pin = jsonData.getData().get("pin");
+        assertNotNull(pin, "pin should not be null");
+        assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
+
+        // now join Lobby
+        for (int i = 0; i < 6; i++) {
+            message = "{\"command\":\"JOIN_GAME\",\"data\":{\"username\":\"Test" + i + "\",\"pin\":\"" + pin + "\"}}";
+            Logger.info("TEST - sending message: " + message);
+            session.sendMessage(new TextMessage(message));
+
+            messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+            assertNotNull(messageResponse, "Response should not be null");
+            Logger.info("TEST - received messageResponse: " + messageResponse);
+
+            jsonData = JsonDataManager.parseJsonMessage(messageResponse);
+
+            assertNotNull(jsonData, "jsonData should not be null");
+            String receivedMessage = jsonData.getData().get("message");
+            assertNotNull(receivedMessage, "message should not be null");
+            if (i < 5) {
+                assertEquals("Erfolgreich der Lobby beigetreten.", receivedMessage, "Message should be 'Erfolgreich der Lobby beigetreten.'");
+            } else {
+                assertEquals("Lobby ist voll!", receivedMessage, "Message should be 'Lobby ist voll!'");
+            }
+        }
     }
 
     @AfterEach
