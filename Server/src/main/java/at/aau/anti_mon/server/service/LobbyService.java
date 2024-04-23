@@ -5,7 +5,6 @@ import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.Player;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 /**
@@ -51,20 +49,12 @@ public class LobbyService {
         return newLobby;
     }
 
-    /**
-    public void joinLobby(String lobbyPin, Player player) {
+    public void joinLobby(Integer lobbyPin, Player player) {
         Lobby lobby = lobbies.get(lobbyPin);
-        if (lobby == null) {
-            throw new IllegalStateException("Lobby mit PIN " + lobbyPin + " existiert nicht.");
-        }
-        if (lobby.canAddPlayer()) {
-            lobby.addPlayer(player);
-        } else {
-            throw new IllegalStateException("Lobby mit PIN " + lobbyPin + " ist voll.");
+        if (lobby != null) {
+            lobby.removePlayer(player);
         }
     }
-     */
-
 
     public void leaveLobby(Integer lobbyPin, Player player) {
         Lobby lobby = lobbies.get(lobbyPin);
@@ -78,19 +68,21 @@ public class LobbyService {
      * @param lobby Lobby
      * @throws Exception wenn das Senden der Nachricht fehlschlägt
      */
-    public void notifyPlayersInLobby(Lobby lobby) throws Exception {
+    public void notifyPlayersInLobby(Lobby lobby){
         List<String> playerNames = lobby.getPlayers().stream()
                 .map(Player::getName)
                 .toList();
-        //String message = new Gson().toJson(playerNames);
+
+        // TODO List to JSON -> LOBBY_PLAYERS Command
 
         for (Player player : lobby.getPlayers()) {
             if (player.getSession().isOpen()) {
-                //player.getSession().sendMessage(new TextMessage(message));
-                sendJoinedUser(player.getSession(), player.getName());
+                JsonDataManager.sendJoinedUser(player.getSession(), player.getName());
             }
         }
     }
+
+
 
     /**
      * Durchsuche die Liste der Lobbies nach der gegebenen PIN und gib die entsprechende Lobby zurück.
@@ -124,43 +116,4 @@ public class LobbyService {
         String destination = "/user/" + username + "/queue/notifications";
         messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
     }
-
-    private void sendJoinedUser(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
-        jsonData.putData("username", message);
-        send(session, message, jsonData);
-    }
-
-    private void sendError(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
-        jsonData.putData("message", message);
-        send(session, message, jsonData);
-    }
-
-    private void sendInfo(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.ERROR, new HashMap<>());
-        jsonData.putData("message", message);
-        send(session, message, jsonData);
-    }
-
-
-    private void send(WebSocketSession session, String message, JsonDataDTO jsonData) {
-        String jsonResponse =   JsonDataManager.createJsonMessage(jsonData);
-        try {
-            synchronized (session) {
-                if (session.isOpen()) {
-                    Logger.info("Nachricht senden: " + jsonResponse);
-                    session.sendMessage(new TextMessage(jsonResponse));
-                } else {
-                    System.err.println("Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
-                    throw new IOException("Session is closed");
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Fehler beim Senden der Nachricht: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
 }

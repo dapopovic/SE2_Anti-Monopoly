@@ -139,7 +139,6 @@ public class GameHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         Logger.info("WebSocket-Sitzung geschlossen: " + session.getId());
-        //sessionManagementService.removeSession(session);
         eventPublisher.publishEvent(new SessionDisconnectEvent(session));
     }
 

@@ -51,6 +51,7 @@ public class HeartBeatManager {
         try {
             Map<String, String> dataMap = new HashMap<>();
             JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, dataMap);
+            jsonData.putData("msg", "PING");
             ObjectMapper mapper = new ObjectMapper();
             String jsonMessage = mapper.writeValueAsString(jsonData);
             TextMessage heartbeatMessage = new TextMessage(jsonMessage);

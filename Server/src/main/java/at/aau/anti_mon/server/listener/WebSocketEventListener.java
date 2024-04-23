@@ -34,7 +34,6 @@ public class WebSocketEventListener {
         this.heartbeatManager = heartbeatManager;
     }
 
-
     /**
      * TODO: TEST
      * @param session WebSocketSession

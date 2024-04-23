@@ -2,6 +2,7 @@ package at.aau.anti_mon.client.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.ReceiveMessageEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
@@ -73,11 +75,19 @@ public class LobbyActivity extends AppCompatActivity{
     GlobalEventQueue globalEventQueue;
 
 
+    SharedPreferences sharedPreferences;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_lobby);
+
+        // TODO:
+        // SharedPreferences für zu speichernde Key-Value Paare
+        sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();
@@ -181,6 +191,14 @@ public class LobbyActivity extends AppCompatActivity{
         }
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onHeartBeatEvent(HeartBeatEvent event) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
+        jsonData.putData("msg", "PONG");
+        String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonMessage);
     }
 
     @Override

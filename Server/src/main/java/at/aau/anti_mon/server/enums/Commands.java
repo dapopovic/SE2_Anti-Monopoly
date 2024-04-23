@@ -16,6 +16,7 @@ public enum Commands {
     JOIN("JOIN"),
     HEARTBEAT("HEARTBEAT"),
     INFO("INFO"),
+    LOBBY_PLAYERS("LOBBY_PLAYERS"),
     ERROR("ERROR");
     // usw
 

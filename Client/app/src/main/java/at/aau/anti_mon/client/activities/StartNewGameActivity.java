@@ -126,6 +126,7 @@ public class StartNewGameActivity extends AppCompatActivity {
     }
 
 
+
     public void onCancelStartNewGame(View view) {
         Intent intent = new Intent(StartNewGameActivity.this, StartMenuActivity.class);
         startActivity(intent);
