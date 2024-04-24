@@ -28,19 +28,14 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.command.Command;
-import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
-import at.aau.anti_mon.client.events.ReceiveMessageEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
-import at.aau.anti_mon.client.networking.WebSocketMessageHandler;
 
 /**
  * LobbyActivity class to handle the lobby of the game
@@ -49,7 +44,7 @@ public class LobbyActivity extends AppCompatActivity{
 
 
     //////////////////////////////////// Android UI
-    TextView textView_pin;
+    TextView textViewPin;
     TextView[] userTextViews;
 
     HashMap<TextView, Boolean> availableTextViews = new HashMap<>();
@@ -57,8 +52,8 @@ public class LobbyActivity extends AppCompatActivity{
 
     ///////////////////////////////////// Variablen
     int numberOfUsers = 0;
-    public String pin;
-    public String username;
+    private String pin;
+    private String username;
 
     ///////////////////////////////////// Networking
 
@@ -73,7 +68,6 @@ public class LobbyActivity extends AppCompatActivity{
      */
     @Inject
     GlobalEventQueue globalEventQueue;
-
 
     SharedPreferences sharedPreferences;
 
@@ -119,7 +113,7 @@ public class LobbyActivity extends AppCompatActivity{
             availableTextViews.put(tv, true);
         }
 
-        textView_pin = findViewById(R.id.Pin);
+        textViewPin = findViewById(R.id.Pin);
 
         processIntent();
     }
@@ -129,14 +123,14 @@ public class LobbyActivity extends AppCompatActivity{
             username = getIntent().getStringExtra("username");
             addUserToTable(username);
         } else {
-            Log.e("LobbyActivity", "Old Intent has no username");
+            Log.e(this.getLocalClassName(), "Old Intent has no username");
             // Todo: Error handling
         }
         if(getIntent().hasExtra("pin")) {
             pin = getIntent().getStringExtra("pin");
-            textView_pin.setText(pin);
+            textViewPin.setText(pin);
         } else {
-            Log.e("LobbyActivity", "Old Intent has no pin");
+            Log.e(this.getLocalClassName(), "Old Intent has no pin");
             // Todo: Error handling
         }
     }
@@ -149,7 +143,7 @@ public class LobbyActivity extends AppCompatActivity{
                 return;
             }
         }
-        Log.e("LobbyActivity", "Kein verfügbarer Platz für neuen Benutzer.");
+        Log.e(this.getLocalClassName(), "Kein verfügbarer Platz für neuen Benutzer.");
     }
 
     private void removeUserFromTable(String username) {
@@ -160,7 +154,7 @@ public class LobbyActivity extends AppCompatActivity{
                 return;
             }
         }
-        Log.e("LobbyActivity", "Benutzername nicht gefunden.");
+        Log.e(this.getLocalClassName(), "Benutzername nicht gefunden.");
     }
 
 
@@ -180,7 +174,7 @@ public class LobbyActivity extends AppCompatActivity{
 
     public void onCancelLobby(View view) {
         // -> go back to JoinGame/StartNewGameActivity
-        Intent intent = new Intent(LobbyActivity.this, getIntent().getClass());
+        Intent intent = new Intent(this, StartNewGameActivity.class);
         startActivity(intent);
     }
 
@@ -205,7 +199,7 @@ public class LobbyActivity extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        Log.d("LobbyActivity", "EventBus registered");
+        Log.d(this.getLocalClassName(), "EventBus registered");
         globalEventQueue.setEventBusReady(true);
 
         if (webSocketClient != null) {
@@ -220,7 +214,7 @@ public class LobbyActivity extends AppCompatActivity{
         }
 
         EventBus.getDefault().unregister(this);
-        Log.d("LobbyActivity", "EventBus unregistered");
+        Log.d(this.getLocalClassName(), "EventBus unregistered");
         globalEventQueue.setEventBusReady(false);
         super.onStop();
     }
