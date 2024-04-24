@@ -6,11 +6,15 @@ import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.networking.NetworkModule;
 import lombok.Getter;
 
+
+/**
+ * The AntiMonopolyApplication is the entry point of the application.
+ * It is responsible for creating the Dagger AppComponent and the GlobalEventQueue.
+ */
 @Getter
 public class AntiMonopolyApplication extends Application {
 
     private AppComponent appComponent;
-    private static AntiMonopolyApplication instance;
     private GlobalEventQueue globalEventQueue;
 
     @Override

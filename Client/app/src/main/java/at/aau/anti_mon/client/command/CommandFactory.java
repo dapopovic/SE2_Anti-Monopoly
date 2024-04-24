@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-public class CommandFactory {
-    private Map<String, Command> commandMap;
 
-    @Inject
+public class CommandFactory {
+    private final Map<String, Command> commandMap;
+
     public CommandFactory(Map<String, Command> commandMap) {
         this.commandMap = new HashMap<>(commandMap);
     }
