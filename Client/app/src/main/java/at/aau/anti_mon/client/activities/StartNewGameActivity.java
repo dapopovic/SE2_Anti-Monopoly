@@ -78,8 +78,7 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     /**
      * Event when the button "Create Game" is clicked
-     * Todo: better Intent handling
-     * @param view
+     * @param view View
      */
     public void onCreateGameClicked(View view) {
         String username = usernameEditText.getText().toString();
