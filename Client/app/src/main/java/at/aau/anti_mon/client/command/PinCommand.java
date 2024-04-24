@@ -23,9 +23,8 @@ public class PinCommand implements Command {
     public void execute(JsonDataDTO data) {
         String pin = data.getData().get("pin");
         Log.d("PinCommand", "Posting pin received event with pin: " + pin);
-        //EventBus.getDefault().post(new PinReceivedEvent(pin));
         // Zugriff auf die GlobalEventQueue über die Application Instanz
-         queue.enqueueEvent(new PinReceivedEvent(pin));
+        queue.enqueueEvent(new PinReceivedEvent(pin));
     }
 
 }

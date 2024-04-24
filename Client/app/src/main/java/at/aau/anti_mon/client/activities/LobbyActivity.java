@@ -78,7 +78,6 @@ public class LobbyActivity extends AppCompatActivity{
 
         setContentView(R.layout.activity_lobby);
 
-        // TODO:
         // SharedPreferences für zu speichernde Key-Value Paare
         sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 

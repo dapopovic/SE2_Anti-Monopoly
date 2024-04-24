@@ -1,7 +1,5 @@
 package at.aau.anti_mon.client.command;
 
-import org.greenrobot.eventbus.EventBus;
-
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -19,7 +17,6 @@ public class JoinGameCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        //EventBus.getDefault().post(new UserJoinedLobbyEvent(data.getData().get("name")));
         queue.enqueueEvent(new UserJoinedLobbyEvent(data.getData().get("username")));
     }
 }
