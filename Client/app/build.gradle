@@ -49,7 +49,7 @@ android {
     testOptions {
         unitTests.all {
             useJUnitPlatform()
-            finalizedBy jacocoTestReport
+//            finalizedBy jacocoTestReport
         }
     }
 }
