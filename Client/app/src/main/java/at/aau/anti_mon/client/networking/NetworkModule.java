@@ -18,7 +18,6 @@ import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.TestCommand;
-import at.aau.anti_mon.client.events.CreatedGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import dagger.Module;
 import dagger.Provides;

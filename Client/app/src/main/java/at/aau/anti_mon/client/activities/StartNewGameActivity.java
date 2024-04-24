@@ -14,6 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -27,6 +30,7 @@ import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.events.CreatedGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.ReceiveMessageEvent;
@@ -80,46 +84,35 @@ public class StartNewGameActivity extends AppCompatActivity {
     public void onCreateGameClicked(View view) {
         String username = usernameEditText.getText().toString();
 
-        if (pin != null) {
-            Intent intent = new Intent(this, LobbyActivity.class);
-            intent.putExtra("username", username);
-            intent.putExtra("pin", pin);
-            startActivity(intent);
-        }else {
-            if (!username.isEmpty()) {
-                /*
-                 * Communication with Server -> send username to server -> get Pin
-                 */
-                JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-                jsonData.putData("username", username);
-                String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-                webSocketClient.sendMessageToServer(jsonDataString);
-                Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
-
-                if (pin != null) {
-                    // Den Username an die LobbyActivity übergeben:
-                    Intent intent = new Intent(this, LobbyActivity.class);
-                    intent.putExtra("username", username);
-                    intent.putExtra("pin", pin);
-                    startActivity(intent);
-                } else {
-                    Log.println(Log.DEBUG, "Network", "Pin is null");
-                    //Todo: Pop up message to user
-                }
-            }
+        if (username.isEmpty()) {
+            Snackbar.make(view, "Please enter a username", BaseTransientBottomBar.LENGTH_SHORT).show();
+            return;
         }
+        /*
+         * Communication with Server -> send username to server -> get Pin
+         */
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
+        jsonData.putData("username", username);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
     }
 
     /**
      * Event to receive a message
      * -> MAIN Thread to update UI
-     * @param event
+     * @param event ReceiveMessageEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPinReceivedEvent(PinReceivedEvent event) {
-        Log.d("LobbyActivity", "Pin received: " + event.getPin());
+        Log.d(this.getLocalClassName(), "Pin received: " + event.getPin());
         if (!isFinishing()) {
             pin = event.getPin();
+            String username = usernameEditText.getText().toString();
+            Intent intent = new Intent(this, LobbyActivity.class);
+            intent.putExtra("pin", pin);
+            intent.putExtra("username", username);
+            startActivity(intent);
         } else {
             Log.d("LobbyActivity", "Activity is finishing. Cannot set pin.");
         }
@@ -146,7 +139,7 @@ public class StartNewGameActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        Log.d("LobbyActivity", "EventBus registered");
+        Log.d(this.getLocalClassName(), "EventBus registered");
         globalEventQueue.setEventBusReady(true);
 
         if (webSocketClient != null) {
