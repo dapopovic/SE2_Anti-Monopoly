@@ -16,6 +16,6 @@ public class InfoCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

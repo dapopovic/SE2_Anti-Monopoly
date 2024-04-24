@@ -83,7 +83,7 @@ public class WebSocketClient {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 isConnected = true;
-                Log.println(Log.DEBUG, "Network", "Opened Connection: " + response.message());
+                Log.println(Log.DEBUG, this.getClass().getSimpleName(), "Opened Connection: " + response.message());
 
                 // Versuche alle wartenden Nachrichten zu senden
                 flushMessageQueue();
@@ -98,25 +98,25 @@ public class WebSocketClient {
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
                 isConnected = false;
                 WebSocketClient.this.webSocket = null;
-                Log.println(Log.DEBUG, "Network", "Closed Connection " + reason);
+                Log.println(Log.DEBUG, this.getClass().getSimpleName(), "Closed Connection " + reason);
             }
 
             @Override
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
                 isConnected = false;
                 String errorMessage = (response != null) ? response.message() : "No response";
-                Log.e("WebSocket Failure", "Error: " + t.getMessage() + ", Response Message: " + errorMessage);
+                Log.e(this.getClass().getSimpleName(), "Error: " + t.getMessage() + ", Response Message: " + errorMessage);
 
                 if (response != null) {
                     Log.e("WebSocket Failure", "Response Message: " + response.message());
-                    Log.println(Log.WARN, "Network", "Connection Failure: " + response.message());
+                    Log.println(Log.WARN, this.getClass().getSimpleName(), "Connection Failure: " + response.message());
                 } else {
                     Log.e("WebSocket Failure", "Received null response");
-                    Log.println(Log.WARN, "Network", "Connection Failure: No response received");
+                    Log.println(Log.WARN, this.getClass().getSimpleName(), "Connection Failure: No response received");
 
                 }
                 WebSocketClient.this.webSocket = null;
-                Log.e("Network", "Connection Failure", t);
+                Log.e(this.getClass().getSimpleName(), "Connection Failure", t);
 
                 // TODO: Eventuell erneut versuchen, die Verbindung herzustellen ?
             }
@@ -125,20 +125,20 @@ public class WebSocketClient {
 
     private void handleIncomingMessage(String text){
         try {
-            Log.d("WebSocketClient", "Received message: " + text);
+            Log.d(this.getClass().getSimpleName(), "Received message: " + text);
             JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
             if (jsonDataDTO != null) {
                 Command command = commandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
                 if (command != null) {
                     command.execute(jsonDataDTO);
                 } else {
-                    Log.w("WebSocketClient", "Received unknown command: " + jsonDataDTO.getCommand());
+                    Log.w(this.getClass().getSimpleName(), "Received unknown command: " + jsonDataDTO.getCommand());
                 }
             } else {
-                Log.e("WebSocketClient", "Failed to parse JSON message");
+                Log.e(this.getClass().getSimpleName(), "Failed to parse JSON message");
             }
         } catch (Exception e) {
-            Log.e("WebSocketClient", "Error handling incoming message", e);
+            Log.e(this.getClass().getSimpleName(), "Error handling incoming message", e);
         }
     }
 
