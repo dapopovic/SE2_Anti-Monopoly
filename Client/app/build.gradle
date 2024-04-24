@@ -81,7 +81,6 @@ sonar {
     property "sonar.java.coveragePlugin", "jacoco"
       property "sonar.gradle.skipCompiler", "true"
     property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-      property "sonar.exclusions", "**/client/*, **/client/**/*"
 
   }
 }
