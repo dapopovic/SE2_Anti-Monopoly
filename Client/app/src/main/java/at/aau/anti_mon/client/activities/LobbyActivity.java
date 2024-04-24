@@ -52,7 +52,6 @@ public class LobbyActivity extends AppCompatActivity{
 
     ///////////////////////////////////// Variablen
     int numberOfUsers = 0;
-    private String pin;
     private String username;
 
     ///////////////////////////////////// Networking
@@ -119,27 +118,23 @@ public class LobbyActivity extends AppCompatActivity{
     }
 
     private void processIntent() {
-        if (getIntent().hasExtra("username")) {
+        if(getIntent().hasExtra("pin") && getIntent().hasExtra("username")) {
+            String pin = getIntent().getStringExtra("pin");
             username = getIntent().getStringExtra("username");
+            textViewPin.setText(pin);
             addUserToTable(username);
         } else {
-            Log.e(this.getLocalClassName(), "Old Intent has no username");
-            // Todo: Error handling
-        }
-        if(getIntent().hasExtra("pin")) {
-            pin = getIntent().getStringExtra("pin");
-            textViewPin.setText(pin);
-        } else {
-            Log.e(this.getLocalClassName(), "Old Intent has no pin");
-            // Todo: Error handling
+            Log.e(this.getLocalClassName(), "Intent has no pin or username");
+            Intent intent = new Intent(this, StartNewGameActivity.class);
+            startActivity(intent);
         }
     }
 
     private void addUserToTable(String username) {
         for (Map.Entry<TextView, Boolean> entry : availableTextViews.entrySet()) {
-            if (entry.getValue()) {  // Prüfe, ob der TextView verfügbar ist
+            if (Boolean.TRUE.equals(entry.getValue())) {
                 entry.getKey().setText(username);
-                availableTextViews.put(entry.getKey(), false);  // Markiere als besetzt
+                availableTextViews.put(entry.getKey(), false);  // Markiere als belegt
                 return;
             }
         }
@@ -160,7 +155,7 @@ public class LobbyActivity extends AppCompatActivity{
 
     /**
      * TODO: Use HashMap to store the users and use operations to add and remove users
-     * @param event
+     * @param event UserLeftLobbyEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserLeftLobbyEvent(UserLeftLobbyEvent event) {
