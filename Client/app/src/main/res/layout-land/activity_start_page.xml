@@ -46,16 +46,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/join_game"
         android:layout_marginTop="10dp"
-        style="@style/Buttons_Style"/>
+        style="@style/Buttons_Style"
+        android:onClick="loadGame"/>
 
     <Button
         android:id="@+id/game_instr"
-
         android:layout_height="wrap_content"
         android:text="@string/game_instr"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/load_game"
         android:layout_marginTop="10dp"
-        style="@style/Buttons_Style"/>
+        style="@style/Buttons_Style"
+        android:onClick="gameInstructions"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
