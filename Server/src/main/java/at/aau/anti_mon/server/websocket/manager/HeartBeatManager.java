@@ -4,6 +4,7 @@ import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -31,7 +32,7 @@ public class HeartBeatManager {
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 1000, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 10, TimeUnit.SECONDS);
     }
 
     //@Scheduled(fixedRate = 25000)
@@ -47,7 +48,7 @@ public class HeartBeatManager {
         sessionManagementService.getAllSessions().values().forEach(this::sendHeartBeatMessage);
     }
 
-    private void sendHeartBeatMessage(WebSocketSession session) {
+    private void sendHeartBeatMessage(@NotNull WebSocketSession session) {
         try {
             Map<String, String> dataMap = new HashMap<>();
             JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, dataMap);

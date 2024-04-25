@@ -1,4 +1,4 @@
-package at.aau.anti_mon.server.websocket;
+package at.aau.anti_mon.server.websocketclient;
 
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;

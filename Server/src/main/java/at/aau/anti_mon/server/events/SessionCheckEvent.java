@@ -5,18 +5,20 @@ import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * Event that is fired when a player connects to the server
+ * Event that is fired when a session is checked for still being active
  */
 @Getter
 @Setter
-public class SessionConnectEvent {
+public class SessionCheckEvent {
 
     private final WebSocketSession session;
+    private final String userID;
 
-    public SessionConnectEvent(
-            WebSocketSession session
-    ) {
+    public SessionCheckEvent(WebSocketSession session, String userID) {
         this.session = session;
+        this.userID = userID;
     }
 
 }
+
+

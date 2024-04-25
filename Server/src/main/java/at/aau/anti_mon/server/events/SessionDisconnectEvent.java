@@ -13,7 +13,9 @@ public class SessionDisconnectEvent {
 
     private final WebSocketSession session;
 
-    public SessionDisconnectEvent(WebSocketSession session) {
+    public SessionDisconnectEvent(
+            WebSocketSession session
+    ) {
         this.session = session;
     }
 

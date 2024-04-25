@@ -1,4 +1,4 @@
-package at.aau.anti_mon.server.websocket;
+package at.aau.anti_mon.server.websocketclient;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;

@@ -1,7 +1,9 @@
 package at.aau.anti_mon.server.events;
 
 
-import at.aau.anti_mon.server.game.Player;
+import at.aau.anti_mon.server.dtos.GameSessionDTO;
+import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.game.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
@@ -14,11 +16,21 @@ import org.springframework.web.socket.WebSocketSession;
 public class CreateLobbyEvent {
 
     private final WebSocketSession session;
-    private final Player player;
+    private final UserDTO userDTO;
 
-    public CreateLobbyEvent(WebSocketSession session, Player player) {
+    public CreateLobbyEvent(WebSocketSession session, UserDTO user) {
         this.session = session;
-        this.player = player;
+        this.userDTO = user;
     }
+
+
+    public String getUsername(){
+        return userDTO.getUsername();
+    }
+
+    public String getUserSessionID(){
+        return session.getId();
+    }
+
 }
 

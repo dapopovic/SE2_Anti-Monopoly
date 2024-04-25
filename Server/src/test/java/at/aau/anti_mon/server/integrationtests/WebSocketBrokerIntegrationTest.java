@@ -1,6 +1,6 @@
-package at.aau.anti_mon.server;
+package at.aau.anti_mon.server.integrationtests;
 
-import at.aau.anti_mon.server.websocket.StompFrameHandlerClientImpl;
+import at.aau.anti_mon.server.websocketclient.StompFrameHandlerClientImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +48,7 @@ class WebSocketBrokerIntegrationTest {
         stompClient.setMessageConverter(new StringMessageConverter());
         stompClient.setTaskScheduler(new ConcurrentTaskScheduler()); // notwendig für das Senden von Herzschlägen
 
-        String WEBSOCKET_URI = "ws://localhost:%d/websocket-example-broker";
+        String WEBSOCKET_URI = "ws://localhost:%d/broker";
         StompSession session = stompClient.connectAsync(String.format(WEBSOCKET_URI, port),
                         new StompSessionHandlerAdapter() {
                         })

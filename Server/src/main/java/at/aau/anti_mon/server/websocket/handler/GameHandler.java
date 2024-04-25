@@ -1,23 +1,24 @@
 package at.aau.anti_mon.server.websocket.handler;
 
-import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.events.CreateLobbyEvent;
-import at.aau.anti_mon.server.events.SessionConnectEvent;
-import at.aau.anti_mon.server.events.SessionDisconnectEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.game.JsonDataDTO;
-import at.aau.anti_mon.server.game.Player;
+import at.aau.anti_mon.server.commands.Command;
+import at.aau.anti_mon.server.commands.CommandFactory;
+import at.aau.anti_mon.server.events.*;
+import at.aau.anti_mon.server.game.*;
 import at.aau.anti_mon.server.service.LobbyService;
-import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonSyntaxException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.tinylog.Logger;
+
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class handles incoming WebSocket messages and delegates them to the appropriate service.
@@ -25,80 +26,38 @@ import org.tinylog.Logger;
 @Component
 public class GameHandler implements WebSocketHandler {
 
-    private final LobbyService lobbyService;
+    //private final LobbyService lobbyService;
     //private final SessionManagementService sessionManagementService;
     private final  ApplicationEventPublisher eventPublisher;
+    private final CommandFactory gameCommandFactory;
 
     @Autowired
-    public GameHandler(LobbyService lobbyService,
+    public GameHandler(
+                        //LobbyService lobbyService,
                        //SessionManagementService sessionManagementService,
+                       //CommandFactory gameCommandFactory,
                        ApplicationEventPublisher eventPublisher) {
-        this.lobbyService = lobbyService;
+        //this.lobbyService = lobbyService;
+      //  this.gameCommandFactory = gameCommandFactory;
         //this.sessionManagementService = sessionManagementService;
         this.eventPublisher = eventPublisher;
+        this.gameCommandFactory = new CommandFactory(eventPublisher);
     }
 
-
-    /**
-     * Diese Methode behandelt eingehende WebSocket-Nachrichten.
-     * @param session WebSocket-Sitzung
-     * @param message WebSocket-Nachricht
-     * @throws Exception  TODO: Exception
-     */
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
-        String json = message.getPayload().toString();
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(message.getPayload().toString());
 
-        Logger.info("SERVER : Nachricht empfangen: " + json);
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
-        Commands command = jsonDataDTO.getCommand();
-
-
-        // Todo: Ersetzen ähnlich wie im Frontend mit CommandFactory
-        if (command != null) {
-            try {
-                Logger.info("SERVER : Command: " + command.getCommand());
-                Logger.info("SERVER : Data: " + jsonDataDTO.getData());
-
-                switch (command) {
-                    case CREATE_GAME -> {
-                        // data = {"name": "username" }
-                        String playerName = jsonDataDTO.getData().get("username");
-                        if (playerName != null) {
-                            Player player = new Player(playerName, session);
-                            eventPublisher.publishEvent(new CreateLobbyEvent(session, player));
-                        } else {
-                            Logger.error("JSON 'data' ist null oder 'name' ist nicht vorhanden.");
-                        }
-                        break;
-                    }
-                    case JOIN_GAME -> {
-                        // data = {"pin": 1234 , "name": "Test"}
-                        String pinString = jsonDataDTO.getData().get("pin");
-                        String playerName = jsonDataDTO.getData().get("username");
-
-                        if (pinString != null && playerName != null) {
-                            int pin = Integer.parseInt(pinString);
-                            Player player = new Player(playerName, session);
-                            lobbyService.findLobbyByPin(pin).ifPresent(lobby -> {
-                                eventPublisher.publishEvent(new UserJoinedLobbyEvent(session, lobby, player));
-                            });
-                        } else {
-                            Logger.error("SERVER : Erforderliche Daten für 'JOIN_GAME' fehlen.");
-                        }
-                        break;
-                    }
-                    default -> {
-                        Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + command);
-                        break;
-                    }
-                }
-            } catch (JsonSyntaxException e) {
-                Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
+        if (jsonDataDTO == null) {
+            Logger.error("SERVER : JSON konnte nicht geparst werden.");
+        }else{
+            Command command = gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
+            if (command == null) {
+                Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
+                throw new IllegalArgumentException("Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
             }
-        } else {
-            Logger.error("SERVER : JSON-Nachricht enthält kein 'command'-Attribut.");
+            command.execute(session, jsonDataDTO);
         }
     }
 
@@ -112,34 +71,84 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        //String userID = extractUserID(session.getUri().getQuery());
+        Logger.info( "Query " + session.getUri().getQuery() );
+
+        Logger.error("Transportfehler in Session " + session.getId() + ": " + exception.getMessage());
         if (session.isOpen()) {
-            session.close(CloseStatus.SERVER_ERROR.withReason("Transport error"));
+            session.close(CloseStatus.SERVER_ERROR.withReason(exception.getMessage()));
         }
-        //sessionManagementService.removeSession(session);
-        eventPublisher.publishEvent(new SessionDisconnectEvent(session));
+
+        eventPublisher.publishEvent(new SessionDisconnectEvent(session
+        //        ,userID
+        ));
     }
 
     /**
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung hergestellt wird.
      * @param session WebSocket-Sitzung
-     * @throws Exception  TODO: Exception
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        Logger.info("Neue WebSocket-Sitzung: " + session.getId());
-        eventPublisher.publishEvent(new SessionConnectEvent(session));
+
+        //////////////////////////////////////////////////////////////////// DEBUG
+        InetSocketAddress clientAddress = session.getRemoteAddress();
+        HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
+
+        Logger.info("Accepted connection from: {}:{}", clientAddress.getHostString(), clientAddress.getPort());
+        Logger.debug("Client hostname: {}", clientAddress.getHostName());
+        Logger.debug("Client ip: {}", clientAddress.getAddress().getHostAddress());
+        Logger.debug("Client port: {}", clientAddress.getPort());
+        Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
+        Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
+        Logger.debug("Session id: {}", session.getId());
+        Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
+        Logger.debug("Session uri: {}", session.getUri().toString());
+        Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
+        //Logger.debug("Handshake header: User-Agent {}", handshakeHeaders.get("User-Agent").toString());
+        //Logger.debug("Handshake header: Sec-WebSocket-Extensions {}", handshakeHeaders.get("Sec-WebSocket-Extensions").toString());
+        //Logger.debug("Handshake header: Sec-WebSocket-Key {}", handshakeHeaders.get("Sec-WebSocket-Key").toString());
+        //Logger.debug("Handshake header: Sec-WebSocket-Version {}", handshakeHeaders.get("Sec-WebSocket-Version").toString());
+        //////////////////////////////////////////////////////////////////// DEBUG
+
+        String userID = extractUserID(session.getUri().getQuery());
+        Logger.info( "Query " + session.getUri().getQuery() );
+
+        Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
+        eventPublisher.publishEvent(new SessionConnectEvent(session
+        //        ,userID
+        ));
+    }
+
+    private String extractUserID(String query) {
+        String[] params = query.split("&");
+        String userIdKey = "userID=";
+        for (String param : params) {
+            if (param.startsWith(userIdKey)) {
+                return param.substring(userIdKey.length());
+            }
+        }
+        Logger.error("UserID konnte nicht extrahiert werden.");
+        return null; // Oder eine angemessene Fehlerbehandlung, falls die userID nicht gefunden wird
     }
 
     /**
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung geschlossen wird.
      * @param session WebSocket-Sitzung
      * @param closeStatus Status
-     * @throws Exception  TODO: Exception
      */
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
+    public void afterConnectionClosed(WebSocketSession session, @NotNull CloseStatus closeStatus) {
+
+        Logger.info("Connection closed by {}:{}", session.getRemoteAddress().getHostString(), session.getRemoteAddress().getPort());
         Logger.info("WebSocket-Sitzung geschlossen: " + session.getId());
-        eventPublisher.publishEvent(new SessionDisconnectEvent(session));
+
+        //String userID = extractUserID(session.getUri().getQuery());
+        Logger.info( "Query " + session.getUri().getQuery() );
+
+        eventPublisher.publishEvent(new SessionDisconnectEvent(session
+              //  ,userID
+        ));
     }
 
     /**
@@ -150,42 +159,5 @@ public class GameHandler implements WebSocketHandler {
     public boolean supportsPartialMessages() {
         return false;
     }
-
-
-
-
-
-    /* OLD Code  / Backup
-    @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        Gson gson = new Gson();
-        String json = message.getPayload().toString();
-        Command command = gson.fromJson(json, Command.class);
-        JsonObject data = command.getData();
-        switch (command.getCommand()) {
-            case CREATE_GAME -> {
-                Lobby lobby = new Lobby();
-                Player player = gson.fromJson(data, Player.class);
-                player.setSession(session);
-                lobby.addPlayer(player);
-                lobbies.add(lobby);
-                TextMessage response = new TextMessage(Integer.toString(lobby.getPin()));
-                session.sendMessage(response);
-            }
-            case JOIN_GAME -> {
-                int pin = data.get("pin").getAsInt();
-                Player player = gson.fromJson(data, Player.class);
-                player.setSession(session);
-                Lobby lobby = findLobbyByPin(pin);
-                if (lobby != null) {
-                    lobby.addPlayer(player);
-                    notifyPlayersInLobby(lobby);
-                } else {
-                    session.sendMessage(new TextMessage("Fehler: Lobby voll oder nicht gefunden."));
-                }
-            }
-        }
-    }
-     */
 
 }

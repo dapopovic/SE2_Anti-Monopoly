@@ -1,8 +1,8 @@
-package at.aau.anti_mon.server;
+package at.aau.anti_mon.server.integrationtests;
 
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
-import at.aau.anti_mon.server.websocket.WebSocketHandlerClientImpl;
+import at.aau.anti_mon.server.websocketclient.WebSocketHandlerClientImpl;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,8 +39,11 @@ public class WebSocketHandlerIntegrationTest {
     public void setup() throws Exception {
         messages = new LinkedBlockingQueue<>();
         WebSocketClient client = new StandardWebSocketClient();
-        String WEBSOCKET_URI = "ws://localhost:%d/game";
-        session = client.execute(new WebSocketHandlerClientImpl(messages ), String.format(WEBSOCKET_URI, port)).get(3, TimeUnit.SECONDS);
+        String BASE_WEBSOCKET_URI = "ws://localhost:%d/game?userID=";
+
+        String userID = "Test";
+
+        session = client.execute(new WebSocketHandlerClientImpl(messages ), String.format(BASE_WEBSOCKET_URI+userID, port)).get(3, TimeUnit.SECONDS);
     }
 
 
@@ -73,7 +76,7 @@ public class WebSocketHandlerIntegrationTest {
         //ObjectMapper mapper = new ObjectMapper();
         //String jsonMessage = mapper.writeValueAsString(jsonData);
 
-        String jsonMessage =  JsonDataManager.createJsonMessage(jsonData);
+        String jsonMessage =  JsonDataManager.createStringFromJsonMessage(jsonData);
 
         // Senden des serialisierten JSON-Strings über eine WebSocket-Session
         assert jsonMessage != null;

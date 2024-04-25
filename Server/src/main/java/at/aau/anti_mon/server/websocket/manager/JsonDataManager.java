@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class JsonDataManager {
 
-    public static String  createJsonMessage(Commands command, Map<String, String> data) {
+    public static String createStringFromJsonMessage(Commands command, Map<String, String> data) {
         try{
             JsonDataDTO jsonDataDTO = new JsonDataDTO(command, data);
             ObjectMapper mapper = new ObjectMapper();
@@ -45,7 +45,7 @@ public class JsonDataManager {
         }
     }
 
-    public static String createJsonMessage( JsonDataDTO jsonData)  {
+    public static String createStringFromJsonMessage(JsonDataDTO jsonData)  {
         try{
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonData);
@@ -56,15 +56,15 @@ public class JsonDataManager {
     }
 
     public static void send(WebSocketSession session, JsonDataDTO jsonData) {
-        String jsonResponse = createJsonMessage(jsonData);
+        String jsonResponse = createStringFromJsonMessage(jsonData);
         try {
             synchronized (session) {
                 if (session.isOpen()) {
-                    Logger.info("Nachricht senden: " + jsonResponse);
+                    Logger.info("SERVER: Nachricht senden: " + jsonResponse);
                     session.sendMessage(new TextMessage(jsonResponse));
                     //session.sendMessage(new TextMessage(jsonData.toString()));
                 } else {
-                    System.err.println("Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
+                    System.err.println("SERVER: Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
                     throw new IOException("Session is closed");
                 }
             }
@@ -76,7 +76,12 @@ public class JsonDataManager {
 
 
     public static void sendJoinedUser(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.JOIN, message, "username");
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, message, "username");
+        send(session, jsonData);
+    }
+
+    public static void sendLeavedUser(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.LEAVE_GAME, message, "username");
         send(session, jsonData);
     }
 
@@ -90,14 +95,12 @@ public class JsonDataManager {
         send(session, jsonData);
     }
 
-
-
     /**
      * Sendet eine Nachricht an den Benutzer
      * @param session WebSocket-Sitzung
      * @param message Nachricht
      */
-    public static void sendAnswer(WebSocketSession session, String message) throws JsonProcessingException {
+    public static void sendAnswer(WebSocketSession session, String message) {
         JsonDataDTO jsonData = createJsonDataDTO(Commands.ANSWER, message, "answer");
         send(session, jsonData);
     }
