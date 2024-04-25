@@ -16,15 +16,16 @@
         app:layout_constraintGuide_percent="0.8098495" />
 
     <Button
-        android:id="@+id/btnOnjects"
+        android:id="@+id/btnObjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Objekte"
+        android:text="Objects"
         app:layout_constraintBottom_toTopOf="@+id/guideline17"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline18" />
+        app:layout_constraintTop_toTopOf="@+id/guideline18"
+        android:onClick="onObjects"/>
 
     <Button
         android:id="@+id/btnHandel"
@@ -35,7 +36,8 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline17" />
+        app:layout_constraintTop_toTopOf="@+id/guideline17"
+        android:onClick="onHandel"/>
 
     <Button
         android:id="@+id/btnSettings"
@@ -46,7 +48,8 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline16" />
+        app:layout_constraintTop_toTopOf="@+id/guideline16"
+        android:onClick="onSettings"/>
 
     <Button
         android:id="@+id/btnFinish"
