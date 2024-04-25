@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".AntiMonopolyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,26 +17,29 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".GameInstructions"
+            android:name=".activities.GameInstructionsActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape"/>
         <activity
-            android:name=".LoadGame"
+            android:name=".activities.LoadGameActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Start_new_Game"
+            android:name=".activities.StartNewGameActivity"
             android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"/>
         <activity
-            android:name=".Lobby"
+            android:name=".activities.LobbyActivity"
             android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape"/>
+        <activity android:name=".activities.JoinGameActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
-            android:name=".Start_Page"
+            android:name=".activities.StartMenuActivity"
             android:exported="true"
             android:screenOrientation="sensorLandscape">
 

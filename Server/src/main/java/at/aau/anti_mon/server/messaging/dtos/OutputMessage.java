@@ -1,11 +1,15 @@
 package at.aau.anti_mon.server.messaging.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class OutputMessage {
 
-    private String from;
-    private String text;
-    private String time;
+    private final String from;
+    private final String text;
+    private final String time;
 
     public OutputMessage(final String from, final String text, final String time) {
 
@@ -14,15 +18,4 @@ public class OutputMessage {
         this.time = time;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public String getFrom() {
-        return from;
-    }
 }
