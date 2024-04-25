@@ -15,41 +15,44 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.8098495" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btnObjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Objects"
+        android:onClick="onObjects"
+        android:src="@drawable/objects0"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/guideline17"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline18"
-        android:onClick="onObjects"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline18" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btnHandel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Handel"
+        android:onClick="onHandel"
+        android:src="@drawable/handel0"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/guideline16"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline17"
-        android:onClick="onHandel"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline17" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btnSettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Settings"
+        android:onClick="onSettings"
+        android:src="@drawable/settings0"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline16"
-        android:onClick="onSettings"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline16" />
 
     <Button
         android:id="@+id/btnFinish"
