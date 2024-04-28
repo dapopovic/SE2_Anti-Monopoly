@@ -5,12 +5,10 @@ import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.User;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tinylog.Logger;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -129,19 +127,19 @@ public class LobbyService {
     }
 
     /**
-     * Durchsuche die Liste der Lobbies nach dem gegebenen Usernamen und gib die entsprechende Lobby zurück.
-     * @param name Name des Users
+     * Durchsuche die Liste der Lobbies nach dem gegebenen Usernamen und den Benutzer zurück.
+     * @param usrID Name des Users
      * @return Player oder null, wenn kein Spieler mit dem gegebenen Namen gefunden wurde
      */
-    public User findLobbyByUsername(String name) throws UserNotFoundException{
+    public User findUserInAllLobbies(String usrID) throws UserNotFoundException{
         for (Lobby lobby : lobbies.values()) {
             for (User user : lobby.getUsers()) {
-                if (user.getName().equals(name)) {
+                if (user.getName().equals(usrID)) {
                     return user;
                 }
             }
         }
-        throw new UserNotFoundException("User mit Name " + name + " nicht gefunden.");
+        throw new UserNotFoundException("User mit Name " + usrID + " nicht gefunden.");
     }
 
     /**

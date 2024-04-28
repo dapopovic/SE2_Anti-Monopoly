@@ -1,13 +1,11 @@
 package at.aau.anti_mon.server.commands;
 
-import at.aau.anti_mon.server.dtos.GameSessionDTO;
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
+import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.game.JsonDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
@@ -24,21 +22,21 @@ public class LeaveLobbyCommand implements Command{
     }
 
     @Override
-    public void execute(WebSocketSession session, JsonDataDTO jsonData) throws Exception {
+    public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
         // data = {"username": "Test" , "pin": "1234"
+        if (jsonData.getData() == null || jsonData.getData().get("pin") == null || jsonData.getData().get("username") == null) {
+            Logger.error("SERVER: Required data for 'LEAVE_GAME' is missing.");
+            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'LEAVE_GAME' is missing.");
+        }
+
         String playerName = jsonData.getData().get("username");
         String pinString = jsonData.getData().get("pin");
 
-        if (pinString != null && playerName != null) {
+        Logger.info("SERVER : LEAVE_GAME empfangen." + playerName + " hat die Lobby mit der PIN " + pinString + " verlassen.");
 
-            UserDTO playerDTO = new UserDTO(playerName);
-            LobbyDTO lobbyDTO = new LobbyDTO(Integer.parseInt(pinString));
-            //GameSessionDTO gameSessionDTO = new GameSessionDTO(session.getId(), playerDTO, lobbyDTO);
-            eventPublisher.publishEvent(new UserLeftLobbyEvent(session, lobbyDTO, playerDTO));
+        UserDTO playerDTO = new UserDTO(playerName);
+        LobbyDTO lobbyDTO = new LobbyDTO(Integer.parseInt(pinString));
+        eventPublisher.publishEvent(new UserLeftLobbyEvent(session, lobbyDTO, playerDTO));
 
-        } else {
-            Logger.error("SERVER : 'LEAVE_GAME' enthält kein 'name'-Attribut.");
-        }
-        Logger.info("SERVER : LEAVE_GAME empfangen." + jsonData.getData().get("username"));
     }
 }

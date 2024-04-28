@@ -1,6 +1,5 @@
 package at.aau.anti_mon.server.websocket.configuration;
 
-import at.aau.anti_mon.server.commands.CommandFactory;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.websocket.handler.BroadcastWebSocketHandler;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;

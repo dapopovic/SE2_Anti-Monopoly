@@ -4,8 +4,8 @@ import at.aau.anti_mon.server.commands.Command;
 import at.aau.anti_mon.server.commands.CommandFactory;
 import at.aau.anti_mon.server.events.*;
 import at.aau.anti_mon.server.game.*;
-import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,12 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.tinylog.Logger;
-
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
  * This class handles incoming WebSocket messages and delegates them to the appropriate service.
@@ -26,40 +22,30 @@ import java.util.Map;
 @Component
 public class GameHandler implements WebSocketHandler {
 
-    //private final LobbyService lobbyService;
-    //private final SessionManagementService sessionManagementService;
     private final  ApplicationEventPublisher eventPublisher;
     private final CommandFactory gameCommandFactory;
 
     @Autowired
     public GameHandler(
-                        //LobbyService lobbyService,
-                       //SessionManagementService sessionManagementService,
-                       //CommandFactory gameCommandFactory,
-                       ApplicationEventPublisher eventPublisher) {
-        //this.lobbyService = lobbyService;
-      //  this.gameCommandFactory = gameCommandFactory;
-        //this.sessionManagementService = sessionManagementService;
+                       ApplicationEventPublisher eventPublisher
+    ) {
         this.eventPublisher = eventPublisher;
         this.gameCommandFactory = new CommandFactory(eventPublisher);
     }
 
     @Override
-    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(message.getPayload().toString());
 
-        if (jsonDataDTO == null) {
-            Logger.error("SERVER : JSON konnte nicht geparst werden.");
-        }else{
-            Command command = gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
-            if (command == null) {
-                Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
-                throw new IllegalArgumentException("Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
-            }
-            command.execute(session, jsonDataDTO);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(message.getPayload().toString());
+        Command command = gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
+        if (command == null) {
+            Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
+            throw new IllegalArgumentException("Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
         }
+        command.execute(session, jsonDataDTO);
     }
+
 
 
     /**
@@ -72,7 +58,7 @@ public class GameHandler implements WebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         //String userID = extractUserID(session.getUri().getQuery());
-        Logger.info( "Query " + session.getUri().getQuery() );
+        //Logger.info( "Query " + session.getUri().getQuery() );
 
         Logger.error("Transportfehler in Session " + session.getId() + ": " + exception.getMessage());
         if (session.isOpen()) {
@@ -129,7 +115,7 @@ public class GameHandler implements WebSocketHandler {
             }
         }
         Logger.error("UserID konnte nicht extrahiert werden.");
-        return null; // Oder eine angemessene Fehlerbehandlung, falls die userID nicht gefunden wird
+        return null;
     }
 
     /**

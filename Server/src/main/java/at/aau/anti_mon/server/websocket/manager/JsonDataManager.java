@@ -35,14 +35,9 @@ public class JsonDataManager {
         return jsonData;
     }
 
-    public static JsonDataDTO parseJsonMessage(String json) {
-        try {
+    public static JsonDataDTO parseJsonMessage(String json) throws JsonProcessingException {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(json, JsonDataDTO.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public static String createStringFromJsonMessage(JsonDataDTO jsonData)  {

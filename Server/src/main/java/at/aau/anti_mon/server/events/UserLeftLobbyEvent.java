@@ -1,10 +1,7 @@
 package at.aau.anti_mon.server.events;
 
-import at.aau.anti_mon.server.dtos.GameSessionDTO;
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
-import at.aau.anti_mon.server.game.Lobby;
-import at.aau.anti_mon.server.game.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;

@@ -13,6 +13,9 @@ import org.springframework.web.socket.WebSocketSession;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the Lobby
+ */
 public class LobbyUnitTest {
 
 

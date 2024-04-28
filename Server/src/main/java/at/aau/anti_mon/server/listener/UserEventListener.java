@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.listener;
 
-import at.aau.anti_mon.server.events.CreateLobbyEvent;
+import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -12,7 +12,6 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -51,7 +50,7 @@ public class UserEventListener {
      * @param event Ereignis
      */
     @EventListener
-    public void onCreateLobbyEvent(CreateLobbyEvent event){
+    public void onCreateLobbyEvent(UserCreatedLobbyEvent event){
         // create User
         User user = userService.findOrCreateUser(event.getUsername(), event.getSession());
 

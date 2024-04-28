@@ -11,10 +11,16 @@ import at.aau.anti_mon.server.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
+/**
+ * Unit tests for the LobbyService
+ */
 public class LobbyServiceUnitTest {
 
     @Test
@@ -36,6 +42,45 @@ public class LobbyServiceUnitTest {
         lobbyService.removeUserFromLobby("user1");
 
         assertNull(lobbyService.getLobbyIDForUserID("user1"));
+    }
+
+    @Test
+    public void findUserinAllLobbiesShouldReturnUser() throws UserNotFoundException {
+        UserService userService = mock(UserService.class);
+        LobbyService lobbyService = new LobbyService(userService);
+        Lobby lobby = mock(Lobby.class);
+        when(lobby.getPin()).thenReturn(1234);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = new User("user1", session);
+        when(session.getId()).thenReturn("session1");
+        lobbyService.createLobby(user);
+
+        assertEquals(user, lobbyService.findUserInAllLobbies("user1"));
+    }
+
+    @Test
+    public void findUserinAllLobbiesShouldThrowException() throws UserNotFoundException {
+        UserService userService = mock(UserService.class);
+        LobbyService lobbyService = new LobbyService(userService);
+        assertThrows(UserNotFoundException.class, () -> lobbyService.findUserInAllLobbies("user2"));
+    }
+
+    @Test
+    public void findOptionalLobbyByPinReturnsLobby(){
+        UserService userService = mock(UserService.class);
+        LobbyService lobbyService = new LobbyService(userService);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = new User("user1", session);
+        when(session.getId()).thenReturn("session1");
+        Lobby lobby = lobbyService.createLobby(user);
+        assertEquals(lobby, lobbyService.findOptionalLobbyByPin(lobby.getPin()).get());
+    }
+
+    @Test
+    public void findOptionalLobbyByPinReturnsEmptyOptional(){
+        UserService userService = mock(UserService.class);
+        LobbyService lobbyService = new LobbyService(userService);
+        assertEquals(Optional.empty(), lobbyService.findOptionalLobbyByPin(1234));
     }
 
     @Test

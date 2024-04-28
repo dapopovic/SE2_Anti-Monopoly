@@ -25,6 +25,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * Integration test for the WebSocketHandler.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"logging.level.org.springframework=DEBUG"})
 public class WebSocketHandlerIntegrationTest {

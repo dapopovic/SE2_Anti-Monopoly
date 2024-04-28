@@ -138,7 +138,7 @@ public class WebSocketClient {
             Log.d("ANTI-MONOPOLY-DEBUG", "Received message: " + text);
             JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
             if (jsonDataDTO != null) {
-                Command command = commandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
+                Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
                 if (command != null) {
                     command.execute(jsonDataDTO);
 

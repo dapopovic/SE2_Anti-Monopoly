@@ -1,8 +1,7 @@
 package at.aau.anti_mon.server.service;
 
 
-import at.aau.anti_mon.server.exceptions.UserNotFoundException;
-import at.aau.anti_mon.server.game.User;
+import at.aau.anti_mon.server.exceptions.SessionNotFoundException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -15,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Handling aller Aspekte der WebSocketSessions
  * - Erstellung, Speicherung, Schließung von Sessions
+ *
+ * TODO --> Nutzen von Optional<> für besseres Handling!
  */
 @Getter
 @Setter
@@ -47,18 +48,12 @@ public class SessionManagementService {
      * @param session The WebSocketSession
      */
     public void registerUserWithSession(String userId, WebSocketSession session) {
-        // Für genaue Key-Value-Prüfung
-        //if (userSessionMap.get(userId).equals(session.getId())) {
-        //       Logger.info("Session {} already registered with user: {}", session.getId(), userId);
-        //       return;
-        //}
+        if (userId == null) {
+            Logger.warn("UserID is null!", session.getId(), "null");
+            throw new IllegalArgumentException("UserID is null!");
+        }
 
         sessions.put(session.getId(), session);
-
-        if (userId == null) {
-            Logger.warn("Session {} registered with user: {}", session.getId(), "null");
-            return;
-        }
         userSessionMap.put(userId, session.getId());
 
         Logger.info("Session {} registered with user: {}", session.getId(), userId);
@@ -74,7 +69,11 @@ public class SessionManagementService {
         Logger.info("Removed session by ID: {}  For user: {}  ", sessionId,userId);
     }
 
-    public WebSocketSession getSessionForUser(String userId) {
+    public WebSocketSession getSessionForUser(String userId) throws SessionNotFoundException {
+        if (!userSessionMap.containsKey(userId)) {
+            Logger.error("User {} not found", userId);
+            throw new SessionNotFoundException("User not found");
+        }
         String sessionId = userSessionMap.get(userId);
         return getSession(sessionId);
     }

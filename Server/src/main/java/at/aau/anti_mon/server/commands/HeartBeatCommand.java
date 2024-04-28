@@ -1,13 +1,9 @@
 package at.aau.anti_mon.server.commands;
 
-import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.SessionCheckEvent;
-import at.aau.anti_mon.server.events.SessionConnectEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
+import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.game.JsonDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
@@ -24,9 +20,14 @@ public class HeartBeatCommand implements Command{
     }
 
     @Override
-    public void execute(WebSocketSession session, JsonDataDTO jsonData) throws Exception {
-        Logger.info("SERVER : Heartbeat empfangen."+jsonData.getData().get("msg"));
+    public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
+        // data = {"msg": PING }
+        if (jsonData.getData() == null || jsonData.getData().get("msg") == null) {
+            Logger.error("SERVER: Required data for 'HEARTBEAT' is missing.");
+            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'HEARTBEAT' is missing.");
+        }
 
+        Logger.info("SERVER : Heartbeat empfangen."+jsonData.getData().get("msg"));
 
         String userID = extractUserID(session.getUri().getQuery());
         Logger.info( "Query " + session.getUri().getQuery() );
@@ -43,6 +44,6 @@ public class HeartBeatCommand implements Command{
             }
         }
         Logger.error("UserID konnte nicht extrahiert werden.");
-        return null; // Oder eine angemessene Fehlerbehandlung, falls die userID nicht gefunden wird
+        throw new IllegalArgumentException("UserID konnte nicht extrahiert werden.");
     }
 }

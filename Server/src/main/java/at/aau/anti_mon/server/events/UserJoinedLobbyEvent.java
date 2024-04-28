@@ -1,6 +1,5 @@
 package at.aau.anti_mon.server.events;
 
-
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import lombok.Getter;

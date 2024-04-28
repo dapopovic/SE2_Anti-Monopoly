@@ -1,17 +1,11 @@
 package at.aau.anti_mon.server.commands;
 
 
-import at.aau.anti_mon.server.dtos.GameSessionDTO;
-import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
-import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.events.CreateLobbyEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
+import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
+import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.game.JsonDataDTO;
-import at.aau.anti_mon.server.game.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
@@ -26,17 +20,19 @@ public class CreateGameCommand implements Command {
     }
 
     @Override
-    public void execute(WebSocketSession session, JsonDataDTO jsonData) throws Exception {
+    public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
         // data = {"username": "Test"}
+        if (jsonData.getData() == null || jsonData.getData().get("username") == null) {
+            Logger.error("SERVER: Required data for 'CREATE_GAME' is missing.");
+            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'CREATE_GAME' is missing.");
+        }
+
+
         String playerName = jsonData.getData().get("username");
         UserDTO playerDTO = new UserDTO(playerName);
 
-        if (playerName != null) {
-            Logger.info("SERVER: JSON Data : User {} creates Lobby", playerName);
-            //GameSessionDTO gameSessionDTO = new GameSessionDTO(session.getId(),playerDTO);
-            eventPublisher.publishEvent(new CreateLobbyEvent(session, playerDTO));
-        } else {
-            Logger.error("SERVER: JSON 'data' ist null oder 'username' ist nicht vorhanden.");
-        }
+        Logger.info("SERVER: JSON Data : User {} creates Lobby", playerName);
+        eventPublisher.publishEvent(new UserCreatedLobbyEvent(session, playerDTO));
+
     }
 }
