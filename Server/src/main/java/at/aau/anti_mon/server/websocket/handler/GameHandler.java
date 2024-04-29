@@ -4,7 +4,8 @@ import at.aau.anti_mon.server.commands.Command;
 import at.aau.anti_mon.server.commands.CommandFactory;
 import at.aau.anti_mon.server.events.*;
 import at.aau.anti_mon.server.game.*;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
+import at.aau.anti_mon.server.utilities.StringUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class GameHandler implements WebSocketHandler {
     public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
 
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(message.getPayload().toString());
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(message.getPayload().toString());
         Command command = gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
         if (command == null) {
             Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
@@ -81,41 +82,43 @@ public class GameHandler implements WebSocketHandler {
         InetSocketAddress clientAddress = session.getRemoteAddress();
         HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
 
-        Logger.info("Accepted connection from: {}:{}", clientAddress.getHostString(), clientAddress.getPort());
-        Logger.debug("Client hostname: {}", clientAddress.getHostName());
-        Logger.debug("Client ip: {}", clientAddress.getAddress().getHostAddress());
-        Logger.debug("Client port: {}", clientAddress.getPort());
-        Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
-        Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
-        Logger.debug("Session id: {}", session.getId());
-        Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
-        Logger.debug("Session uri: {}", session.getUri().toString());
-        Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
+        if (clientAddress == null) {
+            Logger.error("RemoteAddress ist null");
+        }else {
+            Logger.info("Accepted connection from: {}:{}", clientAddress.getHostString(), clientAddress.getPort());
+            Logger.debug("Client hostname: {}", clientAddress.getHostName());
+            Logger.debug("Client ip: {}", clientAddress.getAddress().getHostAddress());
+            Logger.debug("Client port: {}", clientAddress.getPort());
+        }
+
+        if (session.getRemoteAddress() == null) {
+            Logger.error("RemoteAddress ist null");
+        }else {
+            Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
+            Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
+            Logger.debug("Session id: {}", session.getId());
+            Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
+            Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
+        }
+
+        if (session.getUri() == null) {
+            Logger.error("URI ist null");
+        }else {
+            Logger.debug("Session uri: {}", session.getUri().toString());
+            String userID = StringUtility.extractUserID(session.getUri().getQuery());
+            Logger.info( "Query " + session.getUri().getQuery() );
+            Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
+        }
+
         //Logger.debug("Handshake header: User-Agent {}", handshakeHeaders.get("User-Agent").toString());
         //Logger.debug("Handshake header: Sec-WebSocket-Extensions {}", handshakeHeaders.get("Sec-WebSocket-Extensions").toString());
         //Logger.debug("Handshake header: Sec-WebSocket-Key {}", handshakeHeaders.get("Sec-WebSocket-Key").toString());
         //Logger.debug("Handshake header: Sec-WebSocket-Version {}", handshakeHeaders.get("Sec-WebSocket-Version").toString());
         //////////////////////////////////////////////////////////////////// DEBUG
 
-        String userID = extractUserID(session.getUri().getQuery());
-        Logger.info( "Query " + session.getUri().getQuery() );
-
-        Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
         eventPublisher.publishEvent(new SessionConnectEvent(session
         //        ,userID
         ));
-    }
-
-    private String extractUserID(String query) {
-        String[] params = query.split("&");
-        String userIdKey = "userID=";
-        for (String param : params) {
-            if (param.startsWith(userIdKey)) {
-                return param.substring(userIdKey.length());
-            }
-        }
-        Logger.error("UserID konnte nicht extrahiert werden.");
-        return null;
     }
 
     /**
@@ -125,12 +128,18 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, @NotNull CloseStatus closeStatus) {
+        if (session.getRemoteAddress() == null) {
+            Logger.error("RemoteAddress ist null");
+        }else {
+            Logger.info("Connection closed by {}:{}", session.getRemoteAddress().getHostString(), session.getRemoteAddress().getPort());
+        }
+        Logger.info("WebSocket-Sitzung wird geschlossen: " + session.getId());
 
-        Logger.info("Connection closed by {}:{}", session.getRemoteAddress().getHostString(), session.getRemoteAddress().getPort());
-        Logger.info("WebSocket-Sitzung geschlossen: " + session.getId());
-
-        //String userID = extractUserID(session.getUri().getQuery());
-        Logger.info( "Query " + session.getUri().getQuery() );
+        if (session.getUri() == null) {
+            Logger.error("URI ist null");
+        }else {
+            Logger.info( "Query " + session.getUri().getQuery() );
+        }
 
         eventPublisher.publishEvent(new SessionDisconnectEvent(session
               //  ,userID

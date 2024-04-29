@@ -11,13 +11,12 @@ import org.springframework.web.socket.WebSocketSession;
  */
 @Getter
 @Setter
-public class UserCreatedLobbyEvent {
+public class UserCreatedLobbyEvent extends Event {
 
-    private final WebSocketSession session;
     private final UserDTO userDTO;
 
     public UserCreatedLobbyEvent(WebSocketSession session, UserDTO user) {
-        this.session = session;
+        super(session);
         this.userDTO = user;
     }
 
@@ -26,9 +25,7 @@ public class UserCreatedLobbyEvent {
         return userDTO.getUsername();
     }
 
-    public String getUserSessionID(){
-        return session.getId();
-    }
+
 
 }
 

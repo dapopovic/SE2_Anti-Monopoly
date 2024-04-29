@@ -70,7 +70,6 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     /**
      * Event when the button "Create Game" is clicked
-     * Todo: better Intent handling
      * @param view
      */
     public void onCreateGameClicked(View view) {

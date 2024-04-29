@@ -2,10 +2,10 @@ package at.aau.anti_mon.server.websocketclient;
 
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonSyntaxException;
-import jakarta.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
@@ -33,31 +33,22 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
     public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
         String json = (String) message.getPayload();
         Logger.info("CLIENT : Nachricht empfangen: " + json);
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json);
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json);
         Commands command = jsonDataDTO.getCommand();
 
         if (command != null) {
             try {
 
-                JsonDataDTO  data = JsonDataManager.parseJsonMessage(json);
+                JsonDataDTO  data = JsonDataUtility.parseJsonMessage(json);
                 Commands commands = data.getCommand();
 
                 Logger.info("CLIENT : Command: " + commands.getCommand());
                 Logger.info("CLIENT : Data: " + data);
 
                 switch (commands) {
-                    case PIN -> {
-                        messagesQueue.add(json);
-                        break;
-                    }
-                    case HEARTBEAT -> {
-                        Logger.info("CLIENT : Heartbeat received");
-                        break;
-                    }
-                    default -> {
-                        Logger.error("CLIENT :  Unbekannter oder nicht unterstützter Befehl: " + commands);
-                        break;
-                    }
+                    case PIN -> messagesQueue.add(json);
+                    case HEARTBEAT -> Logger.info("CLIENT : Heartbeat received");
+                    default -> Logger.error("CLIENT :  Unbekannter oder nicht unterstützter Befehl: " + commands);
                 }
             } catch (JsonSyntaxException e) {
                 Logger.error("CLIENT : Fehler beim Parsen der JSON-Nachricht: " + json);

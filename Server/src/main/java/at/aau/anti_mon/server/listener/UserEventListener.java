@@ -11,7 +11,7 @@ import at.aau.anti_mon.server.game.User;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class UserEventListener {
     /**
      * Konstruktor für UserEventListener
      * Dependency Injection für LobbyService
-     * @param lobbyService
+     * @param lobbyService LobbyService
      */
     @Autowired
     UserEventListener(LobbyService lobbyService,
@@ -59,7 +59,7 @@ public class UserEventListener {
 
 
         Logger.info("SERVER: Spiel erstellt mit PIN: " + newLobby.getPin());
-        JsonDataManager.sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
+        JsonDataUtility.sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
     }
 
     /**
@@ -80,20 +80,20 @@ public class UserEventListener {
                 for (User user : users) {
 
                     // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler beitretet
-                    JsonDataManager.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser.getName());
+                    JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser.getName());
 
                     // Sende dem neuen Spieler alle Spieler, die bereits in der Lobby sind
-                    JsonDataManager.sendJoinedUser(event.getSession(), user.getName());
+                    JsonDataUtility.sendJoinedUser(event.getSession(), user.getName());
                 }
 
                 // Füge den joinedUser zur Lobby hinzu
                 lobbyService.joinLobby(event.getPin(), joinedUser.getName());
 
                 // DEBUG:
-                JsonDataManager.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-                JsonDataManager.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()), "Erfolgreich der Lobby beigetreten.");
+                JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
+                JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()), "Erfolgreich der Lobby beigetreten.");
             } else {
-            JsonDataManager.sendError(sessionManagementService.getSessionForUser(event.getUsername()), "Fehler: Lobby nicht gefunden.");
+            JsonDataUtility.sendError(sessionManagementService.getSessionForUser(event.getUsername()), "Fehler: Lobby nicht gefunden.");
         }
     }
 
@@ -113,11 +113,11 @@ public class UserEventListener {
         for (User user : users) {
 
             // Sende allen Spielern in der Lobby die Information, dass der Spieler die Lobby verlassen hat
-            JsonDataManager.sendLeavedUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername());
+            JsonDataUtility.sendLeavedUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername());
 
             // Sende dem neuen Spieler Bestätigung des Verlassens
-            JsonDataManager.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-            JsonDataManager.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()), "Erfolgreich die Lobby verlassen.");
+            JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
+            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()), "Erfolgreich die Lobby verlassen.");
 
         }
     }

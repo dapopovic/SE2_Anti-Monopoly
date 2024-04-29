@@ -95,18 +95,6 @@ public class UserService {
         }
 
         users.remove(userId);
-        /*
-        WebSocketSession session = sessionManagementService.getSessionForUser(userId);
-        if (session != null && session.isOpen()) {
-            try {
-                sessionManagementService.removeSession(session);
-                session.close();
-            } catch (IOException e) {
-                Logger.error("Fehler beim Schließen der Session für Benutzer: {}", userId);
-            }
-        }
-
-         */
     }
 
 

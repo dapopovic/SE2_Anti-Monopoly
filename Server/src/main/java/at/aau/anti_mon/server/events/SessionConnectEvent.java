@@ -9,14 +9,12 @@ import org.springframework.web.socket.WebSocketSession;
  */
 @Getter
 @Setter
-public class SessionConnectEvent {
-
-    private final WebSocketSession session;
+public class SessionConnectEvent extends Event{
 
     public SessionConnectEvent(
             WebSocketSession session
     ) {
-        this.session = session;
+        super(session);
     }
 
 }

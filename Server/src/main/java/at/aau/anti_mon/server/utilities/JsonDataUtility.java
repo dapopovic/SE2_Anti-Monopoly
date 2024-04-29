@@ -1,4 +1,4 @@
-package at.aau.anti_mon.server.websocket.manager;
+package at.aau.anti_mon.server.utilities;
 
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * This class is a utility and responsible for creating and parsing JSON messages.
  */
-public class JsonDataManager {
+public class JsonDataUtility {
 
     public static String createStringFromJsonMessage(Commands command, Map<String, String> data) {
         try{
@@ -24,7 +24,7 @@ public class JsonDataManager {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonDataDTO);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;
         }
     }
@@ -45,27 +45,30 @@ public class JsonDataManager {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonData);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;
         }
     }
 
     public static void send(WebSocketSession session, JsonDataDTO jsonData) {
         String jsonResponse = createStringFromJsonMessage(jsonData);
+        if (jsonResponse == null) {
+            Logger.error("Fehler beim Senden der Nachricht: jsonResponse ist null");
+            return;
+        }
+
         try {
             synchronized (session) {
                 if (session.isOpen()) {
                     Logger.info("SERVER: Nachricht senden: " + jsonResponse);
                     session.sendMessage(new TextMessage(jsonResponse));
-                    //session.sendMessage(new TextMessage(jsonData.toString()));
                 } else {
                     System.err.println("SERVER: Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
                     throw new IOException("Session is closed");
                 }
             }
         } catch (IOException e) {
-            System.err.println("Fehler beim Senden der Nachricht: " + e.getMessage());
-            e.printStackTrace();
+            Logger.error("Fehler beim Senden der Nachricht: " + e.getMessage());
         }
     }
 

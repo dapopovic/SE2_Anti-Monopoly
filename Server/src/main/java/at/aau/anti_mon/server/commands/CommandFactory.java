@@ -1,6 +1,5 @@
 package at.aau.anti_mon.server.commands;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import org.tinylog.Logger;
 import java.util.HashMap;
 import java.util.Map;

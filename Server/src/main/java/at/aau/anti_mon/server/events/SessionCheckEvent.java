@@ -9,13 +9,12 @@ import org.springframework.web.socket.WebSocketSession;
  */
 @Getter
 @Setter
-public class SessionCheckEvent {
+public class SessionCheckEvent extends Event{
 
-    private final WebSocketSession session;
     private final String userID;
 
     public SessionCheckEvent(WebSocketSession session, String userID) {
-        this.session = session;
+        super(session);
         this.userID = userID;
     }
 

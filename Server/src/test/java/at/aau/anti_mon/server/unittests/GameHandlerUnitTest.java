@@ -10,7 +10,7 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;
 import at.aau.anti_mon.server.events.SessionConnectEvent;
 import at.aau.anti_mon.server.events.SessionDisconnectEvent;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
@@ -21,6 +21,8 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,31 +37,30 @@ public class GameHandlerUnitTest {
 
 
     @Test
-    public void testHandleMessageInvalidCommand() throws URISyntaxException {
+    public void testHandleMessageInvalidCommand() throws URISyntaxException, IOException {
 
         // Vorbereitung
 
-        WebSocketSession session = mock(WebSocketSession.class);
-        CommandFactory gameCommandFactory = mock(CommandFactory.class);
+        try (WebSocketSession session = mock(WebSocketSession.class)) {
+            CommandFactory gameCommandFactory = mock(CommandFactory.class);
 
 
-        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        String json = "{\"command\":\"INVALID_COMMAND\",\"data\":{\"err\":\"Test\"}}";
-        when(gameCommandFactory.getCommand("INVALID_COMMAND")).thenReturn(null);
-        WebSocketMessage<?> message = new TextMessage(json);
+            ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+            GameHandler gameHandler = new GameHandler(eventPublisher);
+            String json = "{\"command\":\"INVALID_COMMAND\",\"data\":{\"err\":\"Test\"}}";
+            when(gameCommandFactory.getCommand("INVALID_COMMAND")).thenReturn(null);
+            WebSocketMessage<?> message = new TextMessage(json);
 
-        when(session.isOpen()).thenReturn(true);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
+            when(session.isOpen()).thenReturn(true);
+            when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
+            when(session.getId()).thenReturn("session1");
+            when(session.getAcceptedProtocol()).thenReturn("protocol");
+            when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+            when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
 
-        // Teste Json-Serialisierung und Exception-Handling
-        assertThrows(JsonProcessingException.class, () -> {
-            gameHandler.handleMessage(session, message);
-        });
+            // Teste Json-Serialisierung und Exception-Handling
+            assertThrows(JsonProcessingException.class, () -> gameHandler.handleMessage(session, message));
+        }
     }
 
     @Test
@@ -81,7 +82,7 @@ public class GameHandlerUnitTest {
         doCallRealMethod().when(gameCommandFactory).getCommand(Commands.CREATE_GAME.name());
 
         UserEventListener userEventListener = mock(UserEventListener.class);
-        UserCreatedLobbyEvent createLobbyEvent = new UserCreatedLobbyEvent(session, new UserDTO("Test"));
+        //UserCreatedLobbyEvent createLobbyEvent = new UserCreatedLobbyEvent(session, new UserDTO("Test"));
 
         // GAME HANDLER:
         GameHandler gameHandler = new GameHandler(eventPublisher);
@@ -90,8 +91,14 @@ public class GameHandlerUnitTest {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.CREATE_GAME);
         jsonDataDTO.putData("username", "Test");
-        String jsonMessage = JsonDataManager.createStringFromJsonMessage(jsonDataDTO);
-        TextMessage message = new TextMessage(jsonMessage);
+        String jsonMessage = JsonDataUtility.createStringFromJsonMessage(jsonDataDTO);
+        TextMessage message;
+        if (jsonMessage != null) {
+            message = new TextMessage(jsonMessage);
+        }else {
+            throw new JsonProcessingException("Error while creating JSON message") {
+            };
+        }
 
 
         // Konfigurieren des Command, um die Interaction weiterzuleiten
@@ -104,15 +111,15 @@ public class GameHandlerUnitTest {
 
         // Konfigurieren des eventPublisher, um JsonDataManager.sendPin aufzurufen
         doAnswer(invocation -> {
-            UserCreatedLobbyEvent event = invocation.getArgument(0);
-            JsonDataManager.sendPin(session, "1234");
+            //UserCreatedLobbyEvent event = invocation.getArgument(0);
+            JsonDataUtility.sendPin(session, "1234");
             return null;
         }).when(eventPublisher).publishEvent(any(UserCreatedLobbyEvent.class));
 
         // When onCreateLobbyEvent() is called, trigger sendPin()
         doAnswer((Answer<Void>) invocation -> {
             UserCreatedLobbyEvent event = invocation.getArgument(0);
-            JsonDataManager.sendPin(event.getSession(), "1234");
+            JsonDataUtility.sendPin(event.getSession(), "1234");
             return null;
         }).when(userEventListener).onCreateLobbyEvent(any(UserCreatedLobbyEvent.class));
 
@@ -128,22 +135,23 @@ public class GameHandlerUnitTest {
 
     @Test
     public void handleMessageShouldThrowErrorBecauseWrongJsonData() throws URISyntaxException {
-        WebSocketSession session = mock(WebSocketSession.class);
-        when(session.isOpen()).thenReturn(true);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
+        try (WebSocketSession session = mock(WebSocketSession.class)) {
+            when(session.isOpen()).thenReturn(true);
+            when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
+            when(session.getId()).thenReturn("session1");
+            when(session.getAcceptedProtocol()).thenReturn("protocol");
+            when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+            when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
 
-        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
+            ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+            GameHandler gameHandler = new GameHandler(eventPublisher);
 
-        WebSocketMessage<?> message = new TextMessage("Test");
+            WebSocketMessage<?> message = new TextMessage("Test");
 
-        assertThrows(JsonParseException.class, () -> {
-            gameHandler.handleMessage(session, message);
-        });
+            assertThrows(JsonParseException.class, () -> gameHandler.handleMessage(session, message));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

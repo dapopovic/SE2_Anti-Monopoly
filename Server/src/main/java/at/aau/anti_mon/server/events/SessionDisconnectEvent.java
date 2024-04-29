@@ -9,14 +9,11 @@ import org.springframework.web.socket.WebSocketSession;
  */
 @Getter
 @Setter
-public class SessionDisconnectEvent {
+public class SessionDisconnectEvent extends Event {
 
-    private final WebSocketSession session;
-
-    public SessionDisconnectEvent(
-            WebSocketSession session
+    public SessionDisconnectEvent( WebSocketSession session
     ) {
-        this.session = session;
+        super(session);
     }
 
 }

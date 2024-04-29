@@ -13,6 +13,11 @@ public class CommandFactory {
         this.commandMap = new HashMap<>(commandMap);
     }
 
+    public Command getCommand(String commandType) {
+        return commandMap.get(commandType);
+    }
+}
+
     /*
     public CommandFactory() {
         commandMap = new HashMap<>();
@@ -29,8 +34,3 @@ public class CommandFactory {
     }
 
      */
-
-    public Command getCommand(String commandType) {
-        return commandMap.get(commandType);
-    }
-}

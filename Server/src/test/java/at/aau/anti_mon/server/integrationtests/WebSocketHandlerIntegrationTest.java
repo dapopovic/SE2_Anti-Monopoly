@@ -3,7 +3,7 @@ package at.aau.anti_mon.server.integrationtests;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.websocketclient.WebSocketHandlerClientImpl;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -80,7 +80,7 @@ public class WebSocketHandlerIntegrationTest {
         //ObjectMapper mapper = new ObjectMapper();
         //String jsonMessage = mapper.writeValueAsString(jsonData);
 
-        String jsonMessage =  JsonDataManager.createStringFromJsonMessage(jsonData);
+        String jsonMessage =  JsonDataUtility.createStringFromJsonMessage(jsonData);
 
         // Senden des serialisierten JSON-Strings über eine WebSocket-Session
         assert jsonMessage != null;
@@ -92,7 +92,7 @@ public class WebSocketHandlerIntegrationTest {
 
 
         //JsonDataDTO receivedData = mapper.readValue(messageResponse, JsonDataDTO.class);
-        JsonDataDTO receivedData = JsonDataManager.parseJsonMessage(messageResponse);
+        JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse);
 
 
         // Zugriff auf die Daten
