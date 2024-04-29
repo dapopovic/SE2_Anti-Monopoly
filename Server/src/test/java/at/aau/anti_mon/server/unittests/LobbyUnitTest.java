@@ -124,6 +124,18 @@ class LobbyUnitTest {
         Assertions.assertEquals(0, lobby.getUsers().size());
         Assertions.assertFalse(lobby.getUsers().contains(user));
     }
+    @Test
+    void lobbyShouldRemoveOwnerFromLobby() throws LobbyIsFullException, UserNotFoundException {
+        User user = createUserWithOpenSession("player2");
+        lobby.addUser(player1);
+        lobby.setOwner(player1);
+        lobby.addUser(user);
+        lobby.removeUser(player1);
+        Assertions.assertEquals(1, lobby.getUsers().size());
+        Assertions.assertFalse(lobby.getUsers().contains(player1));
+        Assertions.assertTrue(lobby.getUsers().contains(user));
+        Assertions.assertEquals(user, lobby.getOwner());
+    }
 
     @Test
     void lobbyShouldThrowExceptionWhenRemovingUserNotPresent() {
