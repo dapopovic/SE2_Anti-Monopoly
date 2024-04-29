@@ -1,15 +1,13 @@
 package at.aau.anti_mon.server.dtos;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class UserDTO implements Serializable {
 
