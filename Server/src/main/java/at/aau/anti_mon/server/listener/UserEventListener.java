@@ -1,5 +1,12 @@
 package at.aau.anti_mon.server.listener;
 
+import java.util.HashSet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+import org.tinylog.Logger;
+
 import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
@@ -12,14 +19,6 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
-import lombok.extern.java.Log;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-import org.tinylog.Logger;
-
-import java.util.HashSet;
 
 /**
  * Event-Listener for user interactions

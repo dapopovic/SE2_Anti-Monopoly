@@ -1,5 +1,22 @@
 package at.aau.anti_mon.server.unittests;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.socket.WebSocketSession;
+
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
@@ -13,20 +30,6 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.socket.WebSocketSession;
-
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserEventListenerTest {
