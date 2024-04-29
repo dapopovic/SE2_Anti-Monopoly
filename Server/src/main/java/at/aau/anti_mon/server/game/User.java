@@ -8,7 +8,6 @@ import org.springframework.web.socket.WebSocketSession;
  * Represents a User of the App
  */
 @Getter
-@Setter
 public class User {
 
     private final String name;
