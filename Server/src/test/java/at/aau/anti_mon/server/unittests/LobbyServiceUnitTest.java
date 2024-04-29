@@ -17,14 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 /**
  * Unit tests for the LobbyService
  */
-public class LobbyServiceUnitTest {
+class LobbyServiceUnitTest {
 
     @Test
-    public void addUserToLobbyShouldAddUserToLobby() {
+    void addUserToLobbyShouldAddUserToLobby() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
 
@@ -34,7 +33,7 @@ public class LobbyServiceUnitTest {
     }
 
     @Test
-    public void removeUserFromLobbyShouldRemoveUserFromLobby() {
+    void removeUserFromLobbyShouldRemoveUserFromLobby() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
 
@@ -45,7 +44,7 @@ public class LobbyServiceUnitTest {
     }
 
     @Test
-    public void findUserinAllLobbiesShouldReturnUser() throws UserNotFoundException {
+    void findUserinAllLobbiesShouldReturnUser() throws UserNotFoundException {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         Lobby lobby = mock(Lobby.class);
@@ -59,14 +58,14 @@ public class LobbyServiceUnitTest {
     }
 
     @Test
-    public void findUserinAllLobbiesShouldThrowException() throws UserNotFoundException {
+    void findUserinAllLobbiesShouldThrowException() throws UserNotFoundException {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         assertThrows(UserNotFoundException.class, () -> lobbyService.findUserInAllLobbies("user2"));
     }
 
     @Test
-    public void findOptionalLobbyByPinReturnsLobby(){
+    void findOptionalLobbyByPinReturnsLobby() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         WebSocketSession session = mock(WebSocketSession.class);
@@ -77,14 +76,14 @@ public class LobbyServiceUnitTest {
     }
 
     @Test
-    public void findOptionalLobbyByPinReturnsEmptyOptional(){
+    void findOptionalLobbyByPinReturnsEmptyOptional() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         assertEquals(Optional.empty(), lobbyService.findOptionalLobbyByPin(1234));
     }
 
     @Test
-    public void createLobbyShouldCreateNewLobby() {
+    void createLobbyShouldCreateNewLobby() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         WebSocketSession session = mock(WebSocketSession.class);
@@ -98,13 +97,13 @@ public class LobbyServiceUnitTest {
     }
 
     @Test
-    public void joinLobbyShouldAddUserToLobby() throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
+    void joinLobbyShouldAddUserToLobby() throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
         UserService userService = new UserService(mock(SessionManagementService.class));
         LobbyService lobbyService = new LobbyService(userService);
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
         User user1 = userService.findOrCreateUser("user1", session);
-        User user2 = userService.findOrCreateUser("user2", session);
+        userService.findOrCreateUser("user2", session);
         Lobby lobby = lobbyService.createLobby(user1);
 
         lobbyService.joinLobby(lobby.getPin(), "user2");
@@ -113,13 +112,14 @@ public class LobbyServiceUnitTest {
     }
 
     @Test
-    public void leaveLobbyShouldRemoveUserFromLobby() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+    void leaveLobbyShouldRemoveUserFromLobby()
+            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
         UserService userService = new UserService(mock(SessionManagementService.class));
         LobbyService lobbyService = new LobbyService(userService);
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
         User user1 = userService.findOrCreateUser("user1", session);
-        User user2 = userService.findOrCreateUser("user2", session);
+        userService.findOrCreateUser("user2", session);
 
         Lobby lobby = lobbyService.createLobby(user1);
         lobbyService.joinLobby(lobby.getPin(), "user2");

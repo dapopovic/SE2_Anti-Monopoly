@@ -13,14 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 /**
  * Unit tests for the UserService
  */
-public class UserServiceUnitTest {
+class UserServiceUnitTest {
 
     @Test
-    public void findOrCreateUserShouldCreateNewUserWhenUserDoesNotExist() {
+    void findOrCreateUserShouldCreateNewUserWhenUserDoesNotExist() {
         UserService userService = new UserService(mock(SessionManagementService.class));
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
@@ -33,7 +32,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void findOrCreateUserShouldReturnExistingUserWhenUserExists() {
+    void findOrCreateUserShouldReturnExistingUserWhenUserExists() {
         UserService userService = new UserService(mock(SessionManagementService.class));
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
@@ -47,7 +46,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void getOptionalUserShouldReturnEmptyWhenUserDoesNotExist() {
+    void getOptionalUserShouldReturnEmptyWhenUserDoesNotExist() {
         UserService userService = new UserService(mock(SessionManagementService.class));
 
         Optional<User> user = userService.getOptionalUser("user1");
@@ -56,7 +55,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void getOptionalUserShouldReturnUserWhenUserExists() {
+    void getOptionalUserShouldReturnUserWhenUserExists() {
         UserService userService = new UserService(mock(SessionManagementService.class));
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
@@ -70,14 +69,14 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void getUserShouldThrowExceptionWhenUserDoesNotExist() {
+    void getUserShouldThrowExceptionWhenUserDoesNotExist() {
         UserService userService = new UserService(mock(SessionManagementService.class));
 
         assertThrows(UserNotFoundException.class, () -> userService.getUser("user1"));
     }
 
     @Test
-    public void getUserShouldReturnUserWhenUserExists() throws UserNotFoundException {
+    void getUserShouldReturnUserWhenUserExists() throws UserNotFoundException {
         UserService userService = new UserService(mock(SessionManagementService.class));
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
@@ -91,14 +90,14 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void removeUserShouldThrowExceptionWhenUserDoesNotExist() {
+    void removeUserShouldThrowExceptionWhenUserDoesNotExist() {
         UserService userService = new UserService(mock(SessionManagementService.class));
 
         assertThrows(UserNotFoundException.class, () -> userService.removeUser("user1"));
     }
 
     @Test
-    public void removeUserShouldRemoveUserWhenUserExists() throws UserNotFoundException {
+    void removeUserShouldRemoveUserWhenUserExists() throws UserNotFoundException {
         UserService userService = new UserService(mock(SessionManagementService.class));
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");

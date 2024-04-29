@@ -17,18 +17,18 @@ import java.net.URISyntaxException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class EventTest {
+class EventTest {
 
     @Mock
     WebSocketSession session;
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
+    void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void userJoinedLobbyEventShouldReturnCorrectValues() throws URISyntaxException {
+    void userJoinedLobbyEventShouldReturnCorrectValues() throws URISyntaxException {
 
         when(session.isOpen()).thenReturn(true);
         when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
@@ -48,7 +48,7 @@ public class EventTest {
     }
 
     @Test
-    public void userLeftLobbyEventShouldReturnCorrectValues() {
+    void userLeftLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
         UserDTO userDTO = new UserDTO("user1");
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
@@ -60,7 +60,7 @@ public class EventTest {
     }
 
     @Test
-    public void userCreatedLobbyEventShouldReturnCorrectValues() {
+    void userCreatedLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
         UserDTO userDTO = new UserDTO("user1");
         UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, userDTO);
@@ -70,7 +70,7 @@ public class EventTest {
     }
 
     @Test
-    public void sessionConnectEventShouldReturnCorrectValues() {
+    void sessionConnectEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
         SessionConnectEvent event = new SessionConnectEvent(session);
 
@@ -78,7 +78,7 @@ public class EventTest {
     }
 
     @Test
-    public void sessionDisconnectEventShouldReturnCorrectValues() {
+    void sessionDisconnectEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
         SessionDisconnectEvent event = new SessionDisconnectEvent(session);
 

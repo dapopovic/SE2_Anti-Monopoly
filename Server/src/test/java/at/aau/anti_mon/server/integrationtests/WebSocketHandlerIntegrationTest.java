@@ -25,13 +25,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * Integration test for the WebSocketHandler.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"logging.level.org.springframework=DEBUG"})
-public class WebSocketHandlerIntegrationTest {
+@TestPropertySource(properties = { "logging.level.org.springframework=DEBUG" })
+class WebSocketHandlerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -40,30 +39,31 @@ public class WebSocketHandlerIntegrationTest {
     private WebSocketSession session;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         messages = new LinkedBlockingQueue<>();
         WebSocketClient client = new StandardWebSocketClient();
         String BASE_WEBSOCKET_URI = "ws://localhost:%d/game?userID=";
 
         String userID = "Test";
 
-        session = client.execute(new WebSocketHandlerClientImpl(messages ), String.format(BASE_WEBSOCKET_URI+userID, port)).get(3, TimeUnit.SECONDS);
+        session = client
+                .execute(new WebSocketHandlerClientImpl(messages), String.format(BASE_WEBSOCKET_URI + userID, port))
+                .get(3, TimeUnit.SECONDS);
     }
 
-
     @Test
-    public void testCreateGameAndGetPin() throws Exception {
+    void testCreateGameAndGetPin() throws Exception {
         String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
         Logger.info("TEST - sending message: " + message);
         session.sendMessage(new TextMessage(message));
 
-        String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS); // Erhöhe Timeout für Sicherheit
         Assertions.assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(messageResponse);
-        String pin = rootNode.path("pin").asText();  // Sicherstellen, dass 'pin' existiert und ein String ist
+        String pin = rootNode.path("pin").asText(); // Sicherstellen, dass 'pin' existiert und ein String ist
         Logger.debug("Extracted PIN: " + pin);
 
         Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
@@ -71,29 +71,28 @@ public class WebSocketHandlerIntegrationTest {
     }
 
     @Test
-    public void testNewCreateGameAndGetPin() throws Exception {
+    void testNewCreateGameAndGetPin() throws Exception {
         // Beispiel: Verwendung der JsonDataDTO Klasse
 
         JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
         jsonData.putData("username", "Test");
 
-        //ObjectMapper mapper = new ObjectMapper();
-        //String jsonMessage = mapper.writeValueAsString(jsonData);
+        // ObjectMapper mapper = new ObjectMapper();
+        // String jsonMessage = mapper.writeValueAsString(jsonData);
 
-        String jsonMessage =  JsonDataUtility.createStringFromJsonMessage(jsonData);
+        String jsonMessage = JsonDataUtility.createStringFromJsonMessage(jsonData);
 
         // Senden des serialisierten JSON-Strings über eine WebSocket-Session
         assert jsonMessage != null;
         session.sendMessage(new TextMessage(jsonMessage));
 
-        String messageResponse = messages.poll(10, TimeUnit.SECONDS);  // Erhöhe Timeout für Sicherheit
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS); // Erhöhe Timeout für Sicherheit
         Assertions.assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
 
-
-        //JsonDataDTO receivedData = mapper.readValue(messageResponse, JsonDataDTO.class);
+        // JsonDataDTO receivedData = mapper.readValue(messageResponse,
+        // JsonDataDTO.class);
         JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse);
-
 
         // Zugriff auf die Daten
         assert receivedData != null;
@@ -109,7 +108,7 @@ public class WebSocketHandlerIntegrationTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         if (session != null) {
             session.close();
         }

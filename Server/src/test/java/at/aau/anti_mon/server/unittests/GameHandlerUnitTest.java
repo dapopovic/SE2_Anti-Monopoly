@@ -29,21 +29,18 @@ import java.net.URISyntaxException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-
 /**
  * Unit-Test class for GameHandler
  */
-public class GameHandlerUnitTest {
-
+class GameHandlerUnitTest {
 
     @Test
-    public void testHandleMessageInvalidCommand() throws URISyntaxException, IOException {
+    void testHandleMessageInvalidCommand() throws URISyntaxException, IOException {
 
         // Vorbereitung
 
         try (WebSocketSession session = mock(WebSocketSession.class)) {
             CommandFactory gameCommandFactory = mock(CommandFactory.class);
-
 
             ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
             GameHandler gameHandler = new GameHandler(eventPublisher);
@@ -64,7 +61,7 @@ public class GameHandlerUnitTest {
     }
 
     @Test
-    public void handleMessageShouldExecuteCommandAndSendAnswer() throws Exception {
+    void handleMessageShouldExecuteCommandAndSendAnswer() throws Exception {
 
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.isOpen()).thenReturn(true);
@@ -82,7 +79,8 @@ public class GameHandlerUnitTest {
         doCallRealMethod().when(gameCommandFactory).getCommand(Commands.CREATE_GAME.name());
 
         UserEventListener userEventListener = mock(UserEventListener.class);
-        //UserCreatedLobbyEvent createLobbyEvent = new UserCreatedLobbyEvent(session, new UserDTO("Test"));
+        // UserCreatedLobbyEvent createLobbyEvent = new UserCreatedLobbyEvent(session,
+        // new UserDTO("Test"));
 
         // GAME HANDLER:
         GameHandler gameHandler = new GameHandler(eventPublisher);
@@ -95,11 +93,10 @@ public class GameHandlerUnitTest {
         TextMessage message;
         if (jsonMessage != null) {
             message = new TextMessage(jsonMessage);
-        }else {
+        } else {
             throw new JsonProcessingException("Error while creating JSON message") {
             };
         }
-
 
         // Konfigurieren des Command, um die Interaction weiterzuleiten
         doAnswer(invocation -> {
@@ -111,7 +108,7 @@ public class GameHandlerUnitTest {
 
         // Konfigurieren des eventPublisher, um JsonDataManager.sendPin aufzurufen
         doAnswer(invocation -> {
-            //UserCreatedLobbyEvent event = invocation.getArgument(0);
+            // UserCreatedLobbyEvent event = invocation.getArgument(0);
             JsonDataUtility.sendPin(session, "1234");
             return null;
         }).when(eventPublisher).publishEvent(any(UserCreatedLobbyEvent.class));
@@ -123,18 +120,15 @@ public class GameHandlerUnitTest {
             return null;
         }).when(userEventListener).onCreateLobbyEvent(any(UserCreatedLobbyEvent.class));
 
-
-
         // Ausführen der Methode, die getestet wird
         gameHandler.handleMessage(session, message);
-
 
         // Ausführung des Tests
         verify(session, times(1)).sendMessage(any());
     }
 
     @Test
-    public void handleMessageShouldThrowErrorBecauseWrongJsonData() throws URISyntaxException {
+    void handleMessageShouldThrowErrorBecauseWrongJsonData() throws URISyntaxException {
         try (WebSocketSession session = mock(WebSocketSession.class)) {
             when(session.isOpen()).thenReturn(true);
             when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
@@ -155,7 +149,7 @@ public class GameHandlerUnitTest {
     }
 
     @Test
-    public void handleTransportErrorShouldCloseSession() throws Exception {
+    void handleTransportErrorShouldCloseSession() throws Exception {
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
         GameHandler gameHandler = new GameHandler(eventPublisher);
         WebSocketSession session = mock(WebSocketSession.class);
@@ -173,7 +167,7 @@ public class GameHandlerUnitTest {
     }
 
     @Test
-    public void afterConnectionEstablishedShouldPublishEvent() throws Exception {
+    void afterConnectionEstablishedShouldPublishEvent() throws Exception {
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
         GameHandler gameHandler = new GameHandler(eventPublisher);
         WebSocketSession session = mock(WebSocketSession.class);
@@ -189,7 +183,7 @@ public class GameHandlerUnitTest {
     }
 
     @Test
-    public void afterConnectionClosedShouldPublishEvent() throws Exception {
+    void afterConnectionClosedShouldPublishEvent() throws Exception {
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
         GameHandler gameHandler = new GameHandler(eventPublisher);
         WebSocketSession session = mock(WebSocketSession.class);

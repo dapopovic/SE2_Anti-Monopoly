@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class CommandsTest {
+class CommandsTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -46,12 +46,12 @@ public class CommandsTest {
     private HeartBeatCommand heartBeatCommand;
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
+    void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void joinLobbyCommandShouldPublishEvent() {
+    void joinLobbyCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.JOIN_GAME);
         jsonData.putData("pin", "1234");
@@ -63,7 +63,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void joinLobbyCommandHasEmptyValuesAndThrowsException() {
+    void joinLobbyCommandHasEmptyValuesAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.JOIN_GAME);
 
@@ -73,7 +73,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void joinLobbyCommandThrowsException() {
+    void joinLobbyCommandThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.JOIN_GAME);
         jsonData.putData("pin", "");
@@ -85,7 +85,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void leaveLobbyCommandShouldPublishEvent() {
+    void leaveLobbyCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.LEAVE_GAME);
         jsonData.putData("pin", "1234");
@@ -97,7 +97,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void leaveLobbyCommandHasEmptyValuesAndThrowsException() {
+    void leaveLobbyCommandHasEmptyValuesAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.LEAVE_GAME);
 
@@ -105,6 +105,7 @@ public class CommandsTest {
             leaveLobbyCommand.execute(session, jsonData);
         });
     }
+
     @Test
     void leaveLobbyCommandHasNoUsernameAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
@@ -115,6 +116,7 @@ public class CommandsTest {
             leaveLobbyCommand.execute(session, jsonData);
         });
     }
+
     @Test
     void leaveLobbyCommandHasNoPinAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
@@ -127,7 +129,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void createGameCommandShouldPublishEvent() {
+    void createGameCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.CREATE_GAME);
         jsonData.putData("username", "testUser");
@@ -138,7 +140,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void createGameCommandHasEmptyValuesAndThrowsException() {
+    void createGameCommandHasEmptyValuesAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.CREATE_GAME);
 
@@ -146,6 +148,7 @@ public class CommandsTest {
             createGameCommand.execute(session, jsonData);
         });
     }
+
     @Test
     void createGameCommandHasNoUsernameAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
@@ -158,7 +161,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void HeartBeatCommandShouldExecuteSessionCheckEvent() throws URISyntaxException {
+    void HeartBeatCommandShouldExecuteSessionCheckEvent() throws URISyntaxException {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.HEARTBEAT);
         jsonData.putData("username", "testUser");
@@ -172,7 +175,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void HeartBeatCommandShouldThrowException() throws URISyntaxException {
+    void HeartBeatCommandShouldThrowException() throws URISyntaxException {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.HEARTBEAT);
         jsonData.putData("username", "testUser");
@@ -186,7 +189,7 @@ public class CommandsTest {
     }
 
     @Test
-    public void heartBeatCommandHasEmptyValuesAndThrowsException() {
+    void heartBeatCommandHasEmptyValuesAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.HEARTBEAT);
 
@@ -194,8 +197,20 @@ public class CommandsTest {
             heartBeatCommand.execute(session, jsonData);
         });
     }
+
     @Test
-    public void heartBeatCommandHasNoSessionAndThrowsException() {
+    void heartBeatCommandHasNoMsgAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.HEARTBEAT);
+        jsonData.putData("username", "testUser");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            heartBeatCommand.execute(session, jsonData);
+        });
+    }
+
+    @Test
+    void heartBeatCommandHasNoSessionAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.HEARTBEAT);
         jsonData.putData("username", "testUser");

@@ -12,7 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class SessionManagementServiceTest {
+class SessionManagementServiceTest {
 
     @Mock
     private WebSocketSession session;
@@ -21,32 +21,33 @@ public class SessionManagementServiceTest {
     private SessionManagementService sessionManagementService;
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
+    void setup() {
+        MockitoAnnotations.openMocks(this);
         when(session.getId()).thenReturn("123");
     }
 
     @Test
-    public void registerUserWithSessionShouldRegisterUser() {
+    void registerUserWithSessionShouldRegisterUser() {
         sessionManagementService.registerUserWithSession("user1", session);
         assertEquals(session, sessionManagementService.getSession("123"));
         assertEquals(session, sessionManagementService.getSessionForUser("user1"));
     }
 
     @Test
-    public void registerUserWithSessionShouldThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> sessionManagementService.registerUserWithSession(null, session));
+    void registerUserWithSessionShouldThrowException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> sessionManagementService.registerUserWithSession(null, session));
     }
 
     @Test
-    public void getSessionForUserShouldThrowException() {
+    void getSessionForUserShouldThrowException() {
         sessionManagementService.registerUserWithSession("user1", session);
         assertEquals(session, sessionManagementService.getSession("123"));
         assertThrows(SessionNotFoundException.class, () -> sessionManagementService.getSessionForUser("432"));
     }
 
     @Test
-    public void removeSessionByIdShouldRemoveSession() {
+    void removeSessionByIdShouldRemoveSession() {
         sessionManagementService.registerUserWithSession("user1", session);
         assertEquals(session, sessionManagementService.getSession("123"));
         sessionManagementService.removeSessionById("123", "user1");
@@ -55,12 +56,13 @@ public class SessionManagementServiceTest {
     }
 
     @Test
-    public void getSessionForUserShouldThrowExceptionForNonexistentUser() {
-        assertThrows(SessionNotFoundException.class, () -> sessionManagementService.getSessionForUser("nonexistentUser"));
+    void getSessionForUserShouldThrowExceptionForNonexistentUser() {
+        assertThrows(SessionNotFoundException.class,
+                () -> sessionManagementService.getSessionForUser("nonexistentUser"));
     }
 
     @Test
-    public void getNumberOfSessionsShouldReturnCorrectNumber() {
+    void getNumberOfSessionsShouldReturnCorrectNumber() {
         sessionManagementService.registerUserWithSession("user1", session);
         assertEquals(1, sessionManagementService.getNumberOfSessions());
     }

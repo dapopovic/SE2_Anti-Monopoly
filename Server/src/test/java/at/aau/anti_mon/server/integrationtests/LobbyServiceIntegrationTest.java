@@ -1,5 +1,17 @@
 package at.aau.anti_mon.server.integrationtests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.socket.WebSocketSession;
+
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -7,19 +19,12 @@ import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.User;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.UserService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.socket.WebSocketSession;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 /**
  * Integration tests for the LobbyService
  */
 @SpringBootTest
-public class LobbyServiceIntegrationTest {
+class LobbyServiceIntegrationTest {
 
     @Autowired
     private LobbyService lobbyService;
@@ -28,7 +33,7 @@ public class LobbyServiceIntegrationTest {
     private UserService userService;
 
     @Test
-    public void createLobbyShouldCreateNewLobby() {
+    void createLobbyShouldCreateNewLobby() {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
         assertNotNull(lobby);
@@ -36,7 +41,7 @@ public class LobbyServiceIntegrationTest {
     }
 
     @Test
-    public void joinLobbyShouldAddUserToLobby() throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
+    void joinLobbyShouldAddUserToLobby() throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
         User newUser = userService.findOrCreateUser("userToJoin", mock(WebSocketSession.class));
@@ -45,7 +50,8 @@ public class LobbyServiceIntegrationTest {
     }
 
     @Test
-    public void leaveLobbyShouldRemoveUserFromLobby() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+    void leaveLobbyShouldRemoveUserFromLobby()
+            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
         User newUser = userService.findOrCreateUser("userToLeave", mock(WebSocketSession.class));
@@ -55,7 +61,7 @@ public class LobbyServiceIntegrationTest {
     }
 
     @Test
-    public void findLobbyByPinShouldReturnLobbyWhenLobbyExists() throws LobbyNotFoundException {
+    void findLobbyByPinShouldReturnLobbyWhenLobbyExists() throws LobbyNotFoundException {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
         Lobby foundLobby = lobbyService.findLobbyByPin(lobby.getPin());
@@ -63,7 +69,7 @@ public class LobbyServiceIntegrationTest {
     }
 
     @Test
-    public void findLobbyByPinShouldThrowExceptionWhenLobbyDoesNotExist() {
+    void findLobbyByPinShouldThrowExceptionWhenLobbyDoesNotExist() {
         assertThrows(LobbyNotFoundException.class, () -> lobbyService.findLobbyByPin(9999));
     }
 }

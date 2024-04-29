@@ -14,12 +14,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-
 /**
  * Integration tests for the UserService
  */
 @SpringBootTest
-public class UserServiceIntegrationTest {
+class UserServiceIntegrationTest {
 
     @Autowired
     private UserService userService;
@@ -28,7 +27,7 @@ public class UserServiceIntegrationTest {
     private SessionManagementService sessionManagementService;
 
     @Test
-    public void findOrCreateUserShouldCreateNewUserWhenUserDoesNotExist() {
+    void findOrCreateUserShouldCreateNewUserWhenUserDoesNotExist() {
         WebSocketSession session = mock(WebSocketSession.class);
         User user = userService.findOrCreateUser("newUser", session);
         assertNotNull(user);
@@ -36,7 +35,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void findOrCreateUserShouldReturnExistingUserWhenUserExists() {
+    void findOrCreateUserShouldReturnExistingUserWhenUserExists() {
         WebSocketSession session = mock(WebSocketSession.class);
         userService.findOrCreateUser("existingUser", session);
         User user = userService.findOrCreateUser("existingUser", session);
@@ -45,13 +44,13 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void getOptionalUserShouldReturnEmptyWhenUserDoesNotExist() {
+    void getOptionalUserShouldReturnEmptyWhenUserDoesNotExist() {
         Optional<User> user = userService.getOptionalUser("nonExistingUser");
         assertTrue(user.isEmpty());
     }
 
     @Test
-    public void getOptionalUserShouldReturnUserWhenUserExists() {
+    void getOptionalUserShouldReturnUserWhenUserExists() {
         WebSocketSession session = mock(WebSocketSession.class);
         userService.findOrCreateUser("existingUser", session);
         Optional<User> user = userService.getOptionalUser("existingUser");
@@ -60,7 +59,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void removeUserShouldRemoveExistingUser() throws UserNotFoundException {
+    void removeUserShouldRemoveExistingUser() throws UserNotFoundException {
         WebSocketSession session = mock(WebSocketSession.class);
         userService.findOrCreateUser("userToRemove", session);
         userService.removeUser("userToRemove");
@@ -69,7 +68,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void removeUserShouldThrowExceptionWhenUserDoesNotExist() {
+    void removeUserShouldThrowExceptionWhenUserDoesNotExist() {
         assertThrows(UserNotFoundException.class, () -> userService.removeUser("nonExistingUser"));
     }
 }

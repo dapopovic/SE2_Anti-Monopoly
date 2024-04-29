@@ -1,9 +1,30 @@
 package at.aau.anti_mon.server.integrationtests;
 
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.socket.WebSocketSession;
+
 import at.aau.anti_mon.server.commands.JoinLobbyCommand;
 import at.aau.anti_mon.server.commands.LeaveLobbyCommand;
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -16,25 +37,9 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.socket.WebSocketSession;
-
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import at.aau.anti_mon.server.enums.*;
-
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class EventDrivenPatternTest {
+  class EventDrivenPatternTest {
 
 
     @Mock
@@ -63,7 +68,7 @@ public class EventDrivenPatternTest {
 
 
     @BeforeEach
-    public void init() throws URISyntaxException {
+     void init() throws URISyntaxException {
 
         when(session1.isOpen()).thenReturn(true);
         when(session1.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
@@ -90,7 +95,7 @@ public class EventDrivenPatternTest {
     }
 
     @Test
-    public void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         // Given
         UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2"));
@@ -119,7 +124,7 @@ public class EventDrivenPatternTest {
     }
 
     @Test
-    public void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
+     void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
 
         session1 = mock(WebSocketSession.class);
         lobbyService.addUserToLobby( user2.getName(),lobby.getPin());

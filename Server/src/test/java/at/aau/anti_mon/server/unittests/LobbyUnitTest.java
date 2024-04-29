@@ -16,14 +16,13 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for the Lobby
  */
-public class LobbyUnitTest {
-
+class LobbyUnitTest {
 
     private Lobby lobby;
     private User player1;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         lobby = new Lobby();
         player1 = new User("player1", mock(WebSocketSession.class));
     }
@@ -35,10 +34,8 @@ public class LobbyUnitTest {
         return user;
     }
 
-
-
     @Test
-    public void testLobbyCapacity() throws LobbyIsFullException {
+    void testLobbyCapacity() throws LobbyIsFullException {
         for (int i = 0; i < 6; i++) {
             lobby.addUser(createUserWithOpenSession("player" + i));
         }
@@ -46,7 +43,7 @@ public class LobbyUnitTest {
     }
 
     @Test
-    public void testFindPlayerWithSessionId() throws LobbyIsFullException {
+    void testFindPlayerWithSessionId() throws LobbyIsFullException {
         // User mit gemockter Session
         WebSocketSession playerSession = mock(WebSocketSession.class);
         when(playerSession.getId()).thenReturn("player1");
@@ -69,9 +66,8 @@ public class LobbyUnitTest {
         verify(playerSession).getId();
     }
 
-
     @Test
-    public void lobbyShouldReturnNullWhenNoUserWithMatchingSession() {
+    void lobbyShouldReturnNullWhenNoUserWithMatchingSession() {
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("player2");
         User user = lobby.getUserWithSession(session);
@@ -79,25 +75,25 @@ public class LobbyUnitTest {
     }
 
     @Test
-    public void lobbyShouldReturnTrueWhenPlayerInLobby() throws LobbyIsFullException {
+    void lobbyShouldReturnTrueWhenPlayerInLobby() throws LobbyIsFullException {
         User user = createUserWithOpenSession("player2");
         lobby.addUser(user);
         Assertions.assertTrue(lobby.isPlayerInLobby(user));
     }
 
     @Test
-    public void lobbyShouldReturnFalseWhenPlayerNotInLobby() {
+    void lobbyShouldReturnFalseWhenPlayerNotInLobby() {
         User user = createUserWithOpenSession("player2");
         Assertions.assertFalse(lobby.isPlayerInLobby(user));
     }
 
     @Test
-    public void lobbyShouldReturnTrueWhenCanAddPlayer() {
+    void lobbyShouldReturnTrueWhenCanAddPlayer() {
         Assertions.assertTrue(lobby.canAddPlayer());
     }
 
     @Test
-    public void lobbyShouldReturnFalseWhenCannotAddPlayer() throws LobbyIsFullException {
+    void lobbyShouldReturnFalseWhenCannotAddPlayer() throws LobbyIsFullException {
         for (int i = 0; i < 6; i++) {
             lobby.addUser(createUserWithOpenSession("player" + i));
         }
@@ -105,7 +101,7 @@ public class LobbyUnitTest {
     }
 
     @Test
-    public void lobbyShouldAddUserWhenNotFull() throws LobbyIsFullException {
+    void lobbyShouldAddUserWhenNotFull() throws LobbyIsFullException {
         User user = createUserWithOpenSession("player2");
         lobby.addUser(user);
         Assertions.assertEquals(1, lobby.getUsers().size());
@@ -113,16 +109,15 @@ public class LobbyUnitTest {
     }
 
     @Test
-    public void testAddPlayerThrowExceptionBecauseUserAlreadyInLobby() throws UserAlreadyExistsException, LobbyIsFullException{
+    void testAddPlayerThrowExceptionBecauseUserAlreadyInLobby()
+            throws UserAlreadyExistsException, LobbyIsFullException {
         lobby.addUser(player1);
         assertThrows(UserAlreadyExistsException.class, () -> lobby.addUser(player1));
         Assertions.assertEquals(1, lobby.getUsers().size());
     }
 
-
-
     @Test
-    public void lobbyShouldRemoveUserWhenPresent() throws LobbyIsFullException, UserNotFoundException {
+    void lobbyShouldRemoveUserWhenPresent() throws LobbyIsFullException, UserNotFoundException {
         User user = createUserWithOpenSession("player2");
         lobby.addUser(user);
         lobby.removeUser(user);
@@ -131,20 +126,18 @@ public class LobbyUnitTest {
     }
 
     @Test
-    public void lobbyShouldThrowExceptionWhenRemovingUserNotPresent() {
+    void lobbyShouldThrowExceptionWhenRemovingUserNotPresent() {
         User user = createUserWithOpenSession("player2");
         assertThrows(UserNotFoundException.class, () -> lobby.removeUser(user));
     }
 
-
     @Test
-    public void testRemovePlayerNotInLobby() {
+    void testRemovePlayerNotInLobby() {
         when(player1.getSession().isOpen()).thenReturn(true);
         assertThrows(UserNotFoundException.class, () -> lobby.removeUser(player1));
         Assertions.assertEquals(0, lobby.getUsers().size());
         Assertions.assertFalse(lobby.getUsers().contains(player1));
         verify(player1.getSession(), never()).isOpen();
     }
-
 
 }

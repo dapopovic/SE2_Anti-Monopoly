@@ -11,14 +11,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
  * Unit tests for the JsonDataManager
  */
-public class JsonDataManagerUnitTest {
+class JsonDataManagerUnitTest {
 
     @Test
-    public void createStringFromJsonMessageShouldReturnValidJson() throws JsonProcessingException {
+    void createStringFromJsonMessageShouldReturnValidJson() throws JsonProcessingException {
         Map<String, String> data = new HashMap<>();
         data.put("key", "value");
         String json = JsonDataUtility.createStringFromJsonMessage(Commands.NEW_USER, data);
@@ -28,14 +27,14 @@ public class JsonDataManagerUnitTest {
     }
 
     @Test
-    public void createJsonDataDTOShouldReturnValidJsonDataDTO() {
+    void createJsonDataDTOShouldReturnValidJsonDataDTO() {
         JsonDataDTO jsonDataDTO = JsonDataUtility.createJsonDataDTO(Commands.NEW_USER, "message", "datafield");
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
         assertEquals("message", jsonDataDTO.getData().get("datafield"));
     }
 
     @Test
-    public void parseJsonMessageShouldReturnValidJsonDataDTO() throws JsonProcessingException {
+    void parseJsonMessageShouldReturnValidJsonDataDTO() throws JsonProcessingException {
         String json = "{\"command\":\"NEW_USER\",\"data\":{\"datafield\":\"message\"}}";
         JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json);
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
@@ -43,7 +42,7 @@ public class JsonDataManagerUnitTest {
     }
 
     @Test
-    public void createStringFromJsonMessageWithJsonDataDTOShouldReturnValidJson() throws JsonProcessingException {
+    void createStringFromJsonMessageWithJsonDataDTOShouldReturnValidJson() throws JsonProcessingException {
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEW_USER, new HashMap<>());
         jsonDataDTO.putData("datafield", "message");
         String json = JsonDataUtility.createStringFromJsonMessage(jsonDataDTO);

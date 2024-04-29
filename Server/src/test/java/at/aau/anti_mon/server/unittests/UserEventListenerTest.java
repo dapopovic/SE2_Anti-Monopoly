@@ -28,7 +28,7 @@ import java.util.HashSet;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class UserEventListenerTest {
+class UserEventListenerTest {
 
     @Mock
     private SessionManagementService sessionManagementService;
@@ -42,11 +42,9 @@ public class UserEventListenerTest {
     @InjectMocks
     private UserEventListener userEventListener;
 
-
-
     @Test
-    public void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException, URISyntaxException {
-
+    void onUserJoinedLobbyEventShouldCallCorrectServiceMethod()
+            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException, URISyntaxException {
 
         // Given
         WebSocketSession session1 = mock(WebSocketSession.class);
@@ -69,7 +67,6 @@ public class UserEventListenerTest {
         when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
         when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
 
-
         HashSet<User> users = new HashSet<>();
         User user1 = new User("lobbyCreator", session2);
         User user2 = new User("testUser", session1);
@@ -88,14 +85,13 @@ public class UserEventListenerTest {
         // When
         userEventListener.onUserJoinedLobbyEvent(event);
 
-
-
         // Then
         verify(lobbyService, times(1)).joinLobby(1234, "testUser");
     }
 
     @Test
-    public void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, URISyntaxException {
+    void onLeaveLobbyEventShouldCallCorrectServiceMethod()
+            throws UserNotFoundException, LobbyNotFoundException, URISyntaxException {
         WebSocketSession session1 = mock(WebSocketSession.class);
         WebSocketSession session2 = mock(WebSocketSession.class);
 
@@ -116,7 +112,6 @@ public class UserEventListenerTest {
         when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
         when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
 
-
         HashSet<User> users = new HashSet<>();
         User user1 = new User("lobbyCreator", session2);
         User user2 = new User("testUser", session1);
@@ -129,7 +124,6 @@ public class UserEventListenerTest {
 
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
-
 
         UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator"));
 
