@@ -15,6 +15,7 @@ import org.tinylog.Logger;
 public class HeartBeatCommand implements Command{
 
     private final ApplicationEventPublisher eventPublisher;
+    private static final String ERROR_MESSAGE = "SERVER: Required data for 'HEARTBEAT' is missing.";
 
     public HeartBeatCommand(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
@@ -22,17 +23,16 @@ public class HeartBeatCommand implements Command{
 
     @Override
     public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
-        // data = {"msg": PING }
         if (jsonData.getData() == null || jsonData.getData().get("msg") == null) {
-            Logger.error("SERVER: Required data for 'HEARTBEAT' is missing.");
-            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'HEARTBEAT' is missing.");
+            Logger.error(ERROR_MESSAGE);
+            throw new CanNotExecuteJsonCommandException(ERROR_MESSAGE);
         }
 
         Logger.info("SERVER : Heartbeat empfangen."+jsonData.getData().get("msg"));
 
         if (session.getUri() == null) {
-            Logger.error("SERVER: Required data for 'HEARTBEAT' is missing.");
-            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'HEARTBEAT' is missing.");
+            Logger.error(ERROR_MESSAGE);
+            throw new CanNotExecuteJsonCommandException(ERROR_MESSAGE);
         }else{
             String userID = StringUtility.extractUserID(session.getUri().getQuery());
             Logger.info( "Query " + session.getUri().getQuery() );
