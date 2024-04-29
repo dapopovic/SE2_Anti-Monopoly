@@ -30,7 +30,6 @@ public class HeartBeatCommand implements Command{
 
         Logger.info("SERVER : Heartbeat empfangen."+jsonData.getData().get("msg"));
 
-        // Todo Test
         if (session.getUri() == null) {
             Logger.error("SERVER: Required data for 'HEARTBEAT' is missing.");
             throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'HEARTBEAT' is missing.");

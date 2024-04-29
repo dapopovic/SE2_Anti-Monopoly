@@ -164,4 +164,17 @@ public class CommandsTest {
             heartBeatCommand.execute(session, jsonData);
         });
     }
+    @Test
+    public void heartBeatCommandHasNoSessionAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.HEARTBEAT);
+        jsonData.putData("username", "testUser");
+        jsonData.putData("msg", "test");
+        when(session.getUri()).thenReturn(null);
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            heartBeatCommand.execute(session, jsonData);
+        });
+        verify(eventPublisher, times(0)).publishEvent(any(SessionCheckEvent.class));
+        verify(session, times(1)).getUri();
+    }
 }
