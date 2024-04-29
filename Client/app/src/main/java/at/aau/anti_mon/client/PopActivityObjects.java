@@ -17,6 +17,11 @@ public class PopActivityObjects extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pop_objects);
+        try {
+            getActionBar().hide();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
