@@ -105,6 +105,26 @@ public class CommandsTest {
             leaveLobbyCommand.execute(session, jsonData);
         });
     }
+    @Test
+    void leaveLobbyCommandHasNoUsernameAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.LEAVE_GAME);
+        jsonData.putData("test", "test");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            leaveLobbyCommand.execute(session, jsonData);
+        });
+    }
+    @Test
+    void leaveLobbyCommandHasNoPinAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.LEAVE_GAME);
+        jsonData.putData("username", "testUser");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            leaveLobbyCommand.execute(session, jsonData);
+        });
+    }
 
     @Test
     public void createGameCommandShouldPublishEvent() {
