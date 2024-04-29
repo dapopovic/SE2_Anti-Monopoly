@@ -9,8 +9,6 @@ import org.springframework.web.socket.WebSocketSession;
 /**
  * Event that is fired when a player joins a lobby
  */
-@Getter
-@Setter
 public class UserJoinedLobbyEvent extends Event {
 
 
