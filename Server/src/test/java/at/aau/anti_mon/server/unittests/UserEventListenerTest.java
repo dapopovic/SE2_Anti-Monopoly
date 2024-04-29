@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -87,6 +88,50 @@ class UserEventListenerTest {
 
         // Then
         verify(lobbyService, times(1)).joinLobby(1234, "testUser");
+    }
+
+    @Test
+    void onUserJoinedLobbyEventLobbyIsFull()
+            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException, URISyntaxException {
+
+        // Given
+        WebSocketSession session1 = mock(WebSocketSession.class);
+        WebSocketSession session2 = mock(WebSocketSession.class);
+
+        when(session1.isOpen()).thenReturn(true);
+        when(session1.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
+        when(session1.getId()).thenReturn("session1");
+        when(session1.getAcceptedProtocol()).thenReturn("protocol");
+        when(session1.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+        when(session1.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user1"));
+
+        when(session2.isOpen()).thenReturn(true);
+        when(session2.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
+        when(session2.getId()).thenReturn("session2");
+        when(session2.getAcceptedProtocol()).thenReturn("protocol");
+        when(session2.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+        when(session2.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user2"));
+
+        when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
+        when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
+
+        HashSet<User> users = new HashSet<>();
+        User user1 = new User("lobbyCreator", session2);
+        User user2 = new User("testUser", session1);
+        users.add(user1);
+
+        Lobby lobby = mock(Lobby.class);
+        when(lobby.canAddPlayer()).thenReturn(false);
+        when(lobby.getPin()).thenReturn(1234);
+        when(lobby.getUsers()).thenReturn(users);
+
+        when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
+        when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
+
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser"));
+
+        userEventListener.onUserJoinedLobbyEvent(event);
+        verify(lobbyService, times(0)).joinLobby(1234, "testUser");
     }
 
     @Test

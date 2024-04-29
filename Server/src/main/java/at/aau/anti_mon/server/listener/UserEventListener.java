@@ -12,6 +12,8 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
+import lombok.extern.java.Log;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -32,13 +34,13 @@ public class UserEventListener {
     /**
      * Konstruktor für UserEventListener
      * Dependency Injection für LobbyService
+     * 
      * @param lobbyService LobbyService
      */
     @Autowired
     UserEventListener(LobbyService lobbyService,
-                      SessionManagementService sessionManagementService,
-                      UserService userService
-    ) {
+            SessionManagementService sessionManagementService,
+            UserService userService) {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
@@ -47,16 +49,16 @@ public class UserEventListener {
     /**
      * Logik zum Erstellen einer Lobby
      * Der PIN der Lobby wird an den Benutzer zurückgegeben
+     * 
      * @param event Ereignis
      */
     @EventListener
-    public void onCreateLobbyEvent(UserCreatedLobbyEvent event){
+    public void onCreateLobbyEvent(UserCreatedLobbyEvent event) {
         // create User
         User user = userService.findOrCreateUser(event.getUsername(), event.getSession());
 
         // create Lobby
         Lobby newLobby = lobbyService.createLobby(user);
-
 
         Logger.info("SERVER: Spiel erstellt mit PIN: " + newLobby.getPin());
         JsonDataUtility.sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
@@ -64,10 +66,12 @@ public class UserEventListener {
 
     /**
      * Fügt den Benutzer zur Lobby hinzu
+     * 
      * @param event Ereignis
      */
     @EventListener
-    public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+    public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event)
+            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
 
@@ -75,30 +79,35 @@ public class UserEventListener {
         User joinedUser = userService.findOrCreateUser(event.getUsername(), event.getSession());
 
         Lobby joinedLobby = lobbyService.findLobbyByPin(event.getPin());
-            if (joinedLobby.canAddPlayer()) {
-                HashSet<User> users = joinedLobby.getUsers();
-                for (User user : users) {
+        if (joinedLobby.canAddPlayer()) {
+            HashSet<User> users = joinedLobby.getUsers();
+            for (User user : users) {
 
-                    // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler beitretet
-                    JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser.getName());
+                // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler
+                // beitretet
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()),
+                        joinedUser.getName());
 
-                    // Sende dem neuen Spieler alle Spieler, die bereits in der Lobby sind
-                    JsonDataUtility.sendJoinedUser(event.getSession(), user.getName());
-                }
+                // Sende dem neuen Spieler alle Spieler, die bereits in der Lobby sind
+                JsonDataUtility.sendJoinedUser(event.getSession(), user.getName());
+            }
 
-                // Füge den joinedUser zur Lobby hinzu
-                lobbyService.joinLobby(event.getPin(), joinedUser.getName());
+            // Füge den joinedUser zur Lobby hinzu
+            lobbyService.joinLobby(event.getPin(), joinedUser.getName());
 
-                // DEBUG:
-                JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-                JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()), "Erfolgreich der Lobby beigetreten.");
-            } else {
-            JsonDataUtility.sendError(sessionManagementService.getSessionForUser(event.getUsername()), "Fehler: Lobby nicht gefunden.");
+            // DEBUG:
+            JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
+            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
+                    "Erfolgreich der Lobby beigetreten.");
+        } else {
+            JsonDataUtility.sendError(sessionManagementService.getSessionForUser(event.getUsername()),
+                    "Fehler: Lobby ist voll.");
         }
     }
 
     /**
      * Entfernt den Benutzer aus der Lobby
+     * 
      * @param event Ereignis
      */
     @EventListener
@@ -112,12 +121,15 @@ public class UserEventListener {
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         for (User user : users) {
 
-            // Sende allen Spielern in der Lobby die Information, dass der Spieler die Lobby verlassen hat
-            JsonDataUtility.sendLeavedUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername());
+            // Sende allen Spielern in der Lobby die Information, dass der Spieler die Lobby
+            // verlassen hat
+            JsonDataUtility.sendLeavedUser(sessionManagementService.getSessionForUser(user.getName()),
+                    event.getUsername());
 
             // Sende dem neuen Spieler Bestätigung des Verlassens
             JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()), "Erfolgreich die Lobby verlassen.");
+            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
+                    "Erfolgreich die Lobby verlassen.");
 
         }
     }
