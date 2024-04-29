@@ -126,6 +126,16 @@ public class CommandsTest {
             createGameCommand.execute(session, jsonData);
         });
     }
+    @Test
+    void createGameCommandHasNoUsernameAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.CREATE_GAME);
+        jsonData.putData("test", "test");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            createGameCommand.execute(session, jsonData);
+        });
+    }
 
     @Test
     public void HeartBeatCommandShouldExecuteSessionCheckEvent() throws URISyntaxException {
