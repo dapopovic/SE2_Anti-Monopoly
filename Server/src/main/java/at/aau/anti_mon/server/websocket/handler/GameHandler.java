@@ -39,7 +39,9 @@ public class GameHandler implements WebSocketHandler {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
 
         JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(message.getPayload().toString());
+        Logger.info("SERVER : Command: " + gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand()));
         Command command = gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
+       
         if (command == null) {
             Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
             throw new IllegalArgumentException("Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());

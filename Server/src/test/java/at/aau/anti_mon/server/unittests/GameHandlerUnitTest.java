@@ -181,6 +181,36 @@ class GameHandlerUnitTest {
 
         verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
     }
+    @Test
+    void afterConnectionEstablishedNoClientAddress() throws Exception {
+        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+        GameHandler gameHandler = new GameHandler(eventPublisher);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getRemoteAddress()).thenReturn(null);
+        when(session.getId()).thenReturn("session1");
+        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
+        when(session.getAcceptedProtocol()).thenReturn("protocol");
+        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+
+        gameHandler.afterConnectionEstablished(session);
+
+        verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
+    }
+    @Test
+    void afterConnectionEstablishedNoUri() throws Exception {
+        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+        GameHandler gameHandler = new GameHandler(eventPublisher);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
+        when(session.getId()).thenReturn("session1");
+        when(session.getUri()).thenReturn(null);
+        when(session.getAcceptedProtocol()).thenReturn("protocol");
+        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+
+        gameHandler.afterConnectionEstablished(session);
+
+        verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
+    }
 
     @Test
     void afterConnectionClosedShouldPublishEvent() throws Exception {
@@ -197,4 +227,20 @@ class GameHandlerUnitTest {
 
         verify(eventPublisher, times(1)).publishEvent(any(SessionDisconnectEvent.class));
     }
+    @Test
+    void afterConnectionClosedNoClientAddress() throws Exception {
+        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+        GameHandler gameHandler = new GameHandler(eventPublisher);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getRemoteAddress()).thenReturn(null);
+        when(session.getId()).thenReturn("session1");
+        when(session.getUri()).thenReturn(new URI("ws://localhost:8080"));
+        when(session.getAcceptedProtocol()).thenReturn("protocol");
+        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+
+        gameHandler.afterConnectionClosed(session, CloseStatus.NORMAL);
+
+        verify(eventPublisher, times(1)).publishEvent(any(SessionDisconnectEvent.class));
+    }
+    
 }
