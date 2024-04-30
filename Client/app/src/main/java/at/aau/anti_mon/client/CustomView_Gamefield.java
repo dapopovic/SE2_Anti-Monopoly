@@ -45,10 +45,8 @@ public class CustomView_Gamefield extends ConstraintLayout {
             case MotionEvent.ACTION_MOVE:
                 float deltaX = event.getX() - previousX;
                 float deltaY = event.getY() - previousY;
-                if (FACTOR > 1.0f) {
-                    // Apply scrolling only if zoomed in
-                    scrollBy((int) -deltaX, (int) -deltaY);
-                }
+                scrollBy((int) -deltaX, (int) -deltaY);
+
                 previousX = event.getX();
                 previousY = event.getY();
                 break;
@@ -67,7 +65,7 @@ public class CustomView_Gamefield extends ConstraintLayout {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             FACTOR *= detector.getScaleFactor();
-            FACTOR = Math.max(0.1f, Math.min(FACTOR, 10.f));
+            FACTOR = Math.max(1.0f, Math.min(FACTOR, 10.f));
             setScaleX(FACTOR);
             setScaleY(FACTOR);
             Log.d("Detection", "Scaling detected" + FACTOR);
