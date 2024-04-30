@@ -6,16 +6,15 @@ import org.springframework.web.socket.WebSocketSession;
 
 /**
  * Event that is fired when a player connects to the server
-
  */
 @Getter
 @Setter
-public class SessionConnectEvent {
+public class SessionConnectEvent extends Event{
 
-    private final WebSocketSession session;
-
-    public SessionConnectEvent(WebSocketSession session) {
-        this.session = session;
+    public SessionConnectEvent(
+            WebSocketSession session
+    ) {
+        super(session);
     }
 
 }

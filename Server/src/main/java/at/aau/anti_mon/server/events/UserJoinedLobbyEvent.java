@@ -1,34 +1,34 @@
 package at.aau.anti_mon.server.events;
 
-
-import at.aau.anti_mon.server.game.Lobby;
-import at.aau.anti_mon.server.game.Player;
+import at.aau.anti_mon.server.dtos.LobbyDTO;
+import at.aau.anti_mon.server.dtos.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
  * Event that is fired when a player joins a lobby
-
  */
-@Getter
-@Setter
-public class UserJoinedLobbyEvent {
-
-    private final Lobby lobby;
-    private final Player player;
-    private final WebSocketSession session;
+public class UserJoinedLobbyEvent extends Event {
 
 
-    public UserJoinedLobbyEvent(WebSocketSession session, Lobby lobby, Player player) {
-        this.session = session;
-        this.lobby = lobby;
-        this.player = player;
+    private final LobbyDTO lobbyDTO;
+    private final UserDTO userDTO;
+
+    public UserJoinedLobbyEvent(WebSocketSession session, LobbyDTO lobby, UserDTO user) {
+        super(session);
+        this.lobbyDTO = lobby;
+        this.userDTO = user;
     }
 
-    public int getPin(){
-        return lobby.getPin();
+    public String getUsername(){
+        return userDTO.getUsername();
     }
+
+    public Integer getPin(){
+        return lobbyDTO.getPin();
+    }
+
 
 }
 

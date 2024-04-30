@@ -5,6 +5,8 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 
 public class HeartBeatCommand implements Command{
@@ -19,6 +21,7 @@ public class HeartBeatCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        Log.println(Log.INFO,"Network", "CLIENT : HeartBeat empfangen: ");
+        Log.println(Log.INFO,"Network", "CLIENT : HeartBeat empfangen: "+data.getData().get("msg"));
+        queue.enqueueEvent(new HeartBeatEvent(data.getData().get("msg")));
     }
 }

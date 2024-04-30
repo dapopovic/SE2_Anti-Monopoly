@@ -13,9 +13,10 @@ public enum Commands {
     NEW_USER("NEW_USER"),
     CREATE_GAME("CREATE_GAME"),
     JOIN_GAME("JOIN_GAME"),
-    JOIN("JOIN"),
+    LEAVE_GAME("LEAVE_GAME"),
     HEARTBEAT("HEARTBEAT"),
     INFO("INFO"),
+    LOBBY_PLAYERS("LOBBY_PLAYERS"),
     ERROR("ERROR");
     // usw
 

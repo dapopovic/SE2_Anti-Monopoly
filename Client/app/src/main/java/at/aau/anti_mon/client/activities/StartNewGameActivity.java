@@ -24,13 +24,9 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.command.Command;
-import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.PinReceivedEvent;
-import at.aau.anti_mon.client.events.ReceiveMessageEvent;
-import at.aau.anti_mon.client.events.SendMessageEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
@@ -74,95 +70,68 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     /**
      * Event when the button "Create Game" is clicked
-     * Todo: better Intent handling
      * @param view
      */
     public void onCreateGameClicked(View view) {
+
         String username = usernameEditText.getText().toString();
+        webSocketClient.setUserId(username);
 
-        if (pin != null) {
-            Intent intent = new Intent(this, LobbyActivity.class);
-            intent.putExtra("username", username);
-            intent.putExtra("pin", pin);
-            startActivity(intent);
-        }else {
-            if (!username.isEmpty()) {
-                /*
-                 * Communication with Server -> send username to server -> get Pin
-                 */
-                JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-                jsonData.putData("username", username);
-                String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-                webSocketClient.sendMessageToServer(jsonDataString);
-                Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
-
-                if (pin != null) {
-                    // Den Username an die LobbyActivity übergeben:
-                    Intent intent = new Intent(this, LobbyActivity.class);
-                    intent.putExtra("username", username);
-                    intent.putExtra("pin", pin);
-                    startActivity(intent);
-                } else {
-                    Log.println(Log.DEBUG, "Network", "Pin is null");
-                    //Todo: Pop up message to user
-                }
-            }
+        if (!username.isEmpty() && pin == null) {
+            // Senden des Usernames zum Server, um eine neue Spielsession zu starten und einen Pin zu erhalten
+            JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
+            jsonData.putData("username", username);
+            String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+            webSocketClient.sendMessageToServer(jsonDataString);
+            Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Username sending for pin: " + jsonDataString);
+        } else if (pin != null) {
+            // Wenn der Pin schon vorhanden ist, direkt die LobbyActivity starten
+            startLobbyActivity(username, pin);
         }
     }
 
     /**
-     * Event to receive a message
+     * Event when the pin is received from the server
      * -> MAIN Thread to update UI
      * @param event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPinReceivedEvent(PinReceivedEvent event) {
-        Log.d("LobbyActivity", "Pin received: " + event.getPin());
+        Log.d("ANTI-MONOPOLY-DEBUG", "Pin received: " + event.getPin());
         if (!isFinishing()) {
             pin = event.getPin();
+            startLobbyActivity(usernameEditText.getText().toString(), pin);
         } else {
-            Log.d("LobbyActivity", "Activity is finishing. Cannot set pin.");
+            Log.d("ANTI-MONOPOLY-DEBUG", "Activity is finishing. Cannot set pin.");
         }
     }
 
-
-    public void onCancelStartNewGame(View view) {
-        Intent intent = new Intent(StartNewGameActivity.this, StartMenuActivity.class);
+    private void startLobbyActivity(String username, String pin) {
+        Intent intent = new Intent(this, LobbyActivity.class);
+        intent.putExtra("username", username);
+        intent.putExtra("pin", pin);
         startActivity(intent);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        if (webSocketClient != null) {
-            webSocketClient.disconnect();
-        }
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
+    public void onCancelStartNewGame(View view) {
+        // Go back to last Activity on Stack (StartMenuActivity)
+        finish();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        Log.d("LobbyActivity", "EventBus registered");
-        globalEventQueue.setEventBusReady(true);
-
-        if (webSocketClient != null) {
-            webSocketClient.connectToServer();
-        }
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus registered");
+        //globalEventQueue.setEventBusReady(true);
     }
 
     @Override
     protected void onStop() {
-        if (webSocketClient != null) {
-            webSocketClient.disconnect();
-        }
-
-        EventBus.getDefault().unregister(this);
-        Log.d("LobbyActivity", "EventBus unregistered");
-        globalEventQueue.setEventBusReady(false);
         super.onStop();
+        EventBus.getDefault().unregister(this);
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus unregistered");
+        //globalEventQueue.setEventBusReady(false);
     }
 
     @Override
