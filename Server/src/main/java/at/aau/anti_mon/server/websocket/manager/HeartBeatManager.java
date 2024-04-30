@@ -42,7 +42,6 @@ public class HeartBeatManager {
 
     /**
      * Sends a heartbeat message to all active sessions
-     * TODO: TEST
      */
     public void sendHeartbeatToAllSessions() {
         sessionManagementService.getAllSessions().values().forEach(this::sendHeartBeatMessage);
