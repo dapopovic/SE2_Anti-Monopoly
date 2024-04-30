@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -13,7 +13,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class Lobby extends AppCompatActivity {
+import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.activityGamefield;
+
+public class GameInstructionsActivity extends AppCompatActivity {
     public static String username;
     public static String Pin;
     @Override
@@ -36,12 +39,12 @@ public class Lobby extends AppCompatActivity {
     }
 
     public void onCancelLobby(View view) {
-        Intent intent = new Intent(Lobby.this, Start_new_Game.class);
+        Intent intent = new Intent(GameInstructionsActivity.this, StartNewGameActivity.class);
         startActivity(intent);
     }
 
     public void onStartGame(View view) {
-        Intent intent = new Intent(Lobby.this, activityGamefield.class);
+        Intent intent = new Intent(GameInstructionsActivity.this, activityGamefield.class);
         startActivity(intent);
     }
 }
