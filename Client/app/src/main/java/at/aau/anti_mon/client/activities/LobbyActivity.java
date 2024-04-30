@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.multidex.MultiDex;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,7 +24,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
@@ -36,6 +36,7 @@ import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
+import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 
 /**
  * LobbyActivity class to handle the lobby of the game
@@ -44,15 +45,15 @@ public class LobbyActivity extends AppCompatActivity{
 
 
     //////////////////////////////////// Android UI
-    TextView textViewPin;
+    TextView textView_pin;
     TextView[] userTextViews;
 
     HashMap<TextView, Boolean> availableTextViews = new HashMap<>();
 
 
     ///////////////////////////////////// Variablen
-    int numberOfUsers = 0;
-    private String username;
+    public String pin;
+    public String username = "TESTTESTTEST";
 
     ///////////////////////////////////// Networking
 
@@ -70,6 +71,8 @@ public class LobbyActivity extends AppCompatActivity{
 
     SharedPreferences sharedPreferences;
 
+    private LobbyViewModel lobbyViewModel;
+
 
 
     @Override
@@ -78,11 +81,16 @@ public class LobbyActivity extends AppCompatActivity{
 
         setContentView(R.layout.activity_lobby);
 
+        lobbyViewModel = new ViewModelProvider(this).get(LobbyViewModel.class);
+
+        // TODO:
         // SharedPreferences für zu speichernde Key-Value Paare
         sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();
+
+        setupLiveDataObservers();
 
         // Nachdem die UI initialisiert wurde und der EventBus registriert ist, Netzwerkdienste starten
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
@@ -111,33 +119,40 @@ public class LobbyActivity extends AppCompatActivity{
             availableTextViews.put(tv, true);
         }
 
-        textViewPin = findViewById(R.id.Pin);
+        textView_pin = findViewById(R.id.Pin);
 
         processIntent();
     }
 
     private void processIntent() {
-        if(getIntent().hasExtra("pin") && getIntent().hasExtra("username")) {
-            String pin = getIntent().getStringExtra("pin");
+        if (getIntent().hasExtra("username")) {
             username = getIntent().getStringExtra("username");
-            textViewPin.setText(pin);
             addUserToTable(username);
         } else {
-            Log.e(this.getLocalClassName(), "Intent has no pin or username");
-            Intent intent = new Intent(this, StartNewGameActivity.class);
-            startActivity(intent);
+            Log.e("ANTI-MONOPOLY-DEBUG", "Old Intent has no username");
+            // Todo: Error handling
+        }
+        if(getIntent().hasExtra("pin")) {
+            pin = getIntent().getStringExtra("pin");
+            textView_pin.setText(pin);
+        } else {
+            Log.e("ANTI-MONOPOLY-DEBUG", "Old Intent has no pin");
+            // Todo: Error handling
         }
     }
 
     private void addUserToTable(String username) {
         for (Map.Entry<TextView, Boolean> entry : availableTextViews.entrySet()) {
-            if (Boolean.TRUE.equals(entry.getValue())) {
+            if (entry.getValue()) {  // Prüfe, ob der TextView verfügbar ist
                 entry.getKey().setText(username);
-                availableTextViews.put(entry.getKey(), false);  // Markiere als belegt
+
+                Log.d("ANTI-MONOPOLY-DEBUG", "Added user to table: " + username);
+
+                availableTextViews.put(entry.getKey(), false);  // Markiere als besetzt
                 return;
             }
         }
-        Log.e(this.getLocalClassName(), "Kein verfügbarer Platz für neuen Benutzer.");
+        Log.e("LobbyActivity", "Kein verfügbarer Platz für neuen Benutzer.");
     }
 
     private void removeUserFromTable(String username) {
@@ -148,69 +163,110 @@ public class LobbyActivity extends AppCompatActivity{
                 return;
             }
         }
-        Log.e(this.getLocalClassName(), "Benutzername nicht gefunden.");
+        Log.e("ANTI-MONOPOLY-DEBUG", "Benutzername nicht gefunden.");
+    }
+
+    private void setPin(String pin) {
+        textView_pin.setText(pin);
+        Log.d("ANTI-MONOPOLY-DEBUG", "Pin set to: " + pin);
+
     }
 
 
     /**
-     * TODO: Use HashMap to store the users and use operations to add and remove users
+     * Events for non-UI related global events
      * @param event UserLeftLobbyEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserLeftLobbyEvent(UserLeftLobbyEvent event) {
+
+        Log.d("ANTI-MONOPOLY-DEBUG", "UserLeftLobbyEvent");
+
+        // TEST LiveData and Observer Pattern
         removeUserFromTable(event.getName());
     }
 
+    /**
+     * Events for non-UI related global events
+     * @param event UserJoinedLobbyEvent
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
+
+        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent");
+
+
+        // TEST LiveData and Observer Pattern
         addUserToTable(event.getName());
     }
 
-    public void onCancelLobby(View view) {
-        // -> go back to JoinGame/StartNewGameActivity
-        Intent intent = new Intent(this, StartNewGameActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (webSocketClient != null) {
-            webSocketClient.disconnect();
-        }
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
-    }
-
+    /**
+     * TODO: TEST
+     * Heartbeat to keep connection alive
+     * @param event HeartBeatEvent
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
+
+        Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent");
+
+
         JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
         jsonData.putData("msg", "PONG");
         String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonMessage);
     }
 
+    /**
+     * TEST LiveData and Observer Pattern
+     */
+    private void setupLiveDataObservers() {
+
+        // User joined: -> LiveData
+        lobbyViewModel.getUserJoinedLiveData().observe(this, this::addUserToTable);
+
+        // User left: -> LiveData
+        lobbyViewModel.getUserLeftLiveData().observe(this, this::removeUserFromTable);
+
+        // User Created Game: -> LiveData
+        lobbyViewModel.getGameCreatedLiveData().observe(this, this::setPin);
+    }
+
+    public void onCancelLobby(View view) {
+        // Leave Lobby
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
+        jsonData.putData("username", username);
+        jsonData.putData("pin", pin);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", " Username sending to leave Lobby:" + jsonDataString);
+
+        // Go back to last Activity on Stack (JoinGameActivity)
+        finish();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        Log.d(this.getLocalClassName(), "EventBus registered");
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus registered");
         globalEventQueue.setEventBusReady(true);
 
         if (webSocketClient != null) {
+            webSocketClient.setUserId(username);
             webSocketClient.connectToServer();
         }
     }
 
     @Override
     protected void onStop() {
+        super.onStop();
         if (webSocketClient != null) {
             webSocketClient.disconnect();
         }
-
         EventBus.getDefault().unregister(this);
-        Log.d(this.getLocalClassName(), "EventBus unregistered");
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus unregistered");
         globalEventQueue.setEventBusReady(false);
-        super.onStop();
     }
 
     @Override

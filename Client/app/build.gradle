@@ -91,16 +91,21 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
-    implementation(libs.okio)
-    implementation libs.okhttp3.okhttp
+
     implementation libs.retrofit
+
     implementation libs.converter.jackson
     implementation libs.jackson.databind
     implementation libs.jackson.core
     implementation libs.jackson.annotations
+
     implementation libs.multidex
-    implementation(libs.okhttpprofiler)
     implementation libs.eventbus
+
+    implementation(libs.okio)
+    implementation libs.okhttp3.okhttp
+    implementation(libs.okhttpprofiler)
+    implementation(libs.logging.interceptor)
 
     //implementation(libs.okhttp.v490)
 

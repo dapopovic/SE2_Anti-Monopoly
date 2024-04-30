@@ -1,23 +1,21 @@
 package at.aau.anti_mon.server.websocket.handler;
 
-import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.events.CreateLobbyEvent;
-import at.aau.anti_mon.server.events.SessionConnectEvent;
-import at.aau.anti_mon.server.events.SessionDisconnectEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.game.JsonDataDTO;
-import at.aau.anti_mon.server.game.Player;
-import at.aau.anti_mon.server.websocket.manager.JsonDataManager;
+import at.aau.anti_mon.server.commands.Command;
+import at.aau.anti_mon.server.commands.CommandFactory;
+import at.aau.anti_mon.server.events.*;
+import at.aau.anti_mon.server.game.*;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
+import at.aau.anti_mon.server.utilities.StringUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.JsonSyntaxException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.*;
 import org.tinylog.Logger;
+import java.net.InetSocketAddress;
+
 
 /**
  * This class handles incoming WebSocket messages and delegates them to the appropriate service.
@@ -25,129 +23,138 @@ import org.tinylog.Logger;
 @Component
 public class GameHandler implements WebSocketHandler {
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final  ApplicationEventPublisher eventPublisher;
+    private final CommandFactory gameCommandFactory;
 
     @Autowired
-    public GameHandler(ApplicationEventPublisher eventPublisher) {
+    public GameHandler(
+                       ApplicationEventPublisher eventPublisher
+    ) {
         this.eventPublisher = eventPublisher;
+        this.gameCommandFactory = new CommandFactory(eventPublisher);
     }
 
-
-    /**
-     * Diese Methode behandelt eingehende WebSocket-Nachrichten.
-     *
-     * @param session WebSocket-Sitzung
-     * @param message WebSocket-Nachricht
-     */
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) {
+    public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
-        String json = message.getPayload().toString();
 
-        Logger.info("SERVER : Nachricht empfangen: " + json);
-        JsonDataDTO jsonDataDTO;
-        try {
-            jsonDataDTO = JsonDataManager.parseJsonMessage(json);
-        } catch (JsonProcessingException e) {
-            Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
-            JsonDataManager.sendError(session, "Fehler beim Parsen der JSON-Nachricht.");
-            return;
-        }
-        Commands command = jsonDataDTO.getCommand();
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(message.getPayload().toString());
+        Logger.info("SERVER : Command: " + gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand()));
+        Command command = gameCommandFactory.getCommand(jsonDataDTO.getCommand().getCommand());
+       
         if (command == null) {
-            Logger.error("SERVER : JSON-Nachricht enthält kein 'command'-Attribut.");
-            JsonDataManager.sendError(session, "JSON-Nachricht enthält kein 'command'-Attribut.");
-            return;
+            Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
+            throw new IllegalArgumentException("Unbekannter oder nicht unterstützter Befehl: " + jsonDataDTO.getCommand().getCommand());
         }
-        try {
-            Logger.info("SERVER : Command: " + command.getCommand());
-            Logger.info("SERVER : Data: " + jsonDataDTO.getData());
-
-            switch (command) {
-                case CREATE_GAME -> {
-                    String playerName = jsonDataDTO.getData().get("username");
-                    if (playerName != null) {
-                        Player player = new Player(playerName, session);
-                        eventPublisher.publishEvent(new CreateLobbyEvent(session, player));
-                    } else {
-                        Logger.error("JSON 'data' ist null oder 'name' ist nicht vorhanden.");
-                        JsonDataManager.sendError(session, "JSON 'data' ist null oder 'name' ist nicht vorhanden.");
-                    }
-                }
-                case JOIN_GAME -> {
-                    String pinString = jsonDataDTO.getData().get("pin");
-                    String playerName = jsonDataDTO.getData().get("username");
-
-                    if (pinString != null && playerName != null) {
-                        int pin = Integer.parseInt(pinString);
-                        Player player = new Player(playerName, session);
-                        eventPublisher.publishEvent(new UserJoinedLobbyEvent(session, pin, player));
-
-                    } else {
-                        Logger.error("SERVER : Erforderliche Daten für 'JOIN_GAME' fehlen.");
-                        JsonDataManager.sendError(session, "Erforderliche Daten für 'JOIN_GAME' fehlen.");
-                    }
-                }
-                default -> {
-                    Logger.error("SERVER : Unbekannter oder nicht unterstützter Befehl: " + command);
-                    JsonDataManager.sendError(session, "Unbekannter oder nicht unterstützter Befehl: " + command);
-                }
-            }
-        } catch (JsonSyntaxException e) {
-            Logger.error("SERVER : Fehler beim Parsen der JSON-Nachricht: " + json);
-            JsonDataManager.sendError(session, "Fehler beim Parsen der JSON-Nachricht.");
-        }
+        command.execute(session, jsonDataDTO);
     }
+
 
 
     /**
      * Diese Methode wird aufgerufen, wenn ein Transportfehler auftritt.
      * Sie schließt die WebSocket-Sitzung und entfernt sie aus der Session-Verwaltung.
-     *
-     * @param session   WebSocket-Sitzung
+     * @param session WebSocket-Sitzung
      * @param exception Ausnahme
      * @throws Exception TODO: Exception
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        //String userID = extractUserID(session.getUri().getQuery());
+        //Logger.info( "Query " + session.getUri().getQuery() );
+
+        Logger.error("Transportfehler in Session " + session.getId() + ": " + exception.getMessage());
         if (session.isOpen()) {
-            session.close(CloseStatus.SERVER_ERROR.withReason("Transport error"));
+            session.close(CloseStatus.SERVER_ERROR.withReason(exception.getMessage()));
         }
-        eventPublisher.publishEvent(new SessionDisconnectEvent(session));
+
+        eventPublisher.publishEvent(new SessionDisconnectEvent(session
+        //        ,userID
+        ));
     }
 
     /**
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung hergestellt wird.
-     *
      * @param session WebSocket-Sitzung
-     * @throws Exception TODO: Exception
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        Logger.info("Neue WebSocket-Sitzung: " + session.getId());
-        eventPublisher.publishEvent(new SessionConnectEvent(session));
+
+        //////////////////////////////////////////////////////////////////// DEBUG
+        InetSocketAddress clientAddress = session.getRemoteAddress();
+        HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
+
+        if (clientAddress == null) {
+            Logger.error("RemoteAddress ist null");
+        }else {
+            Logger.info("Accepted connection from: {}:{}", clientAddress.getHostString(), clientAddress.getPort());
+            Logger.debug("Client hostname: {}", clientAddress.getHostName());
+            Logger.debug("Client ip: {}", clientAddress.getAddress().getHostAddress());
+            Logger.debug("Client port: {}", clientAddress.getPort());
+        }
+
+        if (session.getRemoteAddress() == null) {
+            Logger.error("RemoteAddress ist null");
+        }else {
+            Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
+            Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
+            Logger.debug("Session id: {}", session.getId());
+            Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
+            Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
+        }
+
+        if (session.getUri() == null) {
+            Logger.error("URI ist null");
+        }else {
+            Logger.debug("Session uri: {}", session.getUri().toString());
+            String userID = StringUtility.extractUserID(session.getUri().getQuery());
+            Logger.info( "Query " + session.getUri().getQuery() );
+            Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
+        }
+
+        //Logger.debug("Handshake header: User-Agent {}", handshakeHeaders.get("User-Agent").toString());
+        //Logger.debug("Handshake header: Sec-WebSocket-Extensions {}", handshakeHeaders.get("Sec-WebSocket-Extensions").toString());
+        //Logger.debug("Handshake header: Sec-WebSocket-Key {}", handshakeHeaders.get("Sec-WebSocket-Key").toString());
+        //Logger.debug("Handshake header: Sec-WebSocket-Version {}", handshakeHeaders.get("Sec-WebSocket-Version").toString());
+        //////////////////////////////////////////////////////////////////// DEBUG
+
+        eventPublisher.publishEvent(new SessionConnectEvent(session
+        //        ,userID
+        ));
     }
 
     /**
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung geschlossen wird.
-     *
-     * @param session     WebSocket-Sitzung
+     * @param session WebSocket-Sitzung
      * @param closeStatus Status
-     * @throws Exception TODO: Exception
      */
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
-        Logger.info("WebSocket-Sitzung geschlossen: " + session.getId());
-        eventPublisher.publishEvent(new SessionDisconnectEvent(session));
+    public void afterConnectionClosed(WebSocketSession session, @NotNull CloseStatus closeStatus) {
+        if (session.getRemoteAddress() == null) {
+            Logger.error("RemoteAddress ist null");
+        }else {
+            Logger.info("Connection closed by {}:{}", session.getRemoteAddress().getHostString(), session.getRemoteAddress().getPort());
+        }
+        Logger.info("WebSocket-Sitzung wird geschlossen: " + session.getId());
+
+        if (session.getUri() == null) {
+            Logger.error("URI ist null");
+        }else {
+            Logger.info( "Query " + session.getUri().getQuery() );
+        }
+
+        eventPublisher.publishEvent(new SessionDisconnectEvent(session
+              //  ,userID
+        ));
     }
 
     /**
      * Diese Methode gibt an, ob die WebSocket-Handler-Implementierung
-     *
      * @return true, wenn die Implementierung das Empfangen von Teilmeldungen unterstützt, andernfalls false
      */
     @Override
     public boolean supportsPartialMessages() {
         return false;
     }
+
 }

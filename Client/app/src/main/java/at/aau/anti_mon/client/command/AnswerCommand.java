@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.CreatedGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.TestEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 
 public class AnswerCommand implements Command {
@@ -17,9 +18,8 @@ public class AnswerCommand implements Command {
         this.queue = queue;
     }
 
-
     @Override
     public void execute(JsonDataDTO data) {
-        EventBus.getDefault().post(new CreatedGameEvent(data.getData().get("pin")));
+        EventBus.getDefault().post(new TestEvent(data.getData().get("msg")));
     }
 }

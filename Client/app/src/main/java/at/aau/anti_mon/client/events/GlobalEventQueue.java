@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.events;
 
+import android.util.Log;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.LinkedList;
@@ -14,6 +16,7 @@ public class GlobalEventQueue {
     private boolean isEventBusReady = false;
 
     public synchronized void enqueueEvent(Object event) {
+        Log.d("ANTI-MONOPOLY-DEBUG", "Enqueue Event: " + event);
         if (isEventBusReady) {
             EventBus.getDefault().post(event);
         } else {
@@ -21,7 +24,12 @@ public class GlobalEventQueue {
         }
     }
 
+    /**
+     * Set the EventBus ready
+     * @param ready
+     */
     public synchronized void setEventBusReady(boolean ready) {
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus ready: " + ready);
         isEventBusReady = ready;
         if (ready) {
             flushEvents();
@@ -29,6 +37,7 @@ public class GlobalEventQueue {
     }
 
     private void flushEvents() {
+        Log.d("ANTI-MONOPOLY-DEBUG", "Flush Events");
         while (!eventQueue.isEmpty()) {
             EventBus.getDefault().post(eventQueue.poll());
         }

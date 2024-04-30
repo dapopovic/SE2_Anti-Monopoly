@@ -16,8 +16,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -25,7 +23,6 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
-import at.aau.anti_mon.client.events.SendMessageEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
@@ -50,12 +47,6 @@ public class JoinGameActivity extends AppCompatActivity {
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        Button backBtn = findViewById(R.id.back);
-        backBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, StartMenuActivity.class);
-            startActivity(intent);
-        });
-
         usernameEditText = findViewById(R.id.editText_joinGame_Name);
         pinEditText = findViewById(R.id.editText_joinGame_Pin);
 
@@ -69,6 +60,12 @@ public class JoinGameActivity extends AppCompatActivity {
     public void onJoinGameClicked(View view) {
         String username = usernameEditText.getText().toString();
         String pin = pinEditText.getText().toString();
+
+        // add Name to Websocket URI
+        webSocketClient.setUserId(username);
+        if (!webSocketClient.isConnected()){
+            webSocketClient.connectToServer();
+        }
 
         if (!username.isEmpty() && !pin.isEmpty()) {
             JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN_GAME, new HashMap<>());
@@ -85,35 +82,35 @@ public class JoinGameActivity extends AppCompatActivity {
             // TODO: Abfrage welche Spieler alle in der Lobby sind
 
         }else {
-            Log.d("JoinGameActivity", "Username or pin is empty");
+            Log.d("ANTI-MONOPOLY-DEBUG", "Username or pin is empty");
             // TODO: Popup anzeigen
         }
     }
 
     public void onCancelJoinGame(View view) {
-        Intent intent = new Intent(JoinGameActivity.this, StartMenuActivity.class);
-        startActivity(intent);
+        // Go back to last Activity on Stack (StartMenuActivity)
+        finish();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (webSocketClient != null) {
-            webSocketClient.connectToServer();
-        }
+
+        // Test for MessageQueue and Session holding
+       //if (webSocketClient != null) {
+            //webSocketClient.setUserId(usernameEditText.getText().toString());
+       //     webSocketClient.connectToServer();
+       //}
     }
 
     @Override
     protected void onStop() {
+        super.onStop();
+
+        // Test for MessageQueue and Session holding
         if (webSocketClient != null) {
             webSocketClient.disconnect();
         }
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -121,5 +118,4 @@ public class JoinGameActivity extends AppCompatActivity {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
 }

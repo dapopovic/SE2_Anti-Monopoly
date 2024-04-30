@@ -12,11 +12,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Commands {
     ANSWER("ANSWER"),
     PIN("PIN"),
-    NEW_USER("NEW_USER"),
     CREATE_GAME("CREATE_GAME"),
+    LEAVE_GAME("LEAVE_GAME"),
     JOIN_GAME("JOIN_GAME"),
-    JOIN("JOIN"),
     HEARTBEAT("HEARTBEAT"),
+    NEW_USER("NEW_USER"),
     INFO("INFO"),
     ERROR("ERROR");
     // usw

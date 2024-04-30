@@ -14,9 +14,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -73,84 +70,68 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     /**
      * Event when the button "Create Game" is clicked
-     * @param view View
+     * @param view
      */
     public void onCreateGameClicked(View view) {
-        String username = usernameEditText.getText().toString();
 
-        if (username.isEmpty()) {
-            Snackbar.make(view, "Please enter a username", BaseTransientBottomBar.LENGTH_SHORT).show();
-            return;
+        String username = usernameEditText.getText().toString();
+        webSocketClient.setUserId(username);
+
+        if (!username.isEmpty() && pin == null) {
+            // Senden des Usernames zum Server, um eine neue Spielsession zu starten und einen Pin zu erhalten
+            JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
+            jsonData.putData("username", username);
+            String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+            webSocketClient.sendMessageToServer(jsonDataString);
+            Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Username sending for pin: " + jsonDataString);
+        } else if (pin != null) {
+            // Wenn der Pin schon vorhanden ist, direkt die LobbyActivity starten
+            startLobbyActivity(username, pin);
         }
-        /*
-         * Communication with Server -> send username to server -> get Pin
-         */
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-        jsonData.putData("username", username);
-        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-        webSocketClient.sendMessageToServer(jsonDataString);
-        Log.println(Log.DEBUG, "Network", " Username sending for pin:" + jsonDataString);
     }
 
     /**
-     * Event to receive a message
+     * Event when the pin is received from the server
      * -> MAIN Thread to update UI
-     * @param event ReceiveMessageEvent
+     * @param event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPinReceivedEvent(PinReceivedEvent event) {
-        Log.d(this.getLocalClassName(), "Pin received: " + event.getPin());
+        Log.d("ANTI-MONOPOLY-DEBUG", "Pin received: " + event.getPin());
         if (!isFinishing()) {
             pin = event.getPin();
-            String username = usernameEditText.getText().toString();
-            Intent intent = new Intent(this, LobbyActivity.class);
-            intent.putExtra("pin", pin);
-            intent.putExtra("username", username);
-            startActivity(intent);
+            startLobbyActivity(usernameEditText.getText().toString(), pin);
         } else {
-            Log.d("LobbyActivity", "Activity is finishing. Cannot set pin.");
+            Log.d("ANTI-MONOPOLY-DEBUG", "Activity is finishing. Cannot set pin.");
         }
     }
 
-
-
-    public void onCancelStartNewGame(View view) {
-        Intent intent = new Intent(StartNewGameActivity.this, StartMenuActivity.class);
+    private void startLobbyActivity(String username, String pin) {
+        Intent intent = new Intent(this, LobbyActivity.class);
+        intent.putExtra("username", username);
+        intent.putExtra("pin", pin);
         startActivity(intent);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        if (webSocketClient != null) {
-            webSocketClient.disconnect();
-        }
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
+    public void onCancelStartNewGame(View view) {
+        // Go back to last Activity on Stack (StartMenuActivity)
+        finish();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        Log.d(this.getLocalClassName(), "EventBus registered");
-        globalEventQueue.setEventBusReady(true);
-
-        if (webSocketClient != null) {
-            webSocketClient.connectToServer();
-        }
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus registered");
+        //globalEventQueue.setEventBusReady(true);
     }
 
     @Override
     protected void onStop() {
-        if (webSocketClient != null) {
-            webSocketClient.disconnect();
-        }
-
-        EventBus.getDefault().unregister(this);
-        Log.d("LobbyActivity", "EventBus unregistered");
-        globalEventQueue.setEventBusReady(false);
         super.onStop();
+        EventBus.getDefault().unregister(this);
+        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus unregistered");
+        //globalEventQueue.setEventBusReady(false);
     }
 
     @Override

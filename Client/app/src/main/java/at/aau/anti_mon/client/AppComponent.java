@@ -5,6 +5,7 @@ import at.aau.anti_mon.client.activities.LobbyActivity;
 import at.aau.anti_mon.client.activities.MainActivity;
 import at.aau.anti_mon.client.activities.StartNewGameActivity;
 import at.aau.anti_mon.client.networking.NetworkModule;
+import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 import dagger.Component;
 import javax.inject.Singleton;
 
@@ -25,5 +26,6 @@ public interface AppComponent {
     void inject (LobbyActivity lobbyActivity);
 
     void inject (JoinGameActivity joinGameActivity);
+
 
 }
