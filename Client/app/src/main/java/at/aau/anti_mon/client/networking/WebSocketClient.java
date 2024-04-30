@@ -16,6 +16,8 @@ import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import lombok.Getter;
+import lombok.Setter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -42,6 +44,8 @@ public class WebSocketClient {
      * URL for testing connection to se2-server
      */
     private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
+    @Getter
+    @Setter
     private WebSocket webSocket;
     private final OkHttpClient client;
     private final CommandFactory commandFactory;
