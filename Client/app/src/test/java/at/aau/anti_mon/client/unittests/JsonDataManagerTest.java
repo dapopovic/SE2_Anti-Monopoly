@@ -20,7 +20,7 @@ import at.aau.anti_mon.client.json.JsonDataManager;
 /**
  * Unit tests for the JsonDataManager
  */
-class JsonDataManagerUnitTest {
+class JsonDataManagerTest {
 
     @Test
     void createStringFromJsonMessageShouldReturnValidJson() throws JsonProcessingException {
