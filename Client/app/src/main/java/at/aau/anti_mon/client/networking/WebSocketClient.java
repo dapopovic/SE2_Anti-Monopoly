@@ -236,11 +236,6 @@ public class WebSocketClient {
         }
     }
 
-    // Simple method to demonstrate unit testing and test coverage with sonarcloud
-    public static String concatenateStrings(String first, String second) {
-        return first + " " + second;
-    }
-
     public LiveData<JsonDataDTO> getLiveData() {
         return liveData;
     }
