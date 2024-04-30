@@ -1,6 +1,5 @@
 package at.aau.anti_mon.client.json;
 
-
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
