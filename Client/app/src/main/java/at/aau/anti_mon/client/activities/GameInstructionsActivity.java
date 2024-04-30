@@ -38,13 +38,13 @@ public class GameInstructionsActivity extends AppCompatActivity {
         coll1.setText(username);
     }
 
-    public void onCancelLobby(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, StartNewGameActivity.class);
+    public void onStartGame(View view) {
+        Intent intent = new Intent(GameInstructionsActivity.this, activityGamefield.class);
         startActivity(intent);
     }
 
-    public void onStartGame(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, activityGamefield.class);
+    public void onCancelGameInstructions(View view) {
+        Intent intent = new Intent(GameInstructionsActivity.this, StartNewGameActivity.class);
         startActivity(intent);
     }
 }
