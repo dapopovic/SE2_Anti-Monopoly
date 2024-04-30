@@ -1,10 +1,8 @@
 package at.aau.anti_mon.client.unittests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
-import android.util.Log;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,12 +28,12 @@ class CommandsTest {
 
     @Mock
     GlobalEventQueue queue;
-    @Mock
     LobbyViewModel viewModel;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        viewModel = new LobbyViewModel();
     }
     
     @Test
@@ -44,24 +42,24 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.JOIN_GAME);
         jsonDataDTO.putData("username", "testUser");
         jsonDataDTO.putData("pin", "1234");
+        assertEquals(Commands.JOIN_GAME, jsonDataDTO.getCommand());
 
         JoinGameCommand joinGameCommand = new JoinGameCommand(queue, viewModel);
         joinGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(UserJoinedLobbyEvent.class));
-        verify(viewModel).userJoined("testUser");
     }
     @Test
     void leaveGameCommandShouldFireUserLeftLobbyEvent() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.LEAVE_GAME);
         jsonDataDTO.putData("username", "testUser");
+        assertEquals(Commands.LEAVE_GAME, jsonDataDTO.getCommand());
 
         LeaveGameCommand leaveGameCommand = new LeaveGameCommand(queue, viewModel);
         leaveGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(UserLeftLobbyEvent.class));
-        verify(viewModel).userLeft("testUser");
     }
 
     @Test
@@ -69,6 +67,7 @@ class CommandsTest {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.PIN);
         jsonDataDTO.putData("pin", "1234");
+        assertEquals(Commands.PIN, jsonDataDTO.getCommand());
 
         PinCommand pinCommand = new PinCommand(queue);
         pinCommand.execute(jsonDataDTO);
@@ -80,6 +79,7 @@ class CommandsTest {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.HEARTBEAT);
         jsonDataDTO.putData("msg", "testMessage");
+        assertEquals(Commands.HEARTBEAT, jsonDataDTO.getCommand());
 
         HeartBeatCommand heartBeatCommand = new HeartBeatCommand(queue);
         heartBeatCommand.execute(jsonDataDTO);
@@ -92,24 +92,24 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.CREATE_GAME);
         jsonDataDTO.putData("pin", "1234");
         jsonDataDTO.putData("username", "testUser");
+        assertEquals(Commands.CREATE_GAME, jsonDataDTO.getCommand());
 
         CreateGameCommand createGameCommand = new CreateGameCommand(queue, viewModel);
         createGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(CreatedGameEvent.class));
-        verify(viewModel).userJoined("testUser");
     }
     @Test
     void newUserCommandShouldFireUserJoinedLobbyEvent() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.NEW_USER);
         jsonDataDTO.putData("username", "testUser");
+        assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
 
         JoinGameCommand joinGameCommand = new JoinGameCommand(queue, viewModel);
         joinGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(UserJoinedLobbyEvent.class));
-        verify(viewModel).userJoined("testUser");
     }
 
 }

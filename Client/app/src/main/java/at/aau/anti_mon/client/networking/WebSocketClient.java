@@ -133,27 +133,20 @@ public class WebSocketClient {
      * Handles incoming messages from the server
      * @param text The message from the server
      */
-    private void handleIncomingMessage(String text){
-        try {
-            Log.d("ANTI-MONOPOLY-DEBUG", "Received message: " + text);
-            JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
-            if (jsonDataDTO != null) {
-                Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
-                if (command != null) {
-                    command.execute(jsonDataDTO);
-
-                    // Test: try LiveData
-                    liveData.postValue(jsonDataDTO);  // Update LiveData for UI-related updates
-
-                } else {
-                    Log.w("ANTI-MONOPOLY-DEBUG", "Received unknown command: " + jsonDataDTO.getCommand());
-                }
-            } else {
-                Log.e("ANTI-MONOPOLY-DEBUG", "Failed to parse JSON message");
-            }
-        } catch (Exception e) {
-            Log.e("ANTI-MONOPOLY-DEBUG", "Error handling incoming message", e);
+    private void handleIncomingMessage(String text) {
+        Log.d("ANTI-MONOPOLY-DEBUG", "Received message: " + text);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
+        if (jsonDataDTO == null) {
+            Log.e("ANTI-MONOPOLY-DEBUG", "Failed to parse JSON message");
+            return;
         }
+        if (jsonDataDTO.getCommand() == null) {
+            Log.e("ANTI-MONOPOLY-DEBUG", "Received message without command");
+            return;
+        }
+        Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
+        command.execute(jsonDataDTO);
+        liveData.postValue(jsonDataDTO);
     }
 
 
@@ -238,6 +231,9 @@ public class WebSocketClient {
 
     public LiveData<JsonDataDTO> getLiveData() {
         return liveData;
+    }
+    public WebSocketListener getWebSocketListener() {
+        return createWebSocketListener();
     }
 
     public void setUserId(String userID) {
