@@ -165,10 +165,7 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>**/dtos/**</exclude>
                                 <exclude>**/server/ServerApplication.*</exclude>
-                                <exclude>**/game/Session.*</exclude>
-                                <exclude>**/game/Savegame.*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
