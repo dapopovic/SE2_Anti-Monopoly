@@ -16,6 +16,8 @@ import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import lombok.Getter;
+import lombok.Setter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -42,6 +44,9 @@ public class WebSocketClient {
      * URL for testing connection to se2-server
      */
     private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
+    private static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
+    @Getter
+    @Setter
     private WebSocket webSocket;
     private final OkHttpClient client;
     private final CommandFactory commandFactory;
@@ -66,15 +71,28 @@ public class WebSocketClient {
      * Connects to the server
      */
     public synchronized void connectToServer() {
-        Log.d("ANTI-MONOPOLY-DEBUG", "Connecting to server");
+        Log.d(DEBUG_TAG, "Connecting to server");
         // Mehrfache Verbindungen verhindern:
         if (webSocket != null || userID == null){
-            Log.d("ANTI-MONOPOLY-DEBUG", "Connection already established or no userID set");
+            Log.d(DEBUG_TAG, "Connection already established or no userID set");
             return;
         }
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
         String urlWithUserId = BASE_WEBSOCKET_URI + userID;
+        Request request = new Request.Builder().url(urlWithUserId).build();
+        webSocket = client.newWebSocket(request, createWebSocketListener());
+    }
+    public synchronized void connectToServer(String uri) {
+        Log.d(DEBUG_TAG, "Connecting to server");
+        // Mehrfache Verbindungen verhindern:
+        if (webSocket != null || userID == null){
+            Log.d(DEBUG_TAG, "Connection already established or no userID set");
+            return;
+        }
+
+        // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
+        String urlWithUserId = uri + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
@@ -87,7 +105,7 @@ public class WebSocketClient {
         return new WebSocketListener() {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Opened Connection: " + response.message());
+                Log.println(Log.DEBUG, DEBUG_TAG, "Opened Connection: " + response.message());
 
                 isConnected = true;
                 // Versuche alle wartenden Nachrichten zu senden
@@ -101,7 +119,7 @@ public class WebSocketClient {
 
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
-                Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Closed Connection " + reason);
+                Log.println(Log.DEBUG, DEBUG_TAG, "Closed Connection " + reason);
 
                 isConnected = false;
                 WebSocketClient.this.webSocket = null;
@@ -110,17 +128,17 @@ public class WebSocketClient {
             @Override
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
                 String errorMessage = (response != null) ? response.message() : "No response";
-                Log.e("ANTI-MONOPOLY-DEBUG", "WebSocket - Failure - Error: " + t.getMessage() + ", Response Message: " + errorMessage);
+                Log.e(DEBUG_TAG, "WebSocket - Failure - Error: " + t.getMessage() + ", Response Message: " + errorMessage);
 
                 isConnected = false;
 
                 if (response != null) {
-                    Log.e("ANTI-MONOPOLY-DEBUG", "WebSocket - Failure - Response Message: " + response.message());
+                    Log.e(DEBUG_TAG, "WebSocket - Failure - Response Message: " + response.message());
                 } else {
-                    Log.e("ANTI-MONOPOLY-DEBUG", "WebSocket - Failure - Received null response");
+                    Log.e(DEBUG_TAG, "WebSocket - Failure - Received null response");
                 }
                 WebSocketClient.this.webSocket = null;
-                Log.e("ANTI-MONOPOLY-DEBUG", "Connection Failure", t);
+                Log.e(DEBUG_TAG, "Connection Failure", t);
 
                 // TODO: Eventuell erneut versuchen, die Verbindung herzustellen ?
                 connectToServer();  // TEST!
@@ -133,27 +151,20 @@ public class WebSocketClient {
      * Handles incoming messages from the server
      * @param text The message from the server
      */
-    private void handleIncomingMessage(String text){
-        try {
-            Log.d("ANTI-MONOPOLY-DEBUG", "Received message: " + text);
-            JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
-            if (jsonDataDTO != null) {
-                Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
-                if (command != null) {
-                    command.execute(jsonDataDTO);
-
-                    // Test: try LiveData
-                    liveData.postValue(jsonDataDTO);  // Update LiveData for UI-related updates
-
-                } else {
-                    Log.w("ANTI-MONOPOLY-DEBUG", "Received unknown command: " + jsonDataDTO.getCommand());
-                }
-            } else {
-                Log.e("ANTI-MONOPOLY-DEBUG", "Failed to parse JSON message");
-            }
-        } catch (Exception e) {
-            Log.e("ANTI-MONOPOLY-DEBUG", "Error handling incoming message", e);
+    private void handleIncomingMessage(String text) {
+        Log.d(DEBUG_TAG, "Received message: " + text);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
+        if (jsonDataDTO == null) {
+            Log.e(DEBUG_TAG, "Failed to parse JSON message");
+            return;
         }
+        if (jsonDataDTO.getCommand() == null) {
+            Log.e(DEBUG_TAG, "Received message without command");
+            return;
+        }
+        Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
+        command.execute(jsonDataDTO);
+        liveData.postValue(jsonDataDTO);
     }
 
 
@@ -161,7 +172,7 @@ public class WebSocketClient {
      * Sends a message to the server if the connection is established or queues the message if the connection is not established yet
      */
     public void sendMessageToServer(String message) {
-        Log.d("ANTI-MONOPOLY-DEBUG", "Sending message to server: " + message);
+        Log.d(DEBUG_TAG, "Sending message to server: " + message);
 
         if (webSocket != null && isConnected) {
             flushMessageQueue();
@@ -187,9 +198,9 @@ public class WebSocketClient {
      */
     private void sendWebSocketMessage(String message) {
         if (webSocket != null && webSocket.send(message)) {
-            Log.d("ANTI-MONOPOLY-DEBUG", "Message sent: " + message);
+            Log.d(DEBUG_TAG, "Message sent: " + message);
         } else {
-            Log.e("ANTI-MONOPOLY-DEBUG", "Failed to send message, requeuing");
+            Log.e(DEBUG_TAG, "Failed to send message, requeuing");
             // Füge die Nachricht erneut zur Queue hinzu, wenn das Senden fehlschlägt
             messageQueue.add(message);
         }
@@ -201,9 +212,9 @@ public class WebSocketClient {
      */
     public void sendJsonData(JsonDataDTO message) {
         if (webSocket != null && webSocket.send(Objects.requireNonNull(JsonDataManager.createJsonMessage(message)))) {
-            Log.d("ANTI-MONOPOLY-DEBUG", "Message sent: " + message);
+            Log.d(DEBUG_TAG, "Message sent: " + message);
         } else {
-            Log.e("ANTI-MONOPOLY-DEBUG", "Failed to send message or WebSocket not connected");
+            Log.e(DEBUG_TAG, "Failed to send message or WebSocket not connected");
         }
     }
 
@@ -236,13 +247,11 @@ public class WebSocketClient {
         }
     }
 
-    // Simple method to demonstrate unit testing and test coverage with sonarcloud
-    public static String concatenateStrings(String first, String second) {
-        return first + " " + second;
-    }
-
     public LiveData<JsonDataDTO> getLiveData() {
         return liveData;
+    }
+    public WebSocketListener getWebSocketListener() {
+        return createWebSocketListener();
     }
 
     public void setUserId(String userID) {

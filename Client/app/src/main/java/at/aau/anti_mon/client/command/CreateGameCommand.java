@@ -26,6 +26,7 @@ public class CreateGameCommand implements Command{
         //EventBus.getDefault().post(new CreatedGameEvent(data.getData().get("pin")));
 
         // Verwenden von EventBus für nicht-UI-bezogene globale Ereignisse
+        System.out.println("CreateGameCommand: " + data.getData().get("pin"));
         queue.enqueueEvent(new CreatedGameEvent(data.getData().get("pin")));
 
         // Update LiveData for UI-bound updates
