@@ -22,6 +22,7 @@ import at.aau.anti_mon.client.networking.NetworkModule;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class WebSocketClientTest extends AntiMonopolyApplication {
+    private static final String BASE_URL = "ws://localhost:8080/game?userID=";
 
     @Inject
     WebSocketClient client;
@@ -39,7 +40,7 @@ public class WebSocketClientTest extends AntiMonopolyApplication {
     @Test
     void testNewCreateGameCommandAndGetPin() {
         client.setUserId("test");
-        client.connectToServer();
+        client.connectToServer(BASE_URL + "test");
         assertTrue(client.isConnected());
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
@@ -49,7 +50,7 @@ public class WebSocketClientTest extends AntiMonopolyApplication {
 
         client.sendMessageToServer(message);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             fail("Thread interrupted");
         }
