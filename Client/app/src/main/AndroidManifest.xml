@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".AntiMonopolyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -29,6 +30,15 @@
             android:theme="@style/AppTheme_PopUp" />
         <activity
             android:name=".activityGamefield"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.JoinGameActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.LobbyActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.LoadGameActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity

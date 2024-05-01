@@ -3,6 +3,7 @@ package at.aau.anti_mon.client;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import at.aau.anti_mon.client.activities.StartMenuActivity;
 
 public class activityGamefield extends AppCompatActivity {
 
@@ -26,6 +29,7 @@ public class activityGamefield extends AppCompatActivity {
     }
 
     public void onSettings(View view) {
+        Log.d("Settings", "Settings");
         Intent i = new Intent(getApplicationContext(),PopActivitySettings.class);
         startActivity(i);
     }
@@ -37,6 +41,11 @@ public class activityGamefield extends AppCompatActivity {
 
     public void onObjects(View view) {
         Intent i = new Intent(getApplicationContext(),PopActivityObjects.class);
+        startActivity(i);
+    }
+
+    public void onFinish(View view) {
+        Intent i = new Intent(getApplicationContext(), StartMenuActivity.class);
         startActivity(i);
     }
 }

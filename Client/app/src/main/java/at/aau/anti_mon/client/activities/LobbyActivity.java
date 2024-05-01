@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.activityGamefield;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -245,6 +246,12 @@ public class LobbyActivity extends AppCompatActivity{
         finish();
     }
 
+    public void onStartGame(View view) {
+        // open Activity to start the game
+        Intent intent = new Intent(this, activityGamefield.class);
+        startActivity(intent);
+
+    }
     @Override
     protected void onStart() {
         super.onStart();
