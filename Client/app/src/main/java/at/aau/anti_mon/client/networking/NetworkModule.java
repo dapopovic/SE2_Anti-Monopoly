@@ -7,6 +7,7 @@ import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;

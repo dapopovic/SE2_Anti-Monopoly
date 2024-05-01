@@ -83,6 +83,19 @@ public class WebSocketClient {
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
+    public synchronized void connectToServer(String uri) {
+        Log.d(DEBUG_TAG, "Connecting to server");
+        // Mehrfache Verbindungen verhindern:
+        if (webSocket != null || userID == null){
+            Log.d(DEBUG_TAG, "Connection already established or no userID set");
+            return;
+        }
+
+        // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
+        String urlWithUserId = uri + userID;
+        Request request = new Request.Builder().url(urlWithUserId).build();
+        webSocket = client.newWebSocket(request, createWebSocketListener());
+    }
 
     /**
      * Creates a WebSocketListener to handle WebSocket events

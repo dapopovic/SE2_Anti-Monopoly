@@ -63,7 +63,7 @@ tasks.register('jacocoTestReport', JacocoReport) {
         xml.destination file("${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
     }
 
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/activities/**', '**/client/*.*', '**/networking/NetworkModule*.*']
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/activities/**', '**/client/*.*']
     def debugTree = fileTree(dir: "${project.layout.buildDirectory.get().asFile}/intermediates/javac/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 
@@ -92,7 +92,9 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.runner
     testImplementation libs.mockito.core
+    testImplementation libs.mockwebserver
 
 
     implementation libs.retrofit
@@ -115,8 +117,12 @@ dependencies {
     // Dagger Dependency Injection
     implementation libs.dagger.android
     implementation libs.dagger.android.support
+    testImplementation libs.dagger.android.support
+    testImplementation libs.dagger.android.processor
     annotationProcessor libs.dagger.android.processor
     annotationProcessor libs.dagger.compiler
+    testAnnotationProcessor libs.dagger.android.processor
+    testAnnotationProcessor libs.dagger.compiler
 
 
     testImplementation libs.junit
