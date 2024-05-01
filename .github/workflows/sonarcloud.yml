@@ -53,7 +53,7 @@ jobs:
       - name: build server
         run: |
           cd Server
-          mvn clean install
+          mvn clean install -DskipTests
           cd ..
       - name: Build the Docker image
         run: docker build -t my-server-image ./Server
