@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import at.aau.anti_mon.client.R;
 
 public class CustomView_Gamefield extends ConstraintLayout {
     private ScaleGestureDetector scaleGestureDetector;

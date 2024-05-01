@@ -1,9 +1,11 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,12 +13,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class PopActivityHandel extends Activity {
+import at.aau.anti_mon.client.R;
+
+public class PopActivitySettings extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pop_handel);
+        setContentView(R.layout.activity_pop_settings);
         try {
             getActionBar().hide();
         } catch (Exception e) {
@@ -30,9 +34,10 @@ public class PopActivityHandel extends Activity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width*.8),(int)(height*.8));
+
     }
 
-    public void onX(View view) {
+    public void onSettingX(View view) {
         finish();
     }
 }
