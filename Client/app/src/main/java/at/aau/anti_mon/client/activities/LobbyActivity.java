@@ -247,7 +247,7 @@ public class LobbyActivity extends AppCompatActivity{
 
     public void onStartGame(View view) {
         // open Activity to start the game
-        Intent intent = new Intent(this, activityGamefield.class);
+        Intent intent = new Intent(this, ActivityGamefield.class);
         startActivity(intent);
 
     }

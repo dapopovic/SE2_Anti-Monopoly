@@ -38,7 +38,7 @@ public class GameInstructionsActivity extends AppCompatActivity {
     }
 
     public void onStartGame(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, activityGamefield.class);
+        Intent intent = new Intent(GameInstructionsActivity.this, ActivityGamefield.class);
         startActivity(intent);
     }
 

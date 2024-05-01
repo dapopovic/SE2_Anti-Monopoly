@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import at.aau.anti_mon.client.R;
 
-public class activityGamefield extends AppCompatActivity {
+public class ActivityGamefield extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,6 @@ public class activityGamefield extends AppCompatActivity {
     }
 
     public void onSettings(View view) {
-        Log.d("Settings", "Settings");
         Intent i = new Intent(getApplicationContext(),PopActivitySettings.class);
         startActivity(i);
     }
