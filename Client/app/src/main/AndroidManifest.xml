@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".AntiMonopolyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,19 +17,28 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".PopActivityObjects"
+            android:name=".activities.PopActivityObjects"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp"/>
         <activity
-            android:name=".PopActivityHandel"
+            android:name=".activities.PopActivityHandel"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".PopActivitySettings"
+            android:name=".activities.PopActivitySettings"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activityGamefield"
+            android:name=".activities.ActivityGamefield"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.JoinGameActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.LobbyActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.LoadGameActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity

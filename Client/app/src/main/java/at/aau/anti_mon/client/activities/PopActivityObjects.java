@@ -1,27 +1,27 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import java.util.Objects;
 
-public class PopActivityHandel extends Activity {
+import at.aau.anti_mon.client.R;
+
+public class PopActivityObjects extends Activity {
+    private int layout = R.layout.activity_pop_objects;
+    public PopActivityObjects() {
+    }
+    public PopActivityObjects(int layout) {
+        this.layout = layout;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pop_handel);
-        try {
-            getActionBar().hide();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        setContentView(layout);
+        Objects.requireNonNull(getActionBar()).hide();
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

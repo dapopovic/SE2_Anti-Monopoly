@@ -1,8 +1,8 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -11,7 +11,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class activityGamefield extends AppCompatActivity {
+import at.aau.anti_mon.client.R;
+
+public class ActivityGamefield extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,11 @@ public class activityGamefield extends AppCompatActivity {
 
     public void onObjects(View view) {
         Intent i = new Intent(getApplicationContext(),PopActivityObjects.class);
+        startActivity(i);
+    }
+
+    public void onFinish(View view) {
+        Intent i = new Intent(getApplicationContext(), StartMenuActivity.class);
         startActivity(i);
     }
 }

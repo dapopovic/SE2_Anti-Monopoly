@@ -14,7 +14,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.activityGamefield;
 
 public class GameInstructionsActivity extends AppCompatActivity {
     public static String username;
@@ -39,7 +38,7 @@ public class GameInstructionsActivity extends AppCompatActivity {
     }
 
     public void onStartGame(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, activityGamefield.class);
+        Intent intent = new Intent(GameInstructionsActivity.this, ActivityGamefield.class);
         startActivity(intent);
     }
 
