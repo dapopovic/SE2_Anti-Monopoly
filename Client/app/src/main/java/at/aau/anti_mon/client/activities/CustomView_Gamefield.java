@@ -96,10 +96,10 @@ public class CustomView_Gamefield extends ConstraintLayout {
         int location;
         switch (name){
             case "Triangle":
-                figureid = "Dreieck";
+                figureid = "Triangle";
                 location = TriangleLocation;
             case "Square":
-                figureid = "Viereck";
+                figureid = "Square";
                 location = SquareLocation;
             case "Kreis":
                 figureid = "Kreis";
@@ -113,8 +113,7 @@ public class CustomView_Gamefield extends ConstraintLayout {
         int goal = location + dicenumber;
         while (location>goal){
             location++;
-            String newLocation = String.valueOf(location);
-            ImageView field = findViewById(getID(newLocation));
+            ImageView field = findViewById(getID(String.valueOf(location)));
             Figure.setX(field.getX());
             Figure.setY(field.getY());
         }
