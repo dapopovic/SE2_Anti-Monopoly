@@ -15,6 +15,7 @@ import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.CreateGameCommand;
+import at.aau.anti_mon.client.command.DiceNumberCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
@@ -105,6 +106,11 @@ public class NetworkModule {
     Command providePinCommand(GlobalEventQueue queue) {
         return new PinCommand(queue);
     }
+
+    @Provides
+    @IntoMap
+    @StringKey("DICENUMBER")
+    Command provideDiceNumberCommand(GlobalEventQueue queue){return new DiceNumberCommand(queue);}
 
 
     @Provides

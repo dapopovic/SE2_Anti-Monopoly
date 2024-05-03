@@ -15,7 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 
 public class CustomView_Gamefield extends ConstraintLayout {
     private ScaleGestureDetector scaleGestureDetector;
@@ -81,6 +85,27 @@ public class CustomView_Gamefield extends ConstraintLayout {
         public boolean onDown(MotionEvent e) {
             return true;
         }
+    }
+
+    @Subscribe
+    public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event){
+        Log.d("onDiceNumberReceivedEvent","We are here");
+        /*Integer dicenumber = event.getDicenumber();
+        String name = event.getName();
+        String position = "rom"+1;
+        Resources res = getResources();
+        int id = res.getIdentifier("start_field","id",getContext().getPackageName());
+        ImageView Startfield = findViewById(R.id.start_field);
+        Float Startfieldx = Startfield.getX();
+        Float Startfieldy = Startfield.getY();
+
+        switch (name){
+            case "Dreieck":
+
+            case "Viereck":
+
+            case "Kreis":
+        }*/
     }
 
 }

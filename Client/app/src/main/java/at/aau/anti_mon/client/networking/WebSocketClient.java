@@ -37,7 +37,7 @@ public class WebSocketClient {
      * https://developer.android.com/studio/run/emulator-networking
      */
    // private static final String WEBSOCKET_URI = "ws://10.0.2.2:51234/game";
-   // private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
+    private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
    //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
 
     /**
