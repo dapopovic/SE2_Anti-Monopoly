@@ -121,7 +121,7 @@ public class CustomView_Gamefield extends ConstraintLayout {
     }
 
     public int getID(String fieldid){
-        return getResources().getIdentifier(fieldid,"id",null);
+        return getResources().getIdentifier("field"+fieldid,"id",null);
     }
 
 

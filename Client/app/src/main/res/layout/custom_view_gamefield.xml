@@ -35,7 +35,7 @@
         app:srcCompat="@drawable/field_square" />
 
     <ImageView
-        android:id="@+id/start_field"
+        android:id="@+id/field1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
@@ -45,7 +45,7 @@
         app:srcCompat="@drawable/start" />
 
     <ImageView
-        android:id="@+id/prison"
+        android:id="@+id/field11"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
@@ -55,7 +55,7 @@
         app:srcCompat="@drawable/price_war" />
 
     <ImageView
-        android:id="@+id/sitting_field"
+        android:id="@+id/field21"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
@@ -65,7 +65,7 @@
         app:srcCompat="@drawable/sitting" />
 
     <ImageView
-        android:id="@+id/unlucky_field"
+        android:id="@+id/field31"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
@@ -75,414 +75,414 @@
         app:srcCompat="@drawable/unlucky_field" />
 
     <ImageView
-        android:id="@+id/rom"
+        android:id="@+id/field2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/start_field"
-        app:layout_constraintLeft_toRightOf="@id/rom2"
+        app:layout_constraintRight_toLeftOf="@id/field1"
+        app:layout_constraintLeft_toRightOf="@id/field3"
         app:layout_constraintHorizontal_chainStyle="spread_inside"/>
 
     <ImageView
-        android:id="@+id/rom2"
+        android:id="@+id/field3"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom"
-        app:layout_constraintLeft_toRightOf="@id/rom3"/>
+        app:layout_constraintRight_toLeftOf="@id/field2"
+        app:layout_constraintLeft_toRightOf="@id/field4"/>
 
     <ImageView
-        android:id="@+id/rom3"
+        android:id="@+id/field4"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/rom_2"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom2"
-        app:layout_constraintLeft_toRightOf="@id/rom4"/>
+        app:layout_constraintRight_toLeftOf="@id/field3"
+        app:layout_constraintLeft_toRightOf="@id/field5"/>
 
     <ImageView
-        android:id="@+id/rom4"
+        android:id="@+id/field5"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/income_tax"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom3"
-        app:layout_constraintLeft_toRightOf="@id/rom5"/>
+        app:layout_constraintRight_toLeftOf="@id/field4"
+        app:layout_constraintLeft_toRightOf="@id/field6"/>
 
     <ImageView
-        android:id="@+id/rom5"
+        android:id="@+id/field6"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/flughafen"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom4"
-        app:layout_constraintLeft_toRightOf="@id/rom6"/>
+        app:layout_constraintRight_toLeftOf="@id/field5"
+        app:layout_constraintLeft_toRightOf="@id/field7"/>
 
     <ImageView
-        android:id="@+id/rom6"
+        android:id="@+id/field7"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/berlin_1"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom5"
-        app:layout_constraintLeft_toRightOf="@id/rom7"/>
+        app:layout_constraintRight_toLeftOf="@id/field6"
+        app:layout_constraintLeft_toRightOf="@id/field8"/>
 
     <ImageView
-        android:id="@+id/rom7"
+        android:id="@+id/field8"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom6"
-        app:layout_constraintLeft_toRightOf="@id/rom8"/>
+        app:layout_constraintRight_toLeftOf="@id/field7"
+        app:layout_constraintLeft_toRightOf="@id/field9"/>
 
     <ImageView
-        android:id="@+id/rom8"
+        android:id="@+id/field9"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/berlin_2"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom7"
-        app:layout_constraintLeft_toRightOf="@id/rom9"/>
+        app:layout_constraintRight_toLeftOf="@id/field8"
+        app:layout_constraintLeft_toRightOf="@id/field10"/>
 
     <ImageView
-        android:id="@+id/rom9"
+        android:id="@+id/field10"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/berlin_3"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom8"
-        app:layout_constraintLeft_toRightOf="@id/prison"/>
+        app:layout_constraintRight_toLeftOf="@id/field9"
+        app:layout_constraintLeft_toRightOf="@id/field11"/>
 
 
 
 
     <ImageView
-        android:id="@+id/left_1"
+        android:id="@+id/field20"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/sitting_field"
-        app:layout_constraintBottom_toTopOf="@id/left_2"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field21"
+        app:layout_constraintBottom_toTopOf="@id/field19"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_2"
+        android:id="@+id/field19"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/left_1"
-        app:layout_constraintBottom_toTopOf="@id/left_3"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field20"
+        app:layout_constraintBottom_toTopOf="@id/field18"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_3"
+        android:id="@+id/field18"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/left_2"
-        app:layout_constraintBottom_toTopOf="@id/left_4"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field19"
+        app:layout_constraintBottom_toTopOf="@id/field17"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_4"
+        android:id="@+id/field17"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/left_3"
-        app:layout_constraintBottom_toTopOf="@id/left_5"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field18"
+        app:layout_constraintBottom_toTopOf="@id/field16"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_5"
+        android:id="@+id/field16"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/left_4"
-        app:layout_constraintBottom_toTopOf="@id/left_6"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field17"
+        app:layout_constraintBottom_toTopOf="@id/field15"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_6"
+        android:id="@+id/field15"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/madrid_3"
-        app:layout_constraintTop_toBottomOf="@id/left_5"
-        app:layout_constraintBottom_toTopOf="@id/left_7"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field16"
+        app:layout_constraintBottom_toTopOf="@id/field14"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_7"
+        android:id="@+id/field14"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/madrid_2"
-        app:layout_constraintTop_toBottomOf="@id/left_6"
-        app:layout_constraintBottom_toTopOf="@id/left_8"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field15"
+        app:layout_constraintBottom_toTopOf="@id/field13"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_8"
+        android:id="@+id/field13"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/madrid_2"
-        app:layout_constraintTop_toBottomOf="@id/left_7"
-        app:layout_constraintBottom_toTopOf="@id/left_9"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field14"
+        app:layout_constraintBottom_toTopOf="@id/field12"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/left_9"
+        android:id="@+id/field12"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@drawable/madrid_1"
-        app:layout_constraintTop_toBottomOf="@id/left_8"
-        app:layout_constraintBottom_toTopOf="@id/prison"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintTop_toBottomOf="@id/field13"
+        app:layout_constraintBottom_toTopOf="@id/field11"
+        app:layout_constraintEnd_toEndOf="@id/field21"
         app:layout_constraintStart_toStartOf="@id/field_square"
         />
 
     <ImageView
-        android:id="@+id/top_1"
+        android:id="@+id/field22"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_2"
-        app:layout_constraintLeft_toRightOf="@id/sitting_field"
+        app:layout_constraintRight_toLeftOf="@id/field23"
+        app:layout_constraintLeft_toRightOf="@id/field21"
         />
 
     <ImageView
-        android:id="@+id/top_2"
+        android:id="@+id/field23"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_3"
-        app:layout_constraintLeft_toRightOf="@id/top_1"
+        app:layout_constraintRight_toLeftOf="@id/field24"
+        app:layout_constraintLeft_toRightOf="@id/field22"
         />
 
     <ImageView
-        android:id="@+id/top_3"
+        android:id="@+id/field24"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_4"
-        app:layout_constraintLeft_toRightOf="@id/top_2"
+        app:layout_constraintRight_toLeftOf="@id/field25"
+        app:layout_constraintLeft_toRightOf="@id/field23"
         />
 
     <ImageView
-        android:id="@+id/top_4"
+        android:id="@+id/field25"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_5"
-        app:layout_constraintLeft_toRightOf="@id/top_3"
+        app:layout_constraintRight_toLeftOf="@id/field26"
+        app:layout_constraintLeft_toRightOf="@id/field24"
         />
 
     <ImageView
-        android:id="@+id/top_5"
+        android:id="@+id/field26"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_6"
-        app:layout_constraintLeft_toRightOf="@id/top_4"
+        app:layout_constraintRight_toLeftOf="@id/field27"
+        app:layout_constraintLeft_toRightOf="@id/field25"
         />
 
     <ImageView
-        android:id="@+id/top_6"
+        android:id="@+id/field27"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_7"
-        app:layout_constraintLeft_toRightOf="@id/top_5"
+        app:layout_constraintRight_toLeftOf="@id/field28"
+        app:layout_constraintLeft_toRightOf="@id/field26"
         />
 
     <ImageView
-        android:id="@+id/top_7"
+        android:id="@+id/field28"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_8"
-        app:layout_constraintLeft_toRightOf="@id/top_6"
+        app:layout_constraintRight_toLeftOf="@id/field29"
+        app:layout_constraintLeft_toRightOf="@id/field27"
         />
 
     <ImageView
-        android:id="@+id/top_8"
+        android:id="@+id/field29"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/top_9"
-        app:layout_constraintLeft_toRightOf="@id/top_7"
+        app:layout_constraintRight_toLeftOf="@id/field30"
+        app:layout_constraintLeft_toRightOf="@id/field28"
         />
 
     <ImageView
-        android:id="@+id/top_9"
+        android:id="@+id/field30"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/unlucky_field"
-        app:layout_constraintLeft_toRightOf="@id/top_8"
+        app:layout_constraintRight_toLeftOf="@id/field31"
+        app:layout_constraintLeft_toRightOf="@id/field29"
         />
 
     <ImageView
-        android:id="@+id/right_1"
+        android:id="@+id/field32"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/unlucky_field"
-        app:layout_constraintBottom_toTopOf="@id/right_2"
+        app:layout_constraintTop_toBottomOf="@id/field31"
+        app:layout_constraintBottom_toTopOf="@id/field33"
         app:layout_constraintRight_toRightOf="@id/field_square"
-        app:layout_constraintLeft_toLeftOf="@id/start_field"
+        app:layout_constraintLeft_toLeftOf="@id/field1"
         app:layout_constraintVertical_chainStyle="spread"
 
         />
 
     <ImageView
-        android:id="@+id/right_2"
+        android:id="@+id/field33"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_1"
-        app:layout_constraintBottom_toTopOf="@id/right_3"
+        app:layout_constraintTop_toBottomOf="@id/field32"
+        app:layout_constraintBottom_toTopOf="@id/field34"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_3"
+        android:id="@+id/field34"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_2"
-        app:layout_constraintBottom_toTopOf="@id/right_4"
+        app:layout_constraintTop_toBottomOf="@id/field33"
+        app:layout_constraintBottom_toTopOf="@id/field35"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_4"
+        android:id="@+id/field35"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_3"
-        app:layout_constraintBottom_toTopOf="@id/right_5"
+        app:layout_constraintTop_toBottomOf="@id/field34"
+        app:layout_constraintBottom_toTopOf="@id/field36"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_5"
+        android:id="@+id/field36"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_4"
-        app:layout_constraintBottom_toTopOf="@id/right_6"
+        app:layout_constraintTop_toBottomOf="@id/field35"
+        app:layout_constraintBottom_toTopOf="@id/field37"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_6"
+        android:id="@+id/field37"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_5"
-        app:layout_constraintBottom_toTopOf="@id/right_7"
+        app:layout_constraintTop_toBottomOf="@id/field36"
+        app:layout_constraintBottom_toTopOf="@id/field38"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_7"
+        android:id="@+id/field38"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_6"
-        app:layout_constraintBottom_toTopOf="@id/right_8"
+        app:layout_constraintTop_toBottomOf="@id/field37"
+        app:layout_constraintBottom_toTopOf="@id/field39"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_8"
+        android:id="@+id/field39"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_7"
-        app:layout_constraintBottom_toTopOf="@id/right_9"
+        app:layout_constraintTop_toBottomOf="@id/field38"
+        app:layout_constraintBottom_toTopOf="@id/field40"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
     <ImageView
-        android:id="@+id/right_9"
+        android:id="@+id/field40"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/right_8"
-        app:layout_constraintBottom_toTopOf="@id/start_field"
+        app:layout_constraintTop_toBottomOf="@id/field39"
+        app:layout_constraintBottom_toTopOf="@id/field1"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
+        app:layout_constraintStart_toStartOf="@id/field1"
         />
 
 
