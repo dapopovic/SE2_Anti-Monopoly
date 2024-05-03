@@ -1,14 +1,11 @@
 package at.aau.anti_mon.client.activities;
 
 import android.content.Context;
-import android.graphics.Matrix;
-import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
@@ -87,26 +83,47 @@ public class CustomView_Gamefield extends ConstraintLayout {
         }
     }
 
+    int KreisLocation = 1;
+    int SquareLocation = 1;
+    int TriangleLocation = 1;
     @Subscribe
     public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event){
         Log.d("onDiceNumberReceivedEvent","We are here");
-        /*Integer dicenumber = event.getDicenumber();
+        Integer dicenumber = event.getDicenumber();
         String name = event.getName();
-        String position = "rom"+1;
-        Resources res = getResources();
-        int id = res.getIdentifier("start_field","id",getContext().getPackageName());
-        ImageView Startfield = findViewById(R.id.start_field);
-        Float Startfieldx = Startfield.getX();
-        Float Startfieldy = Startfield.getY();
 
+        String figureid;
+        int location;
         switch (name){
-            case "Dreieck":
-
-            case "Viereck":
-
+            case "Triangle":
+                figureid = "Dreieck";
+                location = TriangleLocation;
+            case "Square":
+                figureid = "Viereck";
+                location = SquareLocation;
             case "Kreis":
-        }*/
+                figureid = "Kreis";
+                location = KreisLocation;
+            default:
+                figureid = "";
+                location = 1;
+        }
+        ImageView Figure = findViewById(getID(figureid));
+
+        int goal = location + dicenumber;
+        while (location>goal){
+            location++;
+            String newLocation = String.valueOf(location);
+            ImageView field = findViewById(getID(newLocation));
+            Figure.setX(field.getX());
+            Figure.setY(field.getY());
+        }
     }
+
+    public int getID(String fieldid){
+        return getResources().getIdentifier(fieldid,"id",null);
+    }
+
 
 }
 
