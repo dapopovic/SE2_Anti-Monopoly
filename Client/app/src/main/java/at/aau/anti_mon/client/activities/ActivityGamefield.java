@@ -25,6 +25,8 @@ public class ActivityGamefield extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        openDicesPopup();
     }
 
     public void onSettings(View view) {
@@ -44,6 +46,11 @@ public class ActivityGamefield extends AppCompatActivity {
 
     public void onFinish(View view) {
         Intent i = new Intent(getApplicationContext(), StartMenuActivity.class);
+        startActivity(i);
+    }
+
+    public void openDicesPopup() {
+        Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
         startActivity(i);
     }
 }
