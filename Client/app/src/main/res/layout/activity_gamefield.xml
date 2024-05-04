@@ -121,7 +121,20 @@
     <at.aau.anti_mon.client.activities.CustomView_Gamefield
         android:id="@+id/game_field"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="32dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="Figurebewegen"/>
+    </at.aau.anti_mon.client.activities.CustomView_Gamefield>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

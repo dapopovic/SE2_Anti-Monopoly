@@ -95,8 +95,8 @@ public class CustomView_Gamefield extends ConstraintLayout {
         String figureid;
         int location;
         switch (name){
-            case "Triangle":
-                figureid = "Triangle";
+            case "GreenTriangle":
+                figureid = "GreenTriangle";
                 location = TriangleLocation;
             case "Square":
                 figureid = "Square";

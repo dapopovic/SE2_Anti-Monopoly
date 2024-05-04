@@ -1,6 +1,8 @@
 package at.aau.anti_mon.client.command;
 import android.util.Log;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
@@ -18,11 +20,11 @@ public class DiceNumberCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        String dicenumber = data.getData().get("dicenumber");
+        Integer dicenumber = Integer.valueOf(data.getData().get("dicenumber"));
         String name = data.getData().get("name");
         Log.d("DiceNumberCommand", "Posting Dice received event with dice: " + dicenumber);
         Log.d("DiceNumberCommand", "Posting Dice received event with name: " + name);
         // Zugriff auf die GlobalEventQueue über die Application Instanz
-        queue.enqueueEvent(new DiceNumberReceivedEvent(Integer.valueOf(dicenumber),name));
+        queue.enqueueEvent(new DiceNumberReceivedEvent(dicenumber,name));
     }
 }

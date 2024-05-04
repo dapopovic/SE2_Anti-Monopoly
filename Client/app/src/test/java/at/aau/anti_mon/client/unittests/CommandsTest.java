@@ -119,7 +119,7 @@ class CommandsTest {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.DICENUMBER);
         jsonDataDTO.putData("dicenumber", "8");
-        jsonDataDTO.putData("name", "Dreieck");
+        jsonDataDTO.putData("name", "GreenTriangle");
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
 
         DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);

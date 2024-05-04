@@ -12,6 +12,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.command.DiceNumberCommand;
+import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
+import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.json.JsonDataDTO;
 
 public class ActivityGamefield extends AppCompatActivity {
 
@@ -45,5 +50,15 @@ public class ActivityGamefield extends AppCompatActivity {
     public void onFinish(View view) {
         Intent i = new Intent(getApplicationContext(), StartMenuActivity.class);
         startActivity(i);
+    }
+    GlobalEventQueue queue;
+    public void Figurebewegen(View view) {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.DICENUMBER);
+        jsonDataDTO.putData("dicenumber", "1");
+        jsonDataDTO.putData("name", "GreenTriangle");
+
+        DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);
+        diceNumberCommand.execute(jsonDataDTO);
     }
 }
