@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
@@ -82,48 +83,6 @@ public class CustomView_Gamefield extends ConstraintLayout {
             return true;
         }
     }
-
-    int KreisLocation = 1;
-    int SquareLocation = 1;
-    int TriangleLocation = 1;
-    @Subscribe
-    public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event){
-        Log.d("onDiceNumberReceivedEvent","We are here");
-        Integer dicenumber = event.getDicenumber();
-        String name = event.getName();
-
-        String figureid;
-        int location;
-        switch (name){
-            case "GreenTriangle":
-                figureid = "GreenTriangle";
-                location = TriangleLocation;
-            case "Square":
-                figureid = "Square";
-                location = SquareLocation;
-            case "Kreis":
-                figureid = "Kreis";
-                location = KreisLocation;
-            default:
-                figureid = "";
-                location = 1;
-        }
-        ImageView Figure = findViewById(getID(figureid));
-
-        int goal = location + dicenumber;
-        while (location>goal){
-            location++;
-            ImageView field = findViewById(getID(String.valueOf(location)));
-            Figure.setX(field.getX());
-            Figure.setY(field.getY());
-        }
-    }
-
-    public int getID(String fieldid){
-        return getResources().getIdentifier("field"+fieldid,"id",null);
-    }
-
-
 }
 
 
