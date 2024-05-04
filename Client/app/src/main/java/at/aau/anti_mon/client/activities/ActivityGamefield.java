@@ -107,9 +107,13 @@ public class ActivityGamefield extends AppCompatActivity {
     }
 
 
-    int triangleLocation = 1;
-    int squareLocation = 1;
-    int circleLocation = 1;
+    int greentriangleLocation = 1;
+    int greensquareLocation = 1;
+    int greencircleLocation = 1;
+
+    int bluetriangleLocation = 1;
+    int bluesquareLocation = 1;
+    int bluecircleLocation = 1;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event) {
@@ -124,9 +128,12 @@ public class ActivityGamefield extends AppCompatActivity {
             return;
         }
         int location = switch (name) {
-            case "GreenTriangle" -> triangleLocation = updateLocation(triangleLocation, diceNumber);
-            case "Square" -> squareLocation = updateLocation(squareLocation, diceNumber);
-            case "Circle" -> circleLocation = updateLocation(circleLocation, diceNumber);
+            case "GreenTriangle" -> greentriangleLocation = updateLocation(greentriangleLocation, diceNumber);
+            case "GreenSquare" -> greensquareLocation = updateLocation(greensquareLocation, diceNumber);
+            case "GreenCircle" -> greencircleLocation = updateLocation(greencircleLocation, diceNumber);
+            case "BlueTriangle" -> bluetriangleLocation = updateLocation(bluetriangleLocation, diceNumber);
+            case "BlueSquare" -> bluesquareLocation = updateLocation(bluesquareLocation, diceNumber);
+            case "BlueCircle" -> bluecircleLocation = updateLocation(bluecircleLocation, diceNumber);
             default -> 1;
         };
         ImageView figure = findViewById(getID(name, null));

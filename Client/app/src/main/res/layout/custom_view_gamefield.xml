@@ -490,10 +490,57 @@
         android:id="@+id/GreenTriangle"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/field1"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/GreenCircle"
+        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintTop_toBottomOf="@+id/GreenSquare"
         app:srcCompat="@drawable/greentriangle" />
 
+    <ImageView
+        android:id="@+id/GreenSquare"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintTop_toTopOf="@+id/guideline_bottom"
+        app:srcCompat="@drawable/greensquare" />
+
+    <ImageView
+        android:id="@+id/GreenCircle"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:srcCompat="@drawable/greencircle" />
+
+    <ImageView
+        android:id="@+id/BlueSquare"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="23dp"
+        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintTop_toTopOf="@+id/guideline_bottom"
+        app:srcCompat="@drawable/bluesquare" />
+
+    <ImageView
+        android:id="@+id/BlueTriangle"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="23dp"
+        app:layout_constraintBottom_toTopOf="@+id/BlueCircle"
+        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintTop_toBottomOf="@+id/BlueSquare"
+        app:srcCompat="@drawable/bluetriangle" />
+
+    <ImageView
+        android:id="@+id/BlueCircle"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="23dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:srcCompat="@drawable/bluecircle" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
