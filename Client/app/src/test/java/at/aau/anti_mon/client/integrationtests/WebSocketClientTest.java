@@ -21,7 +21,7 @@ import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 
-public class WebSocketClientTest extends AntiMonopolyApplication {
+class WebSocketClientTest extends AntiMonopolyApplication {
     private static final String BASE_URL = "ws://localhost:8080/game?userID=";
 
     @Inject
@@ -47,7 +47,6 @@ public class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.setCommand(Commands.CREATE_GAME);
         jsonDataDTO.putData("username", "test");
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
-
         client.sendMessageToServer(message);
         try {
             Thread.sleep(500);

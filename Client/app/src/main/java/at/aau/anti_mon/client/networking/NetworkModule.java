@@ -7,7 +7,6 @@ import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
@@ -22,7 +21,6 @@ import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.PinCommand;
-import at.aau.anti_mon.client.command.TestCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 import dagger.Module;
@@ -30,7 +28,6 @@ import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * This is a Dagger module.
@@ -118,13 +115,6 @@ public class NetworkModule {
     @IntoMap
     @StringKey("ERROR")
     Command provideErrorCommand(ErrorCommand command) {
-        return command;
-    }
-
-    @Provides
-    @IntoMap
-    @StringKey("TEST")
-    Command provideTestCommand(TestCommand command) {
         return command;
     }
 

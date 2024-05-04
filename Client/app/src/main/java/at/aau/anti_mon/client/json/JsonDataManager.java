@@ -22,7 +22,6 @@ public class JsonDataManager {
             return mapper.writeValueAsString(jsonDataDTO);
         } catch (JsonProcessingException e) {
             Log.e("ANTI-MONOPOLY-DEBUG", "Failed to create JSON message", e);
-            e.printStackTrace();
             return null;
         }
     }
@@ -34,7 +33,6 @@ public class JsonDataManager {
             return mapper.readValue(json, JsonDataDTO.class);
         } catch (JsonProcessingException e) {
             Log.e("ANTI-MONOPOLY-DEBUG", "Failed to parse JSON message", e);
-            e.printStackTrace();
             return null;
         }
     }
@@ -46,7 +44,6 @@ public class JsonDataManager {
             return mapper.writeValueAsString(jsonData);
         } catch (JsonProcessingException e) {
             Log.e("ANTI-MONOPOLY-DEBUG", "Failed to create JSON message", e);
-            e.printStackTrace();
             return null;
         }
     }
