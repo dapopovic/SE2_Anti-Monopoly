@@ -1,6 +1,10 @@
 package at.aau.anti_mon.client.command;
 
+import android.util.Log;
+
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -23,10 +27,8 @@ public class CreateGameCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        //EventBus.getDefault().post(new CreatedGameEvent(data.getData().get("pin")));
-
         // Verwenden von EventBus für nicht-UI-bezogene globale Ereignisse
-        System.out.println("CreateGameCommand: " + data.getData().get("pin"));
+        Log.d("CreateGameCommand", Objects.requireNonNull(data.getData().get("pin")));
         queue.enqueueEvent(new CreatedGameEvent(data.getData().get("pin")));
 
         // Update LiveData for UI-bound updates
