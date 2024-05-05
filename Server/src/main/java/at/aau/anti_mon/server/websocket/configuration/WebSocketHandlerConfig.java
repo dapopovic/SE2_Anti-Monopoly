@@ -4,6 +4,7 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.websocket.handler.BroadcastWebSocketHandler;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ import org.tinylog.Logger;
  * Configuration for the WebSocket Handler
  */
 @Configuration
-//@ConfigurationProperties(prefix = "websockethandler")
+@ConfigurationProperties(prefix = "websockethandler")
 @EnableWebSocket
 public class WebSocketHandlerConfig implements WebSocketConfigurer {
 
@@ -53,8 +54,8 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
                                 eventPublisher
                         ), "/game")
                 .setAllowedOrigins("*");
-               // .withSockJS()
-               // .setHeartbeatTime(25000);
+//               // .withSockJS()
+//               // .setHeartbeatTime(25000);
 
         /**
          * The advantage of using sockJS here is whenever the websocket connection is disconnected or the websocket connection can not be established,

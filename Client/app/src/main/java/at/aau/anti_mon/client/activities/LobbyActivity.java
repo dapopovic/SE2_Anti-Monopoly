@@ -1,9 +1,12 @@
 package at.aau.anti_mon.client.activities;
 
+import static at.aau.anti_mon.client.activities.GameInstructionsActivity.username;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +36,8 @@ import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
+import at.aau.anti_mon.client.events.OnReadyEvent;
+import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
@@ -48,12 +53,12 @@ public class LobbyActivity extends AppCompatActivity{
     TextView textView_pin;
     TextView[] userTextViews;
 
-    HashMap<TextView, Boolean> availableTextViews = new HashMap<>();
+    HashMap<TextView, User> availableTextViews = new HashMap<>();
 
 
     ///////////////////////////////////// Variablen
     public String pin;
-    public String username = "TESTTESTTEST";
+    public User user;
 
     ///////////////////////////////////// Networking
 
@@ -116,7 +121,7 @@ public class LobbyActivity extends AppCompatActivity{
 
         // Alle TextViews als verfügbar markieren:
         for (TextView tv : userTextViews) {
-            availableTextViews.put(tv, true);
+            availableTextViews.put(tv, null);
         }
 
         textView_pin = findViewById(R.id.Pin);
@@ -126,8 +131,8 @@ public class LobbyActivity extends AppCompatActivity{
 
     private void processIntent() {
         if (getIntent().hasExtra("username")) {
-            username = getIntent().getStringExtra("username");
-            addUserToTable(username);
+            user = new User(getIntent().getStringExtra("username"), true, false);
+            addUserToTable(user);
         } else {
             Log.e("ANTI-MONOPOLY-DEBUG", "Old Intent has no username");
             // Todo: Error handling
@@ -141,14 +146,17 @@ public class LobbyActivity extends AppCompatActivity{
         }
     }
 
-    private void addUserToTable(String username) {
-        for (Map.Entry<TextView, Boolean> entry : availableTextViews.entrySet()) {
-            if (entry.getValue()) {  // Prüfe, ob der TextView verfügbar ist
-                entry.getKey().setText(username);
+    private void addUserToTable(User user) {
+        for (Map.Entry<TextView, User> entry : availableTextViews.entrySet()) {
+            if (entry.getValue() == null) {  // Prüfe, ob der TextView verfügbar ist
+                entry.getKey().setText(user.getUsername());
+                if(user.isOwner()) {
+                    entry.getKey().setTextColor(Color.RED);
+                }
 
-                Log.d("ANTI-MONOPOLY-DEBUG", "Added user to table: " + username);
+                Log.d("ANTI-MONOPOLY-DEBUG", "Added user to table: " + user.getUsername());
 
-                availableTextViews.put(entry.getKey(), false);  // Markiere als besetzt
+                availableTextViews.put(entry.getKey(), new User(username, user.isOwner(), false));  // Markiere als besetzt
                 return;
             }
         }
@@ -156,10 +164,10 @@ public class LobbyActivity extends AppCompatActivity{
     }
 
     private void removeUserFromTable(String username) {
-        for (Map.Entry<TextView, Boolean> entry : availableTextViews.entrySet()) {
+        for (Map.Entry<TextView, User> entry : availableTextViews.entrySet()) {
             if (entry.getKey().getText().toString().equals(username)) {
                 entry.getKey().setText("");
-                availableTextViews.put(entry.getKey(), true);  // Markiere als verfügbar
+                availableTextViews.put(entry.getKey(), null);  // Markiere als verfügbar
                 return;
             }
         }
@@ -192,12 +200,19 @@ public class LobbyActivity extends AppCompatActivity{
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
-
         Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent");
-
+        if (user == null) {
+            user = new User(event.getName(), event.isOwner(), false);
+        }
+        if (!event.isOwner()) {
+            // start game button is only visible for the owner
+            findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
+            findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
+        }
+        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent: " + event.getName() + " " + event.isOwner());
 
         // TEST LiveData and Observer Pattern
-        addUserToTable(event.getName());
+        addUserToTable(new User(event.getName(), event.isOwner(), false));
     }
 
     /**
@@ -215,6 +230,19 @@ public class LobbyActivity extends AppCompatActivity{
         jsonData.putData("msg", "PONG");
         String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonMessage);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReadyEvent(OnReadyEvent event) {
+        Log.d("ANTI-MONOPOLY-DEBUG", "onReadyEvent");
+        // get user from table
+        for (Map.Entry<TextView, User> entry : availableTextViews.entrySet()) {
+            User user = entry.getValue();
+            if (user.getUsername().equals(event.getUserName())) {
+                entry.getValue().setReady(!user.isReady());
+                return;
+            }
+        }
+
     }
 
     /**
@@ -250,6 +278,16 @@ public class LobbyActivity extends AppCompatActivity{
         Intent intent = new Intent(this, ActivityGamefield.class);
         startActivity(intent);
 
+    }
+
+    public void onReady(View view) {
+        // send ready message to server
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.READY, new HashMap<>());
+        jsonData.putData("username", user.getUsername());
+        jsonData.putData("pin", pin);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", " Username sending to ready up:" + jsonDataString);
     }
     @Override
     protected void onStart() {

@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.websocket.configuration;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -14,7 +15,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
  */
 @Configuration
 @EnableWebSocketMessageBroker
-//@ConfigurationProperties(prefix = "websocketbroker")
+@ConfigurationProperties(prefix = "websocketbroker")
 public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override

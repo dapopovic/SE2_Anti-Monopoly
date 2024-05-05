@@ -53,7 +53,7 @@ class CommandsTest {
     @Test
     void joinLobbyCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.JOIN_GAME);
+        jsonData.setCommand(Commands.JOIN);
         jsonData.putData("pin", "1234");
         jsonData.putData("username", "testUser");
 
@@ -65,7 +65,7 @@ class CommandsTest {
     @Test
     void joinLobbyCommandHasEmptyValuesAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.JOIN_GAME);
+        jsonData.setCommand(Commands.JOIN);
 
         assertThrows(CanNotExecuteJsonCommandException.class, () -> {
             joinLobbyCommand.execute(session, jsonData);
@@ -75,7 +75,7 @@ class CommandsTest {
     @Test
     void joinLobbyCommandThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.JOIN_GAME);
+        jsonData.setCommand(Commands.JOIN);
         jsonData.putData("pin", "");
         jsonData.putData("username", "");
 

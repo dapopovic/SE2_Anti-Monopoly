@@ -51,6 +51,10 @@ public class Lobby {
         users.add(user);
     }
 
+    public void readyUser(User user) {
+        user.setReady(true);
+    }
+
     public void removeUser(User user) throws UserNotFoundException {
         if (users.contains(user)) {
             if (user.equals(owner) && users.size() > 1) {

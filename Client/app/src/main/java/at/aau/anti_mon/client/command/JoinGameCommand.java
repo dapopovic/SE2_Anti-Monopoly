@@ -23,9 +23,9 @@ public class JoinGameCommand implements Command {
     @Override
     public void execute(JsonDataDTO data) {
         // Verwenden von EventBus für nicht-UI-bezogene globale Ereignisse
-        queue.enqueueEvent(new UserJoinedLobbyEvent(data.getData().get("username")));
+        queue.enqueueEvent(new UserJoinedLobbyEvent(data.getData().get("username"), Boolean.getBoolean(data.getData().get("isOwner"))));
 
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(data.getData().get("username"));
+        viewModel.userJoined(data.getData().get("username"), Boolean.getBoolean(data.getData().get("isOwner")));
     }
 }

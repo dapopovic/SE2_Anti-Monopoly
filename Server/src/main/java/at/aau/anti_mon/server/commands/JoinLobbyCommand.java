@@ -24,8 +24,8 @@ public class JoinLobbyCommand implements Command{
     public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
         // data = {"pin": 1234 , "name": "Test"}
         if (jsonData.getData() == null || jsonData.getData().get("pin") == null || jsonData.getData().get("username") == null) {
-            Logger.error("SERVER: Required data for 'JOIN_GAME' is missing.");
-            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'JOIN_GAME' is missing.");
+            Logger.error("SERVER: Required data for 'JOIN' is missing.");
+            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'JOIN' is missing.");
         }
 
         String pinString = jsonData.getData().get("pin");

@@ -32,7 +32,7 @@ public class CreateGameCommand implements Command{
         queue.enqueueEvent(new CreatedGameEvent(data.getData().get("pin")));
 
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(data.getData().get("username"));
+        viewModel.userJoined(data.getData().get("username"), Boolean.getBoolean(data.getData().get("isOwner")));
 
     }
 }

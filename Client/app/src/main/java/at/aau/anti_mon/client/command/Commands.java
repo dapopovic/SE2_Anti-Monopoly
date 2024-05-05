@@ -14,11 +14,12 @@ public enum Commands {
     PIN("PIN"),
     CREATE_GAME("CREATE_GAME"),
     LEAVE_GAME("LEAVE_GAME"),
-    JOIN_GAME("JOIN_GAME"),
+    JOIN_GAME("JOIN"),
     HEARTBEAT("HEARTBEAT"),
     NEW_USER("NEW_USER"),
     INFO("INFO"),
-    ERROR("ERROR");
+    ERROR("ERROR"),
+    READY("READY");
     // usw
 
 

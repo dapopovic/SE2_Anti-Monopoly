@@ -13,6 +13,7 @@ public class User {
     private final String name;
     private WebSocketSession session;
     private Lobby lobby;
+    @Setter
     private boolean isReady;
 
     public User(String name, WebSocketSession session) {

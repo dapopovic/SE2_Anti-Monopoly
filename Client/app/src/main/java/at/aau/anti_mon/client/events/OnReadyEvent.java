@@ -5,8 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserJoinedLobbyEvent {
-    private final String name;
-    private final boolean isOwner;
-
+public class OnReadyEvent {
+    private final String userName;
 }

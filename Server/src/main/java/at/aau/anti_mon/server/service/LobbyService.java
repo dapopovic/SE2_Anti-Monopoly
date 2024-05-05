@@ -96,6 +96,11 @@ public class LobbyService {
         Logger.info("SERVER: Spieler " +userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
     }
 
+    public void readyUser(int lobbyPin, String userName) throws UserNotFoundException {
+        Lobby lobby = lobbies.get(lobbyPin);
+        lobby.readyUser(userService.getUser(userName));
+        Logger.info("SERVER: Spieler " +userName + " ist bereit.");
+    }
 
     /**
      * Durchsuche die Liste der Lobbies nach der gegebenen PIN und gib die entsprechende Lobby zurück.

@@ -36,7 +36,7 @@ public class WebSocketClient {
      * localhost from the Android emulator is reachable as 10.0.2.2
      * https://developer.android.com/studio/run/emulator-networking
      */
-   // private static final String WEBSOCKET_URI = "ws://10.0.2.2:51234/game";
+    private static final String WEBSOCKET_URI = "ws://10.0.2.2:8080/game?userID=";
    // private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
    //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
 
@@ -79,7 +79,7 @@ public class WebSocketClient {
         }
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = BASE_WEBSOCKET_URI + userID;
+        String urlWithUserId = WEBSOCKET_URI + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
@@ -178,6 +178,7 @@ public class WebSocketClient {
             flushMessageQueue();
             sendWebSocketMessage(message);
         } else {
+            Log.d(DEBUG_TAG, "Connection not established, adding message to queue");
             messageQueue.add(message);
             connectToServer();
         }

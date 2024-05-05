@@ -2,6 +2,7 @@ package at.aau.anti_mon.server.listener;
 
 import java.util.HashSet;
 
+import at.aau.anti_mon.server.events.UserReadyLobbyEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -80,6 +81,7 @@ public class UserEventListener {
         Lobby joinedLobby = lobbyService.findLobbyByPin(event.getPin());
         if (joinedLobby.canAddPlayer()) {
             HashSet<User> users = joinedLobby.getUsers();
+            Logger.info("Users in Lobby: " + users.size());
             for (User user : users) {
 
                 // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler
@@ -130,6 +132,18 @@ public class UserEventListener {
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
 
+        }
+    }
+
+    @EventListener
+    public void onReadyUserEvent(UserReadyLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException {
+        sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
+        lobbyService.readyUser(event.getPin(), event.getUsername());
+        Logger.info("Spieler " + event.getUsername() + " ist bereit.");
+
+        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
+        for (User user : users) {
+            JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername());
         }
     }
 

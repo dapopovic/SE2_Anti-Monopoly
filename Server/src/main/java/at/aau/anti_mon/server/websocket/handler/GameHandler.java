@@ -31,6 +31,7 @@ public class GameHandler implements WebSocketHandler {
                        ApplicationEventPublisher eventPublisher
     ) {
         this.eventPublisher = eventPublisher;
+        Logger.info("SERVER : GameHandler created");
         this.gameCommandFactory = new CommandFactory(eventPublisher);
     }
 
