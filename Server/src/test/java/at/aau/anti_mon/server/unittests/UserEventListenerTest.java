@@ -84,7 +84,7 @@ class UserEventListenerTest {
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser"));
 
         // When
         userEventListener.onUserJoinedLobbyEvent(event);
@@ -131,7 +131,7 @@ class UserEventListenerTest {
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser"));
 
         userEventListener.onUserJoinedLobbyEvent(event);
         verify(lobbyService, times(0)).joinLobby(1234, "testUser");
@@ -173,7 +173,7 @@ class UserEventListenerTest {
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator", false));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator"));
 
         // When
         userEventListener.onLeaveLobbyEvent(event);

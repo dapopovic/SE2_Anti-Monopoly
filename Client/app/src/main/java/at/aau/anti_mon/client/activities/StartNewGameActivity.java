@@ -14,10 +14,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -26,10 +22,10 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
+import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 
 /**
  *
@@ -43,6 +39,8 @@ public class StartNewGameActivity extends AppCompatActivity {
     @Inject
     WebSocketClient webSocketClient;
 
+    @Inject
+    CreateGameViewModel createGameViewModel;
     /**
      * Dependency Injection of GlobalEventQueue
      */
@@ -51,7 +49,7 @@ public class StartNewGameActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start_new_game);
@@ -64,12 +62,17 @@ public class StartNewGameActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username);
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+        setupLiveDataObservers();
+    }
 
+    private void setupLiveDataObservers() {
+        createGameViewModel.getPinLiveData().observe(this, this::onPinReceived);
     }
 
 
     /**
      * Event when the button "Create Game" is clicked
+     *
      * @param view
      */
     public void onCreateGameClicked(View view) {
@@ -77,29 +80,22 @@ public class StartNewGameActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString();
         webSocketClient.setUserId(username);
 
-        if (!username.isEmpty() && pin == null) {
-            // Senden des Usernames zum Server, um eine neue Spielsession zu starten und einen Pin zu erhalten
-            JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-            jsonData.putData("username", username);
-            String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-            webSocketClient.sendMessageToServer(jsonDataString);
-            Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Username sending for pin: " + jsonDataString);
-        } else if (pin != null) {
-            // Wenn der Pin schon vorhanden ist, direkt die LobbyActivity starten
-            startLobbyActivity(username, pin);
+        if (username.isEmpty()) {
+            usernameEditText.setError("Please enter a username");
+            return;
         }
+        // Senden des Usernames zum Server, um eine neue Spielsession zu starten und einen Pin zu erhalten
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
+        jsonData.putData("username", username);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Username sending for pin: " + jsonDataString);
     }
 
-    /**
-     * Event when the pin is received from the server
-     * -> MAIN Thread to update UI
-     * @param event
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPinReceivedEvent(PinReceivedEvent event) {
-        Log.d("ANTI-MONOPOLY-DEBUG", "Pin received: " + event.getPin());
+    public void onPinReceived(String receivedPin) {
+        Log.d("ANTI-MONOPOLY-DEBUG", "Pin received: " + receivedPin);
         if (!isFinishing()) {
-            pin = event.getPin();
+            pin = receivedPin;
             startLobbyActivity(usernameEditText.getText().toString(), pin);
         } else {
             Log.d("ANTI-MONOPOLY-DEBUG", "Activity is finishing. Cannot set pin.");
@@ -110,6 +106,7 @@ public class StartNewGameActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LobbyActivity.class);
         intent.putExtra("username", username);
         intent.putExtra("pin", pin);
+        intent.putExtra("isOwner", true);
         startActivity(intent);
     }
 
@@ -119,19 +116,14 @@ public class StartNewGameActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus registered");
-        //globalEventQueue.setEventBusReady(true);
+    protected void onResume() {
+        super.onResume();
+        pin = null;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
-        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus unregistered");
-        //globalEventQueue.setEventBusReady(false);
     }
 
     @Override

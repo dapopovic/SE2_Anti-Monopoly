@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.command;
 
+import android.util.Log;
+
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -20,10 +22,12 @@ public class NewUserCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        // Verwenden von EventBus für nicht-UI-bezogene globale Ereignisse
-        queue.enqueueEvent(new UserJoinedLobbyEvent(data.getData().get("username"), Boolean.getBoolean(data.getData().get("isOwner"))));
+        boolean isOwner = Boolean.parseBoolean(data.getData().get("isOwner"));
+        String username = data.getData().get("username");
+
+//        Log.d("NewUserCommand", "Posting user joined lobby event with username: " + data.getData().get("username") + " and isOwner: " + data.getData().get("isOwner") + " " + Boolean.getBoolean(data.getData().get("isOwner")));
 
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(data.getData().get("username"), Boolean.getBoolean(data.getData().get("isOwner")));
+        viewModel.userJoined(username, isOwner);
     }
 }

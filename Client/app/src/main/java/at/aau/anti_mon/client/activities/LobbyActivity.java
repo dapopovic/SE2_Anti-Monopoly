@@ -76,7 +76,8 @@ public class LobbyActivity extends AppCompatActivity{
 
     SharedPreferences sharedPreferences;
 
-    private LobbyViewModel lobbyViewModel;
+    @Inject
+    LobbyViewModel lobbyViewModel;
 
 
 
@@ -86,19 +87,16 @@ public class LobbyActivity extends AppCompatActivity{
 
         setContentView(R.layout.activity_lobby);
 
-        lobbyViewModel = new ViewModelProvider(this).get(LobbyViewModel.class);
-
         // TODO:
         // SharedPreferences für zu speichernde Key-Value Paare
         sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();
-
-        setupLiveDataObservers();
-
         // Nachdem die UI initialisiert wurde und der EventBus registriert ist, Netzwerkdienste starten
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+
+        setupLiveDataObservers();
     }
 
     private void initializeUI() {
@@ -131,7 +129,7 @@ public class LobbyActivity extends AppCompatActivity{
 
     private void processIntent() {
         if (getIntent().hasExtra("username")) {
-            user = new User(getIntent().getStringExtra("username"), true, false);
+            user = new User(getIntent().getStringExtra("username"), getIntent().getBooleanExtra("isOwner", false), false);
             addUserToTable(user);
         } else {
             Log.e("ANTI-MONOPOLY-DEBUG", "Old Intent has no username");
@@ -147,9 +145,15 @@ public class LobbyActivity extends AppCompatActivity{
     }
 
     private void addUserToTable(User user) {
+        if (this.user.equals(user) && !user.isOwner()) {
+            // start game button is only visible for the owner
+            findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
+            findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
+        }
         for (Map.Entry<TextView, User> entry : availableTextViews.entrySet()) {
             if (entry.getValue() == null) {  // Prüfe, ob der TextView verfügbar ist
                 entry.getKey().setText(user.getUsername());
+                Log.d("ANTI-MONOPOLY-DEBUG", "Added user to table: " + user.getUsername() + " " + user.isOwner());
                 if(user.isOwner()) {
                     entry.getKey().setTextColor(Color.RED);
                 }
@@ -174,46 +178,40 @@ public class LobbyActivity extends AppCompatActivity{
         Log.e("ANTI-MONOPOLY-DEBUG", "Benutzername nicht gefunden.");
     }
 
-    private void setPin(String pin) {
-        textView_pin.setText(pin);
-        Log.d("ANTI-MONOPOLY-DEBUG", "Pin set to: " + pin);
-
-    }
-
 
     /**
      * Events for non-UI related global events
      * @param event UserLeftLobbyEvent
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUserLeftLobbyEvent(UserLeftLobbyEvent event) {
-
-        Log.d("ANTI-MONOPOLY-DEBUG", "UserLeftLobbyEvent");
-
-        // TEST LiveData and Observer Pattern
-        removeUserFromTable(event.getName());
-    }
-
-    /**
-     * Events for non-UI related global events
-     * @param event UserJoinedLobbyEvent
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
-        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent");
-        if (user == null) {
-            user = new User(event.getName(), event.isOwner(), false);
-        }
-        if (!event.isOwner()) {
-            // start game button is only visible for the owner
-            findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
-            findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
-        }
-        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent: " + event.getName() + " " + event.isOwner());
-
-        // TEST LiveData and Observer Pattern
-        addUserToTable(new User(event.getName(), event.isOwner(), false));
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onUserLeftLobbyEvent(UserLeftLobbyEvent event) {
+//
+//        Log.d("ANTI-MONOPOLY-DEBUG", "UserLeftLobbyEvent");
+//
+//        // TEST LiveData and Observer Pattern
+//        removeUserFromTable(event.getName());
+//    }
+//
+//    /**
+//     * Events for non-UI related global events
+//     * @param event UserJoinedLobbyEvent
+//     */
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
+//        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent");
+//        if (user == null) {
+//            user = new User(event.getName(), event.isOwner(), false);
+//        }
+//        if (!event.isOwner()) {
+//            // start game button is only visible for the owner
+//            findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
+//            findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
+//        }
+//        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent: " + event.getName() + " " + event.isOwner());
+//
+//        // TEST LiveData and Observer Pattern
+//        addUserToTable(new User(event.getName(), event.isOwner(), false));
+//    }
 
     /**
      * TODO: TEST
@@ -255,9 +253,6 @@ public class LobbyActivity extends AppCompatActivity{
 
         // User left: -> LiveData
         lobbyViewModel.getUserLeftLiveData().observe(this, this::removeUserFromTable);
-
-        // User Created Game: -> LiveData
-        lobbyViewModel.getGameCreatedLiveData().observe(this, this::setPin);
     }
 
     public void onCancelLobby(View view) {
@@ -290,8 +285,8 @@ public class LobbyActivity extends AppCompatActivity{
         Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", " Username sending to ready up:" + jsonDataString);
     }
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         EventBus.getDefault().register(this);
         Log.d("ANTI-MONOPOLY-DEBUG", "EventBus registered");
         globalEventQueue.setEventBusReady(true);

@@ -22,6 +22,7 @@ import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
+import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 
 class CommandsTest {
@@ -29,6 +30,8 @@ class CommandsTest {
     @Mock
     GlobalEventQueue queue;
     LobbyViewModel viewModel;
+    @Mock
+    CreateGameViewModel createGameViewModel;
 
     @BeforeEach
     public void setUp() {
@@ -69,10 +72,10 @@ class CommandsTest {
         jsonDataDTO.putData("pin", "1234");
         assertEquals(Commands.PIN, jsonDataDTO.getCommand());
 
-        PinCommand pinCommand = new PinCommand(queue);
+        PinCommand pinCommand = new PinCommand(createGameViewModel);
         pinCommand.execute(jsonDataDTO);
 
-        verify(queue).enqueueEvent(any(PinReceivedEvent.class));
+        verify(createGameViewModel).createGame("1234");
     }
     @Test
     void heartBeatCommandShouldFireHeartBeatEvent() {
