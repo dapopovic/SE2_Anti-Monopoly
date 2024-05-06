@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -112,6 +113,8 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     public void onCancelStartNewGame(View view) {
         // Go back to last Activity on Stack (StartMenuActivity)
+        createGameViewModel.getPinLiveData().removeObservers(this);
+        createGameViewModel.getPinLiveData().setPending(false);
         finish();
     }
 
@@ -124,6 +127,9 @@ public class StartNewGameActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        pin = null;
+        createGameViewModel.getPinLiveData().removeObservers(this);
+        createGameViewModel.getPinLiveData().setPending(false);
     }
 
     @Override

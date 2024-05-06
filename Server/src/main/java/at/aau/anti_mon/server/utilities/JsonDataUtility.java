@@ -73,9 +73,9 @@ public class JsonDataUtility {
     }
 
 
-    public static void sendJoinedUser(WebSocketSession session, String message) {
+    public static void sendJoinedUser(WebSocketSession session, String message, boolean isOwner) {
         JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, message, "username");
-        jsonData.putData("isOwner", "false");
+        jsonData.putData("isOwner", String.valueOf(isOwner));
         send(session, jsonData);
     }
     public static void sendReadyUser(WebSocketSession session, String message) {

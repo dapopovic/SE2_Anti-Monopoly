@@ -56,7 +56,6 @@ public class UserEventListener {
     public void onCreateLobbyEvent(UserCreatedLobbyEvent event) {
         // create User
         User user = userService.findOrCreateUser(event.getUsername(), event.getSession());
-
         // create Lobby
         Lobby newLobby = lobbyService.createLobby(user);
 
@@ -77,32 +76,27 @@ public class UserEventListener {
 
         // create User
         User joinedUser = userService.findOrCreateUser(event.getUsername(), event.getSession());
+        Logger.debug("User " + joinedUser.getName() + " joined the lobby." + " Is owner: " + joinedUser.isOwner());
 
         Lobby joinedLobby = lobbyService.findLobbyByPin(event.getPin());
-        if (joinedLobby.canAddPlayer()) {
-            HashSet<User> users = joinedLobby.getUsers();
-            Logger.info("Users in Lobby: " + users.size());
-            for (User user : users) {
+        // Füge den joinedUser zur Lobby hinzu
+        lobbyService.joinLobby(event.getPin(), joinedUser.getName());
 
-                // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler
-                // beitretet
-                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()),
-                        joinedUser.getName());
+        HashSet<User> users = joinedLobby.getUsers();
+        Logger.info("Users in Lobby: " + users.size());
+        // Sende allen Spielern in der Lobby die Information, dass der Spieler der Lobby
+        // beigetreten ist
+        for (User user : users) {
+            if (!user.equals(joinedUser))
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser.getName(),
+                        joinedUser.isOwner());
+        }
 
-                // Sende dem neuen Spieler alle Spieler, die bereits in der Lobby sind
-                JsonDataUtility.sendJoinedUser(event.getSession(), user.getName());
-            }
-
-            // Füge den joinedUser zur Lobby hinzu
-            lobbyService.joinLobby(event.getPin(), joinedUser.getName());
-
-            // DEBUG:
-            JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
-                    "Erfolgreich der Lobby beigetreten.");
-        } else {
-            JsonDataUtility.sendError(sessionManagementService.getSessionForUser(event.getUsername()),
-                    "Fehler: Lobby ist voll.");
+        // Sende dem neuen Spieler alle Spieler in der Lobby
+        for (User user : users) {
+            if (!user.equals(joinedUser))
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(joinedUser.getName()), user.getName(),
+                        user.isOwner());
         }
     }
 

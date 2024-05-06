@@ -178,43 +178,7 @@ public class LobbyActivity extends AppCompatActivity{
         Log.e("ANTI-MONOPOLY-DEBUG", "Benutzername nicht gefunden.");
     }
 
-
     /**
-     * Events for non-UI related global events
-     * @param event UserLeftLobbyEvent
-     */
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onUserLeftLobbyEvent(UserLeftLobbyEvent event) {
-//
-//        Log.d("ANTI-MONOPOLY-DEBUG", "UserLeftLobbyEvent");
-//
-//        // TEST LiveData and Observer Pattern
-//        removeUserFromTable(event.getName());
-//    }
-//
-//    /**
-//     * Events for non-UI related global events
-//     * @param event UserJoinedLobbyEvent
-//     */
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event) {
-//        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent");
-//        if (user == null) {
-//            user = new User(event.getName(), event.isOwner(), false);
-//        }
-//        if (!event.isOwner()) {
-//            // start game button is only visible for the owner
-//            findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
-//            findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
-//        }
-//        Log.d("ANTI-MONOPOLY-DEBUG", "UserJoinedLobbyEvent: " + event.getName() + " " + event.isOwner());
-//
-//        // TEST LiveData and Observer Pattern
-//        addUserToTable(new User(event.getName(), event.isOwner(), false));
-//    }
-
-    /**
-     * TODO: TEST
      * Heartbeat to keep connection alive
      * @param event HeartBeatEvent
      */
@@ -240,7 +204,6 @@ public class LobbyActivity extends AppCompatActivity{
                 return;
             }
         }
-
     }
 
     /**
@@ -256,16 +219,21 @@ public class LobbyActivity extends AppCompatActivity{
     }
 
     public void onCancelLobby(View view) {
-        // Leave Lobby
+        // leave lobby
+        leaveLobby();
+        // Go back to last Activity on Stack (JoinGameActivity)
+        finish();
+    }
+
+    private void leaveLobby() {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
-        jsonData.putData("username", username);
+        jsonData.putData("username", user.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
+
         Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", " Username sending to leave Lobby:" + jsonDataString);
 
-        // Go back to last Activity on Stack (JoinGameActivity)
-        finish();
     }
 
     public void onStartGame(View view) {
@@ -300,12 +268,15 @@ public class LobbyActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
+        leaveLobby();
         if (webSocketClient != null) {
             webSocketClient.disconnect();
         }
         EventBus.getDefault().unregister(this);
         Log.d("ANTI-MONOPOLY-DEBUG", "EventBus unregistered");
         globalEventQueue.setEventBusReady(false);
+        lobbyViewModel.getUserJoinedLiveData().removeObservers(this);
+        lobbyViewModel.getUserLeftLiveData().removeObservers(this);
     }
 
     @Override

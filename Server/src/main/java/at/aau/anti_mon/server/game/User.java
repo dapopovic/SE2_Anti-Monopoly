@@ -12,6 +12,7 @@ public class User {
 
     private final String name;
     private WebSocketSession session;
+    @Setter
     private Lobby lobby;
     @Setter
     private boolean isReady;
@@ -22,4 +23,13 @@ public class User {
         this.isReady = false;
         this.lobby = null;
     }
+
+    public boolean isOwner() {
+        if (lobby == null) {
+            return false;
+        }
+        return lobby.getOwner().equals(this);
+    }
+
+
 }

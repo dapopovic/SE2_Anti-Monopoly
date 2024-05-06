@@ -73,6 +73,7 @@ public class LobbyService {
         if (existing != null) {
             throw new IllegalStateException("Lobby mit PIN " + newLobby.getPin() + " existiert bereits.");
         }
+        user.setLobby(newLobby);
         return newLobby;
     }
 
@@ -84,8 +85,9 @@ public class LobbyService {
      */
     public void joinLobby(int lobbyPin, String userName) throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
         Lobby lobby = findLobbyByPin(lobbyPin);
-        lobby.addUser(userService.getUser(userName));
-        addUserToLobby(userName, lobbyPin);
+        User user = userService.getUser(userName);
+        lobby.addUser(user);
+        user.setLobby(lobby);
         Logger.info("SERVER: Spieler " +userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
