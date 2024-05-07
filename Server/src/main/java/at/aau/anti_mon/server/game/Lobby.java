@@ -38,6 +38,7 @@ public class Lobby {
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
         this.gameState = GameState.LOBBY;
+        user.setReady(true);
         this.users.add(user);
         this.owner = user;
     }

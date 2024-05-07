@@ -23,6 +23,7 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
@@ -69,7 +70,10 @@ public class StartNewGameActivity extends AppCompatActivity {
     private void setupLiveDataObservers() {
         createGameViewModel.getPinLiveData().observe(this, this::onPinReceived);
     }
-
+    private void removeObservers() {
+        createGameViewModel.getPinLiveData().removeObservers(this);
+        createGameViewModel.getPinLiveData().setPending(false);
+    }
 
     /**
      * Event when the button "Create Game" is clicked
@@ -77,7 +81,6 @@ public class StartNewGameActivity extends AppCompatActivity {
      * @param view
      */
     public void onCreateGameClicked(View view) {
-
         String username = usernameEditText.getText().toString();
         webSocketClient.setUserId(username);
 
@@ -95,12 +98,12 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     public void onPinReceived(String receivedPin) {
         Log.d("ANTI-MONOPOLY-DEBUG", "Pin received: " + receivedPin);
-        if (!isFinishing()) {
-            pin = receivedPin;
-            startLobbyActivity(usernameEditText.getText().toString(), pin);
-        } else {
+        if (isFinishing()) {
             Log.d("ANTI-MONOPOLY-DEBUG", "Activity is finishing. Cannot set pin.");
+            return;
         }
+        pin = receivedPin;
+        startLobbyActivity(usernameEditText.getText().toString(), pin);
     }
 
     private void startLobbyActivity(String username, String pin) {
@@ -108,15 +111,16 @@ public class StartNewGameActivity extends AppCompatActivity {
         intent.putExtra("username", username);
         intent.putExtra("pin", pin);
         intent.putExtra("isOwner", true);
+        intent.putExtra("isReady", true);
         startActivity(intent);
     }
 
     public void onCancelStartNewGame(View view) {
         // Go back to last Activity on Stack (StartMenuActivity)
-        createGameViewModel.getPinLiveData().removeObservers(this);
-        createGameViewModel.getPinLiveData().setPending(false);
+        removeObservers();
         finish();
     }
+
 
     @Override
     protected void onResume() {
@@ -128,8 +132,7 @@ public class StartNewGameActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         pin = null;
-        createGameViewModel.getPinLiveData().removeObservers(this);
-        createGameViewModel.getPinLiveData().setPending(false);
+        removeObservers();
     }
 
     @Override

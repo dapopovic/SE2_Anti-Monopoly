@@ -24,10 +24,12 @@ public class NewUserCommand implements Command{
     public void execute(JsonDataDTO data) {
         boolean isOwner = Boolean.parseBoolean(data.getData().get("isOwner"));
         String username = data.getData().get("username");
+        boolean isReady = Boolean.parseBoolean(data.getData().get("isReady"));
+        Log.d("NewUserCommand", Boolean.toString(isReady));
 
 //        Log.d("NewUserCommand", "Posting user joined lobby event with username: " + data.getData().get("username") + " and isOwner: " + data.getData().get("isOwner") + " " + Boolean.getBoolean(data.getData().get("isOwner")));
 
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(username, isOwner);
+        viewModel.userJoined(username, isOwner, isReady);
     }
 }

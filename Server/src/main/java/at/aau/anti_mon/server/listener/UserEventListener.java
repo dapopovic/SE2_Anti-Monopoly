@@ -88,15 +88,13 @@ public class UserEventListener {
         // beigetreten ist
         for (User user : users) {
             if (!user.equals(joinedUser))
-                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser.getName(),
-                        joinedUser.isOwner());
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser);
         }
 
         // Sende dem neuen Spieler alle Spieler in der Lobby
         for (User user : users) {
             if (!user.equals(joinedUser))
-                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(joinedUser.getName()), user.getName(),
-                        user.isOwner());
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(joinedUser.getName()), user);
         }
     }
 

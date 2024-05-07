@@ -2,6 +2,7 @@ package at.aau.anti_mon.server.utilities;
 
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.game.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.socket.TextMessage;
@@ -73,9 +74,10 @@ public class JsonDataUtility {
     }
 
 
-    public static void sendJoinedUser(WebSocketSession session, String message, boolean isOwner) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, message, "username");
-        jsonData.putData("isOwner", String.valueOf(isOwner));
+    public static void sendJoinedUser(WebSocketSession session, User user) {
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, user.getName(), "username");
+        jsonData.putData("isOwner", String.valueOf(user.isOwner()));
+        jsonData.putData("isReady", String.valueOf(user.isReady()));
         send(session, jsonData);
     }
     public static void sendReadyUser(WebSocketSession session, String message) {

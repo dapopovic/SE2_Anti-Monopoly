@@ -8,5 +8,6 @@ import lombok.Getter;
 public class UserJoinedLobbyEvent {
     private final String name;
     private final boolean isOwner;
+    private final boolean isReady;
 
 }

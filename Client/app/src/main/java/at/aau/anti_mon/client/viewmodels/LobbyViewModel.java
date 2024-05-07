@@ -12,8 +12,8 @@ public class LobbyViewModel extends ViewModel {
     private final MutableLiveData<String> userLeftLiveData = new MutableLiveData<>();
 
     // Methoden zum Aktualisieren der LiveData
-    public void userJoined(String username, boolean isOwner) {
-        userJoinedLiveData.postValue(new User(username, isOwner, false));
+    public void userJoined(String username, boolean isOwner, boolean isReady) {
+        userJoinedLiveData.postValue(new User(username, isOwner, isReady));
     }
 
     public void userLeft(String username) {

@@ -88,6 +88,7 @@ public class LobbyService {
         User user = userService.getUser(userName);
         lobby.addUser(user);
         user.setLobby(lobby);
+        addUserToLobby(userName, lobbyPin);
         Logger.info("SERVER: Spieler " +userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
