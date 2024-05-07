@@ -13,4 +13,5 @@
     <string name="Startgame">Start game</string>
     <string name="Load">Load</string>
     <string name="ready">ready up</string>
+    <string name="unready">Unready</string>
 </resources>

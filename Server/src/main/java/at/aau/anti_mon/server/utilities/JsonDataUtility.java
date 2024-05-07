@@ -80,8 +80,9 @@ public class JsonDataUtility {
         jsonData.putData("isReady", String.valueOf(user.isReady()));
         send(session, jsonData);
     }
-    public static void sendReadyUser(WebSocketSession session, String message) {
+    public static void sendReadyUser(WebSocketSession session, String message, boolean isReady) {
         JsonDataDTO jsonData = createJsonDataDTO(Commands.READY, message, "username");
+        jsonData.putData("isReady", String.valueOf(isReady));
         send(session, jsonData);
     }
 

@@ -126,6 +126,7 @@ public class StartNewGameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         pin = null;
+        setupLiveDataObservers();
     }
 
     @Override

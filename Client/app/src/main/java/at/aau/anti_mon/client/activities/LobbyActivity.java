@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -155,14 +156,11 @@ public class LobbyActivity extends AppCompatActivity {
                 TextView tv = (TextView) entry.getKey().getChildAt(0);
                 tv.setText(user.getUsername());
                 CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
-                Log.d("ANTI-MONOPOLY-DEBUG", "Added user to table: " + user.getUsername() + " " + user.isOwner() + " " + user.isReady());
                 if (user.isOwner()) {
                     tv.setTextColor(Color.RED);
                 }
                 cb.setChecked(user.isReady());
-                Log.d("ANTI-MONOPOLY-DEBUG", "Added user to table: " + user.getUsername());
-
-                availableUsers.put(entry.getKey(), new User(username, user.isOwner(), user.isReady()));  // Markiere als besetzt
+                availableUsers.put(entry.getKey(), user);  // Markiere als besetzt
                 return;
             }
         }
@@ -200,17 +198,21 @@ public class LobbyActivity extends AppCompatActivity {
         webSocketClient.sendMessageToServer(jsonMessage);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onReadyEvent(OnReadyEvent event) {
-        Log.d("ANTI-MONOPOLY-DEBUG", "onReadyEvent");
-        // get user from table
-//        for (Map.Entry<TextView, User> entry : availableUsers.entrySet()) {
-//            User user = entry.getValue();
-//            if (user.getUsername().equals(event.getUserName())) {
-//                entry.getValue().setReady(!user.isReady());
-//                return;
-//            }
-//        }
+    public void onReadyEvent(User user) {
+        availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
+            User currentUser = entry.getValue();
+            if (currentUser.getUsername().equals(user.getUsername())) {
+                currentUser.setReady(user.isReady());
+                CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
+                cb.setChecked(user.isReady());
+                Button readyButton = findViewById(R.id.lobby_ready);
+                if (user.isReady()) {
+                    readyButton.setText(R.string.unready);
+                } else {
+                    readyButton.setText(R.string.ready);
+                }
+            }
+        });
     }
 
     /**
@@ -223,6 +225,9 @@ public class LobbyActivity extends AppCompatActivity {
 
         // User left: -> LiveData
         lobbyViewModel.getUserLeftLiveData().observe(this, this::removeUserFromTable);
+
+        // User ready: -> LiveData
+        lobbyViewModel.getReadyUpLiveData().observe(this, this::onReadyEvent);
     }
 
     private void removeObservers() {

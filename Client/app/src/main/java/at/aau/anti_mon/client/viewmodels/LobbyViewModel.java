@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -10,6 +12,7 @@ import lombok.Getter;
 public class LobbyViewModel extends ViewModel {
     private final MutableLiveData<User> userJoinedLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> userLeftLiveData = new MutableLiveData<>();
+    private final MutableLiveData<User> readyUpLiveData = new MutableLiveData<>();
 
     // Methoden zum Aktualisieren der LiveData
     public void userJoined(String username, boolean isOwner, boolean isReady) {
@@ -19,5 +22,8 @@ public class LobbyViewModel extends ViewModel {
     public void userLeft(String username) {
         userLeftLiveData.postValue(username);
     }
-
+    public void readyUp(String username, boolean isReady) {
+        Log.d("LobbyViewModel", "User is ready " + username);
+        readyUpLiveData.postValue(new User(username, false, isReady));
+    }
 }

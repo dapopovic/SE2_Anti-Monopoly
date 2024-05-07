@@ -133,9 +133,11 @@ public class UserEventListener {
         lobbyService.readyUser(event.getPin(), event.getUsername());
         Logger.info("Spieler " + event.getUsername() + " ist bereit.");
 
+        User readiedUser = userService.getUser(event.getUsername());
+
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         for (User user : users) {
-            JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername());
+            JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername(), readiedUser.isReady());
         }
     }
 

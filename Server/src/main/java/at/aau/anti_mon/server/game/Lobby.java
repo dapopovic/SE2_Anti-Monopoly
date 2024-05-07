@@ -53,7 +53,7 @@ public class Lobby {
     }
 
     public void readyUser(User user) {
-        user.setReady(true);
+        user.setReady(!user.isReady());
     }
 
     public void removeUser(User user) throws UserNotFoundException {

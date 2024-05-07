@@ -25,7 +25,6 @@
         android:text="@string/Startgame"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline8" />
-    <!--    create a button which is used to ready up, if it is not the owner-->
     <Button
         android:id="@+id/lobby_ready"
         style="@style/Buttons_Style"
@@ -77,7 +76,9 @@
 
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -99,7 +100,8 @@
 
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
             </LinearLayout>
         </TableRow>
 
@@ -126,7 +128,8 @@
 
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
             </LinearLayout>
 
             <LinearLayout
@@ -148,7 +151,8 @@
 
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
             </LinearLayout>
         </TableRow>
 
@@ -175,7 +179,8 @@
 
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
             </LinearLayout>
 
             <LinearLayout
@@ -197,7 +202,8 @@
 
                 <CheckBox
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
             </LinearLayout>
         </TableRow>
 
