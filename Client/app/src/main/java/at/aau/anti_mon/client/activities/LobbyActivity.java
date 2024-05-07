@@ -26,10 +26,10 @@ import androidx.multidex.MultiDex;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -38,7 +38,6 @@ import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
-import at.aau.anti_mon.client.events.OnReadyEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -168,6 +167,11 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void removeUserFromTable(String username) {
+        // get size of availableUsers
+        int size = availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).toArray().length;
+        if (size == 2 && user.isOwner()) {
+            findViewById(R.id.lobby_start_game).setEnabled(false);
+        }
         for (Map.Entry<LinearLayout, User> entry : availableUsers.entrySet()) {
             if (entry.getValue() != null && entry.getValue().getUsername().equals(username)) {
                 TextView tv = (TextView) entry.getKey().getChildAt(0);
@@ -198,21 +202,27 @@ public class LobbyActivity extends AppCompatActivity {
         webSocketClient.sendMessageToServer(jsonMessage);
     }
 
-    public void onReadyEvent(User user) {
+    public void onReadyEvent(User eventUser) {
+        AtomicBoolean allReady = new AtomicBoolean(true);
         availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
             User currentUser = entry.getValue();
-            if (currentUser.getUsername().equals(user.getUsername())) {
-                currentUser.setReady(user.isReady());
+            if (currentUser.getUsername().equals(eventUser.getUsername())) {
+                currentUser.setReady(eventUser.isReady());
                 CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
-                cb.setChecked(user.isReady());
+                cb.setChecked(eventUser.isReady());
                 Button readyButton = findViewById(R.id.lobby_ready);
-                if (user.isReady()) {
+                if (eventUser.isReady()) {
                     readyButton.setText(R.string.unready);
                 } else {
                     readyButton.setText(R.string.ready);
                 }
+                if (!currentUser.isReady()) {
+                    allReady.set(false);
+                }
             }
         });
+        Button startButton = findViewById(R.id.lobby_start_game);
+        startButton.setEnabled(user.isOwner() && allReady.get());
     }
 
     /**
