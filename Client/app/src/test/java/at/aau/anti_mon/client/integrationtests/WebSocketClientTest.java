@@ -1,5 +1,6 @@
 package at.aau.anti_mon.client.integrationtests;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,10 +11,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.command.Command;
+import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
@@ -23,14 +30,12 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 
 class WebSocketClientTest extends AntiMonopolyApplication {
-    private static final String BASE_URL = "ws://localhost:8080/game?userID=";
-
     @Inject
     WebSocketClient client;
     @Mock
     GlobalEventQueue globalEventQueue;
 
-    @Inject
+    @Mock
     CreateGameViewModel createGameViewModel;
 
     @BeforeEach
@@ -39,25 +44,22 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         TestComponent testComponent = DaggerTestComponent.builder().networkModule(new NetworkModule(this)).build();
         setGlobalEventQueue(globalEventQueue);
         testComponent.inject(this);
+
+        Map<String, Command> commandMap = new HashMap<>();
+        commandMap.put("PIN", new PinCommand(createGameViewModel));
+        client.setCommandFactory(new CommandFactory(commandMap));
     }
 
     @Test
     void testNewCreateGameCommandAndGetPin() {
-        client.setUserId("test");
-        client.connectToServer(BASE_URL + "test");
-        assertTrue(client.isConnected());
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
-        jsonDataDTO.setCommand(Commands.CREATE_GAME);
-        jsonDataDTO.putData("username", "test");
+        jsonDataDTO.setCommand(Commands.PIN);
+        jsonDataDTO.putData("pin", "1234");
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
-        client.sendMessageToServer(message);
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            fail("Thread interrupted");
-//        }
-//        verify(createGameViewModel).createGame(any(String.class));
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        verify(createGameViewModel).createGame("1234");
 
     }
 

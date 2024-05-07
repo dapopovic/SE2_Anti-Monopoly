@@ -49,7 +49,8 @@ public class WebSocketClient {
     @Setter
     private WebSocket webSocket;
     private final OkHttpClient client;
-    private final CommandFactory commandFactory;
+    @Setter
+    private CommandFactory commandFactory;
     private final MutableLiveData<JsonDataDTO> liveData = new MutableLiveData<>();
     private boolean isConnected = false;
     private String userID;
@@ -80,19 +81,6 @@ public class WebSocketClient {
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
         String urlWithUserId = WEBSOCKET_URI + userID;
-        Request request = new Request.Builder().url(urlWithUserId).build();
-        webSocket = client.newWebSocket(request, createWebSocketListener());
-    }
-    public synchronized void connectToServer(String uri) {
-        Log.d(DEBUG_TAG, "Connecting to server");
-        // Mehrfache Verbindungen verhindern:
-        if (webSocket != null || userID == null){
-            Log.d(DEBUG_TAG, "Connection already established or no userID set");
-            return;
-        }
-
-        // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = uri + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
