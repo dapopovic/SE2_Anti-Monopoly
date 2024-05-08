@@ -1,10 +1,9 @@
 package at.aau.anti_mon.server.websocketclient;
 
 import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.JsonSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
@@ -50,7 +49,7 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
                     case HEARTBEAT -> Logger.info("CLIENT : Heartbeat received");
                     default -> Logger.error("CLIENT :  Unbekannter oder nicht unterstützter Befehl: " + commands);
                 }
-            } catch (JsonSyntaxException e) {
+            } catch (JsonProcessingException e) {
                 Logger.error("CLIENT : Fehler beim Parsen der JSON-Nachricht: " + json);
             }
         } else { // Wenn kein Befehl vorhanden ist

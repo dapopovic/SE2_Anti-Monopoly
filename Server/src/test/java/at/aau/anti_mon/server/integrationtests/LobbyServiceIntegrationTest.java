@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.WebSocketSession;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -24,6 +25,7 @@ import at.aau.anti_mon.server.service.UserService;
  * Integration tests for the LobbyService
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class LobbyServiceIntegrationTest {
 
     @Autowired

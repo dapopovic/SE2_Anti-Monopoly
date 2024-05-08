@@ -4,6 +4,38 @@ services:
     build:
       context: .
     restart: on-failure
-    container_name: qwertzuiop
+    container_name: Anti-Monopoly-Server
+    depends_on:
+      - redis
+      - postgres
     ports:
-      - 8080:8080
+      - "53215:8080"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+         "spring.datasource.url"  : "jdbc:postgresql://postgres:5432/postgres",
+         "spring.datasource.username" : "postgres",
+         "spring.datasource.password" : "postgres",
+         "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
+         "hibernate.transaction.coordinator_class" : "jta",
+         "spring.jpa.hibernate.ddl-auto" : "update"
+       }'
+
+  redis:
+    image: 'redis/redis-stack-server:latest'
+    container_name: redis-backend
+    ports:
+      - '6379:6379'
+
+  postgres:
+    image: 'postgres:alpine'
+    container_name: postgres-backend
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+volumes:
+    postgres:
+      driver: local

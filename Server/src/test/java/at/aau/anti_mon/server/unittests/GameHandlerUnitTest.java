@@ -5,7 +5,7 @@ import at.aau.anti_mon.server.commands.CreateGameCommand;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;
 import at.aau.anti_mon.server.events.SessionConnectEvent;
@@ -197,7 +197,7 @@ class GameHandlerUnitTest {
         verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
     }
     @Test
-    void afterConnectionEstablishedNoUri() throws Exception {
+    void afterConnectionEstablishedNoUri() {
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
         GameHandler gameHandler = new GameHandler(eventPublisher);
         WebSocketSession session = mock(WebSocketSession.class);
