@@ -144,7 +144,7 @@ public class WebSocketClient {
      */
     private void handleIncomingMessage(String text) {
         Log.d(DEBUG_TAG, "Received message: " + text);
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text, JsonDataDTO.class);
         if (jsonDataDTO == null) {
             Log.e(DEBUG_TAG, "Failed to parse JSON message");
             return;

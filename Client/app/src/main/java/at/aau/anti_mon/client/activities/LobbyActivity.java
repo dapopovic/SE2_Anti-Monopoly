@@ -264,8 +264,8 @@ public class LobbyActivity extends AppCompatActivity {
 
     private void startGame(Collection<User> users) {
         Intent intent = new Intent(this, ActivityGameField.class);
-        intent.putExtra("users", JsonDataManager.createJsonMessageFromObject(users));
-        intent.putExtra("currentUser", JsonDataManager.createJsonMessageFromObject(user));
+        intent.putExtra("users", JsonDataManager.createJsonMessage(users));
+        intent.putExtra("currentUser", JsonDataManager.createJsonMessage(user));
         intent.putExtra("pin", pin);
         gameStarted = true;
         startActivity(intent);
