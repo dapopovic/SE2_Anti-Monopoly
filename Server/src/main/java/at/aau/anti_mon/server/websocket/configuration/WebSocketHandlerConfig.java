@@ -18,7 +18,7 @@ import org.tinylog.Logger;
  * Configuration for the WebSocket Handler
  */
 @Configuration
-@ConfigurationProperties(prefix = "websockethandler")
+//@ConfigurationProperties(prefix = "websockethandler")
 @EnableWebSocket
 public class WebSocketHandlerConfig implements WebSocketConfigurer {
 

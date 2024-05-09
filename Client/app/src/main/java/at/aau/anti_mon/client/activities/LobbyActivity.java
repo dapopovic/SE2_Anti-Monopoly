@@ -165,7 +165,7 @@ public class LobbyActivity extends AppCompatActivity {
                 availableUsers.put(entry.getKey(), user);  // Markiere als besetzt
                 int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
                 Log.d(DEBUG_TAG, "Size of available users: " + size);
-                if (size >= 2 && user.isOwner()) {
+                if (size >= 2 && this.user.isOwner()) {
                     Button startButton = findViewById(R.id.lobby_start_game);
                     startButton.setEnabled(false);
                     startButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));

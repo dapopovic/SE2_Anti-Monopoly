@@ -15,7 +15,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
  */
 @Configuration
 @EnableWebSocketMessageBroker
-@ConfigurationProperties(prefix = "websocketbroker")
+//@ConfigurationProperties(prefix = "websocketbroker")
 public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override

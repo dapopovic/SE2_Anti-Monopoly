@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Configuration for the Scheduler
  */
 @Configuration
-@ConfigurationProperties(prefix = "scheduler")
+//@ConfigurationProperties(prefix = "scheduler")
 @EnableScheduling
 public class SchedulingConfig {
 }
