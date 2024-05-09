@@ -1,6 +1,7 @@
 package at.aau.anti_mon.client.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -17,8 +18,10 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;
@@ -43,12 +46,12 @@ class WebSocketClientTest extends AntiMonopolyApplication {
 
         Map<String, Command> commandMap = new HashMap<>();
         commandMap.put("PIN", new PinCommand(createGameViewModel));
+        commandMap.put("HEARTBEAT", new HeartBeatCommand(globalEventQueue));
         client.setCommandFactory(new CommandFactory(commandMap));
     }
 
     @Test
     void testNewCreateGameCommandAndGetPin() {
-
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.PIN);
         jsonDataDTO.putData("pin", "1234");
@@ -56,7 +59,17 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
         verify(createGameViewModel).createGame("1234");
+    }
 
+    @Test
+    void testHeartBeatCommandReceivesHeartBeatEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.HEARTBEAT);
+        jsonDataDTO.putData("msg", "test");
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        verify(globalEventQueue).enqueueEvent(any(HeartBeatEvent.class));
     }
 
 }

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.sql.SQLOutput;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -153,6 +154,10 @@ public class WebSocketClient {
             return;
         }
         Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
+        if (command == null) {
+            Log.e(DEBUG_TAG, "No command found for: " + jsonDataDTO.getCommand().name());
+            return;
+        }
         command.execute(jsonDataDTO);
         liveData.postValue(jsonDataDTO);
     }

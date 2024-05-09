@@ -1,16 +1,17 @@
 package at.aau.anti_mon.server.listener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
-import at.aau.anti_mon.server.events.UserReadyLobbyEvent;
+import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.tinylog.Logger;
 
-import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -138,6 +139,23 @@ public class UserEventListener {
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         for (User user : users) {
             JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername(), readiedUser.isReady());
+        }
+    }
+    @EventListener
+    public void onStartGameEvent(UserStartedGameEvent event) throws LobbyNotFoundException {
+        sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
+        lobbyService.startGame(event.getPin(), event.getUsername());
+        Logger.info("Spieler " + event.getUsername() + " hat das Spiel gestartet.");
+
+        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
+        // convert to userDtos
+        ArrayList<UserDTO> usersList = new ArrayList<>();
+        for (User user : users) {
+            usersList.add(new UserDTO(user.getName(), user.isOwner(), user.isReady()));
+        }
+        Logger.debug("Users in Lobby: " + users.size());
+        for (User user : users) {
+            JsonDataUtility.sendStartGame(sessionManagementService.getSessionForUser(user.getName()), usersList);
         }
     }
 

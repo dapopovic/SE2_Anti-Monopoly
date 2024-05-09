@@ -154,6 +154,15 @@ public class LobbyService {
         throw new UserNotFoundException("User mit Name " + usrID + " nicht gefunden.");
     }
 
+    public void startGame(Integer pin, String username) {
+        Lobby lobby = lobbies.get(pin);
+        if (!lobby.getOwner().getName().equals(username)) {
+            Logger.error("SERVER: User " + username + " is not the owner of the lobby.");
+            return;
+        }
+        lobby.startGame();
+    }
+
     /**
      * Konvertiert Nachrichtenobjekt in JSON und sendet es an alle Clients im Lobby-Channel
      * @param lobbyId ID der Lobby

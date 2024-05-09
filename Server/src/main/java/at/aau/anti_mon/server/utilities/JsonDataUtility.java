@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.utilities;
 
+import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.User;
@@ -10,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +47,15 @@ public class JsonDataUtility {
         try{
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonData);
+        } catch (JsonProcessingException e) {
+            Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
+            return null;
+        }
+    }
+    public static String createJsonStringFromObject(Object object) {
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;
@@ -122,4 +133,15 @@ public class JsonDataUtility {
     }
 
 
+    public static void sendStartGame(WebSocketSession sessionForUser, Collection<UserDTO> users) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.START_GAME, new HashMap<>());
+        // create a list of all users in the lobby
+        StringBuilder usersString = new StringBuilder();
+        for (UserDTO user : users) {
+            usersString.append(JsonDataUtility.createJsonStringFromObject(user)).append(",");
+        }
+        usersString.deleteCharAt(usersString.length() - 1);
+        jsonData.putData("users", "[" + usersString + "]");
+        send(sessionForUser, jsonData);
+    }
 }

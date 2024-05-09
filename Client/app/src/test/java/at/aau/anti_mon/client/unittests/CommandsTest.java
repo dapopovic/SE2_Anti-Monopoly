@@ -14,6 +14,7 @@ import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
+import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -113,6 +114,19 @@ class CommandsTest {
         joinGameCommand.execute(jsonDataDTO);
 
         verify(lobbyViewModel).userJoined("testUser", false, false);
+    }
+    @Test
+    void onReadyCommandShouldFireLobbyViewModelReady() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.READY);
+        jsonDataDTO.putData("username", "testUser");
+        jsonDataDTO.putData("isReady", "true");
+        assertEquals(Commands.READY, jsonDataDTO.getCommand());
+
+        OnReadyCommand ReadyCommand = new OnReadyCommand(lobbyViewModel);
+        ReadyCommand.execute(jsonDataDTO);
+
+        verify(lobbyViewModel).readyUp("testUser", true);
     }
 
 }

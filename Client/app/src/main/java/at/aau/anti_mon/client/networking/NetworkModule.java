@@ -22,6 +22,7 @@ import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
@@ -166,6 +167,13 @@ public class NetworkModule {
     @IntoMap
     @StringKey("READY")
     Command provideReadyCommand(OnReadyCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("START_GAME")
+    Command provideStartGameCommand(StartGameCommand command) {
         return command;
     }
 

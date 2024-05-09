@@ -38,6 +38,16 @@ public class JsonDataManager {
             return null;
         }
     }
+    public static <T> T parseJsonMessage(String json, Class<T> clazz) {
+        Log.d(DEBUG_TAG, "parseJsonMessage: " + json);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            Log.e(DEBUG_TAG, "Failed to parse JSON message", e);
+            return null;
+        }
+    }
 
     public static String createJsonMessage( JsonDataDTO jsonData)  {
         Log.d(DEBUG_TAG, "createJsonMessage: " + jsonData);

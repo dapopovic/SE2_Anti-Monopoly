@@ -277,10 +277,13 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     public void onStartGame(View view) {
-        // open Activity to start the game
-        Intent intent = new Intent(this, ActivityGamefield.class);
-        startActivity(intent);
-
+        // send start game message to server
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.START_GAME, new HashMap<>());
+        jsonData.putData("username", user.getUsername());
+        jsonData.putData("pin", pin);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.d(DEBUG_TAG, " Username sending to start game:" + jsonDataString);
     }
 
     public void onReady(View view) {

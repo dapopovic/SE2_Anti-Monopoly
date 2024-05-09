@@ -18,7 +18,8 @@ public enum Commands {
     INFO("INFO"),
     LOBBY_PLAYERS("LOBBY_PLAYERS"),
     READY("READY"),
-    ERROR("ERROR");
+    ERROR("ERROR"),
+    START_GAME("START_GAME");
 
     // usw
 
