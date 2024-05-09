@@ -15,6 +15,8 @@ import at.aau.anti_mon.client.command.Commands;
  * This class is responsible for creating and parsing JSON messages.
  */
 public class JsonDataManager {
+    private JsonDataManager() {
+    }
     private static final String FAILURE_MESSAGE = "Failed to create JSON message";
     public static String  createJsonMessage(Commands command, Map<String, String> data) {
         Log.d(DEBUG_TAG, "createJsonMessage: " + command + " " + data);
