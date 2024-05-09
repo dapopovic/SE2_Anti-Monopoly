@@ -22,7 +22,6 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:onClick="onStartGame"
-        android:enabled="false"
         android:text="@string/Startgame"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline8" />

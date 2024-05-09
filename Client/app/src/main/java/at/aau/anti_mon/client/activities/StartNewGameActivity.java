@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.activities;
 
+import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,13 +95,13 @@ public class StartNewGameActivity extends AppCompatActivity {
         jsonData.putData("username", username);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
-        Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Username sending for pin: " + jsonDataString);
+        Log.d(DEBUG_TAG, "Username sending for pin: " + jsonDataString);
     }
 
     public void onPinReceived(String receivedPin) {
-        Log.d("ANTI-MONOPOLY-DEBUG", "Pin received: " + receivedPin);
+        Log.d(DEBUG_TAG, "Pin received: " + receivedPin);
         if (isFinishing()) {
-            Log.d("ANTI-MONOPOLY-DEBUG", "Activity is finishing. Cannot set pin.");
+            Log.d(DEBUG_TAG, "Activity is finishing. Cannot set pin.");
             return;
         }
         pin = receivedPin;
@@ -126,7 +128,9 @@ public class StartNewGameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         pin = null;
-        setupLiveDataObservers();
+        if (!createGameViewModel.getPinLiveData().hasActiveObservers()) {
+            setupLiveDataObservers();
+        }
     }
 
     @Override

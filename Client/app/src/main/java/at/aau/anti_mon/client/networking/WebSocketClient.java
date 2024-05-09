@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.networking;
 
+import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -43,8 +45,8 @@ public class WebSocketClient {
     /**
      * URL for testing connection to se2-server
      */
-    private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
-    private static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
+//    private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
+
     @Getter
     @Setter
     private WebSocket webSocket;
@@ -93,7 +95,7 @@ public class WebSocketClient {
         return new WebSocketListener() {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                Log.println(Log.DEBUG, DEBUG_TAG, "Opened Connection: " + response.message());
+                Log.d(DEBUG_TAG, "Opened Connection: " + response.message());
 
                 isConnected = true;
                 // Versuche alle wartenden Nachrichten zu senden
@@ -107,7 +109,7 @@ public class WebSocketClient {
 
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
-                Log.println(Log.DEBUG, DEBUG_TAG, "Closed Connection " + reason);
+                Log.d(DEBUG_TAG, "Closed Connection " + reason);
 
                 isConnected = false;
                 WebSocketClient.this.webSocket = null;

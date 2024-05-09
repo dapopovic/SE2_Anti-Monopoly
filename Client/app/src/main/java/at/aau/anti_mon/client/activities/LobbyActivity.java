@@ -1,5 +1,6 @@
 package at.aau.anti_mon.client.activities;
 
+import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 import static at.aau.anti_mon.client.activities.GameInstructionsActivity.username;
 
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -51,14 +53,15 @@ public class LobbyActivity extends AppCompatActivity {
 
 
     //////////////////////////////////// Android UI
-    TextView textView_pin;
+    TextView textViewPin;
 
     HashMap<LinearLayout, User> availableUsers = new HashMap<>();
 
 
     ///////////////////////////////////// Variablen
-    public String pin;
-    public User user;
+    private String pin;
+    private User user;
+    private boolean leftLobby = false;
 
     ///////////////////////////////////// Networking
 
@@ -121,7 +124,7 @@ public class LobbyActivity extends AppCompatActivity {
             availableUsers.put(lt, null);
         }
 
-        textView_pin = findViewById(R.id.Pin);
+        textViewPin = findViewById(R.id.Pin);
 
         processIntent();
     }
@@ -131,14 +134,14 @@ public class LobbyActivity extends AppCompatActivity {
             user = new User(getIntent().getStringExtra("username"), getIntent().getBooleanExtra("isOwner", false), getIntent().getBooleanExtra("isReady", false));
             addUserToTable(user);
         } else {
-            Log.e("ANTI-MONOPOLY-DEBUG", "Old Intent has no username");
+            Log.e(DEBUG_TAG, "Old Intent has no username");
             // Todo: Error handling
         }
         if (getIntent().hasExtra("pin")) {
             pin = getIntent().getStringExtra("pin");
-            textView_pin.setText(pin);
+            textViewPin.setText(pin);
         } else {
-            Log.e("ANTI-MONOPOLY-DEBUG", "Old Intent has no pin");
+            Log.e(DEBUG_TAG, "Old Intent has no pin");
             // Todo: Error handling
         }
     }
@@ -149,6 +152,7 @@ public class LobbyActivity extends AppCompatActivity {
             findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
             findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
         }
+        Log.d(DEBUG_TAG, "User joined: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady());
         for (Map.Entry<LinearLayout, User> entry : availableUsers.entrySet()) {
             if (entry.getValue() == null) {  // Prüfe, ob der TextView verfügbar ist
                 // get the first available user layout
@@ -160,18 +164,21 @@ public class LobbyActivity extends AppCompatActivity {
                 }
                 cb.setChecked(user.isReady());
                 availableUsers.put(entry.getKey(), user);  // Markiere als besetzt
+                int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
+                if (size == 2 && user.isOwner()) {
+                    Button startButton = findViewById(R.id.lobby_start_game);
+                    startButton.setEnabled(false);
+                    // make it a little pale
+                    startButton.setBackgroundColor(Color.parseColor("#FFD3D3D3"));
+                }
                 return;
             }
         }
-        Log.e("LobbyActivity", "Kein verfügbarer Platz für neuen Benutzer.");
+        Log.e(DEBUG_TAG, "Kein verfügbarer Platz für neuen Benutzer.");
     }
 
     private void removeUserFromTable(String username) {
         // get size of availableUsers
-        int size = availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).toArray().length;
-        if (size == 2 && user.isOwner()) {
-            findViewById(R.id.lobby_start_game).setEnabled(false);
-        }
         for (Map.Entry<LinearLayout, User> entry : availableUsers.entrySet()) {
             if (entry.getValue() != null && entry.getValue().getUsername().equals(username)) {
                 TextView tv = (TextView) entry.getKey().getChildAt(0);
@@ -179,10 +186,17 @@ public class LobbyActivity extends AppCompatActivity {
                 CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
                 cb.setChecked(false);
                 availableUsers.put(entry.getKey(), null);  // Markiere als verfügbar
+                int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
+                if (size == 2 && user.isOwner()) {
+                    Button startButton = findViewById(R.id.lobby_start_game);
+                    startButton.setEnabled(false);
+                    // make it a little pale
+                    startButton.setBackgroundColor(Color.parseColor("#FFD3D3D3"));
+                }
                 return;
             }
         }
-        Log.e("ANTI-MONOPOLY-DEBUG", "Benutzername nicht gefunden.");
+        Log.e(DEBUG_TAG, "Benutzername nicht gefunden.");
     }
 
     /**
@@ -192,9 +206,7 @@ public class LobbyActivity extends AppCompatActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
-
-        Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent");
-
+        Log.d(DEBUG_TAG, "HeartBeatEvent");
 
         JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
         jsonData.putData("msg", "PONG");
@@ -223,6 +235,7 @@ public class LobbyActivity extends AppCompatActivity {
         });
         Button startButton = findViewById(R.id.lobby_start_game);
         startButton.setEnabled(user.isOwner() && allReady.get());
+        startButton.setBackground(allReady.get() ? AppCompatResources.getDrawable(this, R.drawable.rounded_btn) : AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
     }
 
     /**
@@ -258,9 +271,9 @@ public class LobbyActivity extends AppCompatActivity {
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
+        leftLobby = true;
 
-        Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", " Username sending to leave Lobby:" + jsonDataString);
-
+        Log.d(DEBUG_TAG, " Username sending to leave Lobby:" + jsonDataString);
     }
 
     public void onStartGame(View view) {
@@ -277,31 +290,35 @@ public class LobbyActivity extends AppCompatActivity {
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
-        Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", " Username sending to ready up:" + jsonDataString);
+        Log.d(DEBUG_TAG, " Username sending to ready up:" + jsonDataString);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus registered");
+        Log.d(DEBUG_TAG, "EventBus registered");
         globalEventQueue.setEventBusReady(true);
-
         if (webSocketClient != null) {
             webSocketClient.setUserId(username);
             webSocketClient.connectToServer();
+        }
+        if (!lobbyViewModel.getUserJoinedLiveData().hasActiveObservers()) {
+            setupLiveDataObservers();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        leaveLobby();
+        if (!leftLobby) {
+            leaveLobby();
+        }
         if (webSocketClient != null) {
             webSocketClient.disconnect();
         }
         EventBus.getDefault().unregister(this);
-        Log.d("ANTI-MONOPOLY-DEBUG", "EventBus unregistered");
+        Log.d(DEBUG_TAG, "EventBus unregistered");
         globalEventQueue.setEventBusReady(false);
         removeObservers();
     }

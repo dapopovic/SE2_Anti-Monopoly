@@ -15,6 +15,7 @@ import lombok.Setter;
 @Getter
 public class AntiMonopolyApplication extends Application {
 
+    public static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
     private AppComponent appComponent;
     @Setter
     private GlobalEventQueue globalEventQueue;
