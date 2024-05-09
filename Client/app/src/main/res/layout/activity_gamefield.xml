@@ -118,7 +118,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
-    <at.aau.anti_mon.client.activities.CustomView_Gamefield
+    <at.aau.anti_mon.client.activities.CustomViewGameField
         android:id="@+id/game_field"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
