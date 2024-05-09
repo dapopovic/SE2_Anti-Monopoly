@@ -154,10 +154,6 @@ public class WebSocketClient {
             return;
         }
         Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
-        if (command == null) {
-            Log.e(DEBUG_TAG, "No command found for: " + jsonDataDTO.getCommand().name());
-            return;
-        }
         command.execute(jsonDataDTO);
         liveData.postValue(jsonDataDTO);
     }
