@@ -15,10 +15,8 @@ import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.PinCommand;
-import at.aau.anti_mon.client.events.CreatedGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
@@ -29,14 +27,14 @@ class CommandsTest {
 
     @Mock
     GlobalEventQueue queue;
-    LobbyViewModel viewModel;
+    @Mock
+    LobbyViewModel lobbyViewModel;
     @Mock
     CreateGameViewModel createGameViewModel;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        viewModel = new LobbyViewModel();
     }
     
     @Test
@@ -47,7 +45,7 @@ class CommandsTest {
         jsonDataDTO.putData("pin", "1234");
         assertEquals(Commands.JOIN_GAME, jsonDataDTO.getCommand());
 
-        JoinGameCommand joinGameCommand = new JoinGameCommand(queue, viewModel);
+        JoinGameCommand joinGameCommand = new JoinGameCommand(queue, lobbyViewModel);
         joinGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(UserJoinedLobbyEvent.class));
@@ -59,7 +57,7 @@ class CommandsTest {
         jsonDataDTO.putData("username", "testUser");
         assertEquals(Commands.LEAVE_GAME, jsonDataDTO.getCommand());
 
-        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(queue, viewModel);
+        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(queue, lobbyViewModel);
         leaveGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(UserLeftLobbyEvent.class));
@@ -95,12 +93,14 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.CREATE_GAME);
         jsonDataDTO.putData("pin", "1234");
         jsonDataDTO.putData("username", "testUser");
+        jsonDataDTO.putData("isOwner", "true");
+        jsonDataDTO.putData("isReady", "true");
         assertEquals(Commands.CREATE_GAME, jsonDataDTO.getCommand());
 
-        CreateGameCommand createGameCommand = new CreateGameCommand(queue, viewModel);
+        CreateGameCommand createGameCommand = new CreateGameCommand(lobbyViewModel);
         createGameCommand.execute(jsonDataDTO);
 
-        verify(queue).enqueueEvent(any(CreatedGameEvent.class));
+        verify(lobbyViewModel).userJoined("testUser", true, true);
     }
     @Test
     void newUserCommandShouldFireUserJoinedLobbyEvent() {
@@ -109,7 +109,7 @@ class CommandsTest {
         jsonDataDTO.putData("username", "testUser");
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
 
-        JoinGameCommand joinGameCommand = new JoinGameCommand(queue, viewModel);
+        JoinGameCommand joinGameCommand = new JoinGameCommand(queue, lobbyViewModel);
         joinGameCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(UserJoinedLobbyEvent.class));
