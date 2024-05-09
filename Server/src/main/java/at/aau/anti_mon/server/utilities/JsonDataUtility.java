@@ -21,8 +21,11 @@ import java.util.Map;
  */
 public class JsonDataUtility {
 
+    private JsonDataUtility() {
+    }
+
     public static String createStringFromJsonMessage(Commands command, Map<String, String> data) {
-        try{
+        try {
             JsonDataDTO jsonDataDTO = new JsonDataDTO(command, data);
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonDataDTO);
@@ -38,22 +41,13 @@ public class JsonDataUtility {
         return jsonData;
     }
 
-    public static JsonDataDTO parseJsonMessage(String json) throws JsonProcessingException {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(json, JsonDataDTO.class);
+    public static <T> T parseJsonMessage(String json, Class<T> clazz) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, clazz);
     }
 
-    public static String createStringFromJsonMessage(JsonDataDTO jsonData)  {
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(jsonData);
-        } catch (JsonProcessingException e) {
-            Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
-            return null;
-        }
-    }
-    public static String createJsonStringFromObject(Object object) {
-        try{
+    public static String createStringFromJsonMessage(Object object) {
+        try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -91,6 +85,7 @@ public class JsonDataUtility {
         jsonData.putData("isReady", String.valueOf(user.isReady()));
         send(session, jsonData);
     }
+
     public static void sendReadyUser(WebSocketSession session, String message, boolean isReady) {
         JsonDataDTO jsonData = createJsonDataDTO(Commands.READY, message, "username");
         jsonData.putData("isReady", String.valueOf(isReady));
@@ -114,6 +109,7 @@ public class JsonDataUtility {
 
     /**
      * Sendet eine Nachricht an den Benutzer
+     *
      * @param session WebSocket-Sitzung
      * @param message Nachricht
      */
@@ -124,6 +120,7 @@ public class JsonDataUtility {
 
     /**
      * Sendet eine Nachricht an den Benutzer
+     *
      * @param session WebSocket-Sitzung
      * @param message Nachricht
      */
@@ -138,7 +135,7 @@ public class JsonDataUtility {
         // create a list of all users in the lobby
         StringBuilder usersString = new StringBuilder();
         for (UserDTO user : users) {
-            usersString.append(JsonDataUtility.createJsonStringFromObject(user)).append(",");
+            usersString.append(JsonDataUtility.createStringFromJsonMessage(user)).append(",");
         }
         usersString.deleteCharAt(usersString.length() - 1);
         jsonData.putData("users", "[" + usersString + "]");
