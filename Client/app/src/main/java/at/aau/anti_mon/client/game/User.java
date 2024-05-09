@@ -35,9 +35,4 @@ public class User {
         }
         return username.equals(user.username) && isOwner == user.isOwner && isReady == user.isReady && money == user.money;
     }
-
-    @Override
-    public int hashCode() {
-        return username.hashCode() + (isOwner ? 1 : 0) + (isReady ? 1 : 0) + money;
-    }
 }
