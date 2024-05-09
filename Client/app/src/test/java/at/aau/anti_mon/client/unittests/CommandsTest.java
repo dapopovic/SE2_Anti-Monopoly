@@ -17,7 +17,6 @@ import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
-import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
@@ -58,10 +57,10 @@ class CommandsTest {
         jsonDataDTO.putData("username", "testUser");
         assertEquals(Commands.LEAVE_GAME, jsonDataDTO.getCommand());
 
-        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(queue, lobbyViewModel);
+        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(lobbyViewModel);
         leaveGameCommand.execute(jsonDataDTO);
 
-        verify(queue).enqueueEvent(any(UserLeftLobbyEvent.class));
+        verify(lobbyViewModel).userLeft("testUser");
     }
 
     @Test
