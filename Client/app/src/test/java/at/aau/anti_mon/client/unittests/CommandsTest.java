@@ -64,7 +64,7 @@ class CommandsTest {
     }
 
     @Test
-    void pinCommandShouldFirePinReceivedEvent() {
+    void pinCommandShouldFireCreateGame() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.PIN);
         jsonDataDTO.putData("pin", "1234");
