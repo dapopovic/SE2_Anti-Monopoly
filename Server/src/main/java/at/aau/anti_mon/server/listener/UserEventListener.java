@@ -125,7 +125,7 @@ public class UserEventListener {
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
         }
-        sessionManagementService.removeSessionById(event.getUserSessionID(), event.getUsername());
+        sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
     }
 
     @EventListener
