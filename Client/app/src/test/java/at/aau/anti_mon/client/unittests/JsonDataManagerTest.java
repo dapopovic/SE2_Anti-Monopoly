@@ -64,11 +64,8 @@ class JsonDataManagerTest {
         String json = JsonDataManager.createJsonMessage(users);
         ObjectMapper mapper = new ObjectMapper();
         users = assertDoesNotThrow(() -> mapper.readValue(json, User[].class));
-        assertEquals(2, users.length);
-        assertEquals("username", users[0].getUsername());
-        assertEquals("username2", users[1].getUsername());
-        assertEquals(1000, users[0].getMoney());
-        assertEquals(1500, users[1].getMoney());
+        assertEquals(users[0], user);
+        assertEquals(users[1], user2);
     }
 
     @Test
