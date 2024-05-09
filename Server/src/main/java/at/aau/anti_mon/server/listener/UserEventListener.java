@@ -124,8 +124,8 @@ public class UserEventListener {
             JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
-
         }
+        sessionManagementService.removeSessionById(event.getUserSessionID(), event.getUsername());
     }
 
     @EventListener
@@ -153,7 +153,6 @@ public class UserEventListener {
         for (User user : users) {
             usersList.add(new UserDTO(user.getName(), user.isOwner(), user.isReady()));
         }
-        Logger.debug("Users in Lobby: " + users.size());
         for (User user : users) {
             JsonDataUtility.sendStartGame(sessionManagementService.getSessionForUser(user.getName()), usersList);
         }

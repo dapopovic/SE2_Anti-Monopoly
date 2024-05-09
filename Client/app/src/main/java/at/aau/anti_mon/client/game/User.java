@@ -16,4 +16,28 @@ public class User {
     private boolean isOwner;
     @Setter
     private boolean isReady;
+    private int money;
+
+    public User(String username, boolean isOwner, boolean isReady) {
+        this.username = username;
+        this.isOwner = isOwner;
+        this.isReady = isReady;
+        this.money = 1500;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof User user)) {
+            return false;
+        }
+        return username.equals(user.username) && isOwner == user.isOwner && isReady == user.isReady && money == user.money;
+    }
+
+    @Override
+    public int hashCode() {
+        return username.hashCode() + (isOwner ? 1 : 0) + (isReady ? 1 : 0) + money;
+    }
 }

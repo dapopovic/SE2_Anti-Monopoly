@@ -15,7 +15,7 @@ import at.aau.anti_mon.client.command.Commands;
  * This class is responsible for creating and parsing JSON messages.
  */
 public class JsonDataManager {
-
+    private static final String FAILURE_MESSAGE = "Failed to create JSON message";
     public static String  createJsonMessage(Commands command, Map<String, String> data) {
         Log.d(DEBUG_TAG, "createJsonMessage: " + command + " " + data);
         try{
@@ -23,7 +23,7 @@ public class JsonDataManager {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonDataDTO);
         } catch (JsonProcessingException e) {
-            Log.e(DEBUG_TAG, "Failed to create JSON message", e);
+            Log.e(DEBUG_TAG, FAILURE_MESSAGE, e);
             return null;
         }
     }
@@ -34,7 +34,7 @@ public class JsonDataManager {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(json, JsonDataDTO.class);
         } catch (JsonProcessingException e) {
-            Log.e(DEBUG_TAG, "Failed to parse JSON message", e);
+            Log.e(DEBUG_TAG, FAILURE_MESSAGE, e);
             return null;
         }
     }
@@ -44,7 +44,7 @@ public class JsonDataManager {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {
-            Log.e(DEBUG_TAG, "Failed to parse JSON message", e);
+            Log.e(DEBUG_TAG, FAILURE_MESSAGE, e);
             return null;
         }
     }
@@ -55,10 +55,20 @@ public class JsonDataManager {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(jsonData);
         } catch (JsonProcessingException e) {
-            Log.e(DEBUG_TAG, "Failed to create JSON message", e);
+            Log.e(DEBUG_TAG, FAILURE_MESSAGE, e);
             return null;
         }
     }
 
 
+    public static String createJsonMessageFromObject(Object object) {
+        Log.d(DEBUG_TAG, "createJsonStringFromObject: " + object);
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            Log.e(DEBUG_TAG, FAILURE_MESSAGE, e);
+            return null;
+        }
+    }
 }

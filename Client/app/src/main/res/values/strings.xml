@@ -14,4 +14,5 @@
     <string name="Load">Load</string>
     <string name="ready">ready up</string>
     <string name="unready">Unready</string>
+    <string name="player_info">%1$s: %2$s</string>
 </resources>

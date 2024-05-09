@@ -160,6 +160,11 @@ public class LobbyService {
             Logger.error("SERVER: User " + username + " is not the owner of the lobby.");
             return;
         }
+        // check if everyone is ready
+        if (!lobby.isEveryoneReady()) {
+            Logger.error("SERVER: Not everyone is ready.");
+            return;
+        }
         lobby.startGame();
     }
 

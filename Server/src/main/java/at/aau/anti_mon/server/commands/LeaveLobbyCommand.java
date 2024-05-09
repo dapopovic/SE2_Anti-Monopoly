@@ -39,7 +39,7 @@ public class LeaveLobbyCommand implements Command{
 
         Logger.info("SERVER : LEAVE_GAME empfangen." + playerName + " hat die Lobby mit der PIN " + pinString + " verlassen.");
 
-        UserDTO playerDTO = new UserDTO(playerName);
+        UserDTO playerDTO = new UserDTO(playerName, false, true);
         LobbyDTO lobbyDTO = new LobbyDTO(Integer.parseInt(pinString));
         eventPublisher.publishEvent(new UserLeftLobbyEvent(session, lobbyDTO, playerDTO));
 

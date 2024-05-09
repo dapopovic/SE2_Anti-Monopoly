@@ -96,4 +96,8 @@ public class Lobby {
     public void startGame() {
         this.gameState = GameState.INGAME;
     }
+
+    public boolean isEveryoneReady() {
+        return users.stream().allMatch(User::isReady);
+    }
 }

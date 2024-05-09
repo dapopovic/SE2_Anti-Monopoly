@@ -1,7 +1,6 @@
 package at.aau.anti_mon.client.activities;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
-import static at.aau.anti_mon.client.activities.GameInstructionsActivity.username;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -29,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -62,6 +61,7 @@ public class LobbyActivity extends AppCompatActivity {
     private String pin;
     private User user;
     private boolean leftLobby = false;
+    private boolean gameStarted = false;
 
     ///////////////////////////////////// Networking
 
@@ -88,10 +88,9 @@ public class LobbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_lobby);
-
         // TODO:
         // SharedPreferences für zu speichernde Key-Value Paare
-        sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
+        // sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();
@@ -165,11 +164,11 @@ public class LobbyActivity extends AppCompatActivity {
                 cb.setChecked(user.isReady());
                 availableUsers.put(entry.getKey(), user);  // Markiere als besetzt
                 int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
-                if (size == 2 && user.isOwner()) {
+                Log.d(DEBUG_TAG, "Size of available users: " + size);
+                if (size >= 2 && user.isOwner()) {
                     Button startButton = findViewById(R.id.lobby_start_game);
                     startButton.setEnabled(false);
-                    // make it a little pale
-                    startButton.setBackgroundColor(Color.parseColor("#FFD3D3D3"));
+                    startButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
                 }
                 return;
             }
@@ -251,11 +250,25 @@ public class LobbyActivity extends AppCompatActivity {
 
         // User ready: -> LiveData
         lobbyViewModel.getReadyUpLiveData().observe(this, this::onReadyEvent);
+
+        // user started game -> LiveData
+        lobbyViewModel.getStartGameLiveData().observe(this, this::startGame);
     }
 
     private void removeObservers() {
         lobbyViewModel.getUserJoinedLiveData().removeObservers(this);
         lobbyViewModel.getUserLeftLiveData().removeObservers(this);
+        lobbyViewModel.getReadyUpLiveData().removeObservers(this);
+        lobbyViewModel.getStartGameLiveData().removeObservers(this);
+    }
+
+    private void startGame(Collection<User> users) {
+        Intent intent = new Intent(this, ActivityGameField.class);
+        intent.putExtra("users", JsonDataManager.createJsonMessageFromObject(users));
+        intent.putExtra("currentUser", JsonDataManager.createJsonMessageFromObject(user));
+        intent.putExtra("pin", pin);
+        gameStarted = true;
+        startActivity(intent);
     }
 
     public void onCancelLobby(View view) {
@@ -299,25 +312,33 @@ public class LobbyActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (gameStarted) {
+            finish();
+        }
         EventBus.getDefault().register(this);
         Log.d(DEBUG_TAG, "EventBus registered");
         globalEventQueue.setEventBusReady(true);
         if (webSocketClient != null) {
-            webSocketClient.setUserId(username);
+            webSocketClient.setUserId(user.getUsername());
             webSocketClient.connectToServer();
         }
         if (!lobbyViewModel.getUserJoinedLiveData().hasActiveObservers()) {
             setupLiveDataObservers();
         }
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeObservers();
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (!leftLobby) {
+        if (!leftLobby && !gameStarted) {
             leaveLobby();
         }
-        if (webSocketClient != null) {
+        if (webSocketClient != null && !gameStarted) {
             webSocketClient.disconnect();
         }
         EventBus.getDefault().unregister(this);
