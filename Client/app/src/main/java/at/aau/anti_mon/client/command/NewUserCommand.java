@@ -4,19 +4,14 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
-import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 
 public class NewUserCommand implements Command{
-
-    private final GlobalEventQueue queue;
     private final LobbyViewModel viewModel;
 
     @Inject
-    public NewUserCommand(GlobalEventQueue queue, LobbyViewModel viewModel) {
-        this.queue = queue;
+    public NewUserCommand(LobbyViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
@@ -25,10 +20,8 @@ public class NewUserCommand implements Command{
         boolean isOwner = Boolean.parseBoolean(data.getData().get("isOwner"));
         String username = data.getData().get("username");
         boolean isReady = Boolean.parseBoolean(data.getData().get("isReady"));
-        Log.d("NewUserCommand", Boolean.toString(isReady));
 
-//        Log.d("NewUserCommand", "Posting user joined lobby event with username: " + data.getData().get("username") + " and isOwner: " + data.getData().get("isOwner") + " " + Boolean.getBoolean(data.getData().get("isOwner")));
-
+        Log.d("NewUserCommand", "New user joined: " + username + " isOwner: " + isOwner + " isReady: " + isReady);
         // Update LiveData for UI-bound updates
         viewModel.userJoined(username, isOwner, isReady);
     }

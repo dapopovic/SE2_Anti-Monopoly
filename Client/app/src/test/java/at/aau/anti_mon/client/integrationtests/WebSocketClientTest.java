@@ -1,9 +1,6 @@
 package at.aau.anti_mon.client.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -22,7 +19,6 @@ import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;

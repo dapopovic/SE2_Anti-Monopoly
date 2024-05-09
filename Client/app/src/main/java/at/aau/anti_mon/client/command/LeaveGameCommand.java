@@ -4,7 +4,6 @@ package at.aau.anti_mon.client.command;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;

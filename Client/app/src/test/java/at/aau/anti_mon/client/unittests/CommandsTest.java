@@ -17,7 +17,6 @@ import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
-import at.aau.anti_mon.client.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.client.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
@@ -43,12 +42,14 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.JOIN_GAME);
         jsonDataDTO.putData("username", "testUser");
         jsonDataDTO.putData("pin", "1234");
+        jsonDataDTO.putData("isOwner", "false");
+        jsonDataDTO.putData("isReady", "false");
         assertEquals(Commands.JOIN_GAME, jsonDataDTO.getCommand());
 
-        JoinGameCommand joinGameCommand = new JoinGameCommand(queue, lobbyViewModel);
+        JoinGameCommand joinGameCommand = new JoinGameCommand(lobbyViewModel);
         joinGameCommand.execute(jsonDataDTO);
 
-        verify(queue).enqueueEvent(any(UserJoinedLobbyEvent.class));
+        verify(lobbyViewModel).userJoined("testUser", false, false);
     }
     @Test
     void leaveGameCommandShouldFireUserLeftLobbyEvent() {
@@ -109,10 +110,10 @@ class CommandsTest {
         jsonDataDTO.putData("username", "testUser");
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
 
-        JoinGameCommand joinGameCommand = new JoinGameCommand(queue, lobbyViewModel);
+        JoinGameCommand joinGameCommand = new JoinGameCommand(lobbyViewModel);
         joinGameCommand.execute(jsonDataDTO);
 
-        verify(queue).enqueueEvent(any(UserJoinedLobbyEvent.class));
+        verify(lobbyViewModel).userJoined("testUser", false, false);
     }
 
 }
