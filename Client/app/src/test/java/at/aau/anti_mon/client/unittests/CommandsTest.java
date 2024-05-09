@@ -9,16 +9,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
+import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
+import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 
@@ -127,6 +134,37 @@ class CommandsTest {
         ReadyCommand.execute(jsonDataDTO);
 
         verify(lobbyViewModel).readyUp("testUser", true);
+    }
+    @Test
+    void onStartGameCommandShouldFireLobbyViewModelStartGame() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.START_GAME);
+        // create users
+        User user = new User("username", true, true );
+        User user2 = new User("username2", false, false);
+        User[] users = {user, user2};
+        jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
+        assertEquals(Commands.START_GAME, jsonDataDTO.getCommand());
+
+        StartGameCommand startGameCommand = new StartGameCommand(lobbyViewModel);
+        startGameCommand.execute(jsonDataDTO);
+
+        verify(lobbyViewModel).startGame(any());
+    }
+
+    @Test
+    void onNewUserCommandShouldFireLobbyViewModelUserJoined() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.NEW_USER);
+        jsonDataDTO.putData("username", "testUser");
+        jsonDataDTO.putData("isOwner", "false");
+        jsonDataDTO.putData("isReady", "false");
+        assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
+
+        NewUserCommand newUserCommand = new NewUserCommand(lobbyViewModel);
+        newUserCommand.execute(jsonDataDTO);
+
+        verify(lobbyViewModel).userJoined("testUser", false, false);
     }
 
 }
