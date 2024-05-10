@@ -29,7 +29,7 @@
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activities.ActivityGamefield"
+            android:name=".activities.ActivityGameField"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity android:name=".activities.JoinGameActivity"

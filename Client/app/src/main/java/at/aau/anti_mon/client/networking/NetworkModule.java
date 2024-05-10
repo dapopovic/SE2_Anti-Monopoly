@@ -20,8 +20,11 @@ import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
+import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 import dagger.Module;
 import dagger.Provides;
@@ -90,6 +93,12 @@ public class NetworkModule {
     }
 
     @Provides
+    @Singleton
+    CreateGameViewModel provideCreateGameViewModel() {
+        return new CreateGameViewModel();
+    }
+
+    @Provides
     @IntoMap
     @StringKey("ANSWER")
     Command provideAnswerCommand(AnswerCommand command) {
@@ -99,8 +108,8 @@ public class NetworkModule {
     @Provides
     @IntoMap
     @StringKey("PIN")
-    Command providePinCommand(GlobalEventQueue queue) {
-        return new PinCommand(queue);
+    Command providePinCommand(PinCommand command) {
+        return command;
     }
 
 
@@ -154,6 +163,19 @@ public class NetworkModule {
         return command;
     }
 
+    @Provides
+    @IntoMap
+    @StringKey("READY")
+    Command provideReadyCommand(OnReadyCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("START_GAME")
+    Command provideStartGameCommand(StartGameCommand command) {
+        return command;
+    }
 
 
 }

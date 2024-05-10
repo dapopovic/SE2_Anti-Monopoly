@@ -2,6 +2,7 @@ package at.aau.anti_mon.client;
 
 import javax.inject.Singleton;
 
+import at.aau.anti_mon.client.activities.ActivityGameField;
 import at.aau.anti_mon.client.activities.JoinGameActivity;
 import at.aau.anti_mon.client.activities.LobbyActivity;
 import at.aau.anti_mon.client.activities.MainActivity;
@@ -26,4 +27,6 @@ public interface AppComponent {
     void inject (LobbyActivity lobbyActivity);
 
     void inject (JoinGameActivity joinGameActivity);
+
+    void inject(ActivityGameField activityGameField);
 }

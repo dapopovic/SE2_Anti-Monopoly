@@ -16,34 +16,19 @@ import androidx.core.view.WindowInsetsCompat;
 import at.aau.anti_mon.client.R;
 
 public class GameInstructionsActivity extends AppCompatActivity {
-    public static String username;
-    public static String Pin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_lobby);
+        setContentView(R.layout.activity_game_instructions);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        TextView pincode = findViewById(R.id.Pin);
-        pincode.setText(Pin);
-
-        TextView coll1 = findViewById(R.id.coll1);
-        coll1.setText(username);
     }
-
-    public void onStartGame(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, ActivityGamefield.class);
-        startActivity(intent);
-    }
-
     public void onCancelGameInstructions(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, StartNewGameActivity.class);
-        startActivity(intent);
+        finish();
     }
 }

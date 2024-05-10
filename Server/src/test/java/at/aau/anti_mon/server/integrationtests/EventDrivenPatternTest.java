@@ -98,10 +98,10 @@ import at.aau.anti_mon.server.service.UserService;
      void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         // Given
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2"));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2", false, false));
         joinLobbyCommand = mock(JoinLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
-        jsonDataDTO.setCommand(Commands.JOIN_GAME);
+        jsonDataDTO.setCommand(Commands.JOIN);
         jsonDataDTO.putData("username","user2");
         jsonDataDTO.putData("pin",lobby.getPin().toString());
 
@@ -128,7 +128,7 @@ import at.aau.anti_mon.server.service.UserService;
 
         session1 = mock(WebSocketSession.class);
         lobbyService.addUserToLobby( user2.getName(),lobby.getPin());
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1"));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1", false, false));
         leaveLobbyCommand = mock(LeaveLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.LEAVE_GAME);

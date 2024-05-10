@@ -40,12 +40,12 @@ public class LobbyService {
 
     @Autowired
     public LobbyService(UserService userService
-            //SimpMessagingTemplate messagingTemplate
+                        //SimpMessagingTemplate messagingTemplate
     ) {
         //this.messagingTemplate = messagingTemplate;
         this.userService = userService;
         this.lobbies = new ConcurrentHashMap<>();
-        this.userLobbyMap= new ConcurrentHashMap<>();
+        this.userLobbyMap = new ConcurrentHashMap<>();
     }
 
     public void addUserToLobby(String userId, int lobbyId) {
@@ -63,6 +63,7 @@ public class LobbyService {
     /**
      * Erstellt eine neue Lobby und fügt den Ersteller (User) hinzu
      * TODO: Verbesserung des Handling bei bereits bestehendem PIN!
+     *
      * @param user User
      */
     public Lobby createLobby(User user) {
@@ -73,29 +74,38 @@ public class LobbyService {
         if (existing != null) {
             throw new IllegalStateException("Lobby mit PIN " + newLobby.getPin() + " existiert bereits.");
         }
+        user.setLobby(newLobby);
         return newLobby;
     }
 
     /**
      * Fügt einen Benutzer zu einer Lobby hinzu
+     *
      * @param lobbyPin PIN der Lobby
      * @param userName Name des Benutzers
      * @throws UserNotFoundException wenn der Benutzer nicht gefunden wird
      */
     public void joinLobby(int lobbyPin, String userName) throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
         Lobby lobby = findLobbyByPin(lobbyPin);
-        lobby.addUser(userService.getUser(userName));
+        User user = userService.getUser(userName);
+        lobby.addUser(user);
+        user.setLobby(lobby);
         addUserToLobby(userName, lobbyPin);
-        Logger.info("SERVER: Spieler " +userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
+        Logger.info("SERVER: Spieler " + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
     public void leaveLobby(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.removeUser(userService.getUser(userName));
         removeUserFromLobby(userName);
-        Logger.info("SERVER: Spieler " +userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
+        Logger.info("SERVER: Spieler " + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
     }
 
+    public void readyUser(int lobbyPin, String userName) throws UserNotFoundException {
+        Lobby lobby = lobbies.get(lobbyPin);
+        lobby.readyUser(userService.getUser(userName));
+        Logger.info("SERVER: Spieler " + userName + " ist bereit.");
+    }
 
     /**
      * Durchsuche die Liste der Lobbies nach der gegebenen PIN und gib die entsprechende Lobby zurück.
@@ -114,6 +124,7 @@ public class LobbyService {
 
     /**
      * Durchsuche die Liste der Lobbies nach der gegebenen PIN und gib die entsprechende Lobby zurück.
+     *
      * @param pin PIN der Lobby
      * @return Lobby oder null, wenn keine Lobby mit der gegebenen PIN gefunden wurde
      */
@@ -128,10 +139,11 @@ public class LobbyService {
 
     /**
      * Durchsuche die Liste der Lobbies nach dem gegebenen Usernamen und den Benutzer zurück.
+     *
      * @param usrID Name des Users
      * @return Player oder null, wenn kein Spieler mit dem gegebenen Namen gefunden wurde
      */
-    public User findUserInAllLobbies(String usrID) throws UserNotFoundException{
+    public User findUserInAllLobbies(String usrID) throws UserNotFoundException {
         for (Lobby lobby : lobbies.values()) {
             for (User user : lobby.getUsers()) {
                 if (user.getName().equals(usrID)) {
@@ -140,6 +152,20 @@ public class LobbyService {
             }
         }
         throw new UserNotFoundException("User mit Name " + usrID + " nicht gefunden.");
+    }
+
+    public void startGame(Integer pin, String username) {
+        Lobby lobby = lobbies.get(pin);
+        if (!lobby.getOwner().getName().equals(username)) {
+            Logger.error("SERVER: User " + username + " is not the owner of the lobby.");
+            return;
+        }
+        // check if everyone is ready
+        if (!lobby.isEveryoneReady()) {
+            Logger.error("SERVER: Not everyone is ready.");
+            return;
+        }
+        lobby.startGame();
     }
 
     /**

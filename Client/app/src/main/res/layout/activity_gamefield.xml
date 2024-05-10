@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ActivityGamefield"
+    tools:context=".activities.ActivityGameField"
     android:background="@drawable/background">
 
     <androidx.constraintlayout.widget.Guideline
@@ -62,7 +62,7 @@
         android:id="@+id/btnFinish"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:onClick="onFinish"
+        android:onClick="onEndGame"
         android:text="Finish"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
@@ -77,18 +77,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="1.0" />
-
-    <TextView
-        android:id="@+id/txtmoney"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Money"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/guideline18"
-        app:layout_constraintEnd_toStartOf="@+id/guideline14"
-        app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"
@@ -111,6 +99,17 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.4" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/players_recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:elevation="1dp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline18"
+        app:layout_constraintStart_toStartOf="@+id/game_field"
+        app:layout_constraintTop_toTopOf="@+id/guideline17" />
+
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline18"
         android:layout_width="wrap_content"
@@ -118,10 +117,14 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
-    <at.aau.anti_mon.client.activities.CustomView_Gamefield
+    <at.aau.anti_mon.client.activities.CustomViewGameField
         android:id="@+id/game_field"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteY="0dp"
+        android:elevation="0dp">
+
+    </at.aau.anti_mon.client.activities.CustomViewGameField>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
