@@ -125,7 +125,9 @@ public class UserEventListener {
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
         }
-        sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
+
+        // Test
+        //sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
     }
 
     @EventListener
@@ -141,6 +143,7 @@ public class UserEventListener {
             JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername(), readiedUser.isReady());
         }
     }
+
     @EventListener
     public void onStartGameEvent(UserStartedGameEvent event) throws LobbyNotFoundException {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());

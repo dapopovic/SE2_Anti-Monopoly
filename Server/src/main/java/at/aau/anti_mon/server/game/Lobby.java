@@ -59,14 +59,21 @@ public class Lobby {
     public void removeUser(User user) throws UserNotFoundException {
         if (users.contains(user)) {
             if (user.equals(owner) && users.size() > 1) {
-                Iterator<User> iterator = users.iterator();
-                while (iterator.hasNext()) {
-                    User next = iterator.next();
+                for (User next : users) {
                     if (!next.equals(owner)) {
+
+                        // If the next user is not ready, set them to ready -> because he is the new owner
+                        if (!next.isReady()){
+                            readyUser(next);
+                        }
+
                         setOwner(next);
                         break;
                     }
                 }
+            }
+            if (user.isReady()){
+                readyUser(user);
             }
             users.remove(user);
         } else {
