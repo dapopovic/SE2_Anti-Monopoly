@@ -37,7 +37,7 @@ public class WebSocketClient {
      * https://developer.android.com/studio/run/emulator-networking
      */
    // private static final String WEBSOCKET_URI = "ws://10.0.2.2:51234/game";
-   private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
+   //private static final String BASE_WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
    //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
 
     /**
@@ -73,8 +73,13 @@ public class WebSocketClient {
     public synchronized void connectToServer() {
         Log.d(DEBUG_TAG, "Connecting to server");
         // Mehrfache Verbindungen verhindern:
-        if (webSocket != null || userID == null){
-            Log.d(DEBUG_TAG, "Connection already established or no userID set");
+        if (webSocket != null){
+            Log.d(DEBUG_TAG, "Connection socket already created");
+            return;
+        }
+        if(userID == null)
+        {
+            Log.d(DEBUG_TAG, "Can't connect : no userID set");
             return;
         }
 
@@ -141,7 +146,7 @@ public class WebSocketClient {
                 Log.e(DEBUG_TAG, "Connection Failure", t);
 
                 // TODO: Eventuell erneut versuchen, die Verbindung herzustellen ?
-                connectToServer();  // TEST!
+                //connectToServer();  // TEST!
             }
         };
     }

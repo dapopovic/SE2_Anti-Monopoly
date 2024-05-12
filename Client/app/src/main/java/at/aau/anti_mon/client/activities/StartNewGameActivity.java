@@ -82,8 +82,8 @@ public class StartNewGameActivity extends AppCompatActivity {
             JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
             jsonData.putData("username", username);
             String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-            webSocketClient.sendMessageToServer(jsonDataString);
             Log.println(Log.DEBUG, "ANTI-MONOPOLY-DEBUG", "Username sending for pin: " + jsonDataString);
+            webSocketClient.sendMessageToServer(jsonDataString);
         } else if (pin != null) {
             // Wenn der Pin schon vorhanden ist, direkt die LobbyActivity starten
             startLobbyActivity(username, pin);
