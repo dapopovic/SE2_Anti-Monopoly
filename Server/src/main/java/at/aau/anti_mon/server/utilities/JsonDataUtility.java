@@ -113,5 +113,10 @@ public class JsonDataUtility {
         send(session, jsonData);
     }
 
+    public static void sendNumber(WebSocketSession session, String message) {
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.DICES_NUMBER, message, "number");
+        send(session, jsonData);
+    }
+
 
 }

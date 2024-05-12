@@ -11,7 +11,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.events.DiceNumbersEvent;
+import at.aau.anti_mon.client.events.PinReceivedEvent;
 
 public class ActivityGamefield extends AppCompatActivity {
 
@@ -26,6 +31,20 @@ public class ActivityGamefield extends AppCompatActivity {
             return insets;
         });
 
+        openDicesPopup();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDicesRolledEvent(DiceNumbersEvent event) {
+        Log.d("ANTI-MONOPOLY-DEBUG", "Number from rolled dices received: " + event.getNumber());
+
+        // move the corresponding figure
+    }
+
+    // implemented for later : the user has to make a move now
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void theUserIsOnMove() {
+        Log.d("ANTI-MONOPOLY-DEBUG", "The user has to make a move now! Show PopUp window with the dice");
         openDicesPopup();
     }
 

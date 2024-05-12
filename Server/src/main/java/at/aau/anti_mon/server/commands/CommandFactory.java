@@ -19,6 +19,7 @@ public class CommandFactory {
         commandMap.put("CREATE_GAME", new CreateGameCommand(eventPublisher));
         commandMap.put("LEAVE_GAME", new LeaveLobbyCommand(eventPublisher));
         commandMap.put("LOBBY_READY", new TestCommand());
+        commandMap.put("NUMBER", new DiceNumbersCommand(eventPublisher));
         commandMap.forEach((key, value) -> Logger.debug("SERVER: Command in map: " + key));
     }
 

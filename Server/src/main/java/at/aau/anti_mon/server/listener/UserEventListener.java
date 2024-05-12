@@ -1,7 +1,9 @@
 package at.aau.anti_mon.server.listener;
 
 import java.util.HashSet;
+import java.util.Map;
 
+import at.aau.anti_mon.server.events.DicesNumberReceivedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -131,6 +133,18 @@ public class UserEventListener {
                     "Erfolgreich die Lobby verlassen.");
 
         }
+    }
+
+    @EventListener
+    public void userRolledDicesEvent(DicesNumberReceivedEvent event) {
+        // 1) on the beginning of the game wait till all the users rolled the dice
+        // 2) during the game send the number that was rolled to all the users
+        Map<String, User> users = userService.getAllUsers();
+        int number = event.getNumber();
+        for (User user : users.values()) {
+            JsonDataUtility.sendNumber(sessionManagementService.getSessionForUser(user.getName()), String.valueOf(number));
+        }
+
     }
 
 }

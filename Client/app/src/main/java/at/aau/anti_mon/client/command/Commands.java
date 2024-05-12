@@ -18,9 +18,9 @@ public enum Commands {
     HEARTBEAT("HEARTBEAT"),
     NEW_USER("NEW_USER"),
     INFO("INFO"),
-    ERROR("ERROR");
+    ERROR("ERROR"),
+    DICE_NUMBER("NUMBER");
     // usw
-
 
     private final String command;
 

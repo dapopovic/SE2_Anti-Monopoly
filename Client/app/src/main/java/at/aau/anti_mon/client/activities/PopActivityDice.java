@@ -12,12 +12,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.HashMap;
 import java.util.Random;
 
+import javax.inject.Inject;
+
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.json.JsonDataDTO;
+import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class PopActivityDice extends AppCompatActivity {
-
+    @Inject
+    WebSocketClient webSocketClient;
     ImageView dice1;
     ImageView dice2;
     Random random = new Random();
@@ -45,13 +53,11 @@ public class PopActivityDice extends AppCompatActivity {
         dice2 = findViewById(R.id.dice2);
 
         dice1.setOnClickListener(v -> {
-            rollTheDice(dice1);
-            rollTheDice(dice2);
+            rollDicesAndSendNumbersToServer();
         });
 
         dice2.setOnClickListener(v -> {
-            rollTheDice(dice1);
-            rollTheDice(dice2);
+            rollDicesAndSendNumbersToServer();
         });
     }
 
@@ -59,9 +65,24 @@ public class PopActivityDice extends AppCompatActivity {
         finish();
     }
 
-    private void rollTheDice(ImageView dice) {
+    // 1) on the beginning the user should be able to choose the figure
+    // 2) in the middle of the game the user should know when he has to make a move
+    private void rollDicesAndSendNumbersToServer() {
+        int num1 = rollTheDice(dice1);
+        int num2 = rollTheDice(dice2);
+
+        // send the sum of two numbers to the server
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICE_NUMBER, new HashMap<>());
+        jsonData.putData("number", String.valueOf(num1 + num2));
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        assert (webSocketClient != null && webSocketClient.isConnected());
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.d("NUMBERS", jsonDataString);
+        finish();
+    }
+
+    private int rollTheDice(ImageView dice) {
         int randomNumber = random.nextInt(6) + 1;
-        Log.i("ROLLING", String.valueOf(randomNumber));
         switch (randomNumber) {
             case 1:
                 dice.setImageResource(R.drawable.eins);
@@ -82,5 +103,6 @@ public class PopActivityDice extends AppCompatActivity {
                 dice.setImageResource(R.drawable.sechs);
                 break;
         }
+        return randomNumber;
     }
 }

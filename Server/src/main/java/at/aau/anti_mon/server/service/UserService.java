@@ -97,7 +97,9 @@ public class UserService {
         users.remove(userId);
     }
 
-
+    public Map<String, User> getAllUsers() {
+        return users;
+    }
 
 
     /**
