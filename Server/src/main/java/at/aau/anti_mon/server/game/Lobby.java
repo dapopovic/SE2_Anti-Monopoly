@@ -23,7 +23,7 @@ public class Lobby {
     private final HashSet<User> users;
     private User owner;
     private static final int MAX_USERS = 6;
-    private final GameStateEnum gameState;
+    private GameStateEnum gameState;
 
     public Lobby() {
         SecureRandom random = new SecureRandom();
@@ -101,7 +101,7 @@ public class Lobby {
     }
 
     public void startGame() {
-        this.gameState = GameState.INGAME;
+        this.gameState = GameStateEnum.INGAME;
     }
 
     public boolean isEveryoneReady() {

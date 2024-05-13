@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.unittests;
 
-import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.enums.GameStateEnum;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -145,7 +145,7 @@ class LobbyServiceUnitTest {
 
         lobbyService.startGame(lobby.getPin(), "user1");
 
-        assertEquals(GameState.INGAME, lobby.getGameState());
+        assertEquals(GameStateEnum.INGAME, lobby.getGameState());
     }
     @Test
     void startGameWithoutAllUsersReadyShouldStillBeInLobbyState() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
@@ -159,7 +159,7 @@ class LobbyServiceUnitTest {
         lobbyService.joinLobby(lobby.getPin(), "user2");
         lobbyService.startGame(lobby.getPin(), "user1");
 
-        assertEquals(GameState.LOBBY, lobby.getGameState());
+        assertEquals(GameStateEnum.LOBBY, lobby.getGameState());
     }
     @Test
     void startGameNotStartedByOwnerShouldStillBeInLobbyState() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
@@ -175,6 +175,6 @@ class LobbyServiceUnitTest {
 
         lobbyService.startGame(lobby.getPin(), "user2");
 
-        assertEquals(GameState.LOBBY, lobby.getGameState());
+        assertEquals(GameStateEnum.LOBBY, lobby.getGameState());
     }
 }
