@@ -17,6 +17,7 @@ public class User {
     @Setter
     private boolean isReady;
     private int money;
+    //private Figures figure;
 
     public User(String username, boolean isOwner, boolean isReady) {
         this.username = username;

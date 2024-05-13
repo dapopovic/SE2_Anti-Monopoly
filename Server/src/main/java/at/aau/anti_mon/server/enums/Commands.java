@@ -19,7 +19,8 @@ public enum Commands {
     LOBBY_PLAYERS("LOBBY_PLAYERS"),
     READY("READY"),
     ERROR("ERROR"),
-    START_GAME("START_GAME");
+    START_GAME("START_GAME"),
+    DICENUMBER("DICENUMBER");
 
     // usw
 

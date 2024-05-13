@@ -10,6 +10,7 @@ import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -159,6 +160,14 @@ public class UserEventListener {
         for (User user : users) {
             JsonDataUtility.sendStartGame(sessionManagementService.getSessionForUser(user.getName()), usersList);
         }
+    }
+
+    @EventListener
+    public void onDiceNumberEvent(DiceNumberEvent event) {
+        WebSocketSession session = event.getSession();
+        String username = event.getUsername();
+        String dicenumber = event.getDicenumber();
+        JsonDataUtility.sendDiceNumber(session,username,dicenumber);
     }
 
 }

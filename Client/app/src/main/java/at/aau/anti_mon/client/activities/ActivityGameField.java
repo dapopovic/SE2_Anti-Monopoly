@@ -122,6 +122,7 @@ public class ActivityGameField extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         EventBus.getDefault().register(this);
+        queue.setEventBusReady(true);
     }
     @Override
     protected void onStop() {
@@ -130,14 +131,24 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onFigureMove(View view) {
-        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+
+        String dice = "4";
+        String user = "GreenTriangle";
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER,new HashMap<>());
+        jsonData.putData("dicenumber", dice);
+        jsonData.putData("username", user);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG,"ActivityGameField","Send dicenumber to server.");
+
+        /*JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.DICENUMBER);
         jsonDataDTO.putData("dicenumber", "1");
         jsonDataDTO.putData("name", "GreenTriangle");
         queue.setEventBusReady(true);
 
         DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);
-        diceNumberCommand.execute(jsonDataDTO);
+        diceNumberCommand.execute(jsonDataDTO);*/
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
@@ -171,6 +182,9 @@ public class ActivityGameField extends AppCompatActivity {
         if (diceNumber < 1 || diceNumber > 12) {
             Log.d("onDiceNumberReceivedEvent", "diceNumber is out of range, should be between 2 and 12");
             return;
+        }
+        if (name.equals("GreenTriangle")) {
+            Log.d("onDiceNumberReceivedEvent", "name is here");
         }
         int location = switch (name) {
             case "GreenTriangle" -> greentriangleLocation = updateLocation(greentriangleLocation, diceNumber);
