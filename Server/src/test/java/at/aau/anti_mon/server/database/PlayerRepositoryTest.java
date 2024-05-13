@@ -2,40 +2,41 @@ package at.aau.anti_mon.server.database;
 
 import at.aau.anti_mon.server.dao.PlayerDAO;
 import at.aau.anti_mon.server.entities.Player;
-import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
-//@Transactional // Wird unbedingt benötigt, um die Transaktionsverwaltung zu steuern
-@AutoConfigureTestEntityManager
-public class PlayerRepositoryTest {
 
-    @Autowired
-    private TestEntityManager entityManager;
+/**
+ * Test class for the PlayerRepository
+ * The test uses a postgresql test-container to run the tests, loaded by DatabaseTest
+ */
+@DataJpaTest
+@ActiveProfiles("databasetests")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class PlayerRepositoryTest extends TestDatabase {
 
     @Autowired
     private PlayerDAO playerDAO;
 
-    @Test
-    @Transactional
-    public void whenFindById_thenReturnPlayer() {
-        // gegeben
-        Player player = new PlayerBuilder().build();
-        entityManager.persist(player);
-        entityManager.flush();
 
-        // wenn
+    @Test
+    void testConnectionToDatabase() {
+        Assertions.assertNotNull(playerDAO);
+    }
+
+    @Test
+    public void testFindPlayerByID() {
+        Player player = new Player.Builder().build();
+        playerDAO.save(player);
+
         Player found = playerDAO.findById(player.getPlayerID()).orElse(null);
 
-        // dann
         assertThat(found).isNotNull();
         assertThat(found.getName()).isNotNull();
         assertThat(found.getName()).isEqualTo(player.getName());
