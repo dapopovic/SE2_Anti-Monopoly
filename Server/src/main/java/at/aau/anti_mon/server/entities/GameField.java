@@ -1,18 +1,14 @@
 package at.aau.anti_mon.server.entities;
 
-import at.aau.anti_mon.server.enums.GameFieldPlace;
+import at.aau.anti_mon.server.enums.GameFieldInformation;
 import at.aau.anti_mon.server.enums.GameFieldType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * Represents a field on the game board
  */
-@AllArgsConstructor
-@NoArgsConstructor // Needed so the Tables can be automatically created in the DB
 @Getter
 @Setter
 @Entity
@@ -34,19 +30,32 @@ public class GameField {
     @Column(name = "gamefield_type")
     private String type;
 
+    /**
+     * TODO: Test till use of Enum?
+     */
+    @Column(name = "gamefield_position")
+    private Integer position;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "gamefield_fieldtype")
     private GameFieldType gameFieldType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gamefield_place")
-    private GameFieldPlace gameFieldPlace;
+    private GameFieldInformation gameFieldInformation;
 
-    @Column(name = "gamefield_position")
-    private  int position;
-
+    /**
+     * The game the field is in
+     */
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
+
+    /**
+     * Needed so the Tables can be automatically created in the DB
+     * Protected since it should not be used directly
+     */
+    protected GameField() {
+    }
 
 }

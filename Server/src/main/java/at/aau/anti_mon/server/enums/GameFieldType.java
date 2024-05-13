@@ -12,7 +12,6 @@ public enum GameFieldType {
     POWER,
     START,
     PRICEWAR,
-    FOUNDATION;
     // usw
 
 }

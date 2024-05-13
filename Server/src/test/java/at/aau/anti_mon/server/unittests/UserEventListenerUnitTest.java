@@ -4,17 +4,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.socket.WebSocketSession;
 
 import at.aau.anti_mon.server.dtos.LobbyDTO;
@@ -31,8 +28,8 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 
-@SpringBootTest
-class UserEventListenerTest {
+@ExtendWith(MockitoExtension.class)
+class UserEventListenerUnitTest {
 
     @Mock
     private SessionManagementService sessionManagementService;
@@ -48,25 +45,14 @@ class UserEventListenerTest {
 
     @Test
     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod()
-            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException, URISyntaxException {
+            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         // Given
         WebSocketSession session1 = mock(WebSocketSession.class);
         WebSocketSession session2 = mock(WebSocketSession.class);
 
         when(session1.isOpen()).thenReturn(true);
-        when(session1.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session1.getId()).thenReturn("session1");
-        when(session1.getAcceptedProtocol()).thenReturn("protocol");
-        when(session1.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session1.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user1"));
-
         when(session2.isOpen()).thenReturn(true);
-        when(session2.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session2.getId()).thenReturn("session2");
-        when(session2.getAcceptedProtocol()).thenReturn("protocol");
-        when(session2.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session2.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user2"));
 
         when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
         when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
@@ -78,7 +64,6 @@ class UserEventListenerTest {
 
         Lobby lobby = mock(Lobby.class);
         when(lobby.canAddPlayer()).thenReturn(true);
-        when(lobby.getPin()).thenReturn(1234);
         when(lobby.getUsers()).thenReturn(users);
 
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
@@ -102,22 +87,8 @@ class UserEventListenerTest {
         WebSocketSession session2 = mock(WebSocketSession.class);
 
         when(session1.isOpen()).thenReturn(true);
-        when(session1.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session1.getId()).thenReturn("session1");
-        when(session1.getAcceptedProtocol()).thenReturn("protocol");
-        when(session1.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session1.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user1"));
-
-        when(session2.isOpen()).thenReturn(true);
-        when(session2.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session2.getId()).thenReturn("session2");
-        when(session2.getAcceptedProtocol()).thenReturn("protocol");
-        when(session2.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session2.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user2"));
 
         when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
-        when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
-
         HashSet<User> users = new HashSet<>();
         User user1 = new User("lobbyCreator", session2);
         User user2 = new User("testUser", session1);
@@ -125,9 +96,6 @@ class UserEventListenerTest {
 
         Lobby lobby = mock(Lobby.class);
         when(lobby.canAddPlayer()).thenReturn(false);
-        when(lobby.getPin()).thenReturn(1234);
-        when(lobby.getUsers()).thenReturn(users);
-
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
@@ -139,38 +107,21 @@ class UserEventListenerTest {
 
     @Test
     void onLeaveLobbyEventShouldCallCorrectServiceMethod()
-            throws UserNotFoundException, LobbyNotFoundException, URISyntaxException {
-        WebSocketSession session1 = mock(WebSocketSession.class);
+            throws UserNotFoundException, LobbyNotFoundException {
+        //WebSocketSession session1 = mock(WebSocketSession.class);
         WebSocketSession session2 = mock(WebSocketSession.class);
 
-        when(session1.isOpen()).thenReturn(true);
-        when(session1.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session1.getId()).thenReturn("session1");
-        when(session1.getAcceptedProtocol()).thenReturn("protocol");
-        when(session1.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session1.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user1"));
-
         when(session2.isOpen()).thenReturn(true);
-        when(session2.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session2.getId()).thenReturn("session2");
-        when(session2.getAcceptedProtocol()).thenReturn("protocol");
-        when(session2.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session2.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user2"));
-
-        when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
         when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
 
         HashSet<User> users = new HashSet<>();
         User user1 = new User("lobbyCreator", session2);
-        User user2 = new User("testUser", session1);
+        //ser user2 = new User("testUser", session1);
         users.add(user1);
 
         Lobby lobby = mock(Lobby.class);
-        when(lobby.canAddPlayer()).thenReturn(true);
-        when(lobby.getPin()).thenReturn(1234);
         when(lobby.getUsers()).thenReturn(users);
 
-        when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
         UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator"));

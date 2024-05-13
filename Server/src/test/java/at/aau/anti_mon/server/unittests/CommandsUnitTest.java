@@ -11,11 +11,11 @@ import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -28,7 +28,8 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for the Commands
  */
-class CommandsTest {
+@ExtendWith(MockitoExtension.class)
+class CommandsUnitTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -47,11 +48,6 @@ class CommandsTest {
 
     @InjectMocks
     private HeartBeatCommand heartBeatCommand;
-
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void joinLobbyCommandShouldPublishEvent() {
@@ -199,9 +195,7 @@ class CommandsTest {
         jsonData.putData("username", "testUser");
         jsonData.putData("msg", "test");
         when(session.getUri()).thenReturn(null);
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            heartBeatCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> heartBeatCommand.execute(session, jsonData));
         verify(eventPublisher, times(0)).publishEvent(any(SessionCheckEvent.class));
         verify(session, times(1)).getUri();
     }

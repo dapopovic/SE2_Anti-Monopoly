@@ -59,13 +59,13 @@ class WebSocketHandlerIntegrationTest {
         Logger.info("TEST - sending message: " + message);
         session.sendMessage(new TextMessage(message));
 
-        String messageResponse = messages.poll(10, TimeUnit.SECONDS); // Erhöhe Timeout für Sicherheit
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS);
         Assertions.assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(messageResponse);
-        String pin = rootNode.path("pin").asText(); // Sicherstellen, dass 'pin' existiert und ein String ist
+        String pin = rootNode.path("pin").asText();
         Logger.debug("Extracted PIN: " + pin);
 
         Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
@@ -79,9 +79,6 @@ class WebSocketHandlerIntegrationTest {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
         jsonData.putData("username", "Test");
 
-        // ObjectMapper mapper = new ObjectMapper();
-        // String jsonMessage = mapper.writeValueAsString(jsonData);
-
         String jsonMessage = JsonDataUtility.createStringFromJsonMessage(jsonData);
 
         // Senden des serialisierten JSON-Strings über eine WebSocket-Session
@@ -91,9 +88,6 @@ class WebSocketHandlerIntegrationTest {
         String messageResponse = messages.poll(10, TimeUnit.SECONDS); // Erhöhe Timeout für Sicherheit
         Assertions.assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
-
-        // JsonDataDTO receivedData = mapper.readValue(messageResponse,
-        // JsonDataDTO.class);
         JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse);
 
         // Zugriff auf die Daten

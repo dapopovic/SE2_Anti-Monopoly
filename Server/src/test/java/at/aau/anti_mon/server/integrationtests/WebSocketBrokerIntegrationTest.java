@@ -2,14 +2,12 @@ package at.aau.anti_mon.server.integrationtests;
 
 import at.aau.anti_mon.server.websocketclient.StompFrameHandlerClientImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
@@ -24,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Integration test for the WebSocketBroker.
  */
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class WebSocketBrokerIntegrationTest {
 
@@ -51,7 +48,6 @@ class WebSocketBrokerIntegrationTest {
     public StompSession initStompSession() throws Exception {
         WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
         stompClient.setMessageConverter(new StringMessageConverter());
-        //stompClient.setTaskScheduler(new ConcurrentTaskScheduler()); // notwendig für das Senden von Herzschlägen
 
         String WEBSOCKET_URI = "ws://localhost:%d/broker";
         StompSession session = stompClient.connectAsync(String.format(WEBSOCKET_URI, port),

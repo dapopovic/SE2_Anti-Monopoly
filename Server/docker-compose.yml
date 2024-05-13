@@ -23,6 +23,7 @@ services:
   redis:
     image: 'redis/redis-stack-server:latest'
     container_name: redis-backend
+    command: redis-server --requirepass "#R3disPWD"
     ports:
       - '6379:6379'
 
@@ -32,8 +33,8 @@ services:
     restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=#Postgr3sPWD
+      - POSTGRES_DB=postgresdb
     ports:
       - "5432:5432"
 volumes:

@@ -1,22 +1,21 @@
 package at.aau.anti_mon.server.entities;
 
 
+import at.aau.anti_mon.server.enums.GameStateEnum;
+import at.aau.anti_mon.server.enums.Name;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Game entity
  * @author ottzoeke
  */
-@AllArgsConstructor
-@NoArgsConstructor  // Needed so the Tables can be automatically created in the DB
 @Getter
 @Setter
 @Entity
@@ -31,29 +30,76 @@ public class Game implements Serializable {
     @Column(name = "game_name")
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "game_status")
-    private String status;
+    private GameStateEnum status;
 
+    @Column(name = "game_round")
+    private Integer roundNumber;
+
+    /**
+     * The players of the game
+     */
     @OneToMany(mappedBy = "game")
     private Set<Player> playerList;
 
-   // @OneToOne(mappedBy = "playerID") // (optional = false    must specify a owner before creating a game
-  //  private Player creator;
-
+    /**
+     * The game fields of the game
+     */
     @OneToMany(mappedBy = "game")
     private Set<GameField> gameFields;
 
+    @Column(name = "game_start_date")
     private Date startDate;
-    private Date lastSaved;
 
+    // @OneToOne(mappedBy = "playerID") // (optional = false    must specify a owner before creating a game
+    //  private Player creator;
 
-    // Idee für Zug
-    //public void nextPlayer() {
-    //    currentPlayerIndex = (currentPlayerIndex + 1) % playerList.size();
-    //}
+    /**
+     * Needed so the Tables can be automatically created in the DB
+     * Protected since it should not be used directly
+     */
+    protected Game() {
+    }
 
-    //public Player getPlayer() {
-    //    return playerList.get(currentPlayerIndex);
-    //}
+    /**
+     * Builder-Constructor for the Game
+     * @param builder the builder for the game
+     */
+    private Game(Builder builder) {
+        this.name = builder.name;
+        this.roundNumber = builder.roundNumber;
+        this.startDate = builder.startDate;
+        this.playerList = builder.playerList;
+    }
+
+    /**
+     * Builder for the Game
+     */
+    public static class Builder {
+        private String name = Name.randomName().name();  // Standardwert
+        private Integer roundNumber = 0;
+        private Date startDate = new Date();
+        private final Set<Player> playerList = new HashSet<>();
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withStartDate(Date startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public Builder withRoundNumber(Integer roundNumber) {
+            this.roundNumber = roundNumber;
+            return this;
+        }
+
+        public Game build() {
+            return new Game(this);
+        }
+    }
 
 }

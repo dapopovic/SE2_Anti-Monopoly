@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,9 +17,10 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("databasetests")
 @AutoConfigureTestEntityManager
-public class StreetFieldServiceIntegrationTest{
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class StreetFieldServiceIntegrationTest extends TestDatabase{
 
     @Autowired
     private StreetFieldService streetFieldService;
@@ -29,9 +31,9 @@ public class StreetFieldServiceIntegrationTest{
     @Test
     @Transactional
     public void testStreetFieldCreation() {
-        StreetField streetField = new StreetField();
-        entityManager.persist(streetField);
-        entityManager.flush();
+        StreetField streetField = new StreetField.Builder().build();
+       entityManager.persist(streetField);
+       entityManager.flush();
 
         streetFieldService.createGameField(streetField);
 

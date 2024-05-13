@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.game;
 
-import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.enums.GameStateEnum;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.UserAlreadyExistsException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -23,13 +23,13 @@ public class Lobby {
     private final HashSet<User> users;
     private User owner;
     private static final int MAX_USERS = 6;
-    private final GameState gameState;
+    private final GameStateEnum gameState;
 
     public Lobby() {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
-        this.gameState = GameState.LOBBY;
+        this.gameState = GameStateEnum.LOBBY;
         this.owner = null;
     }
 
@@ -37,7 +37,7 @@ public class Lobby {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
-        this.gameState = GameState.LOBBY;
+        this.gameState = GameStateEnum.LOBBY;
         this.users.add(user);
         this.owner = user;
     }
@@ -54,9 +54,7 @@ public class Lobby {
     public void removeUser(User user) throws UserNotFoundException {
         if (users.contains(user)) {
             if (user.equals(owner) && users.size() > 1) {
-                Iterator<User> iterator = users.iterator();
-                while (iterator.hasNext()) {
-                    User next = iterator.next();
+                for (User next : users) {
                     if (!next.equals(owner)) {
                         setOwner(next);
                         break;

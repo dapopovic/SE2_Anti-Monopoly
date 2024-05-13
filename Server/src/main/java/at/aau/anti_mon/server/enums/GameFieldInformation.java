@@ -2,7 +2,7 @@ package at.aau.anti_mon.server.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum GameFieldPlace {
+public enum GameFieldInformation {
 
     START("Start"),
     ROM1("Corso Impero"),
@@ -48,7 +48,7 @@ public enum GameFieldPlace {
 
     private final String name;
 
-    GameFieldPlace(String name) {
+    GameFieldInformation(String name) {
         this.name = name;
     }
 

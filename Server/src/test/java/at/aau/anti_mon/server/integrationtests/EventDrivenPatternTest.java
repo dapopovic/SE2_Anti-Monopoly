@@ -43,7 +43,6 @@ import at.aau.anti_mon.server.service.UserService;
 @ActiveProfiles("test")
 class EventDrivenPatternTest {
 
-
     @Mock
     UserEventListener userEventListener;
     @Autowired
