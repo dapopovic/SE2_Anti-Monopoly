@@ -34,7 +34,7 @@ public class JoinLobbyCommand implements Command{
         Logger.info("SERVER: JSON Data : User {} joined lobby with pin {}", playerName, pinString);
 
         int pin = Integer.parseInt(pinString);
-        UserDTO playerDTO = new UserDTO(playerName, false ,false);
+        UserDTO playerDTO = new UserDTO(playerName, false ,false, null);
         LobbyDTO lobbyDTO = new LobbyDTO(pin);
         eventPublisher.publishEvent(new UserJoinedLobbyEvent(session, lobbyDTO, playerDTO));
     }

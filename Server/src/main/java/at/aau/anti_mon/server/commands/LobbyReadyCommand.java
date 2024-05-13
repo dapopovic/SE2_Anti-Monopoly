@@ -24,6 +24,6 @@ public class LobbyReadyCommand implements Command {
         String playerName = jsonData.getData().get("username");
         String pinString = jsonData.getData().get("pin");
 
-        eventPublisher.publishEvent(new UserReadyLobbyEvent(session, new LobbyDTO(Integer.parseInt(pinString)), new UserDTO(playerName, false, false)));
+        eventPublisher.publishEvent(new UserReadyLobbyEvent(session, new LobbyDTO(Integer.parseInt(pinString)), new UserDTO(playerName, false, false, null)));
     }
 }

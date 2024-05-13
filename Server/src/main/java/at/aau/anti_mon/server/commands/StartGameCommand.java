@@ -25,6 +25,6 @@ public class StartGameCommand implements Command {
         String playerName = jsonData.getData().get("username");
         String pinString = jsonData.getData().get("pin");
 
-        eventPublisher.publishEvent(new UserStartedGameEvent(session, new LobbyDTO(Integer.parseInt(pinString)), new UserDTO(playerName, true, true)));
+        eventPublisher.publishEvent(new UserStartedGameEvent(session, new LobbyDTO(Integer.parseInt(pinString)), new UserDTO(playerName, true, true, null)));
     }
 }

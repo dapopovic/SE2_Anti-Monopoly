@@ -85,7 +85,7 @@ class UserEventListenerTest {
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false, false));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false, false, null));
 
         // When
         userEventListener.onUserJoinedLobbyEvent(event);
@@ -130,7 +130,7 @@ class UserEventListenerTest {
         when(userService.findOrCreateUser("user7", session)).thenReturn(user7);
         doThrow(new LobbyIsFullException("Lobby is full. Cannot add more players.")).when(lobbyService).joinLobby(1234, "user7");
 
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session, new LobbyDTO(1234), new UserDTO("user7", false, false));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session, new LobbyDTO(1234), new UserDTO("user7", false, false, null));
         assertThrows(LobbyIsFullException.class, () -> userEventListener.onUserJoinedLobbyEvent(event));
         // Then
         verify(lobbyService).joinLobby(1234, "user7");
@@ -172,7 +172,7 @@ class UserEventListenerTest {
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator", false, true));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator", false, true, null));
 
         // When
         userEventListener.onLeaveLobbyEvent(event);
@@ -189,7 +189,7 @@ class UserEventListenerTest {
         when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
         when(session.getUri()).thenReturn(URI.create("ws://localhost:8080/game?userID=user1"));
 
-        UserDTO userDTO = new UserDTO("user1", false, true);
+        UserDTO userDTO = new UserDTO("user1", false, true, null);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
         UserReadyLobbyEvent event = new UserReadyLobbyEvent(session, lobbyDTO, userDTO);
 
@@ -222,7 +222,7 @@ class UserEventListenerTest {
         when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
         when(session.getUri()).thenReturn(URI.create("ws://localhost:8080/game?userID=user1"));
 
-        UserDTO userDTO = new UserDTO("user1", false, true);
+        UserDTO userDTO = new UserDTO("user1", false, true, null);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
         UserStartedGameEvent event = new UserStartedGameEvent(session, lobbyDTO, userDTO);
 
