@@ -3,39 +3,25 @@ package at.aau.anti_mon.server.unittests;
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.events.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.socket.WebSocketSession;
-
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-class EventTest {
+@ExtendWith(MockitoExtension.class)
+class EventUnitTest {
 
     @Mock
     WebSocketSession session;
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void userJoinedLobbyEventShouldReturnCorrectValues() throws URISyntaxException {
+    void userJoinedLobbyEventShouldReturnCorrectValues(){
 
-        when(session.isOpen()).thenReturn(true);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
         when(session.getId()).thenReturn("session1");
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=user1"));
 
         when(session.getId()).thenReturn("session1");
         UserDTO userDTO = new UserDTO("user1", false, true);

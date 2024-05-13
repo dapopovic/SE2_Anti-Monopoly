@@ -49,7 +49,7 @@ public class UserEventListener {
 
     /**
      * Logik zum Erstellen einer Lobby
-     * Der PIN der Lobby wird an den Benutzer zurückgegeben
+     * PIN der Lobby wird an den Benutzer zurückgegeben
      * 
      * @param event Ereignis
      */

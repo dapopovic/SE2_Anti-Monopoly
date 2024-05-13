@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Handling aller Aspekte der WebSocketSessions
  * - Erstellung, Speicherung, Schließung von Sessions
- *
  * TODO --> Nutzen von Optional<> für besseres Handling!
  */
 @Getter
@@ -58,6 +57,7 @@ public class SessionManagementService {
 
         Logger.info("Session {} registered with user: {}", session.getId(), userId);
     }
+
 
     public WebSocketSession getSession(String sessionId) {
         return sessions.get(sessionId);

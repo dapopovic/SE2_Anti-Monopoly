@@ -1,4 +1,4 @@
-package at.aau.anti_mon.server.game;
+package at.aau.anti_mon.server.dtos;
 
 import at.aau.anti_mon.server.enums.Commands;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
