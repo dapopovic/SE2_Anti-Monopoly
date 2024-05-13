@@ -63,7 +63,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Set execute permissions for gradlew
         run: chmod +x ./Client/gradlew
-      - name: Build and analyze
+      - name: Build and analyze client
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

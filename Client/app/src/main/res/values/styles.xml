@@ -25,4 +25,19 @@
         <item name="android:textStyle">bold</item>
         <item name="android:cursorVisible">true</item>
     </style>
+    <style name="Buttons_Disabled_Style">
+        <item name="android:background">@drawable/rounded_btn_disabled</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_width">300dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:cursorVisible">true</item>
+    </style>
+
+    <style name="AppTheme_PopUp">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
 </resources>

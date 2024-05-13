@@ -20,7 +20,6 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.exclusions>**/server/*, **/broker/*, **/messaging/*</sonar.exclusions>
     </properties>
 
     <dependencies>
@@ -244,6 +243,7 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+
                     </execution>
                     <execution>
                         <id>report</id>
@@ -251,6 +251,11 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/server/ServerApplication.*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

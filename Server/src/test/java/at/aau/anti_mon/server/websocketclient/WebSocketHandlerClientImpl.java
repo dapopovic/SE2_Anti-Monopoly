@@ -32,13 +32,13 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
     public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
         String json = (String) message.getPayload();
         Logger.info("CLIENT : Nachricht empfangen: " + json);
-        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json);
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json, JsonDataDTO.class);
         Commands command = jsonDataDTO.getCommand();
 
         if (command != null) {
             try {
 
-                JsonDataDTO  data = JsonDataUtility.parseJsonMessage(json);
+                JsonDataDTO  data = JsonDataUtility.parseJsonMessage(json, JsonDataDTO.class);
                 Commands commands = data.getCommand();
 
                 Logger.info("CLIENT : Command: " + commands.getCommand());

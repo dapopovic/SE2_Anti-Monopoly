@@ -17,11 +17,28 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activities.GameInstructionsActivity"
+            android:name=".activities.PopActivityObjects"
             android:exported="false"
-            android:screenOrientation="sensorLandscape"/>
+            android:theme="@style/AppTheme_PopUp"/>
         <activity
-            android:name=".activities.LoadGameActivity"
+            android:name=".activities.PopActivityHandel"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp" />
+        <activity
+            android:name=".activities.PopActivitySettings"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp" />
+        <activity
+            android:name=".activities.ActivityGameField"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.JoinGameActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.LobbyActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".activities.LoadGameActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
@@ -30,14 +47,11 @@
         <activity
             android:name=".activities.StartNewGameActivity"
             android:exported="false"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".activities.LobbyActivity"
+            android:name=".activities.GameInstructionsActivity"
             android:exported="false"
-            android:screenOrientation="sensorLandscape"/>
-        <activity android:name=".activities.JoinGameActivity"
-            android:exported="false"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activities.StartMenuActivity"
             android:exported="true"

@@ -2,34 +2,26 @@ package at.aau.anti_mon.client.command;
 
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-
 import javax.inject.Inject;
 
-import at.aau.anti_mon.client.AntiMonopolyApplication;
-import at.aau.anti_mon.client.events.CreatedGameEvent;
-import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
+import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 
 public class PinCommand implements Command {
-
-
-    private final GlobalEventQueue queue;
+    private final CreateGameViewModel viewModel;
 
     @Inject
-    public PinCommand(GlobalEventQueue queue) {
-        this.queue = queue;
+    public PinCommand(CreateGameViewModel viewModel) {
+        this.viewModel = viewModel;
     }
-
 
     @Override
     public void execute(JsonDataDTO data) {
         String pin = data.getData().get("pin");
         Log.d("PinCommand", "Posting pin received event with pin: " + pin);
-        //EventBus.getDefault().post(new PinReceivedEvent(pin));
-        // Zugriff auf die GlobalEventQueue über die Application Instanz
-         queue.enqueueEvent(new PinReceivedEvent(pin));
+
+        // Update LiveData for UI-bound updates
+        viewModel.createGame(pin);
     }
 
 }

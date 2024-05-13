@@ -21,7 +21,7 @@ class JsonDataManagerUnitTest {
         Map<String, String> data = new HashMap<>();
         data.put("key", "value");
         String json = JsonDataUtility.createStringFromJsonMessage(Commands.NEW_USER, data);
-        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json);
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json, JsonDataDTO.class);
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
         assertEquals("value", jsonDataDTO.getData().get("key"));
     }
@@ -36,7 +36,7 @@ class JsonDataManagerUnitTest {
     @Test
     void parseJsonMessageShouldReturnValidJsonDataDTO() throws JsonProcessingException {
         String json = "{\"command\":\"NEW_USER\",\"data\":{\"datafield\":\"message\"}}";
-        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json);
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(json, JsonDataDTO.class);
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
         assertEquals("message", jsonDataDTO.getData().get("datafield"));
     }
@@ -46,7 +46,7 @@ class JsonDataManagerUnitTest {
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEW_USER, new HashMap<>());
         jsonDataDTO.putData("datafield", "message");
         String json = JsonDataUtility.createStringFromJsonMessage(jsonDataDTO);
-        JsonDataDTO parsedJsonDataDTO = JsonDataUtility.parseJsonMessage(json);
+        JsonDataDTO parsedJsonDataDTO = JsonDataUtility.parseJsonMessage(json, JsonDataDTO.class);
         assertEquals(Commands.NEW_USER, parsedJsonDataDTO.getCommand());
         assertEquals("message", parsedJsonDataDTO.getData().get("datafield"));
     }

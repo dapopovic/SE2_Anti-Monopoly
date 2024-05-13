@@ -5,6 +5,7 @@ import android.app.Application;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.networking.NetworkModule;
 import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -14,7 +15,9 @@ import lombok.Getter;
 @Getter
 public class AntiMonopolyApplication extends Application {
 
+    public static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
     private AppComponent appComponent;
+    @Setter
     private GlobalEventQueue globalEventQueue;
 
     @Override

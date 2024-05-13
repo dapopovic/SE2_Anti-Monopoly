@@ -99,12 +99,13 @@ class EventDrivenPatternTest {
     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         // Given
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2"));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2", false, false));
         joinLobbyCommand = mock(JoinLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.JOIN_GAME);
         jsonDataDTO.putData("username", "user2");
         jsonDataDTO.putData("pin", lobby.getPin().toString());
+
 
         // Mock Event Handling
         doAnswer((Answer<Void>) invocation -> {
@@ -128,8 +129,15 @@ class EventDrivenPatternTest {
     void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
 
         session1 = mock(WebSocketSession.class);
-        lobbyService.addUserToLobby(user2.getName(), lobby.getPin());
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1"));
+//////////////// HEAD
+      //  lobbyService.addUserToLobby(user2.getName(), lobby.getPin());
+      //  UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1"));
+
+//// Merge issues backup
+
+        lobbyService.addUserToLobby( user2.getName(),lobby.getPin());
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1", false, false));
+//////////////// MAIN
         leaveLobbyCommand = mock(LeaveLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.LEAVE_GAME);

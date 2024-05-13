@@ -24,6 +24,11 @@ public class LeaveLobbyCommand implements Command{
     @Override
     public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
         // data = {"username": "Test" , "pin": "1234"
+
+        if (jsonData.getData() != null){
+            Logger.info("SERVER: Data for 'LEAVE_GAME' is not null. " + jsonData.getData().toString());
+        }
+
         if (jsonData.getData() == null || jsonData.getData().get("pin") == null || jsonData.getData().get("username") == null) {
             Logger.error("SERVER: Required data for 'LEAVE_GAME' is missing.");
             throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'LEAVE_GAME' is missing.");
@@ -34,7 +39,7 @@ public class LeaveLobbyCommand implements Command{
 
         Logger.info("SERVER : LEAVE_GAME empfangen." + playerName + " hat die Lobby mit der PIN " + pinString + " verlassen.");
 
-        UserDTO playerDTO = new UserDTO(playerName);
+        UserDTO playerDTO = new UserDTO(playerName, false, true);
         LobbyDTO lobbyDTO = new LobbyDTO(Integer.parseInt(pinString));
         eventPublisher.publishEvent(new UserLeftLobbyEvent(session, lobbyDTO, playerDTO));
 

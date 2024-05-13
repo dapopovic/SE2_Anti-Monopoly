@@ -29,10 +29,9 @@ public class CreateGameCommand implements Command {
 
 
         String playerName = jsonData.getData().get("username");
-        UserDTO playerDTO = new UserDTO(playerName);
+        UserDTO playerDTO = new UserDTO(playerName, true, true);
 
         Logger.info("SERVER: JSON Data : User {} creates Lobby", playerName);
         eventPublisher.publishEvent(new UserCreatedLobbyEvent(session, playerDTO));
-
     }
 }

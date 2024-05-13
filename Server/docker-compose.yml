@@ -40,3 +40,4 @@ services:
 volumes:
     postgres:
       driver: local
+      - "8080:8080"

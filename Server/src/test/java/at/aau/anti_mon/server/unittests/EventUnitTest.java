@@ -24,7 +24,7 @@ class EventUnitTest {
         when(session.getId()).thenReturn("session1");
 
         when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1");
+        UserDTO userDTO = new UserDTO("user1", false, true);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
         UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session, lobbyDTO, userDTO);
 
@@ -36,7 +36,7 @@ class EventUnitTest {
     @Test
     void userLeftLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1");
+        UserDTO userDTO = new UserDTO("user1", false, true);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
         UserLeftLobbyEvent event = new UserLeftLobbyEvent(session, lobbyDTO, userDTO);
 
@@ -48,7 +48,7 @@ class EventUnitTest {
     @Test
     void userCreatedLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1");
+        UserDTO userDTO = new UserDTO("user1", false, true);
         UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, userDTO);
 
         assertEquals("user1", event.getUsername());

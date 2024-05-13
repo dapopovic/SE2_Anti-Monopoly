@@ -1,8 +1,11 @@
 package at.aau.anti_mon.client.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat;
 import at.aau.anti_mon.client.R;
 
 public class GameInstructionsActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +26,9 @@ public class GameInstructionsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
-
     public void onCancelGameInstructions(View view) {
-        Intent intent = new Intent(GameInstructionsActivity.this, StartMenuActivity.class);
-        startActivity(intent);
+        finish();
     }
 }

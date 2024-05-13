@@ -1,13 +1,14 @@
 package at.aau.anti_mon.client;
 
+import javax.inject.Singleton;
+
+import at.aau.anti_mon.client.activities.ActivityGameField;
 import at.aau.anti_mon.client.activities.JoinGameActivity;
 import at.aau.anti_mon.client.activities.LobbyActivity;
 import at.aau.anti_mon.client.activities.MainActivity;
 import at.aau.anti_mon.client.activities.StartNewGameActivity;
 import at.aau.anti_mon.client.networking.NetworkModule;
-import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 import dagger.Component;
-import javax.inject.Singleton;
 
 /**
  * This is a Dagger component. Refer to {@link AntiMonopolyApplication} for the list of Dagger components
@@ -27,5 +28,5 @@ public interface AppComponent {
 
     void inject (JoinGameActivity joinGameActivity);
 
-
+    void inject(ActivityGameField activityGameField);
 }

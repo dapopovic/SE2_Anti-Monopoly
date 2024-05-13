@@ -22,7 +22,5 @@ public class UserCreatedLobbyEvent extends Event {
         return userDTO.getUsername();
     }
 
-
-
 }
 

@@ -38,6 +38,7 @@ public class Lobby {
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
         this.gameState = GameStateEnum.LOBBY;
+        user.setReady(true);
         this.users.add(user);
         this.owner = user;
     }
@@ -51,15 +52,28 @@ public class Lobby {
         users.add(user);
     }
 
+    public void readyUser(User user) {
+        user.setReady(!user.isReady());
+    }
+
     public void removeUser(User user) throws UserNotFoundException {
         if (users.contains(user)) {
             if (user.equals(owner) && users.size() > 1) {
                 for (User next : users) {
                     if (!next.equals(owner)) {
+
+                        // If the next user is not ready, set them to ready -> because he is the new owner
+                        if (!next.isReady()){
+                            readyUser(next);
+                        }
+
                         setOwner(next);
                         break;
                     }
                 }
+            }
+            if (user.isReady()){
+                readyUser(user);
             }
             users.remove(user);
         } else {
@@ -84,5 +98,13 @@ public class Lobby {
 
     public boolean canAddPlayer() {
         return this.users.size() < MAX_USERS;
+    }
+
+    public void startGame() {
+        this.gameState = GameState.INGAME;
+    }
+
+    public boolean isEveryoneReady() {
+        return users.stream().allMatch(User::isReady);
     }
 }

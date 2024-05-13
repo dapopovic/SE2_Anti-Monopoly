@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.unittests;
 
+import at.aau.anti_mon.server.enums.GameState;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -14,8 +15,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the LobbyService
@@ -116,5 +116,65 @@ class LobbyServiceUnitTest {
         lobbyService.joinLobby(lobby.getPin(), "user2");
         lobbyService.leaveLobby(lobby.getPin(), "user2");
         assertFalse(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2")));
+    }
+    @Test
+    void readyUserShouldSetUserReady() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+        UserService userService = new UserService(mock(SessionManagementService.class));
+        LobbyService lobbyService = new LobbyService(userService);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getId()).thenReturn("session1");
+        User user1 = userService.findOrCreateUser("user1", session);
+        Lobby lobby = lobbyService.createLobby(user1);
+        userService.findOrCreateUser("user2", session);
+        lobbyService.joinLobby(lobby.getPin(), "user2");
+        lobbyService.readyUser(lobby.getPin(), "user2");
+
+        assertTrue(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2") && u.isReady()));
+    }
+    @Test
+    void startGameShouldStartGame() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+        UserService userService = new UserService(mock(SessionManagementService.class));
+        LobbyService lobbyService = new LobbyService(userService);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getId()).thenReturn("session1");
+        User user1 = userService.findOrCreateUser("user1", session);
+        Lobby lobby = lobbyService.createLobby(user1);
+        userService.findOrCreateUser("user2", session);
+        lobbyService.joinLobby(lobby.getPin(), "user2");
+        lobbyService.readyUser(lobby.getPin(), "user2");
+
+        lobbyService.startGame(lobby.getPin(), "user1");
+
+        assertEquals(GameState.INGAME, lobby.getGameState());
+    }
+    @Test
+    void startGameWithoutAllUsersReadyShouldStillBeInLobbyState() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+        UserService userService = new UserService(mock(SessionManagementService.class));
+        LobbyService lobbyService = new LobbyService(userService);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getId()).thenReturn("session1");
+        User user1 = userService.findOrCreateUser("user1", session);
+        Lobby lobby = lobbyService.createLobby(user1);
+        userService.findOrCreateUser("user2", session);
+        lobbyService.joinLobby(lobby.getPin(), "user2");
+        lobbyService.startGame(lobby.getPin(), "user1");
+
+        assertEquals(GameState.LOBBY, lobby.getGameState());
+    }
+    @Test
+    void startGameNotStartedByOwnerShouldStillBeInLobbyState() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+        UserService userService = new UserService(mock(SessionManagementService.class));
+        LobbyService lobbyService = new LobbyService(userService);
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getId()).thenReturn("session1");
+        User user1 = userService.findOrCreateUser("user1", session);
+        Lobby lobby = lobbyService.createLobby(user1);
+        userService.findOrCreateUser("user2", session);
+        lobbyService.joinLobby(lobby.getPin(), "user2");
+        lobbyService.readyUser(lobby.getPin(), "user2");
+
+        lobbyService.startGame(lobby.getPin(), "user2");
+
+        assertEquals(GameState.LOBBY, lobby.getGameState());
     }
 }

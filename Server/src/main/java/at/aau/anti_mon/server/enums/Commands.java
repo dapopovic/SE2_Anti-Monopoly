@@ -44,6 +44,8 @@ public enum Commands {
      * Command to leave a game
      * format: {"command": "LEAVE_GAME", "user": "TestUser", "pin": "1234"}
      */
+    JOIN("JOIN"),
+	
     LEAVE_GAME("LEAVE_GAME"),
 
     /**
@@ -103,8 +105,18 @@ public enum Commands {
      * Send by client choose a role
      * format: {"command": "SELECT_ROLE", "user" : "TestUser", "pin": "1234" ,role": "TestRole"}
      */
-    SELECT_ROLE("SELECT_ROLE")
-    ;
+    SELECT_ROLE("SELECT_ROLE"),
+	
+    
+	/**
+	*
+	* Old Commands -> merge issues
+	*
+	*/
+    READY("READY"),
+    ERROR("ERROR"),
+    START_GAME("START_GAME");
+
     // usw
 
     private final String command;

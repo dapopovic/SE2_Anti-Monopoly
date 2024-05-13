@@ -101,7 +101,7 @@ class GameHandlerUnitTest {
         // Konfigurieren des Command, um die Interaction weiterzuleiten
         doAnswer(invocation -> {
             ApplicationEventPublisher publisher = invocation.getArgument(0, ApplicationEventPublisher.class);
-            UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, new UserDTO("Test"));
+            UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, new UserDTO("Test", true, true));
             publisher.publishEvent(event);
             return null;
         }).when(createGameCommand).execute(any(), any());

@@ -88,6 +88,7 @@ class WebSocketHandlerIntegrationTest {
         String messageResponse = messages.poll(10, TimeUnit.SECONDS); // Erhöhe Timeout für Sicherheit
         Assertions.assertNotNull(messageResponse, "Response should not be null");
         Logger.info("TEST - received messageResponse: " + messageResponse);
+
         JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse);
 
         // Zugriff auf die Daten

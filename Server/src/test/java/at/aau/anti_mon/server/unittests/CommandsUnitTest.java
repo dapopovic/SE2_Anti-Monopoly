@@ -1,14 +1,8 @@
 package at.aau.anti_mon.server.unittests;
 
-import at.aau.anti_mon.server.commands.CreateGameCommand;
-import at.aau.anti_mon.server.commands.HeartBeatCommand;
-import at.aau.anti_mon.server.commands.JoinLobbyCommand;
-import at.aau.anti_mon.server.commands.LeaveLobbyCommand;
+import at.aau.anti_mon.server.commands.*;
 import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
-import at.aau.anti_mon.server.events.SessionCheckEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
+import at.aau.anti_mon.server.events.*;
 import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import org.junit.jupiter.api.Test;
@@ -45,14 +39,17 @@ class CommandsUnitTest {
 
     @InjectMocks
     private CreateGameCommand createGameCommand;
-
+    @InjectMocks
+    private LobbyReadyCommand lobbyReadyCommand;
+    @InjectMocks
+    private StartGameCommand startGameCommand;
     @InjectMocks
     private HeartBeatCommand heartBeatCommand;
 
     @Test
     void joinLobbyCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.JOIN_GAME);
+        jsonData.setCommand(Commands.JOIN);
         jsonData.putData("pin", "1234");
         jsonData.putData("username", "testUser");
 
@@ -64,7 +61,7 @@ class CommandsUnitTest {
     @Test
     void joinLobbyCommandHasEmptyValuesAndThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.JOIN_GAME);
+        jsonData.setCommand(Commands.JOIN);
 
         assertThrows(CanNotExecuteJsonCommandException.class, () -> joinLobbyCommand.execute(session, jsonData));
     }
@@ -72,7 +69,7 @@ class CommandsUnitTest {
     @Test
     void joinLobbyCommandThrowsException() {
         JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.JOIN_GAME);
+        jsonData.setCommand(Commands.JOIN);
         jsonData.putData("pin", "");
         jsonData.putData("username", "");
 
@@ -198,5 +195,93 @@ class CommandsUnitTest {
         assertThrows(CanNotExecuteJsonCommandException.class, () -> heartBeatCommand.execute(session, jsonData));
         verify(eventPublisher, times(0)).publishEvent(any(SessionCheckEvent.class));
         verify(session, times(1)).getUri();
+    }
+
+    @Test
+    void lobbyReadyCommandShouldPublishEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.READY);
+        jsonData.putData("pin", "1234");
+        jsonData.putData("username", "testUser");
+
+        lobbyReadyCommand.execute(session, jsonData);
+
+        verify(eventPublisher, times(1)).publishEvent(any(UserReadyLobbyEvent.class));
+    }
+
+    @Test
+    void lobbyReadyCommandHasEmptyValuesAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.READY);
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            lobbyReadyCommand.execute(session, jsonData);
+        });
+    }
+
+    @Test
+    void lobbyReadyCommandHasNoUsernameAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.READY);
+        jsonData.putData("test", "test");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            lobbyReadyCommand.execute(session, jsonData);
+        });
+    }
+
+    @Test
+    void lobbyReadyCommandHasNoPinAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.READY);
+        jsonData.putData("username", "testUser");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            lobbyReadyCommand.execute(session, jsonData);
+        });
+    }
+
+    @Test
+    void startGameCommandShouldPublishEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.START_GAME);
+        jsonData.putData("pin", "1234");
+        jsonData.putData("username", "testUser");
+
+        startGameCommand.execute(session, jsonData);
+
+        verify(eventPublisher, times(1)).publishEvent(any(UserStartedGameEvent.class));
+    }
+
+    @Test
+    void startGameCommandHasEmptyValuesAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.START_GAME);
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            startGameCommand.execute(session, jsonData);
+        });
+    }
+
+    @Test
+    void startGameCommandHasNoUsernameAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.START_GAME);
+        jsonData.putData("test", "test");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            startGameCommand.execute(session, jsonData);
+        });
+    }
+
+    @Test
+    void startGameCommandHasNoPinAndThrowsException() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.START_GAME);
+        jsonData.putData("username", "testUser");
+
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
+            startGameCommand.execute(session, jsonData);
+        });
     }
 }
