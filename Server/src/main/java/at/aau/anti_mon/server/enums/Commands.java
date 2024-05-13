@@ -114,7 +114,6 @@ public enum Commands {
 	*
 	*/
     READY("READY"),
-    ERROR("ERROR"),
     START_GAME("START_GAME");
 
     // usw
