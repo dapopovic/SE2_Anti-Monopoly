@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
@@ -59,7 +59,7 @@ public class LobbyActivity extends AppCompatActivity {
 
     ///////////////////////////////////// Variablen
     private String pin;
-    private User user;
+    private User currentUser;
     private boolean leftLobby = false;
     private boolean gameStarted = false;
 
@@ -130,8 +130,8 @@ public class LobbyActivity extends AppCompatActivity {
 
     private void processIntent() {
         if (getIntent().hasExtra("username")) {
-            user = new User(getIntent().getStringExtra("username"), getIntent().getBooleanExtra("isOwner", false), getIntent().getBooleanExtra("isReady", false));
-            addUserToTable(user);
+            currentUser = new User(getIntent().getStringExtra("username"), getIntent().getBooleanExtra("isOwner", false), getIntent().getBooleanExtra("isReady", false));
+            addUserToTable(currentUser);
         } else {
             Log.e(DEBUG_TAG, "Old Intent has no username");
             // Todo: Error handling
@@ -146,7 +146,7 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void addUserToTable(User user) {
-        if (this.user.equals(user) && !user.isOwner()) {
+        if (this.currentUser.equals(user) && !user.isOwner()) {
             // start game button is only visible for the owner
             findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
             findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
@@ -165,7 +165,7 @@ public class LobbyActivity extends AppCompatActivity {
                 availableUsers.put(entry.getKey(), user);  // Markiere als besetzt
                 int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
                 Log.d(DEBUG_TAG, "Size of available users: " + size);
-                if (size >= 2 && this.user.isOwner()) {
+                if (size >= 2 && this.currentUser.isOwner()) {
                     Button startButton = findViewById(R.id.lobby_start_game);
                     startButton.setEnabled(false);
                     startButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
@@ -186,7 +186,7 @@ public class LobbyActivity extends AppCompatActivity {
                 cb.setChecked(false);
                 availableUsers.put(entry.getKey(), null);  // Markiere als verfügbar
                 int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
-                if (size == 2 && user.isOwner()) {
+                if (size == 2 && currentUser.isOwner()) {
                     Button startButton = findViewById(R.id.lobby_start_game);
                     startButton.setEnabled(false);
                     // make it a little pale
@@ -233,7 +233,7 @@ public class LobbyActivity extends AppCompatActivity {
             }
         });
         Button startButton = findViewById(R.id.lobby_start_game);
-        startButton.setEnabled(user.isOwner() && allReady.get());
+        startButton.setEnabled(currentUser.isOwner() && allReady.get());
         startButton.setBackground(allReady.get() ? AppCompatResources.getDrawable(this, R.drawable.rounded_btn) : AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
     }
 
@@ -263,9 +263,10 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void startGame(Collection<User> users) {
+        users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getMoney() + " role: " + user.getRole()));
         Intent intent = new Intent(this, ActivityGameField.class);
         intent.putExtra("users", JsonDataManager.createJsonMessage(users));
-        intent.putExtra("currentUser", JsonDataManager.createJsonMessage(user));
+        intent.putExtra("currentUser", JsonDataManager.createJsonMessage(currentUser));
         intent.putExtra("pin", pin);
         gameStarted = true;
         startActivity(intent);
@@ -280,7 +281,7 @@ public class LobbyActivity extends AppCompatActivity {
 
     private void leaveLobby() {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
-        jsonData.putData("username", user.getUsername());
+        jsonData.putData("username", currentUser.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
@@ -292,7 +293,7 @@ public class LobbyActivity extends AppCompatActivity {
     public void onStartGame(View view) {
         // send start game message to server
         JsonDataDTO jsonData = new JsonDataDTO(Commands.START_GAME, new HashMap<>());
-        jsonData.putData("username", user.getUsername());
+        jsonData.putData("username", currentUser.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
@@ -302,7 +303,7 @@ public class LobbyActivity extends AppCompatActivity {
     public void onReady(View view) {
         // send ready message to server
         JsonDataDTO jsonData = new JsonDataDTO(Commands.READY, new HashMap<>());
-        jsonData.putData("username", user.getUsername());
+        jsonData.putData("username", currentUser.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
@@ -319,7 +320,7 @@ public class LobbyActivity extends AppCompatActivity {
         Log.d(DEBUG_TAG, "EventBus registered");
         globalEventQueue.setEventBusReady(true);
         if (webSocketClient != null) {
-            webSocketClient.setUserId(user.getUsername());
+            webSocketClient.setUserId(currentUser.getUsername());
             webSocketClient.connectToServer();
         }
         if (!lobbyViewModel.getUserJoinedLiveData().hasActiveObservers()) {

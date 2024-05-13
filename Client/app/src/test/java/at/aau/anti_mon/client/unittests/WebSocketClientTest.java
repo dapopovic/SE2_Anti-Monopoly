@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import java.util.Objects;
 
 import at.aau.anti_mon.client.command.CommandFactory;
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;

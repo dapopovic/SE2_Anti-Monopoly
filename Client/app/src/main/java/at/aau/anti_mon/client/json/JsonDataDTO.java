@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import lombok.Getter;
 import lombok.Setter;
 

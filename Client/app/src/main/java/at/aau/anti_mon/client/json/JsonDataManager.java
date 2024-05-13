@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 
 /**
  * This class is responsible for creating and parsing JSON messages.

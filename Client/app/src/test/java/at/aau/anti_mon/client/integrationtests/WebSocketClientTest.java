@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
@@ -109,8 +109,8 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.START_GAME);
         User[] users = {
-                new User("testUser", false, false, 1000),
-                new User("testUser2", false, false, 1000)
+                new User("testUser", false, false),
+                new User("testUser2", false, false)
         };
         jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);

@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;

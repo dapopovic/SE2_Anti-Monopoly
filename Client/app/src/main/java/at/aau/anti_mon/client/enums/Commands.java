@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client.command;
+package at.aau.anti_mon.client.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
