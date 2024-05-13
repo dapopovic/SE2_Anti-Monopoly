@@ -1,11 +1,14 @@
 package at.aau.anti_mon.client.networking;
 
+import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.sql.SQLOutput;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -36,20 +39,21 @@ public class WebSocketClient {
      * localhost from the Android emulator is reachable as 10.0.2.2
      * https://developer.android.com/studio/run/emulator-networking
      */
-   // private static final String WEBSOCKET_URI = "ws://10.0.2.2:51234/game";
-    private static final String BASE_WEBSOCKET_URI = "ws://10.0.2.2:53215/game?userID=";
+    //private static final String WEBSOCKET_URI = "ws://10.0.2.2:8080/game?userID=";
+    private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game?userID=";
    //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
 
     /**
      * URL for testing connection to se2-server
      */
-    //private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
-    private static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
+//    private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
+
     @Getter
     @Setter
     private WebSocket webSocket;
     private final OkHttpClient client;
-    private final CommandFactory commandFactory;
+    @Setter
+    private CommandFactory commandFactory;
     private final MutableLiveData<JsonDataDTO> liveData = new MutableLiveData<>();
     private boolean isConnected = false;
     private String userID;
@@ -79,20 +83,7 @@ public class WebSocketClient {
         }
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = BASE_WEBSOCKET_URI + userID;
-        Request request = new Request.Builder().url(urlWithUserId).build();
-        webSocket = client.newWebSocket(request, createWebSocketListener());
-    }
-    public synchronized void connectToServer(String uri) {
-        Log.d(DEBUG_TAG, "Connecting to server");
-        // Mehrfache Verbindungen verhindern:
-        if (webSocket != null || userID == null){
-            Log.d(DEBUG_TAG, "Connection already established or no userID set");
-            return;
-        }
-
-        // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = uri + userID;
+        String urlWithUserId = WEBSOCKET_URI + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
@@ -105,7 +96,7 @@ public class WebSocketClient {
         return new WebSocketListener() {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                Log.println(Log.DEBUG, DEBUG_TAG, "Opened Connection: " + response.message());
+                Log.d(DEBUG_TAG, "Opened Connection: " + response.message());
 
                 isConnected = true;
                 // Versuche alle wartenden Nachrichten zu senden
@@ -119,7 +110,7 @@ public class WebSocketClient {
 
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
-                Log.println(Log.DEBUG, DEBUG_TAG, "Closed Connection " + reason);
+                Log.d(DEBUG_TAG, "Closed Connection " + reason);
 
                 isConnected = false;
                 WebSocketClient.this.webSocket = null;
@@ -153,7 +144,7 @@ public class WebSocketClient {
      */
     private void handleIncomingMessage(String text) {
         Log.d(DEBUG_TAG, "Received message: " + text);
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text);
+        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text, JsonDataDTO.class);
         if (jsonDataDTO == null) {
             Log.e(DEBUG_TAG, "Failed to parse JSON message");
             return;
@@ -178,6 +169,7 @@ public class WebSocketClient {
             flushMessageQueue();
             sendWebSocketMessage(message);
         } else {
+            Log.d(DEBUG_TAG, "Connection not established, adding message to queue");
             messageQueue.add(message);
             connectToServer();
         }

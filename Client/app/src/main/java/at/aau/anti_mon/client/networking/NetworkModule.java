@@ -7,7 +7,6 @@ import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
@@ -22,16 +21,17 @@ import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
+import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
-import at.aau.anti_mon.client.command.TestCommand;
+import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * This is a Dagger module.
@@ -94,6 +94,12 @@ public class NetworkModule {
     }
 
     @Provides
+    @Singleton
+    CreateGameViewModel provideCreateGameViewModel() {
+        return new CreateGameViewModel();
+    }
+
+    @Provides
     @IntoMap
     @StringKey("ANSWER")
     Command provideAnswerCommand(AnswerCommand command) {
@@ -103,8 +109,8 @@ public class NetworkModule {
     @Provides
     @IntoMap
     @StringKey("PIN")
-    Command providePinCommand(GlobalEventQueue queue) {
-        return new PinCommand(queue);
+    Command providePinCommand(PinCommand command) {
+        return command;
     }
 
     @Provides
@@ -124,13 +130,6 @@ public class NetworkModule {
     @IntoMap
     @StringKey("ERROR")
     Command provideErrorCommand(ErrorCommand command) {
-        return command;
-    }
-
-    @Provides
-    @IntoMap
-    @StringKey("TEST")
-    Command provideTestCommand(TestCommand command) {
         return command;
     }
 
@@ -170,6 +169,19 @@ public class NetworkModule {
         return command;
     }
 
+    @Provides
+    @IntoMap
+    @StringKey("READY")
+    Command provideReadyCommand(OnReadyCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("START_GAME")
+    Command provideStartGameCommand(StartGameCommand command) {
+        return command;
+    }
 
 
 }

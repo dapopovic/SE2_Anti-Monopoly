@@ -73,6 +73,12 @@ class WebSocketClientTest {
         verify(commandFactory, never()).getCommand(anyString());
     }
     @Test
+    void testHandleIncomingMessageWithWrongCommand() {
+        WebSocket webSocket = mock(WebSocket.class);
+        webSocketListener.onMessage(webSocket, "{\"command\": \"WRONG_COMMAND\", \"data\": {\"username\": \"testUser\"}}");
+        verify(commandFactory, never()).getCommand(anyString());
+    }
+    @Test
     void testOnClosed() {
         webSocketListener.onClosed(webSocketClient.getWebSocket(), 1000, "testReason");
         assertFalse(webSocketClient.isConnected());

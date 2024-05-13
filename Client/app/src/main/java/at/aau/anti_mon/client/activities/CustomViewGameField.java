@@ -18,18 +18,19 @@ import org.greenrobot.eventbus.ThreadMode;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 
-public class CustomView_Gamefield extends ConstraintLayout {
+public class CustomViewGameField extends ConstraintLayout {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
-    private float FACTOR = 1.0f;
-    private float previousX, previousY;
+    private float scaleFactor = 1.0f;
+    private float previousX;
+    private float previousY;
 
-    public CustomView_Gamefield(@NonNull Context context) {
+    public CustomViewGameField(@NonNull Context context) {
         super(context);
         initView();
     }
 
-    public CustomView_Gamefield(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public CustomViewGameField(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
@@ -53,8 +54,9 @@ public class CustomView_Gamefield extends ConstraintLayout {
                 previousX = event.getX();
                 previousY = event.getY();
                 break;
+            default:
+                break;
         }
-
         return true;
     }
 
@@ -67,11 +69,11 @@ public class CustomView_Gamefield extends ConstraintLayout {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            FACTOR *= detector.getScaleFactor();
-            FACTOR = Math.max(1.0f, Math.min(FACTOR, 10.f));
-            setScaleX(FACTOR);
-            setScaleY(FACTOR);
-            Log.d("Detection", "Scaling detected" + FACTOR);
+            scaleFactor *= detector.getScaleFactor();
+            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 10.f));
+            setScaleX(scaleFactor);
+            setScaleY(scaleFactor);
+            Log.d("Detection", "Scaling detected" + scaleFactor);
             return true;
         }
 

@@ -25,6 +25,16 @@
         android:text="@string/Startgame"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline8" />
+    <Button
+        android:id="@+id/lobby_ready"
+        style="@style/Buttons_Style"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:onClick="onReady"
+        android:text="@string/ready"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8" />
 
     <Button
         android:id="@+id/lobby_cancel"
@@ -47,75 +57,154 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/coll1"
-                android:layout_weight="4"
+            <LinearLayout
+                android:id="@+id/user1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:gravity="center"
-                android:padding="20sp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:minWidth="150dp"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/coll4"
-                android:layout_weight="4"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:minWidth="150dp"
+                    android:padding="20sp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:gravity="center"
-                android:padding="20sp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:minWidth="150dp"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:minWidth="150dp"
+                    android:padding="20sp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
+            </LinearLayout>
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/coll2"
-                android:layout_weight="4"
+            <LinearLayout
+                android:id="@+id/user2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:gravity="center"
-                android:padding="20sp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:minWidth="150dp"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/coll5"
-                android:layout_weight="4"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:minWidth="150dp"
+                    android:padding="20sp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:gravity="center"
-                android:padding="20sp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:minWidth="150dp"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:minWidth="150dp"
+                    android:padding="20sp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
+            </LinearLayout>
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/coll3"
-                android:layout_weight="4"
+            <LinearLayout
+                android:id="@+id/user3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:gravity="center"
-                android:padding="20sp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:minWidth="150dp"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/coll6"
-                android:layout_weight="4"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:minWidth="150dp"
+                    android:padding="20sp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user6"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:gravity="center"
-                android:padding="20sp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:minWidth="150dp"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:minWidth="150dp"
+                    android:padding="20sp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
+            </LinearLayout>
         </TableRow>
 
     </TableLayout>

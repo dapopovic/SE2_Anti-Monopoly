@@ -66,51 +66,28 @@ public class JoinGameActivity extends AppCompatActivity {
         if (!webSocketClient.isConnected()){
             webSocketClient.connectToServer();
         }
-
-        if (!username.isEmpty() && !pin.isEmpty()) {
-            JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN_GAME, new HashMap<>());
-            jsonData.putData("username", username);
-            jsonData.putData("pin", pin);
-            String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
-            webSocketClient.sendMessageToServer(jsonMessage);
-
-            // Den Username nutzen:
-            Intent intent = new Intent(this, LobbyActivity.class);
-            intent.putExtra("username", username);
-            intent.putExtra("pin", pin);
-            startActivity(intent);
-            // TODO: Abfrage welche Spieler alle in der Lobby sind
-
-        }else {
-            Log.d("ANTI-MONOPOLY-DEBUG", "Username or pin is empty");
-            // TODO: Popup anzeigen
+        if (username.isEmpty()) {
+            usernameEditText.setError("Username is required");
         }
+        if (pin.isEmpty()) {
+            pinEditText.setError("Pin is required");
+        }
+
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN_GAME, new HashMap<>());
+        jsonData.putData("username", username);
+        jsonData.putData("pin", pin);
+        String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonMessage);
+
+        Intent intent = new Intent(this, LobbyActivity.class);
+        intent.putExtra("username", username);
+        intent.putExtra("pin", pin);
+        startActivity(intent);
     }
 
     public void onCancelJoinGame(View view) {
         // Go back to last Activity on Stack (StartMenuActivity)
         finish();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Test for MessageQueue and Session holding
-       //if (webSocketClient != null) {
-            //webSocketClient.setUserId(usernameEditText.getText().toString());
-       //     webSocketClient.connectToServer();
-       //}
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // Test for MessageQueue and Session holding
-        if (webSocketClient != null) {
-            webSocketClient.disconnect();
-        }
     }
 
     @Override

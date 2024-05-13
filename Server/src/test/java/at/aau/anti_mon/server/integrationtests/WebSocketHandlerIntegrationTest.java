@@ -92,7 +92,7 @@ class WebSocketHandlerIntegrationTest {
 
         // JsonDataDTO receivedData = mapper.readValue(messageResponse,
         // JsonDataDTO.class);
-        JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse);
+        JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse, JsonDataDTO.class);
 
         // Zugriff auf die Daten
         assert receivedData != null;

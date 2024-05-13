@@ -25,12 +25,12 @@ public class StartMenuActivity extends AppCompatActivity {
             return insets;
         });
     }
-    public void chooseStartNewGame(View view) {
+    public void onStartGame(View view) {
         Intent intent = new Intent(this, StartNewGameActivity.class);
         startActivity(intent);
     }
 
-    public void chooseJoinGame(View view) {
+    public void onJoinGame(View view) {
         Intent intent = new Intent(this, JoinGameActivity.class);
         startActivity(intent);
     }

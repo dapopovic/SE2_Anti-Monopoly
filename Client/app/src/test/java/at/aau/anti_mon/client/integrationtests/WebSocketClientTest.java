@@ -1,7 +1,8 @@
 package at.aau.anti_mon.client.integrationtests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -10,52 +11,120 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.command.Command;
+import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.command.HeartBeatCommand;
+import at.aau.anti_mon.client.command.LeaveGameCommand;
+import at.aau.anti_mon.client.command.NewUserCommand;
+import at.aau.anti_mon.client.command.OnReadyCommand;
+import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;
 import at.aau.anti_mon.client.networking.WebSocketClient;
+import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
+import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 
-public class WebSocketClientTest extends AntiMonopolyApplication {
-    private static final String BASE_URL = "ws://localhost:8080/game?userID=";
-
+class WebSocketClientTest extends AntiMonopolyApplication {
     @Inject
     WebSocketClient client;
     @Mock
     GlobalEventQueue globalEventQueue;
-
+    @Inject
+    CreateGameViewModel createGameViewModel;
+    @Inject
+    LobbyViewModel lobbyViewModel;
     @BeforeEach
     void init() {
         openMocks(this);
         TestComponent testComponent = DaggerTestComponent.builder().networkModule(new NetworkModule(this)).build();
         setGlobalEventQueue(globalEventQueue);
         testComponent.inject(this);
+
+        Map<String, Command> commandMap = new HashMap<>();
+        commandMap.put("PIN", new PinCommand(createGameViewModel));
+        commandMap.put("HEARTBEAT", new HeartBeatCommand(globalEventQueue));
+        commandMap.put("NEW_USER", new NewUserCommand(lobbyViewModel));
+        commandMap.put("START_GAME", new StartGameCommand(lobbyViewModel));
+        commandMap.put("LEAVE_GAME", new LeaveGameCommand(lobbyViewModel));
+        commandMap.put("READY", new OnReadyCommand(lobbyViewModel));
+        client.setCommandFactory(new CommandFactory(commandMap));
     }
 
     @Test
     void testNewCreateGameCommandAndGetPin() {
-        client.setUserId("test");
-        client.connectToServer(BASE_URL + "test");
-        assertTrue(client.isConnected());
-
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
-        jsonDataDTO.setCommand(Commands.CREATE_GAME);
-        jsonDataDTO.putData("username", "test");
+        jsonDataDTO.setCommand(Commands.PIN);
+        jsonDataDTO.putData("pin", "1234");
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
-
-        client.sendMessageToServer(message);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            fail("Thread interrupted");
-        }
-        verify(globalEventQueue).enqueueEvent(any(PinReceivedEvent.class));
-
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
     }
 
+    @Test
+    void testHeartBeatCommandReceivesHeartBeatEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.HEARTBEAT);
+        jsonDataDTO.putData("msg", "test");
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        verify(globalEventQueue).enqueueEvent(any(HeartBeatEvent.class));
+    }
+
+    @Test
+    void testNewUserCommandShouldFireUserJoinedLobbyEvent() throws InterruptedException {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.NEW_USER);
+        jsonDataDTO.putData("username", "testUser");
+        jsonDataDTO.putData("isOwner", "false");
+        jsonDataDTO.putData("isReady", "false");
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+    }
+
+    @Test
+    void testLeaveCommandShouldFireUserLeftLobbyEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.LEAVE_GAME);
+        jsonDataDTO.putData("username", "testUser");
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+    }
+    @Test
+    void testStartGameCommandShouldFireGameStartedEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.START_GAME);
+        User[] users = {
+                new User("testUser", false, false, 1000),
+                new User("testUser2", false, false, 1000)
+        };
+        jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+    }
+    @Test
+    void testOnReadyCommandShouldFireReadyEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.READY);
+        jsonDataDTO.putData("username", "testUser");
+        jsonDataDTO.putData("isReady", "true");
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+    }
 }

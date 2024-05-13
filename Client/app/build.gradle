@@ -63,7 +63,7 @@ tasks.register('jacocoTestReport', JacocoReport) {
         xml.destination file("${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
     }
 
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/activities/**', '**/client/*.*']
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/activities/**', '**/client/*.*', '**/adapters/**', '**/events/GlobalEventQueue.*', '**/viewmodels/SingleLiveEvent.*']
     def debugTree = fileTree(dir: "${project.layout.buildDirectory.get().asFile}/intermediates/javac/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 
@@ -82,7 +82,7 @@ sonar {
     property "sonar.java.coveragePlugin", "jacoco"
       property "sonar.gradle.skipCompiler", "true"
     property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-    property "sonar.coverage.exclusions", "***/activities/**,**/client/*.*"
+    property "sonar.coverage.exclusions", "***/activities/**, **/client/*.*, **/adapters/**, **/events/GlobalEventQueue.*, **/viewmodels/SingleLiveEvent.*"
   }
 }
 

@@ -1,15 +1,17 @@
 package at.aau.anti_mon.server.listener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
+import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.tinylog.Logger;
 
-import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -55,7 +57,6 @@ public class UserEventListener {
     public void onCreateLobbyEvent(UserCreatedLobbyEvent event) {
         // create User
         User user = userService.findOrCreateUser(event.getUsername(), event.getSession());
-
         // create Lobby
         Lobby newLobby = lobbyService.createLobby(user);
 
@@ -76,31 +77,25 @@ public class UserEventListener {
 
         // create User
         User joinedUser = userService.findOrCreateUser(event.getUsername(), event.getSession());
+        Logger.debug("User " + joinedUser.getName() + " joined the lobby." + " Is owner: " + joinedUser.isOwner());
 
         Lobby joinedLobby = lobbyService.findLobbyByPin(event.getPin());
-        if (joinedLobby.canAddPlayer()) {
-            HashSet<User> users = joinedLobby.getUsers();
-            for (User user : users) {
+        // Füge den joinedUser zur Lobby hinzu
+        lobbyService.joinLobby(event.getPin(), joinedUser.getName());
 
-                // Sende allen Spielern in der Lobby die Information, dass ein neuer Spieler
-                // beitretet
-                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()),
-                        joinedUser.getName());
+        HashSet<User> users = joinedLobby.getUsers();
+        Logger.info("Users in Lobby: " + users.size());
+        // Sende allen Spielern in der Lobby die Information, dass der Spieler der Lobby
+        // beigetreten ist
+        for (User user : users) {
+            if (!user.equals(joinedUser))
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser);
+        }
 
-                // Sende dem neuen Spieler alle Spieler, die bereits in der Lobby sind
-                JsonDataUtility.sendJoinedUser(event.getSession(), user.getName());
-            }
-
-            // Füge den joinedUser zur Lobby hinzu
-            lobbyService.joinLobby(event.getPin(), joinedUser.getName());
-
-            // DEBUG:
-            JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
-                    "Erfolgreich der Lobby beigetreten.");
-        } else {
-            JsonDataUtility.sendError(sessionManagementService.getSessionForUser(event.getUsername()),
-                    "Fehler: Lobby ist voll.");
+        // Sende dem neuen Spieler alle Spieler in der Lobby
+        for (User user : users) {
+            if (!user.equals(joinedUser))
+                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(joinedUser.getName()), user);
         }
     }
 
@@ -129,7 +124,40 @@ public class UserEventListener {
             JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
+        }
 
+        // Test
+        //sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
+    }
+
+    @EventListener
+    public void onReadyUserEvent(UserReadyLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException {
+        sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
+        lobbyService.readyUser(event.getPin(), event.getUsername());
+        Logger.info("Spieler " + event.getUsername() + " ist bereit.");
+
+        User readiedUser = userService.getUser(event.getUsername());
+
+        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
+        for (User user : users) {
+            JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername(), readiedUser.isReady());
+        }
+    }
+
+    @EventListener
+    public void onStartGameEvent(UserStartedGameEvent event) throws LobbyNotFoundException {
+        sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
+        lobbyService.startGame(event.getPin(), event.getUsername());
+        Logger.info("Spieler " + event.getUsername() + " hat das Spiel gestartet.");
+
+        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
+        // convert to userDtos
+        ArrayList<UserDTO> usersList = new ArrayList<>();
+        for (User user : users) {
+            usersList.add(new UserDTO(user.getName(), user.isOwner(), user.isReady()));
+        }
+        for (User user : users) {
+            JsonDataUtility.sendStartGame(sessionManagementService.getSessionForUser(user.getName()), usersList);
         }
     }
 
