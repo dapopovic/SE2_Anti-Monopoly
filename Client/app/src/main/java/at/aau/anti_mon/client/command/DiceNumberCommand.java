@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.events.PinReceivedEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 public class DiceNumberCommand implements Command{
 
