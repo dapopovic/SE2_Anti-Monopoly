@@ -1,9 +1,6 @@
 package at.aau.anti_mon.server.listener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Figures;
@@ -179,7 +176,9 @@ public class UserEventListener {
         }
         user.setLocation(nextlocation);
 
-        JsonDataUtility.sendDiceNumber(session,username,dicenumber, figure,location);
+        HashSet<User> users = user.getLobby().getUsers();
+        for (User u : users) {
+            JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
+        }
     }
-
 }
