@@ -54,7 +54,13 @@ public class LobbyActivity extends AppCompatActivity {
     //////////////////////////////////// Android UI
     TextView textViewPin;
 
+    Button startButton;
+    Button readyButton;
+
+
     HashMap<LinearLayout, User> availableUsers = new HashMap<>();
+
+
 
 
     ///////////////////////////////////// Variablen
@@ -124,6 +130,9 @@ public class LobbyActivity extends AppCompatActivity {
         }
 
         textViewPin = findViewById(R.id.Pin);
+        startButton = findViewById(R.id.lobby_start_game);
+        readyButton = findViewById(R.id.lobby_ready);
+
 
         processIntent();
     }
@@ -215,27 +224,49 @@ public class LobbyActivity extends AppCompatActivity {
 
     public void onReadyEvent(User eventUser) {
         AtomicBoolean allReady = new AtomicBoolean(true);
-        availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
-            User currentUser = entry.getValue();
-            if (currentUser.getUsername().equals(eventUser.getUsername())) {
-                currentUser.setReady(eventUser.isReady());
-                CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
-                cb.setChecked(eventUser.isReady());
-                Button readyButton = findViewById(R.id.lobby_ready);
-                if (eventUser.isReady()) {
-                    readyButton.setText(R.string.unready);
-                } else {
-                    readyButton.setText(R.string.ready);
-                }
-                if (!currentUser.isReady()) {
-                    allReady.set(false);
-                }
-            }
-        });
-        Button startButton = findViewById(R.id.lobby_start_game);
-        startButton.setEnabled(user.isOwner() && allReady.get());
-        startButton.setBackground(allReady.get() ? AppCompatResources.getDrawable(this, R.drawable.rounded_btn) : AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
+        availableUsers.entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .forEach(entry -> updateReadyStatusForUser(entry, eventUser, allReady));
+
+        updateStartButton(allReady.get());
     }
+
+    private void updateReadyStatusForUser(Map.Entry<LinearLayout, User> entry, User eventUser, AtomicBoolean allReady) {
+        User currentUser = entry.getValue();
+        if (isCurrentUser(currentUser, eventUser)) {
+            currentUser.setReady(eventUser.isReady());
+            updateCheckBox(entry, eventUser.isReady());
+            updateReadyButton(eventUser.isReady());
+            if (!currentUser.isReady()) {
+                allReady.set(false);
+            }
+        }
+    }
+
+    private void updateCheckBox(Map.Entry<LinearLayout, User> entry, boolean isReady) {
+        CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
+        cb.setChecked(isReady);
+    }
+
+    private boolean isCurrentUser(User eventUser, User currentUser) {
+        return currentUser.getUsername().equals(eventUser.getUsername());
+    }
+
+    private void updateReadyButton(boolean isReady) {
+        readyButton.setText(isReady ? R.string.unready : R.string.ready);
+    }
+
+    private void updateStartButton(boolean allReady) {
+        //boolean allReady = areAllUsersReady();
+        startButton.setEnabled(user.isOwner() && allReady);
+        startButton.setBackground(AppCompatResources.getDrawable(this, allReady ? R.drawable.rounded_btn : R.drawable.rounded_btn_disabled));
+    }
+
+    private boolean areAllUsersReady() {
+        return availableUsers.values().stream().allMatch(User::isReady);
+    }
+
+
 
     /**
      * TEST LiveData and Observer Pattern
@@ -268,6 +299,9 @@ public class LobbyActivity extends AppCompatActivity {
         intent.putExtra("currentUser", JsonDataManager.createJsonMessage(user));
         intent.putExtra("pin", pin);
         gameStarted = true;
+
+        // TODO: Initialize Database
+
         startActivity(intent);
     }
 
@@ -326,6 +360,7 @@ public class LobbyActivity extends AppCompatActivity {
             setupLiveDataObservers();
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
