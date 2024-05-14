@@ -170,9 +170,6 @@ public class UserEventListener {
         Integer dicenumber = event.getDicenumber();
 
         User user = userService.getUser(username);
-
-        //user.setFigure(Figures.GreenTriangle);
-
         Figures figure = user.getFigure();
         int location = user.getLocation();
         int nextlocation = location+dicenumber;
