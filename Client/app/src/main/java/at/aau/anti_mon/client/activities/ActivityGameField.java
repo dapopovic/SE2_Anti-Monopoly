@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -132,9 +133,10 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onFigureMove(View view) {
 
-        String dice = "4";
-        //String a = currentUser.getUsername();
-        String user = "GreenTriangle";
+        Random random = new Random();
+        int randomNumber = random.nextInt(11)+2;
+        String dice = String.valueOf(randomNumber);
+        String user = currentUser.getUsername();
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER,new HashMap<>());
         jsonData.putData("dicenumber", dice);
         jsonData.putData("username", user);
@@ -142,14 +144,6 @@ public class ActivityGameField extends AppCompatActivity {
         webSocketClient.sendMessageToServer(jsonDataString);
         Log.println(Log.DEBUG,"ActivityGameField","Send dicenumber to server.");
 
-        /*JsonDataDTO jsonDataDTO = new JsonDataDTO();
-        jsonDataDTO.setCommand(Commands.DICENUMBER);
-        jsonDataDTO.putData("dicenumber", "1");
-        jsonDataDTO.putData("name", "GreenTriangle");
-        queue.setEventBusReady(true);
-
-        DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);
-        diceNumberCommand.execute(jsonDataDTO);*/
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
@@ -162,15 +156,6 @@ public class ActivityGameField extends AppCompatActivity {
         String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonMessage);
     }
-
-
-    int greentriangleLocation = 1;
-    int greensquareLocation = 1;
-    int greencircleLocation = 1;
-
-    int bluetriangleLocation = 1;
-    int bluesquareLocation = 1;
-    int bluecircleLocation = 1;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event) {
@@ -185,23 +170,9 @@ public class ActivityGameField extends AppCompatActivity {
             Log.d("onDiceNumberReceivedEvent", "diceNumber is out of range, should be between 2 and 12");
             return;
         }
-        /*int location = switch (name) {
-            case "GreenTriangle" -> greentriangleLocation = updateLocation(greentriangleLocation, diceNumber);
-            case "GreenSquare" -> greensquareLocation = updateLocation(greensquareLocation, diceNumber);
-            case "GreenCircle" -> greencircleLocation = updateLocation(greencircleLocation, diceNumber);
-            case "BlueTriangle" -> bluetriangleLocation = updateLocation(bluetriangleLocation, diceNumber);
-            case "BlueSquare" -> bluesquareLocation = updateLocation(bluesquareLocation, diceNumber);
-            case "BlueCircle" -> bluecircleLocation = updateLocation(bluecircleLocation, diceNumber);
-            default -> 1;
-        };*/
+
         ImageView figure = findViewById(getID(name, null));
         moveFigure(location, diceNumber, figure);
-    }
-    private int updateLocation(int currentLocation, int diceNumber) {
-        if (currentLocation + diceNumber > MAX_FIELD_COUNT) {
-            return 1;
-        }
-        return currentLocation + diceNumber;
     }
 
     private void moveFigure(int location, int diceNumber, ImageView figure) {
@@ -210,6 +181,7 @@ public class ActivityGameField extends AppCompatActivity {
             ImageView field = findViewById(getID(String.valueOf(location), "field"));
             figure.setX(field.getX());
             figure.setY(field.getY());
+            if(location==40){location = 0;}
         }
     }
 

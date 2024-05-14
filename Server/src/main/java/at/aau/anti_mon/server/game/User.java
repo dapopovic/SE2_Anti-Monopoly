@@ -22,7 +22,7 @@ public class User {
     @Setter
     private Figures figure;
     @Setter
-    private Integer location;
+    private int location;
 
     public User(String name, WebSocketSession session) {
         this.name = name;
@@ -31,7 +31,7 @@ public class User {
         this.lobby = null;
         this.money = 1500;
         this.figure = null;
-        this.location = 0;
+        this.location = 1;
     }
 
     public boolean isOwner() {

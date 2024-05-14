@@ -33,7 +33,6 @@ public class UserEventListener {
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
-    private final User user;
 
     /**
      * Konstruktor für UserEventListener
@@ -165,13 +164,24 @@ public class UserEventListener {
     }
 
     @EventListener
-    public void onDiceNumberEvent(DiceNumberEvent event) {
+    public void onDiceNumberEvent(DiceNumberEvent event) throws UserNotFoundException {
         WebSocketSession session = event.getSession();
         String username = event.getUsername();
         Integer dicenumber = event.getDicenumber();
+
+        User user = userService.getUser(username);
+
+        //user.setFigure(Figures.GreenTriangle);
+
         Figures figure = user.getFigure();
-        Integer location = user.getLocation();
-        user.setLocation(location+dicenumber);
+        int location = user.getLocation();
+        int nextlocation = location+dicenumber;
+
+        if(nextlocation>40){
+            nextlocation = nextlocation-40;
+        }
+        user.setLocation(nextlocation);
+
         JsonDataUtility.sendDiceNumber(session,username,dicenumber, figure,location);
     }
 

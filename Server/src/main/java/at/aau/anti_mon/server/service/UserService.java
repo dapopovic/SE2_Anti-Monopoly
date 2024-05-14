@@ -97,8 +97,9 @@ public class UserService {
         users.remove(userId);
     }
 
-
-
+    public Map<String, User> getUsers() {
+        return users;
+    }
 
     /**
      * Konvertiert Nachrichtenobjekt in JSON und sendet es an einem bestimmten User
