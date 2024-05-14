@@ -18,6 +18,7 @@ public class User {
     @Setter
     private boolean isReady;
     private int money;
+    @Setter
     private Figures figure;
 
     public User(String username, boolean isOwner, boolean isReady) {
@@ -25,6 +26,7 @@ public class User {
         this.isOwner = isOwner;
         this.isReady = isReady;
         this.money = 1500;
+        this.figure = null;
     }
 
     @Override

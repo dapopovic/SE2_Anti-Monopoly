@@ -20,10 +20,16 @@ public class DiceNumberCommand implements Command{
     @Override
     public void execute(JsonDataDTO data) {
         Integer dicenumber = Integer.valueOf(data.getData().get("dicenumber"));
-        String name = data.getData().get("username");
+        String username = data.getData().get("username");
+        String figure = data.getData().get("figure");
+        Integer location = Integer.valueOf(data.getData().get("location"));
+
         Log.d("DiceNumberCommand", "Posting Dice received event with dice: " + dicenumber);
-        Log.d("DiceNumberCommand", "Posting Dice received event with name: " + name);
+        Log.d("DiceNumberCommand", "Posting Dice received event with name: " + username);
+        Log.d("DiceNumberCommand", "Posting Dice received event with figure: " + figure);
+        Log.d("DiceNumberCommand", "Posting Dice received event with location: " + location);
+
         // Zugriff auf die GlobalEventQueue über die Application Instanz
-        queue.enqueueEvent(new DiceNumberReceivedEvent(dicenumber,name));
+        queue.enqueueEvent(new DiceNumberReceivedEvent(dicenumber,username,figure,location));
     }
 }

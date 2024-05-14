@@ -4,10 +4,14 @@ import lombok.Getter;
 @Getter
 public class DiceNumberReceivedEvent {
     private final Integer dicenumber;
-    private final String name;
+    private final String username;
+    private final Integer location;
+    private final String figure;
 
-    public DiceNumberReceivedEvent(Integer dicenumber,String name){
+    public DiceNumberReceivedEvent(Integer dicenumber,String name,String figure, Integer location){
         this.dicenumber=dicenumber;
-        this.name = name;
+        this.username = name;
+        this.figure = figure;
+        this.location = location;
     }
 }

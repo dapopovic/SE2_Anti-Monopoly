@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -32,6 +33,7 @@ public class UserEventListener {
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
+    private final User user;
 
     /**
      * Konstruktor für UserEventListener
@@ -166,8 +168,11 @@ public class UserEventListener {
     public void onDiceNumberEvent(DiceNumberEvent event) {
         WebSocketSession session = event.getSession();
         String username = event.getUsername();
-        String dicenumber = event.getDicenumber();
-        JsonDataUtility.sendDiceNumber(session,username,dicenumber);
+        Integer dicenumber = event.getDicenumber();
+        Figures figure = user.getFigure();
+        Integer location = user.getLocation();
+        user.setLocation(location+dicenumber);
+        JsonDataUtility.sendDiceNumber(session,username,dicenumber, figure,location);
     }
 
 }

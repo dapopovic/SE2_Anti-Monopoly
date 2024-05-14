@@ -18,7 +18,6 @@ public class UserDTO implements Serializable {
     private boolean isReady;
     @NotBlank(message = "Money darf nicht leer sein")
     private int money;
-    private Figures figure;
 
     public UserDTO(String username, boolean isOwner, boolean isReady) {
         this.username = username;

@@ -2,6 +2,7 @@ package at.aau.anti_mon.server.utilities;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
+import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.game.JsonDataDTO;
 import at.aau.anti_mon.server.game.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -142,10 +143,13 @@ public class JsonDataUtility {
         send(sessionForUser, jsonData);
     }
 
-    public static void sendDiceNumber(WebSocketSession session, String username, String dicenumber){
+    public static void sendDiceNumber(WebSocketSession session, String username, Integer dicenumber, Figures figure, Integer location){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
         jsonData.putData("username",username);
-        jsonData.putData("dicenumber",dicenumber);
+        jsonData.putData("dicenumber", String.valueOf(dicenumber));
+        jsonData.putData("figure", String.valueOf(figure));
+        jsonData.putData("location", String.valueOf(location));
+
         send(session,jsonData);
     }
 }

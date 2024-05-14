@@ -175,7 +175,8 @@ public class ActivityGameField extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event) {
         int diceNumber = event.getDicenumber();
-        String name = event.getName();
+        String name = event.getFigure();
+        int location = event.getLocation();
         if (name == null) {
             Log.d("onDiceNumberReceivedEvent", "name is null");
             return;
@@ -184,10 +185,7 @@ public class ActivityGameField extends AppCompatActivity {
             Log.d("onDiceNumberReceivedEvent", "diceNumber is out of range, should be between 2 and 12");
             return;
         }
-        if (name.equals("GreenTriangle")) {
-            Log.d("onDiceNumberReceivedEvent", "name is here");
-        }
-        int location = switch (name) {
+        /*int location = switch (name) {
             case "GreenTriangle" -> greentriangleLocation = updateLocation(greentriangleLocation, diceNumber);
             case "GreenSquare" -> greensquareLocation = updateLocation(greensquareLocation, diceNumber);
             case "GreenCircle" -> greencircleLocation = updateLocation(greencircleLocation, diceNumber);
@@ -195,7 +193,7 @@ public class ActivityGameField extends AppCompatActivity {
             case "BlueSquare" -> bluesquareLocation = updateLocation(bluesquareLocation, diceNumber);
             case "BlueCircle" -> bluecircleLocation = updateLocation(bluecircleLocation, diceNumber);
             default -> 1;
-        };
+        };*/
         ImageView figure = findViewById(getID(name, null));
         moveFigure(location, diceNumber, figure);
     }
@@ -207,10 +205,9 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     private void moveFigure(int location, int diceNumber, ImageView figure) {
-        int goal = location + diceNumber;
-        while (location < goal) {
-            ImageView field = findViewById(getID(String.valueOf(location), "field"));
+        for(int i = 1;i<=diceNumber;i++) {
             location++;
+            ImageView field = findViewById(getID(String.valueOf(location), "field"));
             figure.setX(field.getX());
             figure.setY(field.getY());
         }
