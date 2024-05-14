@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client.enums;
+package at.aau.anti_mon.server.enums;
 
 public enum Figures {
     GreenTriangle,

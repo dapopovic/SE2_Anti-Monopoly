@@ -133,6 +133,7 @@ public class ActivityGameField extends AppCompatActivity {
     public void onFigureMove(View view) {
 
         String dice = "4";
+        //String a = currentUser.getUsername();
         String user = "GreenTriangle";
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER,new HashMap<>());
         jsonData.putData("dicenumber", dice);
