@@ -2,6 +2,7 @@ package at.aau.anti_mon.client.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import at.aau.anti_mon.client.enums.Roles;
 import at.aau.anti_mon.client.enums.Figures;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class User {
     private boolean isReady;
     private int money;
     @Setter
+    private Roles role;
+    @Setter
     private Figures figure;
 
     public User(String username, boolean isOwner, boolean isReady) {
@@ -26,6 +29,7 @@ public class User {
         this.isOwner = isOwner;
         this.isReady = isReady;
         this.money = 1500;
+        this.role = null;
         this.figure = null;
     }
 

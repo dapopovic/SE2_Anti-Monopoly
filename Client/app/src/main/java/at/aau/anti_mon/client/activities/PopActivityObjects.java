@@ -3,11 +3,13 @@ package at.aau.anti_mon.client.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 
 import java.util.Objects;
 
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.enums.Roles;
 
 public class PopActivityObjects extends Activity {
     private int layout = R.layout.activity_pop_objects;
@@ -30,9 +32,13 @@ public class PopActivityObjects extends Activity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width*.8),(int)(height*.8));
+        processIntent();
     }
 
     public void onX(View view) {
         finish();
+    }
+    void processIntent() {
+        Log.d(this.getClass().getName(), "in processIntent");
     }
 }

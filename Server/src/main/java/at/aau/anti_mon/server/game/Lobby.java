@@ -1,6 +1,7 @@
 package at.aau.anti_mon.server.game;
 
 import at.aau.anti_mon.server.enums.GameStateEnum;
+import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.UserAlreadyExistsException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -9,8 +10,7 @@ import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Represents a lobby in the game
@@ -24,6 +24,8 @@ public class Lobby {
     private User owner;
     private static final int MAX_USERS = 6;
     private GameStateEnum gameState;
+
+    private Random random;
 
     public Lobby() {
         SecureRandom random = new SecureRandom();
@@ -76,6 +78,7 @@ public class Lobby {
                 readyUser(user);
             }
             user.setLocation(1);
+            user.setRole(null);
             users.remove(user);
         } else {
             throw new UserNotFoundException("User not found in lobby");
@@ -102,6 +105,12 @@ public class Lobby {
     }
 
     public void startGame() {
+        ArrayList<User> userList = new ArrayList<>(users);
+        random = new Random();
+        Collections.shuffle(userList, random);
+        users.forEach(user ->
+            user.setRole(userList.indexOf(user) < userList.size() / 2 ? Roles.MONOPOLIST : Roles.COMPETITOR)
+        );
         this.gameState = GameStateEnum.INGAME;
     }
 

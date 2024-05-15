@@ -99,7 +99,7 @@ class EventDrivenPatternTest {
     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         // Given
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2", false, false));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2", false, false, null, null));
         joinLobbyCommand = mock(JoinLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.JOIN_GAME);
@@ -136,7 +136,7 @@ class EventDrivenPatternTest {
 //// Merge issues backup
 
         lobbyService.addUserToLobby( user2.getName(),lobby.getPin());
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1", false, false));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1", false, false, null, null));
 //////////////// MAIN
         leaveLobbyCommand = mock(LeaveLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();

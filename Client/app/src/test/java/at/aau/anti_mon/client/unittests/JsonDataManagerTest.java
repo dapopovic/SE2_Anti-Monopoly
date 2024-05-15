@@ -1,21 +1,19 @@
 package at.aau.anti_mon.client.unittests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
+import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -58,8 +56,8 @@ class JsonDataManagerTest {
 
     @Test
     void createStringFromJsonMessageUsingAnObjectShouldReturnValidValue() {
-        User user = new User("username", true, true, 1000, null);
-        User user2 = new User("username2", false, false, 1500, null);
+        User user = new User("username", true, true, 1000, null, Figures.GreenCircle);
+        User user2 = new User("username2", false, false, 1500, null, Figures.BlueCircle);
         User[] users = {user, user2};
         String json = JsonDataManager.createJsonMessage(users);
         ObjectMapper mapper = new ObjectMapper();

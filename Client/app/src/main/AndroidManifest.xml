@@ -29,6 +29,10 @@
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
+            android:name=".activities.PopActivityRole"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp" />
+        <activity
             android:name=".activities.ActivityGameField"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />

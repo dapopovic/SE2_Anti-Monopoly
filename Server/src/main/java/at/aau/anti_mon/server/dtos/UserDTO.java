@@ -3,6 +3,7 @@ package at.aau.anti_mon.server.dtos;
 import java.io.Serializable;
 
 import at.aau.anti_mon.server.enums.Figures;
+import at.aau.anti_mon.server.enums.Roles;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -23,12 +24,16 @@ public class UserDTO implements Serializable {
     private boolean isReady;
     @NotBlank(message = "Money darf nicht leer sein")
     private int money;
+    private Roles role;
+    private Figures figure;
 
-    public UserDTO(String username, boolean isOwner, boolean isReady) {
+    public UserDTO(String username, boolean isOwner, boolean isReady, Roles role, Figures figure) {
         this.username = username;
         this.isOwner = isOwner;
         this.isReady = isReady;
         this.money = 1500;
+        this.role = role;
+        this.figure = figure;
     }
 
 }

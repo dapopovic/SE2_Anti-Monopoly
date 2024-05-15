@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.enums.Roles;
 import at.aau.anti_mon.client.game.User;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -35,6 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         String username = user.getUsername().length() <= 10 ? user.getUsername() : user.getUsername().substring(0, 10) + "...";
         String userInfo = holder.itemView.getContext().getString(R.string.player_info, username, user.getMoney() + " €");
         holder.playerInfo.setText(userInfo);
+        holder.playerIcon.setImageResource(user.getRole() == Roles.MONOPOLIST ? R.drawable.monopolist : R.drawable.competititor);
 
         if (user.equals(currentUser)) {
             holder.itemView.setBackgroundColor(Color.parseColor("#ADD8E6"));
@@ -48,10 +51,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView playerInfo;
+        ImageView playerIcon;
 
         UserViewHolder(View itemView) {
             super(itemView);
             playerInfo = itemView.findViewById(R.id.player_name);
+            playerIcon = itemView.findViewById(R.id.player_icon);
         }
     }
 }
