@@ -96,17 +96,17 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onSettings(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivitySettings.class);
+        Intent i = new Intent(getApplicationContext(), PopActivitySettings.class);
         startActivity(i);
     }
 
     public void onHandel(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivityHandel.class);
+        Intent i = new Intent(getApplicationContext(), PopActivityHandel.class);
         startActivity(i);
     }
 
     public void onObjects(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivityObjects.class);
+        Intent i = new Intent(getApplicationContext(), PopActivityObjects.class);
         startActivity(i);
     }
 
@@ -120,11 +120,12 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
         queue.setEventBusReady(true);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -134,17 +135,18 @@ public class ActivityGameField extends AppCompatActivity {
     public void onFigureMove(View view) {
 
         Random random = new Random();
-        int randomNumber = random.nextInt(11)+2;
+        int randomNumber = random.nextInt(11) + 2;
         String dice = String.valueOf(randomNumber);
         String user = currentUser.getUsername();
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER,new HashMap<>());
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
         jsonData.putData("dicenumber", dice);
         jsonData.putData("username", user);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
-        Log.println(Log.DEBUG,"ActivityGameField","Send dicenumber to server.");
+        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
 
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
 
@@ -176,12 +178,15 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     private void moveFigure(int location, int diceNumber, ImageView figure) {
-        for(int i = 1;i<=diceNumber;i++) {
+        for (int i = 1; i <= diceNumber; i++) {
+            if (location == 40) {
+                location = 0;
+            }
             location++;
+            Log.d("moveFigure", "location: " + location);
             ImageView field = findViewById(getID(String.valueOf(location), "field"));
             figure.setX(field.getX());
             figure.setY(field.getY());
-            if(location==40){location = 0;}
         }
     }
 
