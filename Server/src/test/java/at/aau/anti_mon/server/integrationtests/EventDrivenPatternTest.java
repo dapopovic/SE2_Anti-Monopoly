@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.WebSocketSession;
 
 import at.aau.anti_mon.server.commands.JoinLobbyCommand;
@@ -30,7 +31,7 @@ import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.User;
 import at.aau.anti_mon.server.listener.UserEventListener;
@@ -39,8 +40,8 @@ import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 
 @SpringBootTest
-  class EventDrivenPatternTest {
-
+@ActiveProfiles("test")
+class EventDrivenPatternTest {
 
     @Mock
     UserEventListener userEventListener;
@@ -68,7 +69,7 @@ import at.aau.anti_mon.server.service.UserService;
 
 
     @BeforeEach
-     void init() throws URISyntaxException {
+    void init() throws URISyntaxException {
 
         when(session1.isOpen()).thenReturn(true);
         when(session1.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
@@ -95,21 +96,22 @@ import at.aau.anti_mon.server.service.UserService;
     }
 
     @Test
-     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+    void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
         // Given
         UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session2, new LobbyDTO(lobby.getPin()), new UserDTO("user2", false, false, null));
         joinLobbyCommand = mock(JoinLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
-        jsonDataDTO.setCommand(Commands.JOIN);
-        jsonDataDTO.putData("username","user2");
-        jsonDataDTO.putData("pin",lobby.getPin().toString());
+        jsonDataDTO.setCommand(Commands.JOIN_GAME);
+        jsonDataDTO.putData("username", "user2");
+        jsonDataDTO.putData("pin", lobby.getPin().toString());
+
 
         // Mock Event Handling
         doAnswer((Answer<Void>) invocation -> {
             eventPublisher.publishEvent(event);
             return null;
-        }).when(joinLobbyCommand).execute(session2,jsonDataDTO);
+        }).when(joinLobbyCommand).execute(session2, jsonDataDTO);
 
         doAnswer((Answer<Void>) invocation -> {
             userEventListener.onUserJoinedLobbyEvent(invocation.getArgument(0));
@@ -117,23 +119,30 @@ import at.aau.anti_mon.server.service.UserService;
         }).when(eventPublisher).publishEvent(event);
 
         // When JsonCommand is executed
-        joinLobbyCommand.execute(session2,jsonDataDTO);
+        joinLobbyCommand.execute(session2, jsonDataDTO);
 
         // Then
         verify(userEventListener, times(1)).onUserJoinedLobbyEvent(event);
     }
 
     @Test
-     void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
+    void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
 
         session1 = mock(WebSocketSession.class);
+//////////////// HEAD
+      //  lobbyService.addUserToLobby(user2.getName(), lobby.getPin());
+      //  UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1"));
+
+//// Merge issues backup
+
         lobbyService.addUserToLobby( user2.getName(),lobby.getPin());
         UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1", false, false, null));
+//////////////// MAIN
         leaveLobbyCommand = mock(LeaveLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.LEAVE_GAME);
-        jsonDataDTO.putData("username","user1");
-        jsonDataDTO.putData("pin",lobby.getPin().toString());
+        jsonDataDTO.putData("username", "user1");
+        jsonDataDTO.putData("pin", lobby.getPin().toString());
 
 
         // Mock Event Handling
@@ -148,13 +157,9 @@ import at.aau.anti_mon.server.service.UserService;
         }).when(eventPublisher).publishEvent(event);
 
         // When JsonCommand is executed
-        leaveLobbyCommand.execute(session1,jsonDataDTO);
+        leaveLobbyCommand.execute(session1, jsonDataDTO);
 
         // Then
         verify(userEventListener, times(1)).onLeaveLobbyEvent(event);
     }
-
-
-
-
 }

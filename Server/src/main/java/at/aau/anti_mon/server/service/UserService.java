@@ -97,9 +97,6 @@ public class UserService {
         users.remove(userId);
     }
 
-
-
-
     /**
      * Konvertiert Nachrichtenobjekt in JSON und sendet es an einem bestimmten User
      * @param message Nachrichtenobjekt

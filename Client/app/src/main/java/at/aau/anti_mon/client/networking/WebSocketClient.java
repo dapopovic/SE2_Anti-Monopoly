@@ -39,8 +39,8 @@ public class WebSocketClient {
      * localhost from the Android emulator is reachable as 10.0.2.2
      * https://developer.android.com/studio/run/emulator-networking
      */
-    private static final String WEBSOCKET_URI = "ws://10.0.2.2:8080/game?userID=";
-   // private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
+    //private static final String WEBSOCKET_URI = "ws://10.0.2.2:8080/game?userID=";
+    private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game?userID=";
    //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
 
     /**

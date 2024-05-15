@@ -1,7 +1,7 @@
 package at.aau.anti_mon.server.unittests;
 
 import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;

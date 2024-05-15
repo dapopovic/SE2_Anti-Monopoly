@@ -1,7 +1,7 @@
 package at.aau.anti_mon.server.game;
 
-import at.aau.anti_mon.server.enums.GameState;
 import at.aau.anti_mon.server.enums.Roles;
+import at.aau.anti_mon.server.enums.Figures;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
@@ -21,6 +21,10 @@ public class User {
     private int money;
     @Setter
     private Roles role;
+    @Setter
+    private Figures figure;
+    @Setter
+    private int location;
 
     public User(String name, WebSocketSession session) {
         this.name = name;
@@ -29,6 +33,8 @@ public class User {
         this.lobby = null;
         this.money = 1500;
         this.role = null;
+        this.figure = null;
+        this.location = 1;
     }
 
     public boolean isOwner() {

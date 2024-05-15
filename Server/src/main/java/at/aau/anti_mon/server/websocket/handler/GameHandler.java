@@ -2,8 +2,8 @@ package at.aau.anti_mon.server.websocket.handler;
 
 import at.aau.anti_mon.server.commands.Command;
 import at.aau.anti_mon.server.commands.CommandFactory;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.events.*;
-import at.aau.anti_mon.server.game.*;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import at.aau.anti_mon.server.utilities.StringUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;

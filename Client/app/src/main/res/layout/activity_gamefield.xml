@@ -16,6 +16,18 @@
         app:layout_constraintGuide_percent="0.8098495" />
 
     <ImageButton
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="1dp"
+        android:onClick="onFigureMove"
+        android:src="@drawable/dice"
+        app:layout_constraintBottom_toTopOf="@+id/guideline18"
+        app:layout_constraintEnd_toStartOf="@+id/guideline14"
+        app:layout_constraintStart_toStartOf="@+id/guideline13"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
         android:id="@+id/btnObjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -76,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="1.0" />
+        app:layout_constraintGuide_percent="1" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"
@@ -121,10 +133,9 @@
         android:id="@+id/game_field"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="0dp"
-        android:elevation="0dp">
+        tools:layout_editor_absoluteX="32dp"
+        tools:layout_editor_absoluteY="0dp">
 
     </at.aau.anti_mon.client.activities.CustomViewGameField>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

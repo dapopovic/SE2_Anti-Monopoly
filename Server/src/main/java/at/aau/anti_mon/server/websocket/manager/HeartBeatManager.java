@@ -1,7 +1,7 @@
 package at.aau.anti_mon.server.websocket.manager;
 
 import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import at.aau.anti_mon.client.enums.Commands;
+import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -55,8 +56,8 @@ class JsonDataManagerTest {
 
     @Test
     void createStringFromJsonMessageUsingAnObjectShouldReturnValidValue() {
-        User user = new User("username", true, true);
-        User user2 = new User("username2", false, false);
+        User user = new User("username", true, true, 1000, null, Figures.GreenCircle);
+        User user2 = new User("username2", false, false, 1500, null, Figures.BlueCircle);
         User[] users = {user, user2};
         String json = JsonDataManager.createJsonMessage(users);
         ObjectMapper mapper = new ObjectMapper();

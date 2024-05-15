@@ -20,12 +20,15 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.enums.Commands;
+import at.aau.anti_mon.client.command.DiceNumberCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
+import at.aau.anti_mon.client.enums.Figures;
+import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
@@ -59,6 +62,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         commandMap.put("START_GAME", new StartGameCommand(lobbyViewModel));
         commandMap.put("LEAVE_GAME", new LeaveGameCommand(lobbyViewModel));
         commandMap.put("READY", new OnReadyCommand(lobbyViewModel));
+        commandMap.put("DICENUMBER", new DiceNumberCommand(globalEventQueue));
         client.setCommandFactory(new CommandFactory(commandMap));
     }
 
@@ -109,8 +113,8 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.START_GAME);
         User[] users = {
-                new User("testUser", false, false),
-                new User("testUser2", false, false)
+                new User("testUser", false, false, 1000, null, Figures.GreenCircle),
+                new User("testUser2", false, false, 1000, null, Figures.BlueCircle)
         };
         jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
@@ -126,5 +130,21 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+    }
+
+    @Test
+    void testOnDiceNumberCommandShouldFireDiceNumberEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.DICENUMBER);
+        jsonDataDTO.putData("dicenumber", "8");
+        jsonDataDTO.putData("name", "GreenTriangle");
+        jsonDataDTO.putData("figure", Figures.GreenTriangle.toString());
+        jsonDataDTO.putData("location", "1");
+        assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
+        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        assertNotNull(message);
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+
+        verify(globalEventQueue).enqueueEvent(any(DiceNumberReceivedEvent.class));
     }
 }

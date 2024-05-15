@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.service;
 
+import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -9,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tinylog.Logger;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -38,6 +38,7 @@ public class LobbyService {
 
     private final UserService userService;
 
+    private final Random random = new Random();
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
@@ -165,6 +166,17 @@ public class LobbyService {
             Logger.error("SERVER: Not everyone is ready.");
             return;
         }
+        HashSet<User> users = lobby.getUsers();
+        HashSet<Figures> assignedFigures = new HashSet<>();
+        users.forEach(user -> {
+            Figures randomFigure;
+            do {
+                randomFigure = Figures.values()[random.nextInt(Figures.values().length)];
+            } while(assignedFigures.contains(randomFigure));
+
+            assignedFigures.add(randomFigure);
+            user.setFigure(randomFigure);
+        });
         lobby.startGame();
     }
 

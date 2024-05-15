@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.game;
 
-import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.enums.GameStateEnum;
 import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.UserAlreadyExistsException;
@@ -23,7 +23,7 @@ public class Lobby {
     private final HashSet<User> users;
     private User owner;
     private static final int MAX_USERS = 6;
-    private GameState gameState;
+    private GameStateEnum gameState;
 
     private Random random;
 
@@ -31,7 +31,7 @@ public class Lobby {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
-        this.gameState = GameState.LOBBY;
+        this.gameState = GameStateEnum.LOBBY;
         this.owner = null;
     }
 
@@ -39,7 +39,7 @@ public class Lobby {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
-        this.gameState = GameState.LOBBY;
+        this.gameState = GameStateEnum.LOBBY;
         user.setReady(true);
         this.users.add(user);
         this.owner = user;
@@ -77,6 +77,7 @@ public class Lobby {
             if (user.isReady()){
                 readyUser(user);
             }
+            user.setLocation(1);
             user.setRole(null);
             users.remove(user);
         } else {
@@ -110,7 +111,7 @@ public class Lobby {
         users.forEach(user ->
             user.setRole(userList.indexOf(user) < userList.size() / 2 ? Roles.MONOPOLIST : Roles.COMPETITOR)
         );
-        this.gameState = GameState.INGAME;
+        this.gameState = GameStateEnum.INGAME;
     }
 
     public boolean isEveryoneReady() {

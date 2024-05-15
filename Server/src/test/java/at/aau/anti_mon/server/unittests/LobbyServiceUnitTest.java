@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.unittests;
 
-import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.enums.GameStateEnum;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -26,9 +26,7 @@ class LobbyServiceUnitTest {
     void addUserToLobbyShouldAddUserToLobby() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
-
         lobbyService.addUserToLobby("user1", 1234);
-
         assertEquals(1234, lobbyService.getLobbyIDForUserID("user1"));
     }
 
@@ -36,10 +34,8 @@ class LobbyServiceUnitTest {
     void removeUserFromLobbyShouldRemoveUserFromLobby() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
-
         lobbyService.addUserToLobby("user1", 1234);
         lobbyService.removeUserFromLobby("user1");
-
         assertNull(lobbyService.getLobbyIDForUserID("user1"));
     }
 
@@ -53,12 +49,11 @@ class LobbyServiceUnitTest {
         User user = new User("user1", session);
         when(session.getId()).thenReturn("session1");
         lobbyService.createLobby(user);
-
         assertEquals(user, lobbyService.findUserInAllLobbies("user1"));
     }
 
     @Test
-    void findUserinAllLobbiesShouldThrowException() throws UserNotFoundException {
+    void findUserinAllLobbiesShouldThrowException() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         assertThrows(UserNotFoundException.class, () -> lobbyService.findUserInAllLobbies("user2"));
@@ -105,26 +100,21 @@ class LobbyServiceUnitTest {
         User user1 = userService.findOrCreateUser("user1", session);
         userService.findOrCreateUser("user2", session);
         Lobby lobby = lobbyService.createLobby(user1);
-
         lobbyService.joinLobby(lobby.getPin(), "user2");
-
         assertTrue(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2")));
     }
 
     @Test
-    void leaveLobbyShouldRemoveUserFromLobby()
-            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
+    void leaveLobbyShouldRemoveUserFromLobby() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
         UserService userService = new UserService(mock(SessionManagementService.class));
         LobbyService lobbyService = new LobbyService(userService);
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("session1");
         User user1 = userService.findOrCreateUser("user1", session);
         userService.findOrCreateUser("user2", session);
-
         Lobby lobby = lobbyService.createLobby(user1);
         lobbyService.joinLobby(lobby.getPin(), "user2");
         lobbyService.leaveLobby(lobby.getPin(), "user2");
-
         assertFalse(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2")));
     }
     @Test
@@ -155,7 +145,7 @@ class LobbyServiceUnitTest {
 
         lobbyService.startGame(lobby.getPin(), "user1");
 
-        assertEquals(GameState.INGAME, lobby.getGameState());
+        assertEquals(GameStateEnum.INGAME, lobby.getGameState());
     }
     @Test
     void startGameWithoutAllUsersReadyShouldStillBeInLobbyState() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
@@ -169,7 +159,7 @@ class LobbyServiceUnitTest {
         lobbyService.joinLobby(lobby.getPin(), "user2");
         lobbyService.startGame(lobby.getPin(), "user1");
 
-        assertEquals(GameState.LOBBY, lobby.getGameState());
+        assertEquals(GameStateEnum.LOBBY, lobby.getGameState());
     }
     @Test
     void startGameNotStartedByOwnerShouldStillBeInLobbyState() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
@@ -185,6 +175,6 @@ class LobbyServiceUnitTest {
 
         lobbyService.startGame(lobby.getPin(), "user2");
 
-        assertEquals(GameState.LOBBY, lobby.getGameState());
+        assertEquals(GameStateEnum.LOBBY, lobby.getGameState());
     }
 }
