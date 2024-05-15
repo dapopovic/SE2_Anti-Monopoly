@@ -162,7 +162,6 @@ public class UserEventListener {
 
     @EventListener
     public void onDiceNumberEvent(DiceNumberEvent event) throws UserNotFoundException {
-        WebSocketSession session = event.getSession();
         String username = event.getUsername();
         Integer dicenumber = event.getDicenumber();
 

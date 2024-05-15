@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 
+import at.aau.anti_mon.server.enums.Figures;
+import at.aau.anti_mon.server.events.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,10 +18,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
-import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
-import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
-import at.aau.anti_mon.server.events.UserReadyLobbyEvent;
-import at.aau.anti_mon.server.events.UserStartedGameEvent;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -203,5 +201,32 @@ class UserEventListenerUnitTest {
         verify(m).getUsers();
         verify(lobbyService).findLobbyByPin(1234);
         verify(sessionManagementService).getSessionForUser("user1");
+    }
+    @Test
+    void onRollDiceEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
+        // Given
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5);
+
+        Lobby lobby = mock(Lobby.class);
+
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("testuser");
+        when(user.getFigure()).thenReturn(Figures.GreenCircle);
+        when(user.getLocation()).thenReturn(0);
+        when(user.getLobby()).thenReturn(lobby);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+        when(lobby.getUsers()).thenReturn(users);
+
+        when(userService.getUser("testuser")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("testuser")).thenReturn(session);
+
+        // When
+        assertDoesNotThrow(() -> userEventListener.onDiceNumberEvent(event));
+        verify(userService).getUser("testuser");
+        verify(sessionManagementService).getSessionForUser("testuser");
     }
 }
