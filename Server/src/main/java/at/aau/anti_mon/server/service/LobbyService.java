@@ -38,6 +38,7 @@ public class LobbyService {
 
     private final UserService userService;
 
+    private final Random random = new Random();
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
@@ -166,7 +167,6 @@ public class LobbyService {
             return;
         }
         HashSet<User> users = lobby.getUsers();
-        Random random = new Random();
         HashSet<Figures> assignedFigures = new HashSet<>();
         users.forEach(user -> {
             Figures randomFigure;
