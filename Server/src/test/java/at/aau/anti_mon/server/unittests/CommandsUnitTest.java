@@ -4,12 +4,12 @@ import at.aau.anti_mon.server.commands.*;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.*;
 import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
-import at.aau.anti_mon.server.game.JsonDataDTO;
-import org.junit.jupiter.api.BeforeEach;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -19,7 +19,11 @@ import java.net.URISyntaxException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class CommandsTest {
+/**
+ * Unit tests for the Commands
+ */
+@ExtendWith(MockitoExtension.class)
+class CommandsUnitTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -42,11 +46,6 @@ class CommandsTest {
     @InjectMocks
     private HeartBeatCommand heartBeatCommand;
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void joinLobbyCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
@@ -64,9 +63,7 @@ class CommandsTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.JOIN);
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            joinLobbyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> joinLobbyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -76,9 +73,7 @@ class CommandsTest {
         jsonData.putData("pin", "");
         jsonData.putData("username", "");
 
-        assertThrows(NumberFormatException.class, () -> {
-            joinLobbyCommand.execute(session, jsonData);
-        });
+        assertThrows(NumberFormatException.class, () -> joinLobbyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -98,9 +93,7 @@ class CommandsTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.LEAVE_GAME);
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            leaveLobbyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> leaveLobbyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -109,9 +102,7 @@ class CommandsTest {
         jsonData.setCommand(Commands.LEAVE_GAME);
         jsonData.putData("test", "test");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            leaveLobbyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> leaveLobbyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -120,9 +111,7 @@ class CommandsTest {
         jsonData.setCommand(Commands.LEAVE_GAME);
         jsonData.putData("username", "testUser");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            leaveLobbyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> leaveLobbyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -141,9 +130,7 @@ class CommandsTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.CREATE_GAME);
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            createGameCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> createGameCommand.execute(session, jsonData));
     }
 
     @Test
@@ -152,9 +139,7 @@ class CommandsTest {
         jsonData.setCommand(Commands.CREATE_GAME);
         jsonData.putData("test", "test");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            createGameCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> createGameCommand.execute(session, jsonData));
     }
 
     @Test
@@ -180,9 +165,7 @@ class CommandsTest {
 
         when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?udiDOASDnk"));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            heartBeatCommand.execute(session, jsonData);
-        });
+        assertThrows(IllegalArgumentException.class, () -> heartBeatCommand.execute(session, jsonData));
     }
 
     @Test
@@ -190,9 +173,7 @@ class CommandsTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.HEARTBEAT);
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            heartBeatCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> heartBeatCommand.execute(session, jsonData));
     }
 
     @Test
@@ -201,9 +182,7 @@ class CommandsTest {
         jsonData.setCommand(Commands.HEARTBEAT);
         jsonData.putData("username", "testUser");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            heartBeatCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> heartBeatCommand.execute(session, jsonData));
     }
 
     @Test
@@ -213,9 +192,7 @@ class CommandsTest {
         jsonData.putData("username", "testUser");
         jsonData.putData("msg", "test");
         when(session.getUri()).thenReturn(null);
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            heartBeatCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> heartBeatCommand.execute(session, jsonData));
         verify(eventPublisher, times(0)).publishEvent(any(SessionCheckEvent.class));
         verify(session, times(1)).getUri();
     }

@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.game;
 
-import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.enums.GameStateEnum;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.UserAlreadyExistsException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -23,13 +23,13 @@ public class Lobby {
     private final HashSet<User> users;
     private User owner;
     private static final int MAX_USERS = 6;
-    private GameState gameState;
+    private GameStateEnum gameState;
 
     public Lobby() {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
-        this.gameState = GameState.LOBBY;
+        this.gameState = GameStateEnum.LOBBY;
         this.owner = null;
     }
 
@@ -37,7 +37,7 @@ public class Lobby {
         SecureRandom random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
         this.users = new HashSet<>();
-        this.gameState = GameState.LOBBY;
+        this.gameState = GameStateEnum.LOBBY;
         user.setReady(true);
         this.users.add(user);
         this.owner = user;
@@ -102,7 +102,7 @@ public class Lobby {
     }
 
     public void startGame() {
-        this.gameState = GameState.INGAME;
+        this.gameState = GameStateEnum.INGAME;
     }
 
     public boolean isEveryoneReady() {

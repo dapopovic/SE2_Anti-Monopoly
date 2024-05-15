@@ -7,6 +7,7 @@ import at.aau.anti_mon.server.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Optional;
@@ -18,13 +19,11 @@ import static org.mockito.Mockito.mock;
  * Integration tests for the UserService
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class UserServiceIntegrationTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private SessionManagementService sessionManagementService;
 
     @Test
     void findOrCreateUserShouldCreateNewUserWhenUserDoesNotExist() {

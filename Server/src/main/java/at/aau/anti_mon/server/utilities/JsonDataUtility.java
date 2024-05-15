@@ -3,7 +3,7 @@ package at.aau.anti_mon.server.utilities;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.enums.Figures;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.game.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

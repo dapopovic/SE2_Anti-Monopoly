@@ -1,7 +1,7 @@
 package at.aau.anti_mon.server.game;
 
 import at.aau.anti_mon.server.enums.Figures;
-import at.aau.anti_mon.server.enums.GameState;
+import at.aau.anti_mon.server.enums.GameStateEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;

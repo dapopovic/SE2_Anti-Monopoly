@@ -2,7 +2,7 @@ package at.aau.anti_mon.server.commands;
 
 import at.aau.anti_mon.server.events.SessionCheckEvent;
 import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
-import at.aau.anti_mon.server.game.JsonDataDTO;
+import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.utilities.StringUtility;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.WebSocketSession;

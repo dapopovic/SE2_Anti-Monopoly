@@ -42,6 +42,7 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
+    private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
@@ -66,6 +67,7 @@ public class ActivityGameField extends AppCompatActivity {
         });
         initUI();
         processIntent();
+        random = new Random();
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
     }
@@ -122,7 +124,10 @@ public class ActivityGameField extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
         queue.setEventBusReady(true);
     }
 
@@ -133,8 +138,6 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onFigureMove(View view) {
-
-        Random random = new Random();
         int randomNumber = random.nextInt(11) + 2;
         String dice = String.valueOf(randomNumber);
         String user = currentUser.getUsername();
@@ -179,7 +182,7 @@ public class ActivityGameField extends AppCompatActivity {
 
     private void moveFigure(int location, int diceNumber, ImageView figure) {
         for (int i = 1; i <= diceNumber; i++) {
-            if (location == 40) {
+            if (location == MAX_FIELD_COUNT) {
                 location = 0;
             }
             location++;
