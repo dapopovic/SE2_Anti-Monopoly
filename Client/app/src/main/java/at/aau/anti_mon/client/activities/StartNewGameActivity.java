@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +53,7 @@ public class StartNewGameActivity extends AppCompatActivity {
     GlobalEventQueue globalEventQueue;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,16 +88,23 @@ public class StartNewGameActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString();
         webSocketClient.setUserId(username);
 
+
         if (username.isEmpty()) {
             usernameEditText.setError("Please enter a username");
             return;
         }
-        // Senden des Usernames zum Server, um eine neue Spielsession zu starten und einen Pin zu erhalten
+
+
         JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
         jsonData.putData("username", username);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
         Log.d(DEBUG_TAG, "Username sending for pin: " + jsonDataString);
+
+        if (!webSocketClient.isConnected()) {
+            Toast toast = Toast.makeText(this, "No connection to server", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     public void onPinReceived(String receivedPin) {
@@ -131,6 +140,12 @@ public class StartNewGameActivity extends AppCompatActivity {
         if (!createGameViewModel.getPinLiveData().hasActiveObservers()) {
             setupLiveDataObservers();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        webSocketClient.connectToServer();
     }
 
     @Override

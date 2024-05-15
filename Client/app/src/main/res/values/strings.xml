@@ -12,7 +12,34 @@
     <string name="create">Create</string>
     <string name="Startgame">Start game</string>
     <string name="Load">Load</string>
-    <string name="ready">ready up</string>
-    <string name="unready">Unready</string>
+    <string name="ready">ready</string>
+    <string name="not_ready">Unready</string>
     <string name="player_info">%1$s: %2$s</string>
+    <string name="imagebutton">ImageButton</string>
+    <string name="finish">Finish</string>
+    <string name="field_square">field_square</string>
+    <string name="start_field">start_field</string>
+    <string name="price_war">price_war</string>
+    <string name="sitting">sitting</string>
+    <string name="rom1">Rom</string>
+    <string name="take">take</string>
+
+    <!-- Field descriptions -->
+    <string name="field_square_description">Dies ist ein allgemeines Feld.</string>
+    <string name="start_field_description">Dies ist das Startfeld.</string>
+    <string name="prison_field_description">Dies ist das Gefängnisfeld.</string>
+    <string name="price_war_field_description">Dies ist das Preis- und Kriegsfeld.</string>
+    <string name="sitting_field_description">Dies ist das Sitzfeld.</string>
+    <string name="rom1_field_description">Dies ist das Rom-Feld.</string>
+    <string name="take_field_description">Dies ist ein Event-Feld.</string>
+    <string name="income_tax_field_description">Einkommenssteuer </string>
+    <string name="airport_field_description">Flughafen</string>
+    <string name="railway_field_description">Bahnhof</string>
+    <string name="company_field_description">Unternehmen</string>
+    <string name="berlin1_field_description">Berkin1.</string>
+    <string name="berlin2_field_description">Berkin2.</string>
+    <string name="berlin3_field_description">Berkin3.</string>
+    <string name="todo">TODO</string>
+
+
 </resources>

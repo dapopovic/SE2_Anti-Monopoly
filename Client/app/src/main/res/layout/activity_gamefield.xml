@@ -19,6 +19,7 @@
         android:id="@+id/btnObjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/imagebutton"
         android:onClick="onObjects"
         android:src="@drawable/objects0"
         android:scaleType="fitCenter"
@@ -33,6 +34,7 @@
         android:id="@+id/btnHandel"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/imagebutton"
         android:onClick="onHandel"
         android:src="@drawable/handel0"
         android:scaleType="fitCenter"
@@ -47,6 +49,7 @@
         android:id="@+id/btnSettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/imagebutton"
         android:onClick="onSettings"
         android:src="@drawable/settings0"
         android:scaleType="fitCenter"
@@ -63,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onEndGame"
-        android:text="Finish"
+        android:text="@string/finish"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -121,8 +124,9 @@
         android:id="@+id/game_field"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="0dp"
-        android:elevation="0dp">
+        android:elevation="0dp"
+        tools:layout_editor_absoluteX="48dp"
+        tools:layout_editor_absoluteY="16dp">
 
     </at.aau.anti_mon.client.activities.CustomViewGameField>
 
