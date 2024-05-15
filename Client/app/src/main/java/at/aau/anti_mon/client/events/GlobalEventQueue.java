@@ -20,8 +20,10 @@ public class GlobalEventQueue {
     public synchronized void enqueueEvent(Object event) {
         Log.d(DEBUG_TAG, "Enqueue Event: " + event);
         if (isEventBusReady) {
+            Log.d("isEventBusReady","isEventBusReady: I am here.");
             EventBus.getDefault().post(event);
         } else {
+            Log.d("isEventBusReady","isEventBusReady: I am not ready.");
             eventQueue.add(event);
         }
     }

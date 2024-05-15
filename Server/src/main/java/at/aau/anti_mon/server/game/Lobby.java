@@ -75,6 +75,7 @@ public class Lobby {
             if (user.isReady()){
                 readyUser(user);
             }
+            user.setLocation(1);
             users.remove(user);
         } else {
             throw new UserNotFoundException("User not found in lobby");

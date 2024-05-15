@@ -45,7 +45,7 @@ public enum Commands {
      * format: {"command": "LEAVE_GAME", "user": "TestUser", "pin": "1234"}
      */
     JOIN("JOIN"),
-	
+
     LEAVE_GAME("LEAVE_GAME"),
 
     /**
@@ -71,6 +71,7 @@ public enum Commands {
      * format: {"command": "ERROR", "msg": "Hello World!"}
      */
     ERROR("ERROR"),
+    DICENUMBER("DICENUMBER"),
 
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
 
@@ -106,8 +107,8 @@ public enum Commands {
      * format: {"command": "SELECT_ROLE", "user" : "TestUser", "pin": "1234" ,role": "TestRole"}
      */
     SELECT_ROLE("SELECT_ROLE"),
-	
-    
+
+
 	/**
 	*
 	* Old Commands -> merge issues

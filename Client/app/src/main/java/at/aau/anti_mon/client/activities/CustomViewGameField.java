@@ -6,12 +6,17 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 
 public class CustomViewGameField extends ConstraintLayout {
     private ScaleGestureDetector scaleGestureDetector;
@@ -80,7 +85,6 @@ public class CustomViewGameField extends ConstraintLayout {
             return true;
         }
     }
-
 }
 
 

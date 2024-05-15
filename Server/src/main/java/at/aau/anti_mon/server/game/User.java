@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.game;
 
+import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.enums.GameStateEnum;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,10 @@ public class User {
     @Setter
     private boolean isReady;
     private int money;
+    @Setter
+    private Figures figure;
+    @Setter
+    private int location;
 
     public User(String name, WebSocketSession session) {
         this.name = name;
@@ -25,6 +30,8 @@ public class User {
         this.isReady = false;
         this.lobby = null;
         this.money = 1500;
+        this.figure = null;
+        this.location = 1;
     }
 
     public boolean isOwner() {

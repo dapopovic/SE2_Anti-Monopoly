@@ -2,6 +2,7 @@ package at.aau.anti_mon.server.dtos;
 
 import java.io.Serializable;
 
+import at.aau.anti_mon.server.enums.Figures;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

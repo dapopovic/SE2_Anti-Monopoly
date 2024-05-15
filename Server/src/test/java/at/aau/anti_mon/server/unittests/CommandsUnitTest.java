@@ -284,4 +284,16 @@ class CommandsUnitTest {
             startGameCommand.execute(session, jsonData);
         });
     }
+    @Test
+    void diceNumberCommandShouldPublishEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.DICENUMBER);
+        jsonData.putData("dicenumber", "2");
+        jsonData.putData("username", "testUser");
+
+        DiceNumberCommand diceNumberCommand = new DiceNumberCommand(eventPublisher);
+        diceNumberCommand.execute(session, jsonData);
+
+        verify(eventPublisher, times(1)).publishEvent(any(DiceNumberEvent.class));
+    }
 }

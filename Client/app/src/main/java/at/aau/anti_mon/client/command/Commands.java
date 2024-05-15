@@ -19,6 +19,7 @@ public enum Commands {
     NEW_USER("NEW_USER"),
     INFO("INFO"),
     ERROR("ERROR"),
+    DICENUMBER("DICENUMBER"),
     READY("READY"), START_GAME("START_GAME");
     // usw
 

@@ -14,12 +14,15 @@ import java.util.Collection;
 
 import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
+import at.aau.anti_mon.client.command.DiceNumberCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.enums.Figures;
+import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -165,6 +168,22 @@ class CommandsTest {
         newUserCommand.execute(jsonDataDTO);
 
         verify(lobbyViewModel).userJoined("testUser", false, false);
+    }
+
+    @Test
+    void DiceNumberCommandEVENT(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.DICENUMBER);
+        jsonDataDTO.putData("dicenumber", "8");
+        jsonDataDTO.putData("name", "GreenTriangle");
+        jsonDataDTO.putData("figure", Figures.GreenTriangle.toString());
+        jsonDataDTO.putData("location", "1");
+        assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
+
+        DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);
+        diceNumberCommand.execute(jsonDataDTO);
+
+        verify(queue).enqueueEvent(any(DiceNumberReceivedEvent.class));
     }
 
 }

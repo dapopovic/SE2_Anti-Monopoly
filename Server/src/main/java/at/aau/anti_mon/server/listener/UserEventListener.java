@@ -1,15 +1,14 @@
 package at.aau.anti_mon.server.listener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -161,4 +160,24 @@ public class UserEventListener {
         }
     }
 
+    @EventListener
+    public void onDiceNumberEvent(DiceNumberEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        Integer dicenumber = event.getDicenumber();
+
+        User user = userService.getUser(username);
+        Figures figure = user.getFigure();
+        int location = user.getLocation();
+        int nextlocation = location+dicenumber;
+
+        if(nextlocation>40){
+            nextlocation = nextlocation-40;
+        }
+        user.setLocation(nextlocation);
+
+        HashSet<User> users = user.getLobby().getUsers();
+        for (User u : users) {
+            JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,9 +16,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -25,12 +31,18 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.command.DiceNumberCommand;
+import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
+import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class ActivityGameField extends AppCompatActivity {
+    private static final int MAX_FIELD_COUNT = 40;
+    private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
@@ -39,6 +51,8 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Inject
     WebSocketClient webSocketClient;
+    @Inject
+    GlobalEventQueue queue;
 
 
     @Override
@@ -53,6 +67,7 @@ public class ActivityGameField extends AppCompatActivity {
         });
         initUI();
         processIntent();
+        random = new Random();
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
     }
@@ -83,17 +98,17 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onSettings(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivitySettings.class);
+        Intent i = new Intent(getApplicationContext(), PopActivitySettings.class);
         startActivity(i);
     }
 
     public void onHandel(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivityHandel.class);
+        Intent i = new Intent(getApplicationContext(), PopActivityHandel.class);
         startActivity(i);
     }
 
     public void onObjects(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivityObjects.class);
+        Intent i = new Intent(getApplicationContext(), PopActivityObjects.class);
         startActivity(i);
     }
 
@@ -104,5 +119,82 @@ public class ActivityGameField extends AppCompatActivity {
         jsonDataDTO.putData("pin", pin);
         webSocketClient.sendJsonData(jsonDataDTO);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
+        queue.setEventBusReady(true);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onFigureMove(View view) {
+        int randomNumber = random.nextInt(11) + 2;
+        String dice = String.valueOf(randomNumber);
+        String user = currentUser.getUsername();
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
+        jsonData.putData("dicenumber", dice);
+        jsonData.putData("username", user);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onHeartBeatEvent(HeartBeatEvent event) {
+
+        Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent");
+
+
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
+        jsonData.putData("msg", "PONG");
+        String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonMessage);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDiceNumberReceivedEvent(DiceNumberReceivedEvent event) {
+        int diceNumber = event.getDicenumber();
+        String name = event.getFigure();
+        int location = event.getLocation();
+        if (name == null) {
+            Log.d("onDiceNumberReceivedEvent", "name is null");
+            return;
+        }
+        if (diceNumber < 1 || diceNumber > 12) {
+            Log.d("onDiceNumberReceivedEvent", "diceNumber is out of range, should be between 2 and 12");
+            return;
+        }
+
+        ImageView figure = findViewById(getID(name, null));
+        moveFigure(location, diceNumber, figure);
+    }
+
+    private void moveFigure(int location, int diceNumber, ImageView figure) {
+        for (int i = 1; i <= diceNumber; i++) {
+            if (location == MAX_FIELD_COUNT) {
+                location = 0;
+            }
+            location++;
+            Log.d("moveFigure", "location: " + location);
+            ImageView field = findViewById(getID(String.valueOf(location), "field"));
+            figure.setX(field.getX());
+            figure.setY(field.getY());
+        }
+    }
+
+    public int getID(String fieldId, String prefix) {
+        String resourceName = (prefix != null) ? prefix + fieldId : fieldId;
+        return getResources().getIdentifier(resourceName, "id", getPackageName());
     }
 }

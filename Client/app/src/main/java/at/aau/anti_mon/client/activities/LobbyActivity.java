@@ -343,7 +343,7 @@ public class LobbyActivity extends AppCompatActivity {
         }
         EventBus.getDefault().unregister(this);
         Log.d(DEBUG_TAG, "EventBus unregistered");
-        globalEventQueue.setEventBusReady(false);
+        //globalEventQueue.setEventBusReady(false);
         removeObservers();
     }
 
