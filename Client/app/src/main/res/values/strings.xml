@@ -15,4 +15,7 @@
     <string name="ready">ready up</string>
     <string name="unready">Unready</string>
     <string name="player_info">%1$s: %2$s</string>
+    <string name="roles">Roles</string>
+    <string name="x_close">X</string>
+    <string name="your_role_is">You are a %1$s, your username is %2$s \n and you have the %3$s figure!</string>
 </resources>
