@@ -153,7 +153,7 @@ public class UserEventListener {
         // convert to userDtos
         ArrayList<UserDTO> usersList = new ArrayList<>();
         for (User user : users) {
-            usersList.add(new UserDTO(user.getName(), user.isOwner(), user.isReady(), user.getRole()));
+            usersList.add(new UserDTO(user.getName(), user.isOwner(), user.isReady(), user.getRole(), user.getFigure()));
         }
         for (User user : users) {
             JsonDataUtility.sendStartGame(sessionManagementService.getSessionForUser(user.getName()), usersList);

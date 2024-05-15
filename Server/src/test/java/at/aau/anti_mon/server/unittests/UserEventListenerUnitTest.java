@@ -84,7 +84,7 @@ class UserEventListenerUnitTest {
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false, false, null));
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false, false, null, null));
 
         // When
         userEventListener.onUserJoinedLobbyEvent(event);
@@ -142,7 +142,7 @@ class UserEventListenerUnitTest {
 
         when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
 
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator", false, true, null));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator", false, true, null, null));
 
         // When
         userEventListener.onLeaveLobbyEvent(event);
@@ -155,7 +155,7 @@ class UserEventListenerUnitTest {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
-        UserDTO userDTO = new UserDTO("user1", false, true, null);
+        UserDTO userDTO = new UserDTO("user1", false, true, null, null);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
         UserReadyLobbyEvent event = new UserReadyLobbyEvent(session, lobbyDTO, userDTO);
 
@@ -182,7 +182,7 @@ class UserEventListenerUnitTest {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
-        UserDTO userDTO = new UserDTO("user1", false, true, null);
+        UserDTO userDTO = new UserDTO("user1", false, true, null, null);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
         UserStartedGameEvent event = new UserStartedGameEvent(session, lobbyDTO, userDTO);
 

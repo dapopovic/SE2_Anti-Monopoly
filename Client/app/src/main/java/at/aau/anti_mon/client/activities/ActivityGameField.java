@@ -88,12 +88,19 @@ public class ActivityGameField extends AppCompatActivity {
         Collections.addAll(users, usersList);
         users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getMoney()));
         currentUser = JsonDataManager.parseJsonMessage(intent.getStringExtra("currentUser"), User.class);
-        userAdapter = new UserAdapter(users, currentUser);
-        recyclerView.setAdapter(userAdapter);
         if (currentUser != null) {
             Log.d(DEBUG_TAG, "Current User: " + currentUser.getUsername() + " isOwner: " + currentUser.isOwner() + " isReady: " + currentUser.isReady() + " money: " + currentUser.getMoney());
         }
+        currentUser = users.stream().filter(user -> user.getUsername().equals(currentUser.getUsername())).findFirst().orElse(null);
+        userAdapter = new UserAdapter(users, currentUser);
+        recyclerView.setAdapter(userAdapter);
         pin = intent.getStringExtra("pin");
+        // show the current role of the user in a popup
+        Intent i = new Intent(getApplicationContext(), PopActivityRole.class);
+        i.putExtra("role", currentUser.getRole().name());
+        i.putExtra("username", currentUser.getUsername());
+        i.putExtra("figure", currentUser.getFigure().name());
+        startActivity(i);
     }
 
     public void onSettings(View view) {
