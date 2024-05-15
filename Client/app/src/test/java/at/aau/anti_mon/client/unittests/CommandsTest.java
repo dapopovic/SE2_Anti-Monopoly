@@ -21,6 +21,7 @@ import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -175,6 +176,8 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.DICENUMBER);
         jsonDataDTO.putData("dicenumber", "8");
         jsonDataDTO.putData("name", "GreenTriangle");
+        jsonDataDTO.putData("figure", Figures.GreenTriangle.toString());
+        jsonDataDTO.putData("location", "1");
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
 
         DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);
