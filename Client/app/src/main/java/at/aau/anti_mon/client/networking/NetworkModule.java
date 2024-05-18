@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.AnswerCommand;
+import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.CreateGameCommand;
@@ -183,5 +184,10 @@ public class NetworkModule {
         return command;
     }
 
-
+    @Provides
+    @IntoMap
+    @StringKey("CHANGE_BALANCE")
+    Command provideChangeBalanceCommand(ChangeBalanceCommand command) {
+        return command;
+    }
 }

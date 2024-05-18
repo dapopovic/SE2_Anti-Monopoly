@@ -180,4 +180,19 @@ public class UserEventListener {
             JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
         }
     }
+
+    @EventListener
+    public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        Integer new_balance = event.getNew_balance();
+
+        User user = userService.getUser(username);
+        HashSet<User> users = user.getLobby().getUsers();
+        for (User u : users) {
+            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, new_balance);
+        }
+    }
+
+
+
 }

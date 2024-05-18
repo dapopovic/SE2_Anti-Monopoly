@@ -49,6 +49,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return users.size();
     }
 
+    // Method to update money and notify the adapter
+    public void updateUserMoney(String username, int newMoney) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                users.get(i).setMoney(newMoney);
+                notifyItemChanged(i);  // Notify that the item at position i has changed
+                break;
+            }
+        }
+    }
+
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView playerInfo;
         ImageView playerIcon;
