@@ -2,6 +2,8 @@ package at.aau.anti_mon.server.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+// fixme you will need more information like the price of properties
+//  in the future, you should move this into a class containing all the required information
 public enum GameFieldInformation {
 
     START("Start"),

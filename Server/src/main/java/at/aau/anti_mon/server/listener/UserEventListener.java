@@ -82,6 +82,7 @@ public class UserEventListener {
         // Füge den joinedUser zur Lobby hinzu
         lobbyService.joinLobby(event.getPin(), joinedUser.getName());
 
+        // fixme dont duplicate loops, especially if even the filter is the same
         HashSet<User> users = joinedLobby.getUsers();
         Logger.info("Users in Lobby: " + users.size());
         // Sende allen Spielern in der Lobby die Information, dass der Spieler der Lobby

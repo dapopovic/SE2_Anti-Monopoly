@@ -60,6 +60,7 @@ class GameHandlerUnitTest {
         }
     }
 
+    // fixme in general you would extract setup methods here. you will learn this in a master course, but we can discuss it next time if youre interested
     @Test
     void handleMessageShouldExecuteCommandAndSendAnswer() throws Exception {
 

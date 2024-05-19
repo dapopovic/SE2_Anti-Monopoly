@@ -23,6 +23,7 @@ public class GameEntityIntegrationTest {
     @Autowired
     private GameService gameService;
 
+    // fixme split into multiple tests
     @Test
     @Transactional
     public void testCreateAndSaveGame() {
