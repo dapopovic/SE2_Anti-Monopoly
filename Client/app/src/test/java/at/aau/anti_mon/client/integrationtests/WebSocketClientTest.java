@@ -120,6 +120,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        // fixme the tests here are not testing anything meaningful except for the message != null check
     }
     @Test
     void testOnReadyCommandShouldFireReadyEvent() {

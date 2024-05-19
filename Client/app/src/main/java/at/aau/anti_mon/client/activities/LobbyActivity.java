@@ -279,6 +279,7 @@ public class LobbyActivity extends AppCompatActivity {
         finish();
     }
 
+    // fixme avoid custom json objects in java, use "POJOs" and autoserialize
     private void leaveLobby() {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
         jsonData.putData("username", currentUser.getUsername());

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import at.aau.anti_mon.client.enums.Commands;
 
+// fixme dont use static methods but instance methods in oop
 /**
  * This class is responsible for creating and parsing JSON messages.
  */
