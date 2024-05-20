@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.DiceNumberCommand;
@@ -19,6 +20,7 @@ import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.enums.Figures;
+import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -181,6 +183,18 @@ class CommandsTest {
         diceNumberCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(DiceNumberReceivedEvent.class));
+    }
+
+    @Test
+    void changeBalanceCommandEnqueueEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.CHANGE_BALANCE);
+        jsonData.putData("username", "Julia");
+        jsonData.putData("new_balance", "1700");
+        assertEquals(Commands.CHANGE_BALANCE, jsonData.getCommand());
+        ChangeBalanceCommand changeBalanceCommand = new ChangeBalanceCommand(queue);
+        changeBalanceCommand.execute(jsonData);
+        verify(queue).enqueueEvent(any(ChangeBalanceEvent.class));
     }
 
 }

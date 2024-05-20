@@ -7,11 +7,11 @@ public class ChangeBalanceEvent extends Event {
     @Getter
     private final String username;
     @Getter
-    private final Integer new_balance;
+    private final Integer newBalance;
 
-    public ChangeBalanceEvent(WebSocketSession session, String username, Integer new_balance) {
+    public ChangeBalanceEvent(WebSocketSession session, String username, Integer newBalance) {
         super(session);
         this.username = username;
-        this.new_balance = new_balance;
+        this.newBalance = newBalance;
     }
 }

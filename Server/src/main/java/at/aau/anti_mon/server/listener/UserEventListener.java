@@ -8,7 +8,6 @@ import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -184,7 +183,7 @@ public class UserEventListener {
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
         String username = event.getUsername();
-        Integer new_balance = event.getNew_balance();
+        Integer new_balance = event.getNewBalance();
 
         User user = userService.getUser(username);
         user.setMoney(new_balance);

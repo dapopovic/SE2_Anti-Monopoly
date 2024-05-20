@@ -17,8 +17,8 @@ public class ChangeBalanceCommand implements Command {
     @Override
     public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
         String username = jsonData.getData().get("username");
-        Integer new_balance = Integer.valueOf(jsonData.getData().get("new_balance"));
+        Integer newBalance = Integer.valueOf(jsonData.getData().get("new_balance"));
 
-        eventPublisher.publishEvent(new ChangeBalanceEvent(session, username, new_balance));
+        eventPublisher.publishEvent(new ChangeBalanceEvent(session, username, newBalance));
     }
 }
