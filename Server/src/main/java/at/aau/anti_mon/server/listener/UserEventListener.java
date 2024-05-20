@@ -187,6 +187,7 @@ public class UserEventListener {
         Integer new_balance = event.getNew_balance();
 
         User user = userService.getUser(username);
+        user.setMoney(new_balance);
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
             JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, new_balance);

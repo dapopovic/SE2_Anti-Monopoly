@@ -18,6 +18,7 @@ public class User {
     private Lobby lobby;
     @Setter
     private boolean isReady;
+    @Setter
     private int money;
     @Setter
     private Roles role;
