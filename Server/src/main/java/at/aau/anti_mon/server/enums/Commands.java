@@ -115,7 +115,8 @@ public enum Commands {
 	*
 	*/
     READY("READY"),
-    START_GAME("START_GAME");
+    START_GAME("START_GAME"),
+    CHANGE_BALANCE("CHANGE_BALANCE");
 
     // usw
 

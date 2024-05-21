@@ -229,4 +229,24 @@ class UserEventListenerUnitTest {
         verify(userService).getUser("testuser");
         verify(sessionManagementService).getSessionForUser("testuser");
     }
+
+    @Test
+    void onChangeBalanceEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+        WebSocketSession session = mock(WebSocketSession.class);
+        ChangeBalanceEvent event = new ChangeBalanceEvent(session, "Julia", 1700);
+        Lobby lobby = mock(Lobby.class);
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("Julia");
+        when(user.getLobby()).thenReturn(lobby);
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+        when(lobby.getUsers()).thenReturn(users);
+        when(userService.getUser("Julia")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("Julia")).thenReturn(session);
+
+        assertDoesNotThrow(() -> userEventListener.balanceChangedEvent(event));
+        verify(userService).getUser("Julia");
+        verify(sessionManagementService).getSessionForUser("Julia");
+        verify(user).setMoney(1700);
+    }
 }

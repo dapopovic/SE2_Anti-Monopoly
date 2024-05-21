@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.enums.Commands;
@@ -28,6 +29,7 @@ import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.enums.Figures;
+import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -63,6 +65,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         commandMap.put("LEAVE_GAME", new LeaveGameCommand(lobbyViewModel));
         commandMap.put("READY", new OnReadyCommand(lobbyViewModel));
         commandMap.put("DICENUMBER", new DiceNumberCommand(globalEventQueue));
+        commandMap.put("CHANGE_BALANCE", new ChangeBalanceCommand(globalEventQueue));
         client.setCommandFactory(new CommandFactory(commandMap));
     }
 
@@ -146,5 +149,20 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
 
         verify(globalEventQueue).enqueueEvent(any(DiceNumberReceivedEvent.class));
+    }
+
+    @Test
+    void testChangeBalanceCommandShouldFireChangeBalanceEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.CHANGE_BALANCE);
+        jsonData.putData("username", "Julia");
+        jsonData.putData("new_balance", "1700");
+        assertEquals(Commands.CHANGE_BALANCE, jsonData.getCommand());
+
+        String message = JsonDataManager.createJsonMessage(jsonData);
+        assert message != null;
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+
+        verify(globalEventQueue).enqueueEvent(any(ChangeBalanceEvent.class));
     }
 }

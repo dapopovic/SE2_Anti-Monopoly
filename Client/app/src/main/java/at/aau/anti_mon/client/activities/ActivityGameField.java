@@ -31,6 +31,7 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
+import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -86,6 +87,7 @@ public class ActivityGameField extends AppCompatActivity {
         users = new ArrayList<>();
         User[] usersList = JsonDataManager.parseJsonMessage(intent.getStringExtra("users"), User[].class);
         Collections.addAll(users, usersList);
+        // with user.getMoney() I can get the balance of a user!
         users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getMoney()));
         currentUser = JsonDataManager.parseJsonMessage(intent.getStringExtra("currentUser"), User.class);
         if (currentUser != null) {
@@ -173,6 +175,7 @@ public class ActivityGameField extends AppCompatActivity {
         int diceNumber = event.getDicenumber();
         String name = event.getFigure();
         int location = event.getLocation();
+        String username = event.getUsername();
         if (name == null) {
             Log.d("onDiceNumberReceivedEvent", "name is null");
             return;
@@ -183,13 +186,37 @@ public class ActivityGameField extends AppCompatActivity {
         }
 
         ImageView figure = findViewById(getID(name, null));
-        moveFigure(location, diceNumber, figure);
+        moveFigure(username, location, diceNumber, figure);
     }
 
-    private void moveFigure(int location, int diceNumber, ImageView figure) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBalanceChangeReceivedEvent(ChangeBalanceEvent event) {
+        int new_balance = event.getBalance();
+        String username = event.getUsername();
+        Log.d("Update_balance", String.valueOf(new_balance));
+        userAdapter.updateUserMoney(username, new_balance);
+    }
+
+    private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
         for (int i = 1; i <= diceNumber; i++) {
             if (location == MAX_FIELD_COUNT) {
                 location = 0;
+                // increase here the balance on bank account on 100 Euro
+                if (username.equals(currentUser.getUsername())) {
+                    int new_balance;
+                    if (i == diceNumber) {
+                        new_balance = currentUser.getMoney() + 200;
+                    }
+                    else {
+                        new_balance = currentUser.getMoney() + 100;
+                    }
+                    JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
+                    jsonData.putData("new_balance", String.valueOf(new_balance));
+                    jsonData.putData("username", currentUser.getUsername());
+                    String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+                    webSocketClient.sendMessageToServer(jsonMessage);
+                }
+
             }
             location++;
             Log.d("moveFigure", "location: " + location);

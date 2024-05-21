@@ -296,4 +296,15 @@ class CommandsUnitTest {
 
         verify(eventPublisher, times(1)).publishEvent(any(DiceNumberEvent.class));
     }
+
+    @Test
+    void changeBalanceCommandShouldPublishEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.CHANGE_BALANCE);
+        jsonData.putData("username", "Julia");
+        jsonData.putData("new_balance", "1700");
+        ChangeBalanceCommand changeBalanceCommand = new ChangeBalanceCommand(eventPublisher);
+        changeBalanceCommand.execute(session, jsonData);
+        verify(eventPublisher, times(1)).publishEvent(any(ChangeBalanceEvent.class));
+    }
 }

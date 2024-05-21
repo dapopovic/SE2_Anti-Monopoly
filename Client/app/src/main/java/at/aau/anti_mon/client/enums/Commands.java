@@ -20,7 +20,8 @@ public enum Commands {
     INFO("INFO"),
     ERROR("ERROR"),
     DICENUMBER("DICENUMBER"),
-    READY("READY"), START_GAME("START_GAME");
+    READY("READY"), START_GAME("START_GAME"),
+    CHANGE_BALANCE("CHANGE_BALANCE");
     // usw
 
 
