@@ -175,6 +175,7 @@ public class ActivityGameField extends AppCompatActivity {
         int diceNumber = event.getDicenumber();
         String name = event.getFigure();
         int location = event.getLocation();
+        String username = event.getUsername();
         if (name == null) {
             Log.d("onDiceNumberReceivedEvent", "name is null");
             return;
@@ -185,7 +186,7 @@ public class ActivityGameField extends AppCompatActivity {
         }
 
         ImageView figure = findViewById(getID(name, null));
-        moveFigure(location, diceNumber, figure);
+        moveFigure(username, location, diceNumber, figure);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -196,23 +197,26 @@ public class ActivityGameField extends AppCompatActivity {
         userAdapter.updateUserMoney(username, new_balance);
     }
 
-    private void moveFigure(int location, int diceNumber, ImageView figure) {
+    private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
         for (int i = 1; i <= diceNumber; i++) {
             if (location == MAX_FIELD_COUNT) {
                 location = 0;
                 // increase here the balance on bank account on 100 Euro
-                int new_balance;
-                if (i == diceNumber) {
-                    new_balance = currentUser.getMoney() + 200;
+                if (username.equals(currentUser.getUsername())) {
+                    int new_balance;
+                    if (i == diceNumber) {
+                        new_balance = currentUser.getMoney() + 200;
+                    }
+                    else {
+                        new_balance = currentUser.getMoney() + 100;
+                    }
+                    JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
+                    jsonData.putData("new_balance", String.valueOf(new_balance));
+                    jsonData.putData("username", currentUser.getUsername());
+                    String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+                    webSocketClient.sendMessageToServer(jsonMessage);
                 }
-                else {
-                    new_balance = currentUser.getMoney() + 100;
-                }
-                JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-                jsonData.putData("new_balance", String.valueOf(new_balance));
-                jsonData.putData("username", currentUser.getUsername());
-                String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
-                webSocketClient.sendMessageToServer(jsonMessage);
+
             }
             location++;
             Log.d("moveFigure", "location: " + location);
