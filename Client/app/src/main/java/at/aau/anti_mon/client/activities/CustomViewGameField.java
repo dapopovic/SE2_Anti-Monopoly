@@ -74,7 +74,7 @@ public class CustomViewGameField extends ConstraintLayout {
 
     }
 
-    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+    private static class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDown(MotionEvent e) {
             return true;

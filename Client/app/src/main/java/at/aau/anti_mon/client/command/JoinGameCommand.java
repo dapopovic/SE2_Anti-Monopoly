@@ -16,6 +16,6 @@ public class JoinGameCommand implements Command {
     @Override
     public void execute(JsonDataDTO data) {
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(data.getData().get("username"), Boolean.parseBoolean(data.getData().get("isOwner")), Boolean.parseBoolean(data.getData().get("isReady")));
+        viewModel.userJoined( data.getData().get("username"), Boolean.parseBoolean( data.getData().get("isOwner")), Boolean.parseBoolean( data.getData().get("isReady")));
     }
 }

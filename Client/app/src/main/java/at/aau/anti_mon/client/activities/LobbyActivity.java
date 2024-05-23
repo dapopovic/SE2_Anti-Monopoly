@@ -4,7 +4,6 @@ import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,26 +54,21 @@ public class LobbyActivity extends AppCompatActivity {
     TextView textViewPin;
     Button startButton;
     Button readyButton;
-    //HashMap<LinearLayout, User> availableUsers = new HashMap<>();
-
     private RecyclerView recyclerView;
     private LobbyUserAdapter userAdapter;
-    ArrayList<User> userList = new ArrayList<>(); // to initialize the list as empty
 
     ///////////////////////////////////// Variablen
     private String pin;
     private User user;
     private boolean leftLobby = false;
     private boolean gameStarted = false;
+    private final ArrayList<User> userList = new ArrayList<>();
 
     ///////////////////////////////////// Networking
 
     @Inject WebSocketClient webSocketClient;
     @Inject GlobalEventQueue globalEventQueue;
     @Inject LobbyViewModel lobbyViewModel;
-
-    private SharedPreferences sharedPreferences;
-
 
 
     @Override
@@ -83,9 +77,7 @@ public class LobbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lobby);
         injectDependencies();
         initializeUI();
-
-        userAdapter = new LobbyUserAdapter(userList);
-        recyclerView.setAdapter(userAdapter);
+        setupRecyclerView();
         processIntentAfterCreate();
         setupLiveDataObservers();
     }
@@ -100,36 +92,38 @@ public class LobbyActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         recyclerView = findViewById(R.id.recyclerViewUsers);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-        // initialize UI views
         textViewPin = findViewById(R.id.Pin);
         startButton = findViewById(R.id.lobby_start_game);
         readyButton = findViewById(R.id.lobby_ready);
+    }
 
+    private void setupRecyclerView(){
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        userAdapter = new LobbyUserAdapter(userList);
+        recyclerView.setAdapter(userAdapter);
     }
 
     private void processIntentAfterCreate() {
-        if (getIntent().hasExtra("username")) {
-            user = new User(getIntent().getStringExtra("username"),
-                    getIntent().getBooleanExtra("isOwner", false),
-                    getIntent().getBooleanExtra("isReady", false)
+        Intent intent = getIntent();
+        if (intent.hasExtra("username")) {
+            user = new User(intent.getStringExtra("username"),
+                    intent.getBooleanExtra("isOwner", false),
+                    intent.getBooleanExtra("isReady", false)
             );
             addUserToTable(user);
         } else {
             Log.e(DEBUG_TAG, "Old Intent has no username");
-            Toast.makeText(this, "Username missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Username missing", Toast.LENGTH_LONG).show();
             finish();
             //TODO Error Handling
         }
-        if (getIntent().hasExtra("pin")) {
-            pin = getIntent().getStringExtra("pin");
+
+        if (intent.hasExtra("pin")) {
+            pin = intent.getStringExtra("pin");
             textViewPin.setText(pin);
         } else {
             Log.e(DEBUG_TAG, "Old Intent has no pin");
-            Toast.makeText(this, "PIN missing", Toast.LENGTH_SHORT).show();
-            //finish();
+            Toast.makeText(this, "PIN missing", Toast.LENGTH_LONG).show();
             //TODO Error Handling
         }
     }
@@ -179,27 +173,16 @@ public class LobbyActivity extends AppCompatActivity {
         intent.putExtra("currentUser", JsonDataManager.createJsonMessage(user));
         intent.putExtra("pin", pin);
         gameStarted = true;
-
-        // TODO: Initialize Database
-
         startActivity(intent);
     }
 
 
     private void setupLiveDataObservers() {
-        // User joined: -> LiveData
         lobbyViewModel.getUserJoinedLiveData().observe(this, this::addUserToTable);
-
-        // User left: -> LiveData
         lobbyViewModel.getUserLeftLiveData().observe(this, this::removeUserFromTable);
-
-        // User ready: -> LiveData
         lobbyViewModel.getReadyUpLiveData().observe(this, this::onReadyEvent);
-
-        // user started game -> LiveData
         lobbyViewModel.getStartGameLiveData().observe(this, this::startGame);
     }
-
 
     private void removeObservers() {
         lobbyViewModel.getUserJoinedLiveData().removeObservers(this);
@@ -218,45 +201,24 @@ public class LobbyActivity extends AppCompatActivity {
      * On ready button click send message to server
      */
     public void onReady(View view) {
-        String jsonDataString = prepareJsonDataDTO(Commands.READY);
-        webSocketClient.sendMessageToServer(jsonDataString);
-        Log.d(DEBUG_TAG, " Username sending to ready up:" + jsonDataString);
+        JsonDataManager.createUserMessage(user.getUsername(), pin, Commands.READY).sendMessage();
     }
 
     /**
      * On start game button click send message to server
      */
     public void onStartGame(View view) {
-        String jsonDataString = prepareJsonDataDTO(Commands.START_GAME);
-        webSocketClient.sendMessageToServer(jsonDataString);
-        Log.d(DEBUG_TAG, " Username sending to start game:" + jsonDataString);
+        JsonDataManager.createUserMessage(user.getUsername(), pin, Commands.START_GAME).sendMessage();
     }
 
     public void onCancelLobby(View view) {
-        // leave lobby
         leaveLobby();
-        // Go back to last Activity on Stack (JoinGameActivity)
         finish();
     }
 
     private void leaveLobby() {
-        String jsonDataString = prepareJsonDataDTO(Commands.LEAVE_GAME);
-        webSocketClient.sendMessageToServer(jsonDataString);
+        JsonDataManager.createUserMessage(user.getUsername(), pin, Commands.LEAVE_GAME).sendMessage();
         leftLobby = true;
-        Log.d(DEBUG_TAG, " Username sending to leave Lobby:" + jsonDataString);
-    }
-
-
-    /**
-     * Prepares the JsonDataDTO for the given command
-     * @param command The command to prepare the JsonDataDTO for (e.g. START_GAME, READY)
-     * @return The JsonDataDTO as a String
-     */
-    public String prepareJsonDataDTO(Commands command) {
-        JsonDataDTO jsonData = new JsonDataDTO(command, new HashMap<>());
-        jsonData.putData("username", user.getUsername());
-        jsonData.putData("pin", pin);
-        return JsonDataManager.createJsonMessage(jsonData);
     }
 
     /**
@@ -272,6 +234,7 @@ public class LobbyActivity extends AppCompatActivity {
         jsonData.putData("msg", "PONG");
         String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonMessage);
+
     }
 
 
@@ -285,7 +248,7 @@ public class LobbyActivity extends AppCompatActivity {
         Log.d(DEBUG_TAG, "EventBus registered");
         globalEventQueue.setEventBusReady(true);
         if (webSocketClient != null) {
-            webSocketClient.setUserId(user.getUsername());
+            webSocketClient.setUserID(user.getUsername());
             webSocketClient.connectToServer();
         }
         if (!lobbyViewModel.getUserJoinedLiveData().hasActiveObservers()) {

@@ -17,17 +17,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
-import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.game.User;
-import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
@@ -37,21 +31,10 @@ import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
  */
 public class StartNewGameActivity extends AppCompatActivity {
 
+    @Inject  WebSocketClient webSocketClient;
+    @Inject  CreateGameViewModel createGameViewModel;
     EditText usernameEditText;
-
     String pin;
-
-    @Inject
-    WebSocketClient webSocketClient;
-
-    @Inject
-    CreateGameViewModel createGameViewModel;
-    /**
-     * Dependency Injection of GlobalEventQueue
-     */
-    @Inject
-    GlobalEventQueue globalEventQueue;
-
 
 
     @Override
@@ -59,16 +42,24 @@ public class StartNewGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start_new_game);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        usernameEditText = findViewById(R.id.username);
-
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+        initializeUI();
+        injectDependencies();
         setupLiveDataObservers();
+    }
+
+    private void injectDependencies() {
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+    }
+
+    private void initializeUI() {
+        usernameEditText = findViewById(R.id.username);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), this::applyWindowInsets);
+    }
+
+    private WindowInsetsCompat applyWindowInsets(View v, WindowInsetsCompat insets) {
+        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+        return insets;
     }
 
     private void setupLiveDataObservers() {
@@ -81,25 +72,18 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     /**
      * Event when the button "Create Game" is clicked
-     *
      * @param view
      */
     public void onCreateGameClicked(View view) {
         String username = usernameEditText.getText().toString();
-        webSocketClient.setUserId(username);
-
+        webSocketClient.setUserID(username);
 
         if (username.isEmpty()) {
             usernameEditText.setError("Please enter a username");
             return;
         }
 
-
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
-        jsonData.putData("username", username);
-        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-        webSocketClient.sendMessageToServer(jsonDataString);
-        Log.d(DEBUG_TAG, "Username sending for pin: " + jsonDataString);
+        JsonDataManager.createUserMessage(username, Commands.CREATE_GAME).sendMessage();
 
         if (!webSocketClient.isConnected()) {
             Toast toast = Toast.makeText(this, "No connection to server", Toast.LENGTH_SHORT);
@@ -131,7 +115,6 @@ public class StartNewGameActivity extends AppCompatActivity {
         removeObservers();
         finish();
     }
-
 
     @Override
     protected void onResume() {

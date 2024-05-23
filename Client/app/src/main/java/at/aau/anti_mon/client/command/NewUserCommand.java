@@ -17,9 +17,9 @@ public class NewUserCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        boolean isOwner = Boolean.parseBoolean(data.getData().get("isOwner"));
-        String username = data.getData().get("username");
-        boolean isReady = Boolean.parseBoolean(data.getData().get("isReady"));
+        boolean isOwner = Boolean.parseBoolean( data.getData().get("isOwner"));
+        String username =  data.getData().get("username");
+        boolean isReady = Boolean.parseBoolean( data.getData().get("isReady"));
 
         Log.d("NewUserCommand", "New user joined: " + username + " isOwner: " + isOwner + " isReady: " + isReady);
         // Update LiveData for UI-bound updates

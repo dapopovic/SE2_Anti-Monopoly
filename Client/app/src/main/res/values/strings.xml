@@ -40,6 +40,13 @@
     <string name="berlin2_field_description">Berkin2.</string>
     <string name="berlin3_field_description">Berkin3.</string>
     <string name="todo">TODO</string>
+    <string name="rent">Rent:</string>
+    <string name="hotel_price">Hotel Price:</string>
+    <string name="house_price">House Price:</string>
+    <string name="street_name">Street Name:</string>
+    <string name="price">Price:</string>
+    <string name="textview">TextView</string>
+    <string name="owner">Owner:</string>
 
 
 </resources>

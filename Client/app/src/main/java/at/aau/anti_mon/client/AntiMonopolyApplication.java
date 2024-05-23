@@ -23,8 +23,8 @@ public class AntiMonopolyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        appComponent = DaggerAppComponent.builder()
-                .networkModule(new NetworkModule(this))
+         appComponent = DaggerAppComponent.builder()
+                .application(this)
                 .build();
         globalEventQueue = new GlobalEventQueue();
         globalEventQueue.setEventBusReady(true);

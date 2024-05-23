@@ -13,9 +13,11 @@ public class OnReadyCommand implements Command {
     public OnReadyCommand(LobbyViewModel viewModel) {
         this.viewModel = viewModel;
     }
+
+    // TODO:
     @Override
     public void execute(JsonDataDTO data) {
         Log.d("OnReadyCommand", "User is ready");
-        viewModel.readyUp(data.getData().get("username"), Boolean.parseBoolean(data.getData().get("isReady")));
+        viewModel.readyUp((String) data.getData().get("username"), Boolean.parseBoolean((String) data.getData().get("isReady")));
     }
 }

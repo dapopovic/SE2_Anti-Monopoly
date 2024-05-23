@@ -7,7 +7,11 @@ import at.aau.anti_mon.client.activities.JoinGameActivity;
 import at.aau.anti_mon.client.activities.LobbyActivity;
 import at.aau.anti_mon.client.activities.MainActivity;
 import at.aau.anti_mon.client.activities.StartNewGameActivity;
+import at.aau.anti_mon.client.game.GameController;
+import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;
+import at.aau.anti_mon.client.viewmodels.GameFieldViewModel;
+import dagger.BindsInstance;
 import dagger.Component;
 
 /**
@@ -29,4 +33,19 @@ public interface AppComponent {
     void inject (JoinGameActivity joinGameActivity);
 
     void inject(ActivityGameField activityGameField);
+
+    void inject(GameFieldViewModel gameFieldViewModel);
+
+    void inject(GameController gameController);
+
+    JsonDataManager getJsonDataManager();
+
+
+    @Component.Builder
+    interface Builder {
+        AppComponent build();
+        @BindsInstance
+        Builder networkModule(NetworkModule networkModule);
+    }
+
 }

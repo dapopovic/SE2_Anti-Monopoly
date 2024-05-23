@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -16,14 +14,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
-import java.util.HashMap;
-
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
-import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 
@@ -32,8 +27,7 @@ public class JoinGameActivity extends AppCompatActivity {
     EditText usernameEditText;
     EditText pinEditText;
 
-    @Inject
-    WebSocketClient webSocketClient;
+    @Inject WebSocketClient webSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +44,7 @@ public class JoinGameActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.editText_joinGame_Name);
         pinEditText = findViewById(R.id.editText_joinGame_Pin);
 
-        /*
-         * Injection des WebSocketClients
-         */
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
-
+        injectDependencies();
     }
 
     public void onJoinGameClicked(View view) {
@@ -62,7 +52,7 @@ public class JoinGameActivity extends AppCompatActivity {
         String pin = pinEditText.getText().toString();
 
         // add Name to Websocket URI
-        webSocketClient.setUserId(username);
+        webSocketClient.setUserID(username);
         if (!webSocketClient.isConnected()){
             webSocketClient.connectToServer();
         }
@@ -73,11 +63,7 @@ public class JoinGameActivity extends AppCompatActivity {
             pinEditText.setError("Pin is required");
         }
 
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN_GAME, new HashMap<>());
-        jsonData.putData("username", username);
-        jsonData.putData("pin", pin);
-        String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
-        webSocketClient.sendMessageToServer(jsonMessage);
+        JsonDataManager.createUserMessage(username, pin, Commands.JOIN_GAME);
 
         Intent intent = new Intent(this, LobbyActivity.class);
         intent.putExtra("username", username);
@@ -85,9 +71,19 @@ public class JoinGameActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    /**
+     * Go back to last Activity on Stack (StartMenuActivity)
+     */
     public void onCancelJoinGame(View view) {
-        // Go back to last Activity on Stack (StartMenuActivity)
         finish();
+    }
+
+    /**
+     * Injection des WebSocketClients
+     */
+    public void injectDependencies() {
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
     }
 
     @Override
@@ -95,4 +91,6 @@ public class JoinGameActivity extends AppCompatActivity {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
+
 }

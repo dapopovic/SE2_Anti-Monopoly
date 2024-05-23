@@ -21,7 +21,9 @@ public class StartGameCommand implements Command {
     @Override
     public void execute(JsonDataDTO data) {
         Log.d("StartGameCommand", "Game started " + data.getData().get("users"));
-        User[] users = JsonDataManager.parseJsonMessage(data.getData().get("users"), User[].class);
+
+        // TODO: SET TO STRING --> TEST
+        User[] users = JsonDataManager.parseJsonMessage( data.getData().get("users"), User[].class);
         lobbyViewModel.startGame(new ArrayList<>(Arrays.asList(users)));
     }
 }

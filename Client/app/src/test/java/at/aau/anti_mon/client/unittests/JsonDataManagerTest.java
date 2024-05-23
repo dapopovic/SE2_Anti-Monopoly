@@ -27,13 +27,14 @@ class JsonDataManagerTest {
 
     @Test
     void createStringFromJsonMessageShouldReturnValidJson() {
-        Map<String, String> data = new HashMap<>();
-        data.put("key", "value");
-        String json = JsonDataManager.createJsonMessage(Commands.NEW_USER, data);
+
+        String json = JsonDataManager.createUserMessage("test", Commands.NEW_USER).getMessage();
+        assert json != null;
         JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json, JsonDataDTO.class);
+
         assertNotNull(jsonDataDTO);
         assertEquals(Commands.NEW_USER, jsonDataDTO.getCommand());
-        assertEquals("value", jsonDataDTO.getData().get("key"));
+        assertEquals("test", jsonDataDTO.getData().get("username"));
     }
 
     @Test

@@ -21,7 +21,6 @@ public class CreateGameCommand implements Command{
     public void execute(JsonDataDTO data) {
         Log.d("CreateGameCommand", Objects.requireNonNull(data.getData().get("pin")));
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(data.getData().get("username"), Boolean.parseBoolean(data.getData().get("isOwner")), Boolean.parseBoolean(data.getData().get("isReady")));
-
+        viewModel.userJoined( data.getData().get("username"), Boolean.parseBoolean( data.getData().get("isOwner")), Boolean.parseBoolean( data.getData().get("isReady")));
     }
 }

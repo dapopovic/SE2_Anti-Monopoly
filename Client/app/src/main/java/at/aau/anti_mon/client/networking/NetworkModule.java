@@ -10,13 +10,11 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
-import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
-import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
@@ -24,7 +22,10 @@ import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.game.GameController;
+import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
+import at.aau.anti_mon.client.viewmodels.GameFieldViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 import dagger.Module;
 import dagger.Provides;
@@ -57,6 +58,11 @@ public class NetworkModule {
         return application;
     }
 
+    @Provides
+    @Singleton
+    JsonDataManager provideJsonDataManager(WebSocketClient webSocketClient) {
+        return new JsonDataManager(webSocketClient);
+    }
 
     @Provides
     @Singleton
@@ -76,6 +82,12 @@ public class NetworkModule {
 
     @Provides
     @Singleton
+    GameController provideGameController() {
+        return new GameController();
+    }
+
+    @Provides
+    @Singleton
     GlobalEventQueue provideGlobalEventQueue(Application application) {
         return ((AntiMonopolyApplication) application).getGlobalEventQueue();
     }
@@ -84,6 +96,14 @@ public class NetworkModule {
     @Singleton
     CommandFactory provideCommandFactory(Map<String, Command> commands) {
         return new CommandFactory(commands);
+    }
+
+    /////////////////////////////////////////////////////////////////////////// ViewModels
+
+    @Provides
+    @Singleton
+    GameFieldViewModel provideGameFieldViewModel() {
+        return new GameFieldViewModel();
     }
 
     @Provides
@@ -98,25 +118,13 @@ public class NetworkModule {
         return new CreateGameViewModel();
     }
 
-    @Provides
-    @IntoMap
-    @StringKey("ANSWER")
-    Command provideAnswerCommand(AnswerCommand command) {
-        return command;
-    }
+
+    /////////////////////////////////////////////////////////////////////////// Commands
 
     @Provides
     @IntoMap
     @StringKey("PIN")
     Command providePinCommand(PinCommand command) {
-        return command;
-    }
-
-
-    @Provides
-    @IntoMap
-    @StringKey("INFO")
-    Command provideInfoCommand(InfoCommand command) {
         return command;
     }
 

@@ -11,6 +11,7 @@ import lombok.Getter;
 
 @Getter
 public class LobbyViewModel extends ViewModel {
+
     private final SingleLiveEvent<User> userJoinedLiveData = new SingleLiveEvent<>();
     private final SingleLiveEvent<String> userLeftLiveData = new SingleLiveEvent<>();
     private final SingleLiveEvent<User> readyUpLiveData = new SingleLiveEvent<>();
@@ -24,10 +25,12 @@ public class LobbyViewModel extends ViewModel {
     public void userLeft(String username) {
         userLeftLiveData.postValue(username);
     }
+
     public void readyUp(String username, boolean isReady) {
         Log.d("LobbyViewModel", "User is ready " + username);
         readyUpLiveData.postValue(new User(username, false, isReady));
     }
+
     public void startGame(Collection<User> users) {
         startGameLiveData.postValue(users);
     }

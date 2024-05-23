@@ -19,6 +19,6 @@ public class ErrorCommand implements Command{
 
     @Override
     public void execute(JsonDataDTO data) {
-        EventBus.getDefault().post(new TestEvent(data.getData().get("msg")));
+        EventBus.getDefault().post(new TestEvent( data.getData().get("msg")));
     }
 }

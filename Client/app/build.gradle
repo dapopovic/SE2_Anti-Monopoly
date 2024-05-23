@@ -93,26 +93,18 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.runner
-    testImplementation libs.mockito.core
-    testImplementation libs.mockwebserver
-
-
     implementation libs.retrofit
-
     implementation libs.converter.jackson
     implementation libs.jackson.databind
     implementation libs.jackson.core
     implementation libs.jackson.annotations
-
     implementation libs.multidex
     implementation libs.eventbus
-
-    implementation(libs.okio)
+    implementation libs.okio
     implementation libs.okhttp3.okhttp
-    implementation(libs.okhttpprofiler)
-    implementation(libs.logging.interceptor)
+    implementation libs.okhttpprofiler
+    implementation libs.logging.interceptor
 
-    //implementation(libs.okhttp.v490)
 
     // Dagger Dependency Injection
     implementation libs.dagger.android
@@ -124,9 +116,12 @@ dependencies {
     testAnnotationProcessor libs.dagger.android.processor
     testAnnotationProcessor libs.dagger.compiler
 
-
+    testImplementation libs.mockito.core
+    testImplementation libs.mockwebserver
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
+    testImplementation libs.core.testing
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     testRuntimeOnly libs.junit.jupiter.engine
 

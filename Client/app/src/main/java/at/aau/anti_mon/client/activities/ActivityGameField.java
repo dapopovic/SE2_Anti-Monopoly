@@ -18,36 +18,35 @@ import androidx.collection.SparseArrayCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.game.GameController;
+import at.aau.anti_mon.client.game.GameState;
 import at.aau.anti_mon.client.game.User;
-import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.WebSocketClient;
+import at.aau.anti_mon.client.viewmodels.GameFieldViewModel;
 
+/**
+ * Activity für das Spielfeld des Anti-Monopoly-Spiels.
+ * Zeigt das Spielfeld an und ermöglicht es dem Benutzer, auf die einzelnen Felder zu klicken, um Informationen zu erhalten.
+ */
 public class ActivityGameField extends AppCompatActivity {
-    ArrayList<User> users;
-    UserAdapter userAdapter;
-    RecyclerView recyclerView;
-    User currentUser;
-    String pin;
 
-    @Inject
-    WebSocketClient webSocketClient;
+    private GameFieldViewModel gameFieldViewModel;
+    private UserAdapter userAdapter;
+    private RecyclerView recyclerView;
 
     // SparseArrayCompat für das Mapping von View-IDs zu Bild- und Textressourcen
     private SparseArrayCompat<int[]> resourceMap;
+    private GameController gameController;
 
     /*
     private final int[] imageViewIds = {
@@ -70,12 +69,17 @@ public class ActivityGameField extends AppCompatActivity {
             return insets;
         });
 
+        gameFieldViewModel = new ViewModelProvider(this).get(GameFieldViewModel.class);
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(gameFieldViewModel);
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+        //((AntiMonopolyApplication) getApplication()).getAppComponent().inject(gameController);
         initUI();
 
         // Initialisiere das Mapping
         initResourceMap();
 
         processIntent();
+        setupObservers();
 
         // Initialisiert alle ImageView-Elemente mit einen OnClickListener
         for (int i = 0; i < resourceMap.size(); i++) {
@@ -84,7 +88,121 @@ public class ActivityGameField extends AppCompatActivity {
             imageView.setOnClickListener(this::onImageViewClick);
         }
 
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+        initializeGame();
+    }
+
+
+    /**
+     * Setzt die Observer für die LiveData-Objekte.
+     */
+    private void setupObservers() {
+        gameFieldViewModel.getGameState().observe(this, gameState -> {
+            switch (gameState) {
+
+                //TODO: Implementiere die Logik für die verschiedenen Spielzustände
+                case START_TURN:
+                    // Start turn logic
+                    break;
+
+                // Player is in turn
+                case THROW_DICE:
+                    break;
+
+                // Player is in turn
+                case END_TURN:
+                    break;
+
+                // Player is in turn
+                case WINNING:
+                    break;
+
+                // Player is in turn
+                case LOOSING:
+                    break;
+            }
+        });
+    }
+
+
+    private void onImageViewClick(View view) {
+        int viewId = view.getId();
+        int[] resources = resourceMap.get(viewId);
+
+        if (resources != null) {
+            //int imageResId = resources[0];
+            //int textResId = resources[1];
+            //String message = getString(textResId);
+
+            // Zeige Dialog mit übergebenen Informationen
+            showCustomDialog(this, resources[0], getString(resources[1]));
+        }
+    }
+
+    private void showCustomDialog(Context context, int imageResId, String message) {
+        // LayoutInflater um Layout zu laden
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.dialog_custom, null);
+
+        // Bild und Text setzen
+        ImageView imageView = view.findViewById(R.id.dialog_image);
+        imageView.setImageResource(imageResId);
+
+        TextView textView = view.findViewById(R.id.dialog_description);
+        textView.setText(message); // Setze den Text dynamisch
+
+        // AlertDialog erstellen
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setView(view)
+                .setTitle("Feldinformation")
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+        // Dialog anzeigen
+        builder.create().show();
+    }
+
+
+    private void processIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra("users") && intent.hasExtra("currentUser") && intent.hasExtra("pin")) {
+            gameFieldViewModel.setUsers(JsonDataManager.parseJsonMessage(intent.getStringExtra("users"), User[].class));
+            gameFieldViewModel.setCurrentUser(JsonDataManager.parseJsonMessage(intent.getStringExtra("currentUser"), User.class));
+            gameFieldViewModel.setPin(intent.getStringExtra("pin"));
+            userAdapter = new UserAdapter(gameFieldViewModel.getUsers(), gameFieldViewModel.getCurrentUser());
+            recyclerView.setAdapter(userAdapter);
+        } else {
+            Log.e(DEBUG_TAG, "Intent is missing extras");
+            finish();
+        }
+    }
+
+    private void initUI() {
+        recyclerView = findViewById(R.id.players_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void initializeGame() {
+        //Initialisiere GameState
+        gameFieldViewModel.setGameState(GameState.START_TURN);
+
+        gameController.initializeGame();
+    }
+
+
+    public void onSettings(View view) {
+        startActivity(new Intent(getApplicationContext(), PopActivitySettings.class));
+    }
+
+    public void onHandel(View view) {
+        startActivity(new Intent(getApplicationContext(), PopActivityHandel.class));
+    }
+
+    public void onObjects(View view) {
+        startActivity(new Intent(getApplicationContext(), PopActivityObjects.class));
+    }
+
+    public void onEndGame(View view) {
+        gameFieldViewModel.leaveGame();
+        finish();
     }
 
     private void initResourceMap() {
@@ -133,92 +251,6 @@ public class ActivityGameField extends AppCompatActivity {
         resourceMap.put(R.id.right_9, new int[]{R.drawable.berlin_3, R.string.berlin3_field_description});
 
     }
-
-    private void onImageViewClick(View view) {
-        int viewId = view.getId();
-        int[] resources = resourceMap.get(viewId);
-
-        if (resources != null) {
-            int imageResId = resources[0];
-            int textResId = resources[1];
-            String message = getString(textResId);
-
-            // Zeige Dialog mit Informationen
-            showCustomDialog(this, imageResId, message);
-        }
-    }
-
-    private void showCustomDialog(Context context, int imageResId, String message) {
-        // LayoutInflater um Layout zu laden
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.dialog_custom, null);
-
-        // Bild und Text setzen
-        ImageView imageView = view.findViewById(R.id.dialog_image);
-        imageView.setImageResource(imageResId); // Setze das Bild dynamisch
-
-        TextView textView = view.findViewById(R.id.dialog_text);
-        textView.setText(message); // Setze den Text dynamisch
-
-        // AlertDialog erstellen
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setView(view)
-                .setTitle("Feldinformation")
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-
-        // Dialog anzeigen
-        builder.create().show();
-    }
-
-    private void initUI() {
-        recyclerView = findViewById(R.id.players_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void processIntent() {
-        Intent intent = getIntent();
-        if (!intent.hasExtra("users") || !intent.hasExtra("currentUser") || !intent.hasExtra("pin")) {
-            Log.e(DEBUG_TAG, "Intent is missing extras");
-            finish();
-            return;
-        }
-        users = new ArrayList<>();
-        User[] usersList = JsonDataManager.parseJsonMessage(intent.getStringExtra("users"), User[].class);
-        Collections.addAll(users, usersList);
-        users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getMoney()));
-        currentUser = JsonDataManager.parseJsonMessage(intent.getStringExtra("currentUser"), User.class);
-        userAdapter = new UserAdapter(users, currentUser);
-        recyclerView.setAdapter(userAdapter);
-        if (currentUser != null) {
-            Log.d(DEBUG_TAG, "Current User: " + currentUser.getUsername() + " isOwner: " + currentUser.isOwner() + " isReady: " + currentUser.isReady() + " money: " + currentUser.getMoney());
-        }
-        pin = intent.getStringExtra("pin");
-    }
-
-    public void onSettings(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivitySettings.class);
-        startActivity(i);
-    }
-
-    public void onHandel(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivityHandel.class);
-        startActivity(i);
-    }
-
-    public void onObjects(View view) {
-        Intent i = new Intent(getApplicationContext(),PopActivityObjects.class);
-        startActivity(i);
-    }
-
-    public void onEndGame(View view) {
-        // only for now, because the server does not support END_GAME yet
-        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
-        jsonDataDTO.putData("username", currentUser.getUsername());
-        jsonDataDTO.putData("pin", pin);
-        webSocketClient.sendJsonData(jsonDataDTO);
-        finish();
-    }
-
 
 }
 
