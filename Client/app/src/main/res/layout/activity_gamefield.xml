@@ -16,7 +16,7 @@
         app:layout_constraintGuide_percent="0.8098495" />
 
     <ImageButton
-        android:id="@+id/button"
+        android:id="@+id/btnDice"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="1dp"
