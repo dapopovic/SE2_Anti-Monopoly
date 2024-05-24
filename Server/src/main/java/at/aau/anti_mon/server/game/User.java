@@ -26,6 +26,8 @@ public class User {
     private Figures figure;
     @Setter
     private int location;
+    @Setter
+    private int sequence;
 
     public User(String name, WebSocketSession session) {
         this.name = name;
@@ -36,6 +38,7 @@ public class User {
         this.role = null;
         this.figure = null;
         this.location = 1;
+        this.sequence = 0;
     }
 
     public boolean isOwner() {
