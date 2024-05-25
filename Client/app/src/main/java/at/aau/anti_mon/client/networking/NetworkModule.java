@@ -22,6 +22,7 @@ import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
+import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
@@ -119,7 +120,6 @@ public class NetworkModule {
     @StringKey("DICENUMBER")
     Command provideDiceNumberCommand(GlobalEventQueue queue){return new DiceNumberCommand(queue);}
 
-
     @Provides
     @IntoMap
     @StringKey("INFO")
@@ -188,6 +188,13 @@ public class NetworkModule {
     @IntoMap
     @StringKey("CHANGE_BALANCE")
     Command provideChangeBalanceCommand(ChangeBalanceCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("NEXT_PLAYER")
+    Command provideNextPlayerCommand(NextPlayerCommand command) {
         return command;
     }
 }

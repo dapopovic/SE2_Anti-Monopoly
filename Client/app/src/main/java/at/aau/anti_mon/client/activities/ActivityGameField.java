@@ -37,6 +37,7 @@ import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -125,6 +126,7 @@ public class ActivityGameField extends AppCompatActivity {
     public void onEndGame(View view) {
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
+        Log.d("onEndGame", "Send name:"+currentUser.getUsername());
         //jsonDataDTO.putData("pin", pin);
         webSocketClient.sendJsonData(jsonDataDTO);
     }
@@ -146,8 +148,8 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onFigureMove(View view) {
-        ImageButton b = findViewById(R.id.btnDice);
-        b.setEnabled(false);
+        ImageButton Dice = findViewById(R.id.btnDice);
+        Dice.setEnabled(false);
 
         int randomNumber = random.nextInt(11) + 2;
         String dice = String.valueOf(randomNumber);
@@ -232,5 +234,13 @@ public class ActivityGameField extends AppCompatActivity {
     public int getID(String fieldId, String prefix) {
         String resourceName = (prefix != null) ? prefix + fieldId : fieldId;
         return getResources().getIdentifier(resourceName, "id", getPackageName());
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNextPlayerEvent(NextPlayerEvent event) {
+        String username = event.getUsername();
+        if(username == currentUser.getUsername()){
+            ImageButton Dice = findViewById(R.id.btnDice);
+            Dice.setEnabled(true);
+        }
     }
 }
