@@ -159,4 +159,10 @@ public class JsonDataUtility {
         jsonData.putData("new_balance", String.valueOf(new_balance));
         send(session, jsonData);
     }
+
+    public static void sendNextPlayer(WebSocketSession session, String username){
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
+        jsonData.putData("username",username);
+        send(session,jsonData);
+    }
 }

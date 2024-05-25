@@ -193,6 +193,22 @@ public class UserEventListener {
         }
     }
 
+    @EventListener
+    public void onNextPlayerEvent(NextPlayerEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        int sequence = user.getSequence();
+        HashSet<User> users = user.getLobby().getUsers();
+        int playernumber = users.size();
+        if(sequence==playernumber){sequence=0;}
+        sequence++;
+        for (User u : users) {
+            if(u.getSequence() == sequence){
+                JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), u.getName());
+            }
+        }
+    }
+
 
 
 }

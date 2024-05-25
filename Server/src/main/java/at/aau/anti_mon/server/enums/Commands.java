@@ -72,6 +72,7 @@ public enum Commands {
      */
     ERROR("ERROR"),
     DICENUMBER("DICENUMBER"),
+    NEXT_PLAYER("NEXT_PLAYER"),
 
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
 
