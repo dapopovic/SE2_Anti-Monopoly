@@ -24,6 +24,7 @@ public class CommandFactory {
         commandMap.put(Commands.START_GAME.getCommand(), new StartGameCommand(eventPublisher));
         commandMap.put(Commands.DICENUMBER.getCommand(), new DiceNumberCommand(eventPublisher));
         commandMap.put(Commands.CHANGE_BALANCE.getCommand(), new ChangeBalanceCommand(eventPublisher));
+        commandMap.put(Commands.NEXT_PLAYER.getCommand(), new NextPlayerCommand(eventPublisher));
         commandMap.forEach((key, value) -> Logger.debug("SERVER: Command in map: " + key));
     }
 

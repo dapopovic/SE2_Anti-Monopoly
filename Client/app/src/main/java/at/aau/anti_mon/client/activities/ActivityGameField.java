@@ -123,12 +123,10 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onEndGame(View view) {
-        // only for now, because the server does not support END_GAME yet
-        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
-        jsonDataDTO.putData("pin", pin);
+        //jsonDataDTO.putData("pin", pin);
         webSocketClient.sendJsonData(jsonDataDTO);
-        finish();
     }
 
     @Override
