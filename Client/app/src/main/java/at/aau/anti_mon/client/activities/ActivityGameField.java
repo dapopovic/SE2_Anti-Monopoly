@@ -237,6 +237,7 @@ public class ActivityGameField extends AppCompatActivity {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNextPlayerEvent(NextPlayerEvent event) {
+        Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
         String username = event.getUsername();
         if(username == currentUser.getUsername()){
             ImageButton Dice = findViewById(R.id.btnDice);
