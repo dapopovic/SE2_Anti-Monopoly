@@ -79,6 +79,8 @@ public class ActivityGameField extends AppCompatActivity {
 
         ImageButton Dice = findViewById(R.id.btnDice);
         Dice.setEnabled(false);
+        Button Finish = findViewById(R.id.btnFinish);
+        Finish.setEnabled(false);
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
