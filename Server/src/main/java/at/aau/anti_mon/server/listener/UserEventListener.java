@@ -214,6 +214,7 @@ public class UserEventListener {
         Logger.info("Wir sind in FirstPlayerEventListener.");
         String username = event.getUsername();
         User user = userService.getUser(username);
+        Logger.info("Wir haben die Nummer: "+ user.getSequence());
         if(user.getSequence() == 1){
             Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
             JsonDataUtility.sendNextPlayer(event.getSession(),username);

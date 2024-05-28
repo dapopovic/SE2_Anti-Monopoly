@@ -26,7 +26,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/dice2"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintLeft_toRightOf="@id/dice2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/dice1" />
