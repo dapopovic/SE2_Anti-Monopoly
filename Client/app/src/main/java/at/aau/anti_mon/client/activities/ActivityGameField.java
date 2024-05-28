@@ -73,6 +73,13 @@ public class ActivityGameField extends AppCompatActivity {
         random = new Random();
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+
+        ImageButton Dice = findViewById(R.id.btnDice);
+        Dice.setEnabled(false);
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
+        jsonDataDTO.putData("username", currentUser.getUsername());
+        Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
+        webSocketClient.sendJsonData(jsonDataDTO);
     }
 
     private void initUI() {
@@ -239,9 +246,8 @@ public class ActivityGameField extends AppCompatActivity {
     public void onNextPlayerEvent(NextPlayerEvent event) {
         Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
         String username = event.getUsername();
-        if(username == currentUser.getUsername()){
-            ImageButton Dice = findViewById(R.id.btnDice);
-            Dice.setEnabled(true);
-        }
+        ImageButton Dice = findViewById(R.id.btnDice);
+        Dice.setEnabled(true);
+
     }
 }

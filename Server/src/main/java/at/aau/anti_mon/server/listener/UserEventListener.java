@@ -195,6 +195,7 @@ public class UserEventListener {
 
     @EventListener
     public void onNextPlayerEvent(NextPlayerEvent event) throws UserNotFoundException {
+        Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
         String username = event.getUsername();
         User user = userService.getUser(username);
         int sequence = user.getSequence();
@@ -208,7 +209,13 @@ public class UserEventListener {
             }
         }
     }
-
-
-
+    @EventListener
+    public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException{
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        if(user.getSequence() == 1){
+            Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
+            JsonDataUtility.sendNextPlayer(event.getSession(),username);
+        }
+    }
 }
