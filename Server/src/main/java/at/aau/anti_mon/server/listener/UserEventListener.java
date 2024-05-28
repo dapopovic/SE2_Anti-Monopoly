@@ -211,6 +211,7 @@ public class UserEventListener {
     }
     @EventListener
     public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException{
+        Logger.info("Wir sind in FirstPlayerEventListener.");
         String username = event.getUsername();
         User user = userService.getUser(username);
         if(user.getSequence() == 1){
