@@ -3,6 +3,7 @@ package at.aau.anti_mon.client.activities;
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,7 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.PopActivityDice;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
@@ -51,6 +53,7 @@ public class ActivityGameField extends AppCompatActivity {
     RecyclerView recyclerView;
     User currentUser;
     String pin;
+    Boolean Würfeln = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -148,6 +151,26 @@ public class ActivityGameField extends AppCompatActivity {
         }
 
         queue.setEventBusReady(true);
+        Log.d("onRestart", "I am in onRestart");
+        if(Würfeln){
+            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            if(sharedPreferences.getBoolean("Wurfel", false)){
+                Log.d("onRestart", "I am in onRestart in the if");
+                int zahl1 = sharedPreferences.getInt("zahl1", 0);
+                int zahl2 = sharedPreferences.getInt("zahl2", 0);
+                if(zahl1!=zahl2){
+                    ImageButton Dice = findViewById(R.id.btnDice);
+                    Dice.setEnabled(false);
+                }
+                sendDice(zahl1,zahl2);
+            }
+            Würfeln = false;
+        }
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
     }
 
     @Override
@@ -157,19 +180,9 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onFigureMove(View view) {
-        ImageButton Dice = findViewById(R.id.btnDice);
-        Dice.setEnabled(false);
-
-        int randomNumber = random.nextInt(11) + 2;
-        String dice = String.valueOf(randomNumber);
-        String user = currentUser.getUsername();
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
-        jsonData.putData("dicenumber", dice);
-        jsonData.putData("username", user);
-        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-        webSocketClient.sendMessageToServer(jsonDataString);
-        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
-
+        Würfeln = true;
+        Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
+        startActivity(i);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -253,5 +266,16 @@ public class ActivityGameField extends AppCompatActivity {
         Button Finish = findViewById(R.id.btnFinish);
         Finish.setEnabled(true);
 
+    }
+    public void sendDice(int dice1, int dice2){
+        int dicenumber = dice1+dice2;
+        String dice = String.valueOf(dicenumber);
+        String user = currentUser.getUsername();
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
+        jsonData.putData("dicenumber", dice);
+        jsonData.putData("username", user);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
     }
 }
