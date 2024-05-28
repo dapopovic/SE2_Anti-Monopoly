@@ -136,6 +136,8 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("onEndGame", "Send name:"+currentUser.getUsername());
         //jsonDataDTO.putData("pin", pin);
         webSocketClient.sendJsonData(jsonDataDTO);
+        Button Finish = findViewById(R.id.btnFinish);
+        Finish.setEnabled(false);
     }
 
     @Override
@@ -248,6 +250,8 @@ public class ActivityGameField extends AppCompatActivity {
         String username = event.getUsername();
         ImageButton Dice = findViewById(R.id.btnDice);
         Dice.setEnabled(true);
+        Button Finish = findViewById(R.id.btnFinish);
+        Finish.setEnabled(true);
 
     }
 }
