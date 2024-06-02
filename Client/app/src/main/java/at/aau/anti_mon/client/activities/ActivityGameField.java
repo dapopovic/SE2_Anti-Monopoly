@@ -180,10 +180,6 @@ public class ActivityGameField extends AppCompatActivity {
             Log.d("onDiceNumberReceivedEvent", "name is null");
             return;
         }
-        if (diceNumber < 1 || diceNumber > 12) {
-            Log.d("onDiceNumberReceivedEvent", "diceNumber is out of range, should be between 2 and 12");
-            return;
-        }
 
         ImageView figure = findViewById(getID(name, null));
         moveFigure(username, location, diceNumber, figure);

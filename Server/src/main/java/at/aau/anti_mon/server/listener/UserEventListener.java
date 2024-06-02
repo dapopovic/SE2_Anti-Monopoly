@@ -33,13 +33,13 @@ public class UserEventListener {
     /**
      * Konstruktor für UserEventListener
      * Dependency Injection für LobbyService
-     * 
+     *
      * @param lobbyService LobbyService
      */
     @Autowired
     UserEventListener(LobbyService lobbyService,
-            SessionManagementService sessionManagementService,
-            UserService userService) {
+                      SessionManagementService sessionManagementService,
+                      UserService userService) {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
@@ -48,7 +48,7 @@ public class UserEventListener {
     /**
      * Logik zum Erstellen einer Lobby
      * PIN der Lobby wird an den Benutzer zurückgegeben
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
@@ -64,7 +64,7 @@ public class UserEventListener {
 
     /**
      * Fügt den Benutzer zur Lobby hinzu
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
@@ -99,7 +99,7 @@ public class UserEventListener {
 
     /**
      * Entfernt den Benutzer aus der Lobby
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
@@ -167,16 +167,20 @@ public class UserEventListener {
         User user = userService.getUser(username);
         Figures figure = user.getFigure();
         int location = user.getLocation();
-        int nextlocation = location+dicenumber;
+        int nextlocation = location + dicenumber;
 
-        if(nextlocation>40){
-            nextlocation = nextlocation-40;
+        if (nextlocation > 40) {
+            nextlocation = nextlocation - 40;
+        }
+        if (nextlocation == 31) {
+            dicenumber += 20;
+            nextlocation = 11;
         }
         user.setLocation(nextlocation);
 
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
-            JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
+            JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username, dicenumber, figure, location);
         }
     }
 
@@ -192,7 +196,6 @@ public class UserEventListener {
             JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, new_balance);
         }
     }
-
 
 
 }
