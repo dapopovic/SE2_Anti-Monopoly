@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -47,6 +48,7 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
+    private static final int REQUEST_CODE_POP_ACTIVITY_DICE = 1;
     private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
@@ -156,7 +158,8 @@ public class ActivityGameField extends AppCompatActivity {
         }
 
         queue.setEventBusReady(true);
-        Log.d("onRestart", "I am in onRestart");
+
+        /*Log.d("onRestart", "I am in onRestart");
         if(Würfeln){
             SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
             if(sharedPreferences.getBoolean("Wurfel", false)){
@@ -170,7 +173,7 @@ public class ActivityGameField extends AppCompatActivity {
                 sendDice(zahl1,zahl2);
             }
             Würfeln = false;
-        }
+        }*/
     }
     @Override
     protected void onRestart() {
@@ -187,7 +190,31 @@ public class ActivityGameField extends AppCompatActivity {
     public void onFigureMove(View view) {
         Würfeln = true;
         Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
-        startActivity(i);
+        //startActivity(i);
+        startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult", "I am in onActivityResult");
+        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
+            if (data != null) {
+                int zahl1 = data.getIntExtra("zahl1", 0);
+                int zahl2 = data.getIntExtra("zahl2", 0);
+                boolean wurfel = data.getBooleanExtra("Wurfel", false);
+
+                // Verarbeite die empfangenen Daten
+                Log.d("onActivityResult", "zahl1: " + zahl1);
+                Log.d("onActivityResult", "zahl2: " + zahl2);
+                Log.d("onActivityResult", "wurfel: " + wurfel);
+
+                if(zahl1!=zahl2){
+                    ImageButton Dice = findViewById(R.id.btnDice);
+                    Dice.setEnabled(false);
+                }
+                sendDice(zahl1,zahl2);
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -267,7 +294,9 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
         String username = event.getUsername();
         Log.d("onNextPlayerEvent", "The next Player is: "+username);
-        if(username==currentUser.getUsername()){
+        Log.d("onNextPlayerEvent", "We are: "+currentUser.getUsername());
+        if(Objects.equals(username, currentUser.getUsername())){
+            Log.d("onNextPlayerEvent", "We are in the if");
             ImageButton Dice = findViewById(R.id.btnDice);
             Dice.setEnabled(true);
             Button Finish = findViewById(R.id.btnFinish);

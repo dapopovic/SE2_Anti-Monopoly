@@ -180,6 +180,7 @@ public class LobbyService {
             user.setSequence(sequencezahl);
             sequencezahl++;
         });
+        sequencezahl = 1;
         lobby.startGame();
     }
 

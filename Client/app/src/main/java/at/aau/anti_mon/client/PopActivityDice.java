@@ -1,6 +1,7 @@
 package at.aau.anti_mon.client;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -66,7 +67,20 @@ public class PopActivityDice extends Activity {
 
     public void onX(View view) {
         Log.d("onX", "I am in onX from PopActivityDice");
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        Intent resultIntent = new Intent();
+
+        if (Zahl1 != 0 && Zahl2 != 0) {
+            resultIntent.putExtra("zahl1", Zahl1);
+            resultIntent.putExtra("zahl2", Zahl2);
+            resultIntent.putExtra("Wurfel", true);
+        } else {
+            resultIntent.putExtra("Wurfel", false);
+        }
+
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
+
+        /*SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if(Zahl1!=0 && Zahl2 !=0){
             editor.putInt("zahl1", Zahl1);
@@ -77,7 +91,7 @@ public class PopActivityDice extends Activity {
             editor.putBoolean("Wurfel",false);
         }
         editor.apply();
-        finish();
+        finish();*/
     }
 
     private void rollTheDice1(ImageView dice) {
