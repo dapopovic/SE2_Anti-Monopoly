@@ -179,6 +179,7 @@ public class LobbyService {
             user.setFigure(randomFigure);
             user.setSequence(sequencezahl);
             sequencezahl++;
+            user.setLocation(1);
         });
         sequencezahl = 1;
         lobby.startGame();
