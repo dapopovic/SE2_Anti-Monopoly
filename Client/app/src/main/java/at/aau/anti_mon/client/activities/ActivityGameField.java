@@ -55,7 +55,6 @@ public class ActivityGameField extends AppCompatActivity {
     RecyclerView recyclerView;
     User currentUser;
     String pin;
-    Boolean Würfeln = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -158,27 +157,10 @@ public class ActivityGameField extends AppCompatActivity {
         }
 
         queue.setEventBusReady(true);
-
-        /*Log.d("onRestart", "I am in onRestart");
-        if(Würfeln){
-            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-            if(sharedPreferences.getBoolean("Wurfel", false)){
-                Log.d("onRestart", "I am in onRestart in the if");
-                int zahl1 = sharedPreferences.getInt("zahl1", 0);
-                int zahl2 = sharedPreferences.getInt("zahl2", 0);
-                if(zahl1!=zahl2){
-                    ImageButton Dice = findViewById(R.id.btnDice);
-                    Dice.setEnabled(false);
-                }
-                sendDice(zahl1,zahl2);
-            }
-            Würfeln = false;
-        }*/
     }
     @Override
     protected void onRestart() {
         super.onRestart();
-
     }
 
     @Override
@@ -188,7 +170,6 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onFigureMove(View view) {
-        Würfeln = true;
         Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
         //startActivity(i);
         startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
@@ -208,11 +189,13 @@ public class ActivityGameField extends AppCompatActivity {
                 Log.d("onActivityResult", "zahl2: " + zahl2);
                 Log.d("onActivityResult", "wurfel: " + wurfel);
 
-                if(zahl1!=zahl2){
-                    ImageButton Dice = findViewById(R.id.btnDice);
-                    Dice.setEnabled(false);
+                if (wurfel){
+                    if(zahl1!=zahl2){
+                        ImageButton Dice = findViewById(R.id.btnDice);
+                        Dice.setEnabled(false);
+                    }
+                    sendDice(zahl1,zahl2);
                 }
-                sendDice(zahl1,zahl2);
             }
         }
     }
