@@ -2,6 +2,7 @@ package at.aau.anti_mon.client.activities;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -272,6 +274,7 @@ public class ActivityGameField extends AppCompatActivity {
         String resourceName = (prefix != null) ? prefix + fieldId : fieldId;
         return getResources().getIdentifier(resourceName, "id", getPackageName());
     }
+    AlertDialog.Builder builder;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNextPlayerEvent(NextPlayerEvent event) {
         Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
@@ -284,6 +287,17 @@ public class ActivityGameField extends AppCompatActivity {
             Dice.setEnabled(true);
             Button Finish = findViewById(R.id.btnFinish);
             Finish.setEnabled(true);
+            builder = new AlertDialog.Builder(this);
+            builder.setTitle("Notice")
+                    .setMessage("Its your turn")
+                    .setCancelable(true)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }).show();
+
         }
     }
     public void sendDice(int dice1, int dice2){
