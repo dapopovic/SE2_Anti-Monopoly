@@ -214,10 +214,15 @@ public class UserEventListener {
         Logger.info("Wir sind in FirstPlayerEventListener.");
         String username = event.getUsername();
         User user = userService.getUser(username);
+        HashSet<User> users = user.getLobby().getUsers();
         Logger.info("Wir haben die Nummer: "+ user.getSequence());
+        boolean First = false;
         if(user.getSequence() == 1){
             Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
-            JsonDataUtility.sendNextPlayer(event.getSession(),username);
+            First = true;
+            for (User u : users){
+                JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
+            }
         }
     }
 }

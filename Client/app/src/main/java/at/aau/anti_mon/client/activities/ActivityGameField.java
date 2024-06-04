@@ -263,11 +263,13 @@ public class ActivityGameField extends AppCompatActivity {
     public void onNextPlayerEvent(NextPlayerEvent event) {
         Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
         String username = event.getUsername();
-        ImageButton Dice = findViewById(R.id.btnDice);
-        Dice.setEnabled(true);
-        Button Finish = findViewById(R.id.btnFinish);
-        Finish.setEnabled(true);
-
+        Log.d("onNextPlayerEvent", "The next Player is: "+username);
+        if(username==currentUser.getUsername()){
+            ImageButton Dice = findViewById(R.id.btnDice);
+            Dice.setEnabled(true);
+            Button Finish = findViewById(R.id.btnFinish);
+            Finish.setEnabled(true);
+        }
     }
     public void sendDice(int dice1, int dice2){
         int dicenumber = dice1+dice2;
