@@ -77,6 +77,9 @@ public class ActivityGameField extends AppCompatActivity {
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
+        sendFirst();
+    }
+    private void sendFirst(){
         ImageButton Dice = findViewById(R.id.btnDice);
         Dice.setEnabled(false);
         Button Finish = findViewById(R.id.btnFinish);
