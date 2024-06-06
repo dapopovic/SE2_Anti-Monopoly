@@ -57,6 +57,25 @@ public class PopActivityDice extends Activity implements SensorEventListener {
         würfeln = true;
         dice1 = findViewById(R.id.dice1);
         dice2 = findViewById(R.id.dice2);
+        dice1.setEnabled(true);
+        dice2.setEnabled(true);
+
+        dice1.setOnClickListener(v -> {
+            würfeln = false;
+            Zahl1 = rolltheDice(dice1);
+            Zahl2 = rolltheDice(dice2);
+            dice1.setEnabled(false);
+            dice2.setEnabled(false);
+        });
+
+        dice2.setOnClickListener(v -> {
+            würfeln = false;
+            Zahl1 = rolltheDice(dice1);
+            Zahl2 = rolltheDice(dice2);
+            dice1.setEnabled(false);
+            dice2.setEnabled(false);
+        });
+
 
         // SensorManager und Beschleunigungssensor initialisieren
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -115,6 +134,9 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
             Log.d("SHAKE_EVENT", "Shake detected!");  // Log-Ausgabe zur Fehlerbehebung
             würfeln = false;
+            dice1.setEnabled(false);
+            dice2.setEnabled(false);
+
             Zahl1 = rolltheDice(dice1);
             Zahl2 = rolltheDice(dice2);
         }
