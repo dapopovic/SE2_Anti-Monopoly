@@ -147,7 +147,6 @@ public class ActivityGameField extends AppCompatActivity {
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onEndGame", "Send name:"+currentUser.getUsername());
-        //jsonDataDTO.putData("pin", pin);
         webSocketClient.sendJsonData(jsonDataDTO);
         Button Finish = findViewById(R.id.btnFinish);
         Finish.setEnabled(false);
@@ -282,7 +281,7 @@ public class ActivityGameField extends AppCompatActivity {
         String resourceName = (prefix != null) ? prefix + fieldId : fieldId;
         return getResources().getIdentifier(resourceName, "id", getPackageName());
     }
-    AlertDialog.Builder builder;
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNextPlayerEvent(NextPlayerEvent event) {
         Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
@@ -290,16 +289,7 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("onNextPlayerEvent", "The next Player is: "+username);
         Log.d("onNextPlayerEvent", "We are: "+currentUser.getUsername());
 
-        builder = new AlertDialog.Builder(this);
-        builder.setTitle("Notice")
-                .setMessage("Its player "+username+"'s turn.")
-                .setCancelable(true)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).show();
+        userAdapter.currentPlayer(username);
 
         if(Objects.equals(username, currentUser.getUsername())){
             Log.d("onNextPlayerEvent", "We are in the if");

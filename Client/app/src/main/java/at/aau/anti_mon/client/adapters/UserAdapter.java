@@ -42,6 +42,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         if (user.equals(currentUser)) {
             holder.itemView.setBackgroundColor(Color.parseColor("#ADD8E6"));
         }
+        if (user.isCurrentPlayer()){
+            holder.playerInfo.setTextColor(Color.parseColor("#FF0000"));
+        }
+        if (!user.isCurrentPlayer()){
+            holder.playerInfo.setTextColor(Color.parseColor("#000000"));
+        }
     }
 
     @Override
@@ -54,6 +60,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getUsername().equals(username)) {
                 users.get(i).setMoney(newMoney);
+                notifyItemChanged(i);  // Notify that the item at position i has changed
+                break;
+            }
+        }
+    }
+
+    public void currentPlayer(String username){
+        for (int i = 0; i < users.size(); i++) {
+            if(users.get(i).isCurrentPlayer()){
+                users.get(i).setCurrentPlayer(false);
+                notifyItemChanged(i);  // Notify that the item at position i has changed
+                break;
+            }
+        }
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
+                users.get(i).setCurrentPlayer(true);
                 notifyItemChanged(i);  // Notify that the item at position i has changed
                 break;
             }
