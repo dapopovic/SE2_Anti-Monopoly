@@ -57,6 +57,7 @@ public class ActivityGameField extends AppCompatActivity {
     RecyclerView recyclerView;
     User currentUser;
     String pin;
+    boolean doubleDice = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -142,6 +143,7 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onEndGame(View view) {
+        doubleDice = false;
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onEndGame", "Send name:"+currentUser.getUsername());
@@ -192,6 +194,12 @@ public class ActivityGameField extends AppCompatActivity {
                 Log.d("onActivityResult", "wurfel: " + wurfel);
 
                 if (wurfel){
+                    if(doubleDice){
+                        zahl2 = 0;
+                    }
+                    if(zahl1 == zahl2){
+                        doubleDice = true;
+                    }
                     if(zahl1!=zahl2){
                         ImageButton Dice = findViewById(R.id.btnDice);
                         Dice.setEnabled(false);
