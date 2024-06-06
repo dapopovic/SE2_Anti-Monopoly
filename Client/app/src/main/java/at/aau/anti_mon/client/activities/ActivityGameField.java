@@ -289,23 +289,24 @@ public class ActivityGameField extends AppCompatActivity {
         String username = event.getUsername();
         Log.d("onNextPlayerEvent", "The next Player is: "+username);
         Log.d("onNextPlayerEvent", "We are: "+currentUser.getUsername());
+
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("Notice")
+                .setMessage("Its player "+username+"'s turn.")
+                .setCancelable(true)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
+
         if(Objects.equals(username, currentUser.getUsername())){
             Log.d("onNextPlayerEvent", "We are in the if");
             ImageButton Dice = findViewById(R.id.btnDice);
             Dice.setEnabled(true);
             Button Finish = findViewById(R.id.btnFinish);
             Finish.setEnabled(true);
-            builder = new AlertDialog.Builder(this);
-            builder.setTitle("Notice")
-                    .setMessage("Its your turn")
-                    .setCancelable(true)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    }).show();
-
         }
     }
     public void sendDice(int dice1, int dice2){
