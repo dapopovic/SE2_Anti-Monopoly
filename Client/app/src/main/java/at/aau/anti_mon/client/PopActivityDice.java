@@ -114,16 +114,15 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             mShakeTimestamp = now;
 
             Log.d("SHAKE_EVENT", "Shake detected!");  // Log-Ausgabe zur Fehlerbehebung
-            rollTheDice1(dice1);
-            rollTheDice2(dice2);
             würfeln = false;
+            Zahl1 = rolltheDice(dice1);
+            Zahl2 = rolltheDice(dice2);
         }
     }
-
-    private void rollTheDice1(ImageView dice) {
-        Zahl1 = random.nextInt(6) + 1;
-        Log.i("ROLLING", String.valueOf(Zahl1));
-        switch (Zahl1) {
+    private int rolltheDice(ImageView dice){
+        int Zahl = random.nextInt(6) + 1;
+        Log.i("ROLLING", String.valueOf(Zahl));
+        switch (Zahl) {
             case 1:
                 dice.setImageResource(R.drawable.dice1);
                 break;
@@ -143,31 +142,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
                 dice.setImageResource(R.drawable.dice6);
                 break;
         }
-    }
-
-    private void rollTheDice2(ImageView dice) {
-        Zahl2 = random.nextInt(6) + 1;
-        Log.i("ROLLING", String.valueOf(Zahl2));
-        switch (Zahl2) {
-            case 1:
-                dice.setImageResource(R.drawable.dice1);
-                break;
-            case 2:
-                dice.setImageResource(R.drawable.dice2);
-                break;
-            case 3:
-                dice.setImageResource(R.drawable.dice3);
-                break;
-            case 4:
-                dice.setImageResource(R.drawable.dice4);
-                break;
-            case 5:
-                dice.setImageResource(R.drawable.dice5);
-                break;
-            case 6:
-                dice.setImageResource(R.drawable.dice6);
-                break;
-        }
+        return Zahl;
     }
 
     public void onX(View view) {
