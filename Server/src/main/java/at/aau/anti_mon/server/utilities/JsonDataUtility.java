@@ -141,4 +141,11 @@ public class JsonDataUtility {
         jsonData.putData("users", "[" + usersString + "]");
         send(sessionForUser, jsonData);
     }
+
+    public static void sendDiceNumber(WebSocketSession session, String username, String dicenumber){
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
+        jsonData.putData("username",username);
+        jsonData.putData("dicenumber",dicenumber);
+        send(session,jsonData);
+    }
 }

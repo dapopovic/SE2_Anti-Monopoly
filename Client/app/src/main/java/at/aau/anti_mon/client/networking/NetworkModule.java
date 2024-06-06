@@ -13,6 +13,7 @@ import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.CreateGameCommand;
+import at.aau.anti_mon.client.command.DiceNumberCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
@@ -123,6 +124,12 @@ public class NetworkModule {
     Command providePinCommand(PinCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey("DICENUMBER")
+    Command provideDiceNumberCommand(GlobalEventQueue queue){return new DiceNumberCommand(queue);}
+
 
     @Provides
     @IntoMap

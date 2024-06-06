@@ -114,7 +114,8 @@ public enum Commands {
 	*
 	*/
     READY("READY"),
-    START_GAME("START_GAME");
+    START_GAME("START_GAME"),
+    DICENUMBER("DICENUMBER");
 
     // usw
 

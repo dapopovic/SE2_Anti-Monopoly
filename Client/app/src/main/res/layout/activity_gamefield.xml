@@ -130,5 +130,14 @@
 
     </at.aau.anti_mon.client.activities.CustomViewGameField>
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onFigureMove"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:elevation="1dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
