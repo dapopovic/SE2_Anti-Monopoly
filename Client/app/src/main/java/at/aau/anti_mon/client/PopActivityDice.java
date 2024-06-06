@@ -1,25 +1,32 @@
 package at.aau.anti_mon.client;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.Random;
 
 import at.aau.anti_mon.client.activities.ActivityGameField;
 
-public class PopActivityDice extends Activity {
+public class PopActivityDice extends Activity implements SensorEventListener {
+
+    private static final float SHAKE_THRESHOLD = 1.5f;
+    private static final int SHAKE_SLOP_TIME_MS = 500;
+    private long mShakeTimestamp;
+
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
 
     ImageView dice1;
     ImageView dice2;
@@ -27,6 +34,8 @@ public class PopActivityDice extends Activity {
 
     int Zahl1 = 0;
     int Zahl2 = 0;
+    boolean würfeln = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,55 +52,72 @@ public class PopActivityDice extends Activity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width*.8),(int)(height*.8));
+        getWindow().setLayout((int)(width * .8), (int)(height * .8));
 
+        würfeln = true;
         dice1 = findViewById(R.id.dice1);
         dice2 = findViewById(R.id.dice2);
-        dice1.setEnabled(true);
-        dice2.setEnabled(true);
 
-        dice1.setOnClickListener(v -> {
-            rollTheDice1(dice1);
-            rollTheDice2(dice2);
-            dice1.setEnabled(false);
-            dice2.setEnabled(false);
-        });
+        // SensorManager und Beschleunigungssensor initialisieren
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        dice2.setOnClickListener(v -> {
-            rollTheDice1(dice1);
-            rollTheDice2(dice2);
-            dice1.setEnabled(false);
-            dice2.setEnabled(false);
-        });
+        if (accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        } else {
+            // Gerät hat keinen Beschleunigungssensor
+            Log.e("PopActivityDice", "No accelerometer found!");
+        }
     }
 
-    public void onX(View view) {
-        Log.d("onX", "I am in onX from PopActivityDice");
-        Intent resultIntent = new Intent();
-
-        if (Zahl1 != 0 && Zahl2 != 0) {
-            resultIntent.putExtra("zahl1", Zahl1);
-            resultIntent.putExtra("zahl2", Zahl2);
-            resultIntent.putExtra("Wurfel", true);
-        } else {
-            resultIntent.putExtra("Wurfel", false);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
         }
+    }
 
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (accelerometer != null) {
+            sensorManager.unregisterListener(this);
+        }
+    }
 
-        /*SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        if(Zahl1!=0 && Zahl2 !=0){
-            editor.putInt("zahl1", Zahl1);
-            editor.putInt("zahl2", Zahl2);
-            editor.putBoolean("Wurfel",true);
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && würfeln) {
+            handleShakeEvent(event.values);
         }
-        if(Zahl1==0 | Zahl2 ==0){
-            editor.putBoolean("Wurfel",false);
+    }
+
+    private void handleShakeEvent(float[] values) {
+        float x = values[0];
+        float y = values[1];
+        float z = values[2];
+
+        float gX = x / SensorManager.GRAVITY_EARTH;
+        float gY = y / SensorManager.GRAVITY_EARTH;
+        float gZ = z / SensorManager.GRAVITY_EARTH;
+
+        float gForce = (float) Math.sqrt(gX * gX + gY * gY + gZ * gZ);
+
+        Log.d("SHAKE_EVENT", "gForce: " + gForce);  // Log-Ausgabe zur Fehlerbehebung
+
+        if (gForce > SHAKE_THRESHOLD) {
+            final long now = System.currentTimeMillis();
+            if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
+                return;
+            }
+            mShakeTimestamp = now;
+
+            Log.d("SHAKE_EVENT", "Shake detected!");  // Log-Ausgabe zur Fehlerbehebung
+            rollTheDice1(dice1);
+            rollTheDice2(dice2);
+            würfeln = false;
         }
-        editor.apply();
-        finish();*/
     }
 
     private void rollTheDice1(ImageView dice) {
@@ -118,6 +144,7 @@ public class PopActivityDice extends Activity {
                 break;
         }
     }
+
     private void rollTheDice2(ImageView dice) {
         Zahl2 = random.nextInt(6) + 1;
         Log.i("ROLLING", String.valueOf(Zahl2));
@@ -141,5 +168,26 @@ public class PopActivityDice extends Activity {
                 dice.setImageResource(R.drawable.dice6);
                 break;
         }
+    }
+
+    public void onX(View view) {
+        Log.d("onX", "I am in onX from PopActivityDice");
+        Intent resultIntent = new Intent();
+
+        if (Zahl1 != 0 && Zahl2 != 0) {
+            resultIntent.putExtra("zahl1", Zahl1);
+            resultIntent.putExtra("zahl2", Zahl2);
+            resultIntent.putExtra("Wurfel", true);
+        } else {
+            resultIntent.putExtra("Wurfel", false);
+        }
+
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Ignorieren für diesen Fall
     }
 }
