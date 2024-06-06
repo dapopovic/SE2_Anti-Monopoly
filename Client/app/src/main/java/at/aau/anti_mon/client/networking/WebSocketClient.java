@@ -8,6 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.itkacher.okprofiler.BuildConfig;
+import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor;
+
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -47,7 +50,7 @@ public class WebSocketClient {
     /**
      * URL for testing connection to se2-server
      */
-    private static final String WEBSOCKET_URI = "http://se2-demo.aau.at:53215/game?userID="; // /game?userID=
+    private static final String WEBSOCKET_URI = "http://se2-demo.aau.at:53215/game?userID=";
 
     private WebSocket webSocket;
     private final OkHttpClient client;
@@ -61,11 +64,27 @@ public class WebSocketClient {
      */
     private final Queue<String> messageQueue = new LinkedList<>();
 
+
     @Inject
-    public WebSocketClient(OkHttpClient client, CommandFactory commandFactory) {
-        this.client = client;
+    public WebSocketClient(CommandFactory commandFactory) {
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(new OkHttpProfilerInterceptor());
+        }
+        this.client = builder.build();
+
         this.commandFactory = commandFactory;
+
+        // Todo: TEst
         //connectToServer(); // -> keine dauerhafte Verbindung
+        connectToServer(userID); // -> keine dauerhafte Verbindung
+
+
+        // TODO: Derzeit MUSS der WebSocketClient im Konstruktor entweder in MessageService oder nach altem Design in
+        // JsonDataManager initialisiert werden. Dies sollte in Zukunft durch Dagger erfolgen oder durch Nutzung eines besseren Designs?
+        MessagingService.initialize(this);
+        //JsonDataManager.initialize(this);
     }
 
     /**
@@ -201,13 +220,21 @@ public class WebSocketClient {
     /**
      * Disconnects the WebSocket connection
      */
-    public synchronized void disconnect() {
+    public synchronized void disconnect(String reason) {
         if (webSocket != null) {
-            webSocket.close(1000, "Client disconnected");
+            if (reason != null) {
+                webSocket.close(1000, reason);
+            } else {
+                webSocket.close(1000, "Client disconnected");
+            }
             webSocket = null;
             isConnected = false;
         }
     }
+    public synchronized void disconnect() {
+        disconnect(null);
+    }
+
 
     public void onOpen() {
         isConnected = true;
@@ -217,5 +244,23 @@ public class WebSocketClient {
     public void onClose() {
         isConnected = false;
         webSocket = null;
+    }
+
+    /**
+     * Restarts the WebSocket connection
+     */
+    public synchronized void restartConnection() {
+        disconnect("Client disconnected because of reconnection!"); // Disconnect if already connected
+        connectToServer(userID); // Reconnect
+    }
+
+    /**
+     * TODO: TEST !
+     * @param userID The user ID to set
+     */
+    public void setUserID(String userID){
+        this.userID = userID;
+        disconnect();
+        restartConnection();
     }
 }

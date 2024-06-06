@@ -12,6 +12,7 @@ import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.game.GameState;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +47,6 @@ public class GameFieldViewModel extends ViewModel {
     }
 
     public void leaveGame() {
-        JsonDataManager.createUserMessage(currentUser.getUsername(),pin, Commands.LEAVE_GAME).sendMessage();
+        MessagingService.createUserMessage(currentUser.getUsername(),pin, Commands.LEAVE_GAME).sendMessage();
     }
 }

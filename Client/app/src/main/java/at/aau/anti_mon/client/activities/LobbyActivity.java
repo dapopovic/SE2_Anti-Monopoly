@@ -41,6 +41,7 @@ import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
 
@@ -69,6 +70,7 @@ public class LobbyActivity extends AppCompatActivity {
     @Inject WebSocketClient webSocketClient;
     @Inject GlobalEventQueue globalEventQueue;
     @Inject LobbyViewModel lobbyViewModel;
+  //  @Inject JsonDataManager jsonDataManager;
 
 
     @Override
@@ -80,6 +82,13 @@ public class LobbyActivity extends AppCompatActivity {
         setupRecyclerView();
         processIntentAfterCreate();
         setupLiveDataObservers();
+    }
+
+    /**
+     *  Injects the dependencies
+     */
+    private void injectDependencies() {
+        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
     }
 
     private void initializeUI() {
@@ -201,14 +210,14 @@ public class LobbyActivity extends AppCompatActivity {
      * On ready button click send message to server
      */
     public void onReady(View view) {
-        JsonDataManager.createUserMessage(user.getUsername(), pin, Commands.READY).sendMessage();
+        MessagingService.createUserMessage(user.getUsername(), pin, Commands.READY).sendMessage();
     }
 
     /**
      * On start game button click send message to server
      */
     public void onStartGame(View view) {
-        JsonDataManager.createUserMessage(user.getUsername(), pin, Commands.START_GAME).sendMessage();
+        MessagingService.createUserMessage(user.getUsername(), pin, Commands.START_GAME).sendMessage();
     }
 
     public void onCancelLobby(View view) {
@@ -217,7 +226,7 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void leaveLobby() {
-        JsonDataManager.createUserMessage(user.getUsername(), pin, Commands.LEAVE_GAME).sendMessage();
+        MessagingService.createUserMessage(user.getUsername(), pin, Commands.LEAVE_GAME).sendMessage();
         leftLobby = true;
     }
 
@@ -234,9 +243,7 @@ public class LobbyActivity extends AppCompatActivity {
         jsonData.putData("msg", "PONG");
         String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonMessage);
-
     }
-
 
     @Override
     protected void onResume() {
@@ -244,9 +251,11 @@ public class LobbyActivity extends AppCompatActivity {
         if (gameStarted) {
             finish();
         }
+
         EventBus.getDefault().register(this);
         Log.d(DEBUG_TAG, "EventBus registered");
         globalEventQueue.setEventBusReady(true);
+
         if (webSocketClient != null) {
             webSocketClient.setUserID(user.getUsername());
             webSocketClient.connectToServer();
@@ -255,7 +264,6 @@ public class LobbyActivity extends AppCompatActivity {
             setupLiveDataObservers();
         }
     }
-
 
     @Override
     protected void onPause() {
@@ -272,6 +280,7 @@ public class LobbyActivity extends AppCompatActivity {
         if (webSocketClient != null && !gameStarted) {
             webSocketClient.disconnect();
         }
+
         EventBus.getDefault().unregister(this);
         Log.d(DEBUG_TAG, "EventBus unregistered");
         globalEventQueue.setEventBusReady(false);
@@ -292,11 +301,6 @@ public class LobbyActivity extends AppCompatActivity {
         MultiDex.install(this);
     }
 
-    /**
-     *  Injects the dependencies
-     */
-    private void injectDependencies() {
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
-    }
+
 
 }

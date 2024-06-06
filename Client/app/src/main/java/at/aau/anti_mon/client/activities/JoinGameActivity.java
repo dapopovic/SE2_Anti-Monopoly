@@ -14,12 +14,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.multidex.MultiDex;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class JoinGameActivity extends AppCompatActivity {
@@ -63,7 +67,20 @@ public class JoinGameActivity extends AppCompatActivity {
             pinEditText.setError("Pin is required");
         }
 
-        JsonDataManager.createUserMessage(username, pin, Commands.JOIN_GAME);
+
+        // TODO: Test of the new MessagingService
+        //JsonDataManager.createUserMessage(username, pin, Commands.JOIN).sendMessage();
+        MessagingService.createUserMessage(username, pin, Commands.JOIN).sendMessage();
+
+
+
+
+        //JsonDataDTO jsonData = new JsonDataDTO(Commands.JOIN, new HashMap<>());
+        //jsonData.putData("username", username);
+        //jsonData.putData("pin", pin);
+        //String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+        //webSocketClient.sendMessageToServer(jsonMessage);
+
 
         Intent intent = new Intent(this, LobbyActivity.class);
         intent.putExtra("username", username);

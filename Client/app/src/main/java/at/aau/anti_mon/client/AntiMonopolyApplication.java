@@ -3,7 +3,9 @@ package at.aau.anti_mon.client;
 import android.app.Application;
 
 import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;
+import at.aau.anti_mon.client.networking.WebSocketClient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,11 +25,20 @@ public class AntiMonopolyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-         appComponent = DaggerAppComponent.builder()
-                .application(this)
+        appComponent = DaggerAppComponent.builder()
+                .networkModule(new NetworkModule(this))
                 .build();
+        appComponent.inject(this);
         globalEventQueue = new GlobalEventQueue();
         globalEventQueue.setEventBusReady(true);
+
+        // Bitte noch nicht löschen, da es noch nicht klar ist, ob es noch benötigt wird.
+        // -> Design ohne MessagingService als Facade zwischen JsonDataManager und WebSocketClient
+        //JsonDataManager.initialize(appComponent.getWebSocketClient());
+    }
+
+    public WebSocketClient getWebSocketClient() {
+        return appComponent.getWebSocketClient();
     }
 
 }

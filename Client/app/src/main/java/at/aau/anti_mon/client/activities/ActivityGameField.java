@@ -46,7 +46,9 @@ public class ActivityGameField extends AppCompatActivity {
 
     // SparseArrayCompat für das Mapping von View-IDs zu Bild- und Textressourcen
     private SparseArrayCompat<int[]> resourceMap;
-    private GameController gameController;
+    @Inject  GameController gameController;
+    @Inject WebSocketClient webSocketClient;
+    //@Inject JsonDataManager jsonDataManager;
 
     /*
     private final int[] imageViewIds = {

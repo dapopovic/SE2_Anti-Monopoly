@@ -35,6 +35,7 @@ import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.networking.WebSocketClientListener;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
@@ -78,7 +79,7 @@ class WebSocketClientIntegrationTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        webSocketClient = new WebSocketClient(mockOkHttpClient, mockCommandFactory);
+        webSocketClient = new WebSocketClient( mockCommandFactory);
         webSocketClient.setConnected(true);
         webSocketClientListener = new WebSocketClientListener(webSocketClient);
 
@@ -119,7 +120,7 @@ class WebSocketClientIntegrationTest {
         verify(mockOkHttpClient).newWebSocket(any(Request.class), any(WebSocketClientListener.class));
 
         // Check Method 1 to send messages
-        String outgoingMessage = JsonDataManager.createUserMessage("testuser", Commands.CREATE_GAME).getMessage();
+        String outgoingMessage = MessagingService.createUserMessage("testuser", Commands.CREATE_GAME).getMessage();
         webSocketClient.sendMessageToServer(outgoingMessage);
         verify(mockWebSocket).send(outgoingMessage);
 
@@ -130,7 +131,7 @@ class WebSocketClientIntegrationTest {
         verify(mockWebSocket).send(outgoingMessage);
 
         // Check Method 3 to send messages
-        JsonDataManager.createUserMessage("testuser", Commands.CREATE_GAME).sendMessage();
+        MessagingService.createUserMessage("testuser", Commands.CREATE_GAME).sendMessage();
         verify(mockWebSocket).send(outgoingMessage);
     }
 
@@ -143,8 +144,8 @@ class WebSocketClientIntegrationTest {
         webSocketClient.connectToServer("testUser");
         verify(mockOkHttpClient).newWebSocket(any(Request.class), any(WebSocketClientListener.class));
 
-        String outgoingMessage = JsonDataManager.createUserMessage("testuser", Commands.CREATE_GAME).getMessage();
-        String incomingMessage = JsonDataManager.createUserMessage("1234", Commands.PIN).getMessage();
+        String outgoingMessage = MessagingService.createUserMessage("testuser", Commands.CREATE_GAME).getMessage();
+        String incomingMessage = MessagingService.createUserMessage("1234", Commands.PIN).getMessage();
 
         doAnswer((Answer<Void>) invocation -> {
             webSocketClientListener.onMessage(mockWebSocket, incomingMessage);
@@ -174,7 +175,7 @@ class WebSocketClientIntegrationTest {
     @Test
     void shouldHandleIncomingMessage() {
         webSocketClient.connectToServer("testUser");
-        String incomingMessage = JsonDataManager.createUserMessage("1234", Commands.PIN).getMessage();
+        String incomingMessage = MessagingService.createUserMessage("1234", Commands.PIN).getMessage();
         when(mockCommandFactory.getCommand(anyString())).thenReturn(mockCommand);
 
         webSocketClient.handleIncomingMessage(incomingMessage);
@@ -203,7 +204,7 @@ class WebSocketClientIntegrationTest {
      */
     @Test
     void shouldTriggerLiveDataEventCreateGameWhenMessageReceived() {
-        String incomingMessage = JsonDataManager.createUserMessage( "1234", Commands.PIN).getMessage();
+        String incomingMessage = MessagingService.createUserMessage( "1234", Commands.PIN).getMessage();
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.PIN);
         jsonDataDTO.putData("pin", "1234");
 
@@ -227,7 +228,7 @@ class WebSocketClientIntegrationTest {
      */
     @Test
     void testHeartBeatCommandReceivesHeartBeatEvent() {
-        String message = JsonDataManager.createMessage("test", Commands.HEARTBEAT).getMessage();
+        String message = MessagingService.createMessage("test", Commands.HEARTBEAT).getMessage();
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.HEARTBEAT);
         jsonDataDTO.putData("msg", "test");
         assertNotNull(message);
@@ -250,7 +251,7 @@ class WebSocketClientIntegrationTest {
      */
     @Test
     void testNewUserCommandShouldFireUserJoinedLobbyEvent() {
-        String message = JsonDataManager.createUserMessage("testUser", false, false, Commands.NEW_USER).getMessage();
+        String message = MessagingService.createUserMessage("testUser", false, false, Commands.NEW_USER).getMessage();
         assertNotNull(message);
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEW_USER);
         jsonDataDTO.putData("username", "testUser");
@@ -275,7 +276,7 @@ class WebSocketClientIntegrationTest {
      */
     @Test
     void testLeaveCommandShouldFireUserLeftLobbyEvent() {
-        String message = JsonDataManager.createUserMessage("testUser", Commands.LEAVE_GAME).getMessage();
+        String message = MessagingService.createUserMessage("testUser", Commands.LEAVE_GAME).getMessage();
         assertNotNull(message);
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LEAVE_GAME);
         jsonDataDTO.putData("username", "testUser");
@@ -303,7 +304,7 @@ class WebSocketClientIntegrationTest {
                 new User("testUser2", false, false, 1000)
         };
 
-        String message = JsonDataManager.createMessage("users",users,Commands.START_GAME).getMessage();
+        String message = MessagingService.createMessage("users",users,Commands.START_GAME).getMessage();
         assertNotNull(message);
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.START_GAME);
         jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
@@ -325,7 +326,7 @@ class WebSocketClientIntegrationTest {
      */
     @Test
     void testOnReadyCommandShouldFireReadyEvent() {
-        String message = JsonDataManager.createUserMessage("testUser",true, Commands.READY).getMessage();
+        String message = MessagingService.createUserMessage("testUser",true, Commands.READY).getMessage();
         assertNotNull(message);
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LEAVE_GAME);
         jsonDataDTO.putData("username", "testUser");

@@ -19,6 +19,7 @@ import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 
 /**
  * Unit tests for the JsonDataManager
@@ -28,7 +29,7 @@ class JsonDataManagerTest {
     @Test
     void createStringFromJsonMessageShouldReturnValidJson() {
 
-        String json = JsonDataManager.createUserMessage("test", Commands.NEW_USER).getMessage();
+        String json = MessagingService.createUserMessage("test", Commands.NEW_USER).getMessage();
         assert json != null;
         JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(json, JsonDataDTO.class);
 

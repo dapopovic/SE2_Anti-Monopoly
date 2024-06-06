@@ -10,6 +10,7 @@ import at.aau.anti_mon.client.activities.StartNewGameActivity;
 import at.aau.anti_mon.client.game.GameController;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import at.aau.anti_mon.client.networking.NetworkModule;
+import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.viewmodels.GameFieldViewModel;
 import dagger.BindsInstance;
 import dagger.Component;
@@ -38,14 +39,10 @@ public interface AppComponent {
 
     void inject(GameController gameController);
 
-    JsonDataManager getJsonDataManager();
+    void inject(JsonDataManager jsonDataManager);
 
+    WebSocketClient getWebSocketClient();
 
-    @Component.Builder
-    interface Builder {
-        AppComponent build();
-        @BindsInstance
-        Builder networkModule(NetworkModule networkModule);
-    }
+    //JsonDataManager getJsonDataManager();
 
 }

@@ -58,26 +58,22 @@ public class NetworkModule {
         return application;
     }
 
+    //@Provides
+    //@Singleton
+    //JsonDataManager provideJsonDataManager(WebSocketClient webSocketClient) {
+    //    return new JsonDataManager(webSocketClient);
+    //}
+
     @Provides
     @Singleton
-    JsonDataManager provideJsonDataManager(WebSocketClient webSocketClient) {
-        return new JsonDataManager(webSocketClient);
+    WebSocketClient provideWebSocketClient(CommandFactory commandFactory) {
+        return new WebSocketClient( commandFactory);
     }
 
     @Provides
     @Singleton
-    public static OkHttpClient provideOkHttpClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(new OkHttpProfilerInterceptor());
-        }
-        return builder.build();
-    }
-
-    @Provides
-    @Singleton
-    WebSocketClient provideWebSocketClient(OkHttpClient client, CommandFactory commandFactory) {
-        return new WebSocketClient(client, commandFactory);
+    MessagingService provideMessagingService(WebSocketClient webSocketClient) {
+        return new MessagingService(webSocketClient);
     }
 
     @Provides
@@ -159,7 +155,7 @@ public class NetworkModule {
 
     @Provides
     @IntoMap
-    @StringKey("JOIN_GAME")
+    @StringKey("JOIN")
     Command provideJoinGameCommand(JoinGameCommand command) {
         return command;
     }

@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.command.Commands;
-import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 
@@ -33,6 +33,7 @@ public class StartNewGameActivity extends AppCompatActivity {
 
     @Inject  WebSocketClient webSocketClient;
     @Inject  CreateGameViewModel createGameViewModel;
+   // @Inject  JsonDataManager jsonDataManager;
     EditText usernameEditText;
     String pin;
 
@@ -47,13 +48,17 @@ public class StartNewGameActivity extends AppCompatActivity {
         setupLiveDataObservers();
     }
 
+    private void initializeUI() {
+        usernameEditText = findViewById(R.id.username);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), this::applyWindowInsets);
+    }
+
     private void injectDependencies() {
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
     }
 
-    private void initializeUI() {
-        usernameEditText = findViewById(R.id.username);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), this::applyWindowInsets);
+    private void setupLiveDataObservers() {
+        createGameViewModel.getPinLiveData().observe(this, this::onPinReceived);
     }
 
     private WindowInsetsCompat applyWindowInsets(View v, WindowInsetsCompat insets) {
@@ -62,9 +67,6 @@ public class StartNewGameActivity extends AppCompatActivity {
         return insets;
     }
 
-    private void setupLiveDataObservers() {
-        createGameViewModel.getPinLiveData().observe(this, this::onPinReceived);
-    }
     private void removeObservers() {
         createGameViewModel.getPinLiveData().removeObservers(this);
         createGameViewModel.getPinLiveData().setPending(false);
@@ -83,7 +85,7 @@ public class StartNewGameActivity extends AppCompatActivity {
             return;
         }
 
-        JsonDataManager.createUserMessage(username, Commands.CREATE_GAME).sendMessage();
+        MessagingService.createUserMessage(username, Commands.CREATE_GAME).sendMessage();
 
         if (!webSocketClient.isConnected()) {
             Toast toast = Toast.makeText(this, "No connection to server", Toast.LENGTH_SHORT);
