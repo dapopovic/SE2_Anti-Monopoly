@@ -1,5 +1,6 @@
 package at.aau.anti_mon.client;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,12 +32,14 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
     ImageView dice1;
     ImageView dice2;
+    TextView TouchorShake;
     Random random = new Random();
 
     int Zahl1 = 0;
     int Zahl2 = 0;
     boolean würfeln = true;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,9 @@ public class PopActivityDice extends Activity implements SensorEventListener {
         dice2 = findViewById(R.id.dice2);
         dice1.setEnabled(true);
         dice2.setEnabled(true);
+        TouchorShake = findViewById(R.id.txtTouchorShake);
+        TouchorShake.setVisibility(View.VISIBLE);
+
 
         dice1.setOnClickListener(v -> {
             würfeln = false;
@@ -66,6 +73,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             Zahl2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
+            TouchorShake.setVisibility(View.INVISIBLE);
         });
 
         dice2.setOnClickListener(v -> {
@@ -74,8 +82,17 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             Zahl2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
+            TouchorShake.setVisibility(View.INVISIBLE);
         });
 
+        TouchorShake.setOnClickListener(v -> {
+            würfeln = false;
+            Zahl1 = rolltheDice(dice1);
+            Zahl2 = rolltheDice(dice2);
+            dice1.setEnabled(false);
+            dice2.setEnabled(false);
+            TouchorShake.setVisibility(View.INVISIBLE);
+        });
 
         // SensorManager und Beschleunigungssensor initialisieren
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -136,6 +153,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             würfeln = false;
             dice1.setEnabled(false);
             dice2.setEnabled(false);
+            TouchorShake.setVisibility(View.INVISIBLE);
 
             Zahl1 = rolltheDice(dice1);
             Zahl2 = rolltheDice(dice2);

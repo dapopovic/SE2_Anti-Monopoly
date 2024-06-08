@@ -5,6 +5,7 @@ import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -86,8 +87,10 @@ public class ActivityGameField extends AppCompatActivity {
     private void sendFirst(){
         ImageButton Dice = findViewById(R.id.btnDice);
         Dice.setEnabled(false);
+        Dice.setBackgroundColor(Color.parseColor("#6C757D"));
         Button Finish = findViewById(R.id.btnFinish);
         Finish.setEnabled(false);
+        Finish.setBackgroundColor(Color.parseColor("#6C757D"));
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
@@ -150,6 +153,7 @@ public class ActivityGameField extends AppCompatActivity {
         webSocketClient.sendJsonData(jsonDataDTO);
         Button Finish = findViewById(R.id.btnFinish);
         Finish.setEnabled(false);
+        Finish.setBackgroundColor(Color.parseColor("#6C757D"));
     }
 
     @Override
@@ -202,6 +206,10 @@ public class ActivityGameField extends AppCompatActivity {
                     if(zahl1!=zahl2){
                         ImageButton Dice = findViewById(R.id.btnDice);
                         Dice.setEnabled(false);
+                        Dice.setBackgroundColor(Color.parseColor("#6C757D"));
+                        Button Finish = findViewById(R.id.btnFinish);
+                        Finish.setEnabled(true);
+                        Finish.setBackgroundColor(Color.parseColor("#DC3545"));
                     }
                     sendDice(zahl1,zahl2);
                 }
@@ -295,8 +303,9 @@ public class ActivityGameField extends AppCompatActivity {
             Log.d("onNextPlayerEvent", "We are in the if");
             ImageButton Dice = findViewById(R.id.btnDice);
             Dice.setEnabled(true);
-            Button Finish = findViewById(R.id.btnFinish);
-            Finish.setEnabled(true);
+            Dice.setBackgroundColor(Color.parseColor("#28A745"));
+            //Button Finish = findViewById(R.id.btnFinish);
+            //Finish.setEnabled(true);
         }
     }
     public void sendDice(int dice1, int dice2){
