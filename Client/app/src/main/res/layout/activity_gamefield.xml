@@ -22,6 +22,7 @@
         android:elevation="1dp"
         android:onClick="onFigureMove"
         android:src="@drawable/dice"
+        android:backgroundTint="@color/grün"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
