@@ -3,9 +3,12 @@ package at.aau.anti_mon.client.activities;
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,11 +26,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.PopActivityDice;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
@@ -35,6 +40,7 @@ import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -42,12 +48,14 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
+    private static final int REQUEST_CODE_POP_ACTIVITY_DICE = 1;
     private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
     User currentUser;
     String pin;
+    boolean doubledice = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -70,6 +78,20 @@ public class ActivityGameField extends AppCompatActivity {
         random = new Random();
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+
+        sendfirst();
+    }
+    private void sendfirst(){
+        ImageButton dice = findViewById(R.id.btndice);
+        dice.setEnabled(false);
+        dice.setBackgroundColor(Color.parseColor("#6C757D"));
+        Button finish = findViewById(R.id.btnfinish);
+        finish.setEnabled(false);
+        finish.setBackgroundColor(Color.parseColor("#6C757D"));
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
+        jsonDataDTO.putData("username", currentUser.getUsername());
+        Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
+        webSocketClient.sendJsonData(jsonDataDTO);
     }
 
     private void initUI() {
@@ -121,12 +143,14 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onEndGame(View view) {
-        // only for now, because the server does not support END_GAME yet
-        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
+        doubledice = false;
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
-        jsonDataDTO.putData("pin", pin);
+        Log.d("onEndGame", "Send name:"+currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
-        finish();
+        Button finish = findViewById(R.id.btnfinish);
+        finish.setEnabled(false);
+        finish.setBackgroundColor(Color.parseColor("#6C757D"));
     }
 
     @Override
@@ -138,6 +162,10 @@ public class ActivityGameField extends AppCompatActivity {
 
         queue.setEventBusReady(true);
     }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 
     @Override
     protected void onStop() {
@@ -146,16 +174,44 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onFigureMove(View view) {
-        int randomNumber = random.nextInt(11) + 2;
-        String dice = String.valueOf(randomNumber);
-        String user = currentUser.getUsername();
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
-        jsonData.putData("dicenumber", dice);
-        jsonData.putData("username", user);
-        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
-        webSocketClient.sendMessageToServer(jsonDataString);
-        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
+        Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
+        //startActivity(i);
+        startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult", "I am in onActivityResult");
+        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
+            if (data != null) {
+                int number1 = data.getIntExtra("zahl1", 0);
+                int number2 = data.getIntExtra("zahl2", 0);
+                boolean wurfel = data.getBooleanExtra("Wurfel", false);
 
+                // Verarbeite die empfangenen Daten
+                Log.d("onActivityResult", "zahl1: " + number1);
+                Log.d("onActivityResult", "zahl2: " + number2);
+                Log.d("onActivityResult", "wurfel: " + wurfel);
+
+                if (wurfel){
+                    if(doubledice){
+                        number2 = 0;
+                    }
+                    if(number1 == number2){
+                        doubledice = true;
+                    }
+                    if(number1!=number2){
+                        ImageButton dice = findViewById(R.id.btndice);
+                        dice.setEnabled(false);
+                        dice.setBackgroundColor(Color.parseColor("#6C757D"));
+                        Button finish = findViewById(R.id.btnfinish);
+                        finish.setEnabled(true);
+                        finish.setBackgroundColor(Color.parseColor("#DC3545"));
+                    }
+                    sendDice(number1,number2);
+                }
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -229,5 +285,35 @@ public class ActivityGameField extends AppCompatActivity {
     public int getID(String fieldId, String prefix) {
         String resourceName = (prefix != null) ? prefix + fieldId : fieldId;
         return getResources().getIdentifier(resourceName, "id", getPackageName());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNextPlayerEvent(NextPlayerEvent event) {
+        Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
+        String username = event.getUsername();
+        Log.d("onNextPlayerEvent", "The next Player is: "+username);
+        Log.d("onNextPlayerEvent", "We are: "+currentUser.getUsername());
+
+        userAdapter.currentPlayer(username);
+
+        if(Objects.equals(username, currentUser.getUsername())){
+            Log.d("onNextPlayerEvent", "We are in the if");
+            ImageButton dice = findViewById(R.id.btndice);
+            dice.setEnabled(true);
+            dice.setBackgroundColor(Color.parseColor("#28A745"));
+            //Button Finish = findViewById(R.id.btnFinish);
+            //Finish.setEnabled(true);
+        }
+    }
+    public void sendDice(int dice1, int dice2){
+        int dicenumber = dice1+dice2;
+        String dice = String.valueOf(dicenumber);
+        String user = currentUser.getUsername();
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
+        jsonData.putData("dicenumber", dice);
+        jsonData.putData("username", user);
+        String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
+        webSocketClient.sendMessageToServer(jsonDataString);
+        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
     }
 }

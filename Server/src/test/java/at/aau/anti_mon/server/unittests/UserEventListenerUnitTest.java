@@ -249,4 +249,44 @@ class UserEventListenerUnitTest {
         verify(sessionManagementService).getSessionForUser("Julia");
         verify(user).setMoney(1700);
     }
+
+    @Test
+    void onFirstPlayerEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+        WebSocketSession session = mock(WebSocketSession.class);
+        FirstPlayerEvent event = new FirstPlayerEvent(session,"user1");
+        Lobby lobby = mock(Lobby.class);
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user1");
+        when(user.getLobby()).thenReturn(lobby);
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+        when(lobby.getUsers()).thenReturn(users);
+        when(userService.getUser("user1")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(user.getSequence()).thenReturn(1);
+
+        assertDoesNotThrow(() -> userEventListener.onFirstPlayerEvent(event));
+        verify(userService).getUser("user1");
+        verify(sessionManagementService).getSessionForUser("user1");
+    }
+
+    @Test
+    void onNextPlayerEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+        WebSocketSession session = mock(WebSocketSession.class);
+        NextPlayerEvent event = new NextPlayerEvent(session,"user1");
+        Lobby lobby = mock(Lobby.class);
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user1");
+        when(user.getLobby()).thenReturn(lobby);
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+        when(lobby.getUsers()).thenReturn(users);
+        when(userService.getUser("user1")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(user.getSequence()).thenReturn(1);
+
+        assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
+        verify(userService).getUser("user1");
+        verify(sessionManagementService).getSessionForUser("user1");
+    }
 }

@@ -193,6 +193,38 @@ public class UserEventListener {
         }
     }
 
+    @EventListener
+    public void onNextPlayerEvent(NextPlayerEvent event) throws UserNotFoundException {
+        Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        int sequence = user.getSequence();
+        HashSet<User> users = user.getLobby().getUsers();
+        int playernumber = users.size();
+        if(sequence==playernumber){sequence=0;}
+        sequence++;
 
-
+        int finalSequence = sequence;
+        User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
+        Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
+        for (User u : users) {
+            JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
+        }
+    }
+    @EventListener
+    public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException{
+        Logger.info("Wir sind in FirstPlayerEventListener.");
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        HashSet<User> users = user.getLobby().getUsers();
+        Logger.info("Wir haben die Nummer: "+ user.getSequence());
+        boolean First = false;
+        if(user.getSequence() == 1){
+            Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
+            First = true;
+            for (User u : users){
+                JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
+            }
+        }
+    }
 }

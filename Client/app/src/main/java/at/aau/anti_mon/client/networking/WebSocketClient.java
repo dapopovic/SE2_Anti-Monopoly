@@ -46,7 +46,7 @@ public class WebSocketClient {
     /**
      * URL for testing connection to se2-server
      */
-//    private static final String BASE_WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
+   //private static final String WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
 
     @Getter
     @Setter
