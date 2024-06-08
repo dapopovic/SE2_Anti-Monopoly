@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
+import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.DiceNumberCommand;
@@ -25,6 +26,7 @@ import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -197,4 +199,14 @@ class CommandsTest {
         verify(queue).enqueueEvent(any(ChangeBalanceEvent.class));
     }
 
+    @Test
+    void NextPlayerCommandEvent(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.NEXT_PLAYER);
+        jsonDataDTO.putData("username", "user1");
+        assertEquals(Commands.NEXT_PLAYER, jsonDataDTO.getCommand());
+        NextPlayerCommand nextPlayerCommand = new NextPlayerCommand(queue);
+        nextPlayerCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(NextPlayerEvent.class));
+    }
 }
