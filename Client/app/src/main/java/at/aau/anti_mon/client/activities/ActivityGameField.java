@@ -2,9 +2,7 @@ package at.aau.anti_mon.client.activities;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -85,10 +82,10 @@ public class ActivityGameField extends AppCompatActivity {
         sendfirst();
     }
     private void sendfirst(){
-        ImageButton dice = findViewById(R.id.btnDice);
+        ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
         dice.setBackgroundColor(Color.parseColor("#6C757D"));
-        Button finish = findViewById(R.id.btnFinish);
+        Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
         finish.setBackgroundColor(Color.parseColor("#6C757D"));
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
@@ -146,12 +143,12 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void onEndGame(View view) {
-        doubleDice = false;
+        doubledice = false;
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onEndGame", "Send name:"+currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
-        Button finish = findViewById(R.id.btnFinish);
+        Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
         finish.setBackgroundColor(Color.parseColor("#6C757D"));
     }
@@ -204,10 +201,10 @@ public class ActivityGameField extends AppCompatActivity {
                         doubledice = true;
                     }
                     if(number1!=number2){
-                        ImageButton dice = findViewById(R.id.btnDice);
+                        ImageButton dice = findViewById(R.id.btndice);
                         dice.setEnabled(false);
                         dice.setBackgroundColor(Color.parseColor("#6C757D"));
-                        Button finish = findViewById(R.id.btnFinish);
+                        Button finish = findViewById(R.id.btnfinish);
                         finish.setEnabled(true);
                         finish.setBackgroundColor(Color.parseColor("#DC3545"));
                     }
@@ -301,7 +298,7 @@ public class ActivityGameField extends AppCompatActivity {
 
         if(Objects.equals(username, currentUser.getUsername())){
             Log.d("onNextPlayerEvent", "We are in the if");
-            ImageButton dice = findViewById(R.id.btnDice);
+            ImageButton dice = findViewById(R.id.btndice);
             dice.setEnabled(true);
             dice.setBackgroundColor(Color.parseColor("#28A745"));
             //Button Finish = findViewById(R.id.btnFinish);

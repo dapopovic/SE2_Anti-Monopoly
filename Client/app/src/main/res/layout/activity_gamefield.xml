@@ -16,7 +16,7 @@
         app:layout_constraintGuide_percent="0.8098495" />
 
     <ImageButton
-        android:id="@+id/btnDice"
+        android:id="@+id/btndice"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="1dp"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/btnObjects"
+        android:id="@+id/btnobjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onObjects"
@@ -44,7 +44,7 @@
         android:elevation="1dp"/>
 
     <ImageButton
-        android:id="@+id/btnHandel"
+        android:id="@+id/btnhandel"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onHandel"
@@ -59,7 +59,7 @@
         android:elevation="1dp"/>
 
     <ImageButton
-        android:id="@+id/btnSettings"
+        android:id="@+id/btnsettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onSettings"
@@ -75,7 +75,7 @@
         />
 
     <Button
-        android:id="@+id/btnFinish"
+        android:id="@+id/btnfinish"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onEndGame"
