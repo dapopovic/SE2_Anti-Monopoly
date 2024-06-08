@@ -203,10 +203,11 @@ public class UserEventListener {
         int playernumber = users.size();
         if(sequence==playernumber){sequence=0;}
         sequence++;
+
+        int finalSequence = sequence;
+        User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
         for (User u : users) {
-            if(u.getSequence() == sequence){
-                JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), u.getName());
-            }
+            JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
     }
     @EventListener
