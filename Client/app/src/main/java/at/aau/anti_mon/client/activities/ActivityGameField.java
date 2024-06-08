@@ -58,7 +58,7 @@ public class ActivityGameField extends AppCompatActivity {
     RecyclerView recyclerView;
     User currentUser;
     String pin;
-    boolean doubleDice = false;
+    boolean doubledice = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -82,15 +82,15 @@ public class ActivityGameField extends AppCompatActivity {
 
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
-        sendFirst();
+        sendfirst();
     }
-    private void sendFirst(){
-        ImageButton Dice = findViewById(R.id.btnDice);
-        Dice.setEnabled(false);
-        Dice.setBackgroundColor(Color.parseColor("#6C757D"));
-        Button Finish = findViewById(R.id.btnFinish);
-        Finish.setEnabled(false);
-        Finish.setBackgroundColor(Color.parseColor("#6C757D"));
+    private void sendfirst(){
+        ImageButton dice = findViewById(R.id.btnDice);
+        dice.setEnabled(false);
+        dice.setBackgroundColor(Color.parseColor("#6C757D"));
+        Button finish = findViewById(R.id.btnFinish);
+        finish.setEnabled(false);
+        finish.setBackgroundColor(Color.parseColor("#6C757D"));
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
@@ -151,9 +151,9 @@ public class ActivityGameField extends AppCompatActivity {
         jsonDataDTO.putData("username", currentUser.getUsername());
         Log.d("onEndGame", "Send name:"+currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
-        Button Finish = findViewById(R.id.btnFinish);
-        Finish.setEnabled(false);
-        Finish.setBackgroundColor(Color.parseColor("#6C757D"));
+        Button finish = findViewById(R.id.btnFinish);
+        finish.setEnabled(false);
+        finish.setBackgroundColor(Color.parseColor("#6C757D"));
     }
 
     @Override
@@ -187,31 +187,31 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("onActivityResult", "I am in onActivityResult");
         if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
             if (data != null) {
-                int zahl1 = data.getIntExtra("zahl1", 0);
-                int zahl2 = data.getIntExtra("zahl2", 0);
+                int number1 = data.getIntExtra("zahl1", 0);
+                int number2 = data.getIntExtra("zahl2", 0);
                 boolean wurfel = data.getBooleanExtra("Wurfel", false);
 
                 // Verarbeite die empfangenen Daten
-                Log.d("onActivityResult", "zahl1: " + zahl1);
-                Log.d("onActivityResult", "zahl2: " + zahl2);
+                Log.d("onActivityResult", "zahl1: " + number1);
+                Log.d("onActivityResult", "zahl2: " + number2);
                 Log.d("onActivityResult", "wurfel: " + wurfel);
 
                 if (wurfel){
-                    if(doubleDice){
-                        zahl2 = 0;
+                    if(doubledice){
+                        number2 = 0;
                     }
-                    if(zahl1 == zahl2){
-                        doubleDice = true;
+                    if(number1 == number2){
+                        doubledice = true;
                     }
-                    if(zahl1!=zahl2){
-                        ImageButton Dice = findViewById(R.id.btnDice);
-                        Dice.setEnabled(false);
-                        Dice.setBackgroundColor(Color.parseColor("#6C757D"));
-                        Button Finish = findViewById(R.id.btnFinish);
-                        Finish.setEnabled(true);
-                        Finish.setBackgroundColor(Color.parseColor("#DC3545"));
+                    if(number1!=number2){
+                        ImageButton dice = findViewById(R.id.btnDice);
+                        dice.setEnabled(false);
+                        dice.setBackgroundColor(Color.parseColor("#6C757D"));
+                        Button finish = findViewById(R.id.btnFinish);
+                        finish.setEnabled(true);
+                        finish.setBackgroundColor(Color.parseColor("#DC3545"));
                     }
-                    sendDice(zahl1,zahl2);
+                    sendDice(number1,number2);
                 }
             }
         }
@@ -301,9 +301,9 @@ public class ActivityGameField extends AppCompatActivity {
 
         if(Objects.equals(username, currentUser.getUsername())){
             Log.d("onNextPlayerEvent", "We are in the if");
-            ImageButton Dice = findViewById(R.id.btnDice);
-            Dice.setEnabled(true);
-            Dice.setBackgroundColor(Color.parseColor("#28A745"));
+            ImageButton dice = findViewById(R.id.btnDice);
+            dice.setEnabled(true);
+            dice.setBackgroundColor(Color.parseColor("#28A745"));
             //Button Finish = findViewById(R.id.btnFinish);
             //Finish.setEnabled(true);
         }

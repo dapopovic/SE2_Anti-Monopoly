@@ -15,11 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.Random;
-
-import at.aau.anti_mon.client.activities.ActivityGameField;
 
 public class PopActivityDice extends Activity implements SensorEventListener {
 
@@ -32,12 +28,12 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
     ImageView dice1;
     ImageView dice2;
-    TextView TouchorShake;
+    TextView touchorshake;
     Random random = new Random();
 
     int Zahl1 = 0;
     int Zahl2 = 0;
-    boolean würfeln = true;
+    boolean rolldice = true;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -58,40 +54,40 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
         getWindow().setLayout((int)(width * .8), (int)(height * .8));
 
-        würfeln = true;
+        rolldice = true;
         dice1 = findViewById(R.id.dice1);
         dice2 = findViewById(R.id.dice2);
         dice1.setEnabled(true);
         dice2.setEnabled(true);
-        TouchorShake = findViewById(R.id.txtTouchorShake);
-        TouchorShake.setVisibility(View.VISIBLE);
+        touchorshake = findViewById(R.id.txtTouchorShake);
+        touchorshake.setVisibility(View.VISIBLE);
 
 
         dice1.setOnClickListener(v -> {
-            würfeln = false;
+            rolldice = false;
             Zahl1 = rolltheDice(dice1);
             Zahl2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
-            TouchorShake.setVisibility(View.INVISIBLE);
+            touchorshake.setVisibility(View.INVISIBLE);
         });
 
         dice2.setOnClickListener(v -> {
-            würfeln = false;
+            rolldice = false;
             Zahl1 = rolltheDice(dice1);
             Zahl2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
-            TouchorShake.setVisibility(View.INVISIBLE);
+            touchorshake.setVisibility(View.INVISIBLE);
         });
 
-        TouchorShake.setOnClickListener(v -> {
-            würfeln = false;
+        touchorshake.setOnClickListener(v -> {
+            rolldice = false;
             Zahl1 = rolltheDice(dice1);
             Zahl2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
-            TouchorShake.setVisibility(View.INVISIBLE);
+            touchorshake.setVisibility(View.INVISIBLE);
         });
 
         // SensorManager und Beschleunigungssensor initialisieren
@@ -124,7 +120,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && würfeln) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && rolldice) {
             handleShakeEvent(event.values);
         }
     }
@@ -150,19 +146,19 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             mShakeTimestamp = now;
 
             Log.d("SHAKE_EVENT", "Shake detected!");  // Log-Ausgabe zur Fehlerbehebung
-            würfeln = false;
+            rolldice = false;
             dice1.setEnabled(false);
             dice2.setEnabled(false);
-            TouchorShake.setVisibility(View.INVISIBLE);
+            touchorshake.setVisibility(View.INVISIBLE);
 
             Zahl1 = rolltheDice(dice1);
             Zahl2 = rolltheDice(dice2);
         }
     }
     private int rolltheDice(ImageView dice){
-        int Zahl = random.nextInt(6) + 1;
-        Log.i("ROLLING", String.valueOf(Zahl));
-        switch (Zahl) {
+        int number = random.nextInt(6) + 1;
+        Log.i("ROLLING", String.valueOf(number));
+        switch (number) {
             case 1:
                 dice.setImageResource(R.drawable.dice1);
                 break;
@@ -182,7 +178,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
                 dice.setImageResource(R.drawable.dice6);
                 break;
         }
-        return Zahl;
+        return number;
     }
 
     public void onX(View view) {
