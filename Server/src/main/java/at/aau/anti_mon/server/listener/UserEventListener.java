@@ -206,6 +206,7 @@ public class UserEventListener {
 
         int finalSequence = sequence;
         User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
+        Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
