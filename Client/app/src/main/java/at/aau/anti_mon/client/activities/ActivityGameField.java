@@ -160,9 +160,7 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
-
         Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent");
-
 
         JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
         jsonData.putData("msg", "PONG");
@@ -187,33 +185,15 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBalanceChangeReceivedEvent(ChangeBalanceEvent event) {
-        int new_balance = event.getBalance();
+        int newBalance = event.getBalance();
         String username = event.getUsername();
-        Log.d("Update_balance", String.valueOf(new_balance));
-        userAdapter.updateUserMoney(username, new_balance);
+        Log.d("Update_balance", String.valueOf(newBalance));
+        userAdapter.updateUserMoney(username, newBalance);
     }
 
     private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
         for (int i = 1; i <= diceNumber; i++) {
-            if (location == MAX_FIELD_COUNT) {
-                location = 0;
-                // increase here the balance on bank account on 100 Euro
-                if (username.equals(currentUser.getUsername())) {
-                    int new_balance;
-                    if (i == diceNumber) {
-                        new_balance = currentUser.getMoney() + 200;
-                    }
-                    else {
-                        new_balance = currentUser.getMoney() + 100;
-                    }
-                    JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-                    jsonData.putData("new_balance", String.valueOf(new_balance));
-                    jsonData.putData("username", currentUser.getUsername());
-                    String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
-                    webSocketClient.sendMessageToServer(jsonMessage);
-                }
-
-            }
+            if (location == MAX_FIELD_COUNT) location = 0;
             location++;
             Log.d("moveFigure", "location: " + location);
             ImageView field = findViewById(getID(String.valueOf(location), "field"));

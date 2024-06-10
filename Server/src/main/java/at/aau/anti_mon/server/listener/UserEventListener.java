@@ -29,6 +29,7 @@ public class UserEventListener {
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
+    private static final int CHANGE_BALANCE = 100;
 
     /**
      * Konstruktor für UserEventListener
@@ -169,14 +170,23 @@ public class UserEventListener {
         int location = user.getLocation();
         int nextlocation = location + dicenumber;
 
+        int newBalance = user.getMoney();
         if (nextlocation > 40) {
             nextlocation = nextlocation - 40;
+            newBalance += CHANGE_BALANCE;
+        }
+        if (nextlocation == 1) {
+            dicenumber += CHANGE_BALANCE;
         }
         if (nextlocation == 31) {
             dicenumber += 20;
             nextlocation = 11;
         }
         user.setLocation(nextlocation);
+
+        if (newBalance != user.getMoney()) {
+            balanceChangedEvent(new ChangeBalanceEvent(sessionManagementService.getSessionForUser(username), username, newBalance));
+        }
 
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
@@ -187,13 +197,13 @@ public class UserEventListener {
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
         String username = event.getUsername();
-        Integer new_balance = event.getNewBalance();
+        int newBalance = event.getNewBalance();
 
         User user = userService.getUser(username);
-        user.setMoney(new_balance);
+        user.setMoney(newBalance);
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
-            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, new_balance);
+            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, newBalance);
         }
     }
 
