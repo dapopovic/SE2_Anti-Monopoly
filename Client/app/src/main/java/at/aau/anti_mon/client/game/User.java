@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.jbosslog.JBossLog;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +25,8 @@ public class User {
     private Roles role;
     @Setter
     private Figures figure;
+    @Setter
+    private boolean currentPlayer;
 
     public User(String username, boolean isOwner, boolean isReady) {
         this.username = username;
@@ -32,6 +35,7 @@ public class User {
         this.money = 1500;
         this.role = null;
         this.figure = null;
+        this.currentPlayer=false;
     }
 
     @Override

@@ -70,4 +70,22 @@ class EventUnitTest {
 
         assertEquals("session1", event.getSession().getId());
     }
+
+    @Test
+    void nextPlayerEventShouldReturnCorrectValues() {
+        when(session.getId()).thenReturn("session1");
+        String username = "user1";
+        NextPlayerEvent event = new NextPlayerEvent(session,username);
+        assertEquals("session1", event.getSession().getId());
+        assertEquals("user1", event.getUsername());
+    }
+
+    @Test
+    void firstPlayerEventShouldReturnCorrectValues() {
+        when(session.getId()).thenReturn("session1");
+        String username = "user1";
+        FirstPlayerEvent event = new FirstPlayerEvent(session,username);
+        assertEquals("session1", event.getSession().getId());
+        assertEquals("user1", event.getUsername());
+    }
 }

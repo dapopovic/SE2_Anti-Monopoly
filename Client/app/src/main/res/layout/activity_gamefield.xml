@@ -16,24 +16,26 @@
         app:layout_constraintGuide_percent="0.8098495" />
 
     <ImageButton
-        android:id="@+id/button"
+        android:id="@+id/btndice"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="1dp"
         android:onClick="onFigureMove"
         android:src="@drawable/dice"
+
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/btnObjects"
+        android:id="@+id/btnobjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onObjects"
         android:src="@drawable/objects0"
         android:scaleType="fitCenter"
+        android:backgroundTint="@color/blau"
         app:layout_constraintBottom_toTopOf="@+id/guideline17"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -42,12 +44,13 @@
         android:elevation="1dp"/>
 
     <ImageButton
-        android:id="@+id/btnHandel"
+        android:id="@+id/btnhandel"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onHandel"
         android:src="@drawable/handel0"
         android:scaleType="fitCenter"
+        android:backgroundTint="@color/orange"
         app:layout_constraintBottom_toTopOf="@+id/guideline16"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -56,12 +59,13 @@
         android:elevation="1dp"/>
 
     <ImageButton
-        android:id="@+id/btnSettings"
+        android:id="@+id/btnsettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onSettings"
         android:src="@drawable/settings0"
         android:scaleType="fitCenter"
+        android:backgroundTint="@color/grau"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -71,7 +75,7 @@
         />
 
     <Button
-        android:id="@+id/btnFinish"
+        android:id="@+id/btnfinish"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onEndGame"
