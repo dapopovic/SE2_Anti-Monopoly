@@ -37,6 +37,7 @@ import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
+import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -251,6 +252,13 @@ public class ActivityGameField extends AppCompatActivity {
         String username = event.getUsername();
         Log.d("Update_balance", String.valueOf(new_balance));
         userAdapter.updateUserMoney(username, new_balance);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCheatingReceivedEvent(CheatingEvent event) {
+        Log.d("Cheating", "Cheating event received!");
+        Intent cheating = new Intent(this, PopActivityCheating.class);
+        startActivity(cheating);
     }
 
     private void moveFigure(String username, int location, int diceNumber, ImageView figure) {

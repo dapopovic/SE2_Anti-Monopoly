@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
+import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.CreateGameCommand;
@@ -195,6 +196,13 @@ public class NetworkModule {
     @IntoMap
     @StringKey("NEXT_PLAYER")
     Command provideNextPlayerCommand(NextPlayerCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("CHEATING")
+    Command cheatingCommand(CheatingCommand command) {
         return command;
     }
 }

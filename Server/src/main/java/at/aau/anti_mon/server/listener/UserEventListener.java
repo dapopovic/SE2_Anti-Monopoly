@@ -25,7 +25,7 @@ import at.aau.anti_mon.server.utilities.JsonDataUtility;
  */
 @Component
 public class UserEventListener {
-
+    private Random random;
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
@@ -43,6 +43,7 @@ public class UserEventListener {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
+        this.random = new Random();
     }
 
     /**
@@ -177,6 +178,13 @@ public class UserEventListener {
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
             JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
+        }
+
+        // suggest cheating with probability of 50%
+        int probability = random.nextInt(100) + 1;
+        System.out.println("Probability: " + probability);
+        if (probability > 50) {
+            JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
         }
     }
 
