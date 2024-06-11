@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -50,6 +52,7 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
     private static final int REQUEST_CODE_POP_ACTIVITY_DICE = 1;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
     private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
@@ -77,11 +80,24 @@ public class ActivityGameField extends AppCompatActivity {
         initUI();
         processIntent();
         random = new Random();
-
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
         sendfirst();
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        String resultData = result.getData().getStringExtra("resultKey");
+                        if (resultData != null && resultData.equals("yes")) {
+                            sendDice(1, 0);
+                        }
+                    }
+                }
+        );
+
     }
+
     private void sendfirst(){
         ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
