@@ -274,7 +274,7 @@ public class ActivityGameField extends AppCompatActivity {
     public void onCheatingReceivedEvent(CheatingEvent event) {
         Log.d("Cheating", "Cheating event received!");
         Intent cheating = new Intent(this, PopActivityCheating.class);
-        startActivity(cheating);
+        activityResultLauncher.launch(cheating);
     }
 
     private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
