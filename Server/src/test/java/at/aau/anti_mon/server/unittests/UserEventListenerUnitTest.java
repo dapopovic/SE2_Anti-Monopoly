@@ -207,7 +207,7 @@ class UserEventListenerUnitTest {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
-        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5);
+        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5, false);
 
         Lobby lobby = mock(Lobby.class);
 

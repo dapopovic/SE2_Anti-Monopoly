@@ -180,12 +180,15 @@ public class UserEventListener {
             JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
         }
 
-        // suggest cheating with probability of 50%
-        int probability = random.nextInt(100) + 1;
-        System.out.println("Probability: " + probability);
-        if (probability > 50) {
-            JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
+        // suggest cheating with probability of 50% when it was not cheated till now
+        if (!event.getCheat()) {
+            int probability = random.nextInt(100) + 1;
+            System.out.println("Probability: " + probability);
+            if (probability > 50) {
+                JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
+            }
         }
+
     }
 
     @EventListener

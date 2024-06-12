@@ -90,7 +90,7 @@ public class ActivityGameField extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         String resultData = result.getData().getStringExtra("resultKey");
                         if (resultData != null && resultData.equals("yes")) {
-                            sendDice(1, 0);
+                            sendDice(1, 0, true);
                         }
                     }
                 }
@@ -225,7 +225,7 @@ public class ActivityGameField extends AppCompatActivity {
                         finish.setEnabled(true);
                         finish.setBackgroundColor(Color.parseColor("#DC3545"));
                     }
-                    sendDice(number1,number2);
+                    sendDice(number1,number2,false);
                 }
             }
         }
@@ -329,13 +329,14 @@ public class ActivityGameField extends AppCompatActivity {
             //Finish.setEnabled(true);
         }
     }
-    public void sendDice(int dice1, int dice2){
+    public void sendDice(int dice1, int dice2, boolean cheat){
         int dicenumber = dice1+dice2;
         String dice = String.valueOf(dicenumber);
         String user = currentUser.getUsername();
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
         jsonData.putData("dicenumber", dice);
         jsonData.putData("username", user);
+        jsonData.putData("cheat", String.valueOf(cheat));
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
         Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
