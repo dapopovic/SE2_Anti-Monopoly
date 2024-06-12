@@ -28,6 +28,8 @@ public class User {
     private int location;
     @Setter
     private int sequence;
+    @Setter
+    private int unavailableRounds;
 
     public User(String name, WebSocketSession session) {
         this.name = name;
@@ -39,6 +41,7 @@ public class User {
         this.figure = null;
         this.location = 1;
         this.sequence = 0;
+        this.unavailableRounds = 0;
     }
 
     public boolean isOwner() {

@@ -1,14 +1,18 @@
 package at.aau.anti_mon.server.unittests;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.net.URISyntaxException;
-import java.util.HashSet;
+import java.util.*;
 
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
+import org.h2.util.json.JSONItemType;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,10 +42,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
-import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,6 +60,8 @@ class UserEventListenerUnitTest {
 
     @InjectMocks
     private UserEventListener userEventListener;
+
+    private final static int AMOUNT_PLAYERS = 4;
 
     @Test
     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod()
@@ -150,6 +154,7 @@ class UserEventListenerUnitTest {
         // Then
         verify(lobbyService, times(1)).leaveLobby(1234, "lobbyCreator");
     }
+
     @Test
     void onReadyUserEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
         // Given
@@ -177,6 +182,7 @@ class UserEventListenerUnitTest {
         verify(userService).getUser("user1");
         verify(sessionManagementService).getSessionForUser("user1");
     }
+
     @Test
     void onStartGameEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
         // Given
@@ -202,6 +208,7 @@ class UserEventListenerUnitTest {
         verify(lobbyService).findLobbyByPin(1234);
         verify(sessionManagementService).getSessionForUser("user1");
     }
+
     @Test
     void onRollDiceEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
         // Given
@@ -253,7 +260,7 @@ class UserEventListenerUnitTest {
     @Test
     void onFirstPlayerEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
         WebSocketSession session = mock(WebSocketSession.class);
-        FirstPlayerEvent event = new FirstPlayerEvent(session,"user1");
+        FirstPlayerEvent event = new FirstPlayerEvent(session, "user1");
         Lobby lobby = mock(Lobby.class);
         User user = mock(User.class);
         when(user.getName()).thenReturn("user1");
@@ -273,7 +280,7 @@ class UserEventListenerUnitTest {
     @Test
     void onNextPlayerEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
         WebSocketSession session = mock(WebSocketSession.class);
-        NextPlayerEvent event = new NextPlayerEvent(session,"user1");
+        NextPlayerEvent event = new NextPlayerEvent(session, "user1");
         Lobby lobby = mock(Lobby.class);
         User user = mock(User.class);
         when(user.getName()).thenReturn("user1");
@@ -289,4 +296,170 @@ class UserEventListenerUnitTest {
         verify(userService).getUser("user1");
         verify(sessionManagementService).getSessionForUser("user1");
     }
+
+    @RepeatedTest(100)
+    void onGetPlayerAllUsersAvailableRoundsGreaterThan0() {
+        HashSet<User> users = new HashSet<>();
+        Lobby lobby = mock(Lobby.class);
+        when(lobby.getUsers()).thenReturn(users);
+        int sequence = 0;
+        for (int i = 0; i < AMOUNT_PLAYERS; i++) {
+            WebSocketSession session = mock(WebSocketSession.class);
+            User user = mock(User.class);
+            when(user.getName()).thenReturn("user" + i);
+            when(user.getSequence()).thenReturn(sequence);
+            when(user.getUnavailableRounds()).thenReturn(2);
+            when(sessionManagementService.getSessionForUser("user" + i)).thenReturn(session);
+            users.add(user);
+            sequence++;
+        }
+        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user1");
+        User user1 = users.stream().filter(user -> user.getName().equals("user1")).toList().get(0);
+        when(user1.getLobby()).thenReturn(lobby);
+        when(assertDoesNotThrow(() -> userService.getUser("user1"))).thenReturn(user1);
+        assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
+        verify(users.iterator().next(), times(3 + AMOUNT_PLAYERS)).getName();
+    }
+
+    @RepeatedTest(100)
+    void onGetPlayerOneUserAvailableRoundsGreaterThan0() {
+        HashSet<User> users = new HashSet<>();
+        Lobby lobby = mock(Lobby.class);
+        when(lobby.getUsers()).thenReturn(users);
+        int sequence = 0;
+        int randomizedUser = new Random().nextInt(0, 4);
+        System.out.println(randomizedUser);
+        for (int i = 0; i < AMOUNT_PLAYERS; i++) {
+            WebSocketSession session = mock(WebSocketSession.class);
+            User user = mock(User.class);
+            when(user.getName()).thenReturn("user" + i);
+            when(user.getSequence()).thenReturn(sequence);
+            when(user.getUnavailableRounds()).thenReturn(i == randomizedUser ? 2 : 0);
+            when(sessionManagementService.getSessionForUser("user" + i)).thenReturn(session);
+            users.add(user);
+            sequence++;
+        }
+        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user0");
+        User user1 = users.stream().filter(user -> user.getName().equals("user0")).toList().get(0);
+        when(user1.getLobby()).thenReturn(lobby);
+        when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user1);
+        assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
+        ArrayList<User> userList = new ArrayList<>(users);
+        userList.sort(Comparator.comparing(User::getSequence));
+        int nextUser = randomizedUser == 1 ? 2 : 1;
+        verify(userList.get(nextUser), times(3 + AMOUNT_PLAYERS)).getName();
+    }
+//    @RepeatedTest(100)
+//    void onGetPlayerAllUsersUntilRandomizedUserAvailableRoundsGreaterThan0() {
+//        HashSet<User> users = new HashSet<>();
+//        Lobby lobby = mock(Lobby.class);
+//        when(lobby.getUsers()).thenReturn(users);
+//        int sequence = 0;
+//        int randomizedUser = new Random().nextInt(0, 4);
+//        System.out.println(randomizedUser);
+//        for (int i = 0; i < AMOUNT_PLAYERS; i++) {
+//            WebSocketSession session = mock(WebSocketSession.class);
+//            User user = mock(User.class);
+//            when(user.getName()).thenReturn("user" + i);
+//            when(user.getSequence()).thenReturn(sequence);
+//            when(user.getUnavailableRounds()).thenReturn(i <= randomizedUser ? 2 : 0);
+//            when(sessionManagementService.getSessionForUser("user" + i)).thenReturn(session);
+//            users.add(user);
+//            sequence++;
+//        }
+//        sequence = 0;
+//        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user0");
+//        User user1 = users.stream().filter(user -> user.getName().equals("user0")).toList().get(0);
+//        when(user1.getLobby()).thenReturn(lobby);
+//        when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user1);
+//        assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
+//        ArrayList<User> userList = new ArrayList<>(users);
+//        userList.sort(Comparator.comparing(User::getSequence));
+//        int nextUser = 0;
+//        if(randomizedUser == sequence) {
+//            nextUser = 1;
+//        } else {
+//            for (int i = 0; i < userList.size(); i++) {
+//                if (userList.get(i).getUnavailableRounds() == 0) {
+//                    nextUser = i;
+//                    break;
+//                }
+//            }
+//        }
+//        System.out.println("Next User: " + userList.get(nextUser).getName());
+//        verify(userList.get(nextUser), times(4 + AMOUNT_PLAYERS)).getName();
+//    }
+
+//    @RepeatedTest(100)
+//    void onGetPlayerAllUsersUntilRandomizedUserAvailableRoundsGreaterThan0() {
+//        HashSet<User> users = new HashSet<>();
+//        int sequence = 0;
+//        int randomizedUser = new Random().nextInt(0, 4);
+//        System.out.println(randomizedUser);
+//        for (int i = 0; i < 4; i++) {
+//            WebSocketSession session = mock(WebSocketSession.class);
+//            User user = new User("user" + i, session);
+//            user.setUnavailableRounds(0);
+//            if (i <= randomizedUser) {
+//                user.setUnavailableRounds(2);
+//            }
+//            user.setSequence(sequence);
+//            users.add(user);
+//            sequence++;
+//        }
+//        sequence = 0;
+//        User currentUser = userEventListener.getNextPlayer(users, sequence, 4);
+//        ArrayList<User> userList = new ArrayList<>(users);
+//        userList.sort(Comparator.comparing(User::getSequence));
+//        int nextUser = 0;
+//        if (randomizedUser == sequence) {
+//            nextUser = 1;
+//        } else {
+//            for (int i = 0; i < userList.size(); i++) {
+//                if (userList.get(i).getUnavailableRounds() == 0) {
+//                    nextUser = i;
+//                    break;
+//                }
+//            }
+//        }
+//        assertEquals(userList.get(nextUser), currentUser);
+//    }
+
+//    @RepeatedTest(100)
+//    void onGetPlayerAllUsersUntilRandomizedUserAvailableRoundsGreaterThan0WithRandomSequence() {
+//        HashSet<User> users = new HashSet<>();
+//        int sequence = 0;
+//        int randomizedUser = new Random().nextInt(0, 4);
+//        System.out.println(randomizedUser);
+//        for (int i = 0; i < 4; i++) {
+//            WebSocketSession session = mock(WebSocketSession.class);
+//            User user = new User("user" + i, session);
+//            user.setUnavailableRounds(0);
+//            if (i <= randomizedUser) {
+//                user.setUnavailableRounds(2);
+//            }
+//            user.setSequence(sequence);
+//            users.add(user);
+//            sequence++;
+//        }
+//        sequence = new Random().nextInt(0, 4);
+//        User currentUser = userEventListener.getNextPlayer(users, sequence, 4);
+//        ArrayList<User> userList = new ArrayList<>(users);
+//        userList.sort(Comparator.comparing(User::getSequence));
+//        int nextUser = 0;
+//        if ((randomizedUser == 0 && sequence != 0) || sequence > randomizedUser) {
+//            nextUser = sequence;
+//        } else {
+//            for (int i = 0; i < userList.size(); i++) {
+//                if (userList.get(i).getUnavailableRounds() == 0) {
+//                    nextUser = i;
+//                    break;
+//                }
+//            }
+//        }
+//        System.out.println("Next User: " + userList.get(nextUser).getName());
+//        System.out.println("Current User: " + currentUser.getName());
+//        assertEquals(userList.get(nextUser), currentUser);
+//    }
+
 }

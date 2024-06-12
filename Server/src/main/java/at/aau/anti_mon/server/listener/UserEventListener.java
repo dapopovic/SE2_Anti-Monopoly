@@ -39,8 +39,8 @@ public class UserEventListener {
      */
     @Autowired
     UserEventListener(LobbyService lobbyService,
-            SessionManagementService sessionManagementService,
-            UserService userService) {
+                      SessionManagementService sessionManagementService,
+                      UserService userService) {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
@@ -49,7 +49,7 @@ public class UserEventListener {
     /**
      * Logik zum Erstellen einer Lobby
      * PIN der Lobby wird an den Benutzer zurückgegeben
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
@@ -65,7 +65,7 @@ public class UserEventListener {
 
     /**
      * Fügt den Benutzer zur Lobby hinzu
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
@@ -100,7 +100,7 @@ public class UserEventListener {
 
     /**
      * Entfernt den Benutzer aus der Lobby
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
@@ -124,9 +124,6 @@ public class UserEventListener {
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
         }
-
-        // Test
-        //sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
     }
 
     @EventListener
@@ -181,6 +178,7 @@ public class UserEventListener {
         if (nextlocation == 31) {
             dicenumber += 20;
             nextlocation = 11;
+            user.setUnavailableRounds(2);
         }
         user.setLocation(nextlocation);
 
@@ -212,32 +210,58 @@ public class UserEventListener {
         Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
         String username = event.getUsername();
         User user = userService.getUser(username);
-        int sequence = user.getSequence();
         HashSet<User> users = user.getLobby().getUsers();
-        int playernumber = users.size();
-        if(sequence==playernumber){sequence=0;}
+        int sequence = user.getSequence();
+        int playerNumber = users.size();
+        if (sequence == playerNumber) sequence = 0;
         sequence++;
-
-        int finalSequence = sequence;
-        User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
+        reduceUnavailableRounds(users);
+        User userCurrentSequence = getNextPlayer(users, sequence, playerNumber);
         Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
     }
+
+    private void reduceUnavailableRounds(HashSet<User> users) {
+        for (User u : users) {
+            if (u.getUnavailableRounds() > 0) {
+                u.setUnavailableRounds(u.getUnavailableRounds() - 1);
+            }
+        }
+    }
+
+    public User getNextPlayer(Set<User> users, int sequence, int playerNumber) {
+        ArrayList<User> usersList = new ArrayList<>(users);
+        usersList.sort(Comparator.comparingInt(User::getSequence));
+        int isAtSequence = 0;
+        for (int i = sequence; i < usersList.size(); i = i == playerNumber - 1 ? 0 : i + 1){
+            User u = usersList.get(i);
+            if (u.getUnavailableRounds() == 0) {
+                return u;
+            } else if (isAtSequence == 2) {
+                break;
+            }
+            if (i == sequence) {
+                isAtSequence++;
+            }
+        }
+        User userCurrentSequence = users.iterator().next();
+        userCurrentSequence.setUnavailableRounds(0);
+        return userCurrentSequence;
+    }
+
     @EventListener
-    public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException{
+    public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException {
         Logger.info("Wir sind in FirstPlayerEventListener.");
         String username = event.getUsername();
         User user = userService.getUser(username);
         HashSet<User> users = user.getLobby().getUsers();
-        Logger.info("Wir haben die Nummer: "+ user.getSequence());
-        boolean First = false;
-        if(user.getSequence() == 1){
+        Logger.info("Wir haben die Nummer: " + user.getSequence());
+        if (user.getSequence() == 1) {
             Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
-            First = true;
-            for (User u : users){
-                JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
+            for (User u : users) {
+                JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()), user.getName());
             }
         }
     }

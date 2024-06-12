@@ -81,7 +81,8 @@ public class ActivityGameField extends AppCompatActivity {
 
         sendfirst();
     }
-    private void sendfirst(){
+
+    private void sendfirst() {
         ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
         dice.setBackgroundColor(Color.parseColor("#6C757D"));
@@ -90,7 +91,7 @@ public class ActivityGameField extends AppCompatActivity {
         finish.setBackgroundColor(Color.parseColor("#6C757D"));
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
-        Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
+        Log.d("onCreateGame", "Send name:" + currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
     }
 
@@ -146,7 +147,7 @@ public class ActivityGameField extends AppCompatActivity {
         doubledice = false;
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData("username", currentUser.getUsername());
-        Log.d("onEndGame", "Send name:"+currentUser.getUsername());
+        Log.d("onEndGame", "Send name:" + currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
         Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
@@ -162,6 +163,7 @@ public class ActivityGameField extends AppCompatActivity {
 
         queue.setEventBusReady(true);
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -178,6 +180,7 @@ public class ActivityGameField extends AppCompatActivity {
         //startActivity(i);
         startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -193,14 +196,14 @@ public class ActivityGameField extends AppCompatActivity {
                 Log.d("onActivityResult", "zahl2: " + number2);
                 Log.d("onActivityResult", "wurfel: " + wurfel);
 
-                if (wurfel){
-                    if(doubledice){
+                if (wurfel) {
+                    if (doubledice) {
                         number2 = 0;
                     }
-                    if(number1 == number2){
+                    if (number1 == number2) {
                         doubledice = true;
                     }
-                    if(number1!=number2){
+                    if (number1 != number2) {
                         ImageButton dice = findViewById(R.id.btndice);
                         dice.setEnabled(false);
                         dice.setBackgroundColor(Color.parseColor("#6C757D"));
@@ -208,7 +211,7 @@ public class ActivityGameField extends AppCompatActivity {
                         finish.setEnabled(true);
                         finish.setBackgroundColor(Color.parseColor("#DC3545"));
                     }
-                    sendDice(number1,number2);
+                    sendDice(number1, number2);
                 }
             }
         }
@@ -267,12 +270,12 @@ public class ActivityGameField extends AppCompatActivity {
     public void onNextPlayerEvent(NextPlayerEvent event) {
         Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
         String username = event.getUsername();
-        Log.d("onNextPlayerEvent", "The next Player is: "+username);
-        Log.d("onNextPlayerEvent", "We are: "+currentUser.getUsername());
+        Log.d("onNextPlayerEvent", "The next Player is: " + username);
+        Log.d("onNextPlayerEvent", "We are: " + currentUser.getUsername());
 
         userAdapter.currentPlayer(username);
 
-        if(Objects.equals(username, currentUser.getUsername())){
+        if (Objects.equals(username, currentUser.getUsername())) {
             Log.d("onNextPlayerEvent", "We are in the if");
             ImageButton dice = findViewById(R.id.btndice);
             dice.setEnabled(true);
@@ -281,8 +284,9 @@ public class ActivityGameField extends AppCompatActivity {
             //Finish.setEnabled(true);
         }
     }
-    public void sendDice(int dice1, int dice2){
-        int dicenumber = dice1+dice2;
+
+    public void sendDice(int dice1, int dice2) {
+        int dicenumber = dice1 + dice2;
         String dice = String.valueOf(dicenumber);
         String user = currentUser.getUsername();
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
