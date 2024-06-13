@@ -184,9 +184,7 @@ public class UserEventListener {
         if (!event.getCheat()) {
             int probability = random.nextInt(100) + 1;
             System.out.println("Probability: " + probability);
-            if (probability > 50) {
-                JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
-            }
+            sendCheating(probability, user);
         }
 
     }
@@ -236,6 +234,12 @@ public class UserEventListener {
             for (User u : users){
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
             }
+        }
+    }
+
+    public void sendCheating(int probability, User user) {
+        if (probability > 50) {
+            JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
         }
     }
 }
