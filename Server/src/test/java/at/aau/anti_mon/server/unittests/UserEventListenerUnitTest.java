@@ -47,6 +47,8 @@ class UserEventListenerUnitTest {
 
     @Mock
     private LobbyService lobbyService;
+    @Mock
+    private Random random;
 
     @InjectMocks
     private UserEventListener userEventListener;
@@ -239,6 +241,34 @@ class UserEventListenerUnitTest {
         verify(userService).getUser("Julia");
         verify(sessionManagementService).getSessionForUser("Julia");
         verify(user).setMoney(1700);
+    }
+
+    @Test
+    void onDiceNumberEventShouldCallCheatingFunction() throws UserNotFoundException {
+        // Given
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        DiceNumberEvent event = new DiceNumberEvent(session, "Julia", 10, false);
+
+        Lobby lobby = mock(Lobby.class);
+
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("Julia");
+        when(user.getFigure()).thenReturn(Figures.GreenCircle);
+        when(user.getLocation()).thenReturn(36);
+        when(user.getLobby()).thenReturn(lobby);
+        when(random.nextInt()).thenReturn(45);
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+        when(lobby.getUsers()).thenReturn(users);
+
+        when(userService.getUser("Julia")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("Julia")).thenReturn(session);
+
+        // When
+        assertDoesNotThrow(() -> userEventListener.onDiceNumberEvent(event));
+        verify(userService).getUser("Julia");
+        verify(sessionManagementService).getSessionForUser("Julia");
     }
 
     @Test
