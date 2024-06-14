@@ -9,6 +9,7 @@ import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -202,8 +203,14 @@ public class UserEventListener {
             }
             System.out.println("Probability: " + probability);
             //sendCheating(probability, user);
+            WebSocketSession session = sessionManagementService.getSessionForUser(user.getName());
             if (probability > 50) {
-                JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
+                JsonDataUtility.sendCheating(session);
+                System.out.println(session.getId() + " can cheat");
+            }
+            else
+            {
+                System.out.println(session.getId() + " can not cheat");
             }
         }
     }
