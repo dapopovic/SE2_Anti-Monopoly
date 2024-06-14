@@ -23,7 +23,10 @@ public class PopActivityObjects extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(layout);
-        Objects.requireNonNull(getActionBar()).hide();
+        //Objects.requireNonNull(getActionBar()).hide();
+        if (getActionBar() != null) {
+            getActionBar().hide();
+        }
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

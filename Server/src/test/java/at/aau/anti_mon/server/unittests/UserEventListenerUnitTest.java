@@ -1,18 +1,19 @@
 package at.aau.anti_mon.server.unittests;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.net.URISyntaxException;
+
 import java.util.HashSet;
 
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -27,21 +28,11 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -207,7 +198,7 @@ class UserEventListenerUnitTest {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
-        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5);
+        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5, true);
 
         Lobby lobby = mock(Lobby.class);
 
@@ -216,7 +207,6 @@ class UserEventListenerUnitTest {
         when(user.getFigure()).thenReturn(Figures.GreenCircle);
         when(user.getLocation()).thenReturn(0);
         when(user.getLobby()).thenReturn(lobby);
-
         HashSet<User> users = new HashSet<>();
         users.add(user);
         when(lobby.getUsers()).thenReturn(users);
@@ -248,6 +238,70 @@ class UserEventListenerUnitTest {
         verify(userService).getUser("Julia");
         verify(sessionManagementService).getSessionForUser("Julia");
         verify(user).setMoney(1700);
+    }
+
+    @Test
+    void testCheckCheatingCanNotCheat() throws UserNotFoundException {
+        //Setup rng, server should not offer cheating despite good rng value(rngvalue>50)
+        userEventListener.setFixProbabilityForCheating(65);
+
+        //Setup mock class behavior
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = mock(User.class);
+        //no method mocking, as neither session nor user should get called since cheating not allowed
+
+        //Perform test
+        userEventListener.checkCheating(false, user);
+
+        //verify method calls
+        verify(sessionManagementService, never()).getSessionForUser("Julia");
+        mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(0));
+        mockedStatic.close();
+    }
+
+    @Test
+    void testCheckCheatingCanCheatButNoOfferFromServer() throws UserNotFoundException {
+        //Setup rng, server should not offer cheating (rngvalue<50)
+        userEventListener.setFixProbabilityForCheating(45);
+
+        //Setup mock class behavior
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = mock(User.class);
+        //no method mocking, as neither session nor user should get called since cheating rng unlucky
+
+        //Perform test
+        userEventListener.checkCheating(true, user);
+
+        //verify method calls
+        verify(sessionManagementService, never()).getSessionForUser("Julia");
+        mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(0));
+        mockedStatic.close();
+    }
+
+    @Test
+    void testCheckCheatingCanCheatAndOfferFromServer() throws UserNotFoundException {
+        //Setup rng, server should offer cheating (rngvalue<50)
+        userEventListener.setFixProbabilityForCheating(65);
+
+        //Setup mock class behavior
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("Julia");
+
+        when(sessionManagementService.getSessionForUser("Julia")).thenReturn(session);
+
+        //Perform test
+        userEventListener.checkCheating(true, user);
+
+        //verify method calls
+        verify(sessionManagementService).getSessionForUser("Julia");
+        mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(1));
+        mockedStatic.close();
     }
 
     @Test

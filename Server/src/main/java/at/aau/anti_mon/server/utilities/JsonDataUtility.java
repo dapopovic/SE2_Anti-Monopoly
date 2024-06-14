@@ -160,6 +160,11 @@ public class JsonDataUtility {
         send(session, jsonData);
     }
 
+    public static void sendCheating(WebSocketSession session) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.CHEATING, new HashMap<>());
+        send(session, jsonData);
+    }
+
     public static void sendNextPlayer(WebSocketSession session, String username){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonData.putData("username",username);

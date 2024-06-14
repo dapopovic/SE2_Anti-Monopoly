@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.listener;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
@@ -8,6 +9,7 @@ import at.aau.anti_mon.server.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -25,10 +27,15 @@ import at.aau.anti_mon.server.utilities.JsonDataUtility;
  */
 @Component
 public class UserEventListener {
-
+    private SecureRandom random;
+    private int fixProbabilityForCheating = -1;
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
+
+    public void setFixProbabilityForCheating(int number) {
+        this.fixProbabilityForCheating = number;
+    }
 
     /**
      * Konstruktor für UserEventListener
@@ -43,6 +50,7 @@ public class UserEventListener {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
+        this.random = new SecureRandom();
     }
 
     /**
@@ -177,6 +185,26 @@ public class UserEventListener {
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
             JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
+        }
+
+        checkCheating(!event.getCheat(), user);
+
+    }
+
+    public void checkCheating(boolean canCheat, User user) {
+        // suggest cheating with probability of 50% when it was not cheated till now
+        if(!canCheat)
+        {
+            return;
+        }
+        int probability = fixProbabilityForCheating;
+        //if -1 (aka not fixed rng), use rng generator to roll a number
+        if (probability < 0) {
+            probability = random.nextInt(100) + 1;
+        }
+        if (probability > 50) {
+            WebSocketSession session = sessionManagementService.getSessionForUser(user.getName());
+            JsonDataUtility.sendCheating(session);
         }
     }
 

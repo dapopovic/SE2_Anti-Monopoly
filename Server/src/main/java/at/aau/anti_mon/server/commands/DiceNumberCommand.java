@@ -17,7 +17,7 @@ public class DiceNumberCommand implements Command{
 
         String username = jsonData.getData().get("username");
         Integer dicenumber = Integer.valueOf(jsonData.getData().get("dicenumber"));
-
-        eventPublisher.publishEvent(new DiceNumberEvent(session,username, dicenumber));
+        Boolean cheat = Boolean.valueOf(jsonData.getData().get("cheat"));
+        eventPublisher.publishEvent(new DiceNumberEvent(session,username, dicenumber, cheat));
     }
 }

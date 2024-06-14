@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
+import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.enums.Commands;
@@ -30,6 +31,7 @@ import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
+import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -66,6 +68,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         commandMap.put("READY", new OnReadyCommand(lobbyViewModel));
         commandMap.put("DICENUMBER", new DiceNumberCommand(globalEventQueue));
         commandMap.put("CHANGE_BALANCE", new ChangeBalanceCommand(globalEventQueue));
+        commandMap.put("CHEATING", new CheatingCommand(globalEventQueue));
         client.setCommandFactory(new CommandFactory(commandMap));
     }
 
@@ -164,5 +167,18 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
 
         verify(globalEventQueue).enqueueEvent(any(ChangeBalanceEvent.class));
+    }
+
+    @Test
+    void testCheatingCommandShouldFireCheatingEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.CHEATING);
+        assertEquals(Commands.CHEATING, jsonData.getCommand());
+
+        String message = JsonDataManager.createJsonMessage(jsonData);
+        assert message != null;
+        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+
+        verify(globalEventQueue).enqueueEvent(any(CheatingEvent.class));
     }
 }

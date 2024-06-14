@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,6 +39,7 @@ import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
+import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
@@ -49,6 +52,7 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
     private static final int REQUEST_CODE_POP_ACTIVITY_DICE = 1;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
     private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
@@ -76,11 +80,24 @@ public class ActivityGameField extends AppCompatActivity {
         initUI();
         processIntent();
         random = new Random();
-
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
         sendfirst();
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        String resultData = result.getData().getStringExtra("resultKey");
+                        if (resultData != null && resultData.equals("yes")) {
+                            sendDice(1, 0, true);
+                        }
+                    }
+                }
+        );
+
     }
+
     private void sendfirst(){
         ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
@@ -208,7 +225,7 @@ public class ActivityGameField extends AppCompatActivity {
                         finish.setEnabled(true);
                         finish.setBackgroundColor(Color.parseColor("#DC3545"));
                     }
-                    sendDice(number1,number2);
+                    sendDice(number1,number2,false);
                 }
             }
         }
@@ -251,6 +268,13 @@ public class ActivityGameField extends AppCompatActivity {
         String username = event.getUsername();
         Log.d("Update_balance", String.valueOf(new_balance));
         userAdapter.updateUserMoney(username, new_balance);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCheatingReceivedEvent(CheatingEvent event) {
+        Log.d("Cheating", "Cheating event received!");
+        Intent cheating = new Intent(this, PopActivityCheating.class);
+        activityResultLauncher.launch(cheating);
     }
 
     private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
@@ -305,13 +329,14 @@ public class ActivityGameField extends AppCompatActivity {
             //Finish.setEnabled(true);
         }
     }
-    public void sendDice(int dice1, int dice2){
+    public void sendDice(int dice1, int dice2, boolean cheat){
         int dicenumber = dice1+dice2;
         String dice = String.valueOf(dicenumber);
         String user = currentUser.getUsername();
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
         jsonData.putData("dicenumber", dice);
         jsonData.putData("username", user);
+        jsonData.putData("cheat", String.valueOf(cheat));
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
         Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
