@@ -241,37 +241,64 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void testCheckCheatingCanCheatButNoOfferFromServer() throws UserNotFoundException {
-        userEventListener.setFixProbabilityForCheating(45);
-        User user = mock(User.class);
-        userEventListener.checkCheating(true, user);
-        verify(sessionManagementService, never()).getSessionForUser("testuser");
-        userEventListener.setFixProbabilityForCheating(-1);
-    }
+    void testCheckCheatingCanNotCheat() throws UserNotFoundException {
+        //Setup rng, server should not offer cheating despite good rng value(rngvalue>50)
+        userEventListener.setFixProbabilityForCheating(65);
 
-    /*
-    @Test
-    void testCheckCheatingCanCheatRandomProbability() throws UserNotFoundException {
+        //Setup mock class behavior
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
         WebSocketSession session = mock(WebSocketSession.class);
-        userEventListener.setFixProbabilityForCheating(-1);
         User user = mock(User.class);
-        when(sessionManagementService.getSessionForUser("Julia")).thenReturn(session);
-        userEventListener.checkCheating(true, user);
-        verify(sessionManagementService).getSessionForUser("Julia");
+        //no method mocking, as neither session nor user should get called since cheating not allowed
+
+        //Perform test
+        userEventListener.checkCheating(false, user);
+
+        //verify method calls
+        verify(sessionManagementService, never()).getSessionForUser("Julia");
+        mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(0));
     }
 
-     */
+    @Test
+    void testCheckCheatingCanCheatButNoOfferFromServer() throws UserNotFoundException {
+        //Setup rng, server should not offer cheating (rngvalue<50)
+        userEventListener.setFixProbabilityForCheating(45);
+
+        //Setup mock class behavior
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = mock(User.class);
+        //no method mocking, as neither session nor user should get called since cheating rng unlucky
+
+        //Perform test
+        userEventListener.checkCheating(true, user);
+
+        //verify method calls
+        verify(sessionManagementService, never()).getSessionForUser("Julia");
+        mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(0));
+    }
 
     @Test
     void testCheckCheatingCanCheatAndOfferFromServer() throws UserNotFoundException {
+        //Setup rng, server should offer cheating (rngvalue<50)
         userEventListener.setFixProbabilityForCheating(65);
+
+        //Setup mock class behavior
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
         WebSocketSession session = mock(WebSocketSession.class);
+
         User user = mock(User.class);
-        when(user.getName()).thenReturn("testuser");
-        when(sessionManagementService.getSessionForUser("testuser")).thenReturn(session);
+        when(user.getName()).thenReturn("Julia");
+
+        when(sessionManagementService.getSessionForUser("Julia")).thenReturn(session);
+
+        //Perform test
         userEventListener.checkCheating(true, user);
-        verify(sessionManagementService).getSessionForUser("testuser");
-        userEventListener.setFixProbabilityForCheating(-1);
+
+        //verify method calls
+        verify(sessionManagementService).getSessionForUser("Julia");
+        mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(1));
     }
 
     @Test

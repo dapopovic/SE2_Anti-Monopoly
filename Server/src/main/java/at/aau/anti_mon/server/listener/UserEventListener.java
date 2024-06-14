@@ -193,25 +193,18 @@ public class UserEventListener {
 
     public void checkCheating(boolean canCheat, User user) {
         // suggest cheating with probability of 50% when it was not cheated till now
-        if (canCheat) {
-            int probability = 0;
-            if (fixProbabilityForCheating < 0) {
-                probability = random.nextInt(100) + 1;
-            }
-            else {
-                probability = fixProbabilityForCheating;
-            }
-            System.out.println("Probability: " + probability);
-            //sendCheating(probability, user);
+        if(!canCheat)
+        {
+            return;
+        }
+        int probability = fixProbabilityForCheating;
+        //if -1 (aka not fixed rng), use rng generator to roll a number
+        if (probability < 0) {
+            probability = random.nextInt(100) + 1;
+        }
+        if (probability > 50) {
             WebSocketSession session = sessionManagementService.getSessionForUser(user.getName());
-            if (probability > 50) {
-                JsonDataUtility.sendCheating(session);
-                System.out.println(session.getId() + " can cheat");
-            }
-            else
-            {
-                System.out.println(session.getId() + " can not cheat");
-            }
+            JsonDataUtility.sendCheating(session);
         }
     }
 
