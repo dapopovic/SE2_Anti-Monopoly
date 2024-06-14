@@ -26,9 +26,14 @@ import at.aau.anti_mon.server.utilities.JsonDataUtility;
 @Component
 public class UserEventListener {
     private Random random;
+    private int fixProbabilityForCheating = -1;
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
+
+    public void setFixProbabilityForCheating(int number) {
+        this.fixProbabilityForCheating = number;
+    }
 
     /**
      * Konstruktor für UserEventListener
@@ -180,13 +185,26 @@ public class UserEventListener {
             JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
         }
 
-        // suggest cheating with probability of 50% when it was not cheated till now
-        if (!event.getCheat()) {
-            int probability = random.nextInt(100) + 1;
-            System.out.println("Probability: " + probability);
-            sendCheating(probability, user);
-        }
+        checkCheating(!event.getCheat(), user);
 
+    }
+
+    public void checkCheating(boolean canCheat, User user) {
+        // suggest cheating with probability of 50% when it was not cheated till now
+        if (canCheat) {
+            int probability = 0;
+            if (fixProbabilityForCheating < 0) {
+                probability = random.nextInt(100) + 1;
+            }
+            else {
+                probability = fixProbabilityForCheating;
+            }
+            System.out.println("Probability: " + probability);
+            //sendCheating(probability, user);
+            if (probability > 50) {
+                JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
+            }
+        }
     }
 
     @EventListener
@@ -234,12 +252,6 @@ public class UserEventListener {
             for (User u : users){
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
             }
-        }
-    }
-
-    public void sendCheating(int probability, User user) {
-        if (probability > 50) {
-            JsonDataUtility.sendCheating(sessionManagementService.getSessionForUser(user.getName()));
         }
     }
 }
