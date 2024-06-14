@@ -1,5 +1,6 @@
 package at.aau.anti_mon.server.listener;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
@@ -25,7 +26,7 @@ import at.aau.anti_mon.server.utilities.JsonDataUtility;
  */
 @Component
 public class UserEventListener {
-    private Random random;
+    private SecureRandom random;
     private int fixProbabilityForCheating = -1;
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
@@ -48,7 +49,7 @@ public class UserEventListener {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
-        this.random = new Random();
+        this.random = new SecureRandom();
     }
 
     /**

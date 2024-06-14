@@ -32,7 +32,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.mockito.Mockito.*;
 
@@ -248,6 +247,13 @@ class UserEventListenerUnitTest {
         userEventListener.checkCheating(true, user);
         verify(sessionManagementService, never()).getSessionForUser("testuser");
         userEventListener.setFixProbabilityForCheating(-1);
+    }
+
+    @Test
+    void testCheckCheatingCanCheatRandomProbability() throws UserNotFoundException {
+        userEventListener.setFixProbabilityForCheating(-1);
+        User user = mock(User.class);
+        userEventListener.checkCheating(true, user);
     }
 
     @Test
