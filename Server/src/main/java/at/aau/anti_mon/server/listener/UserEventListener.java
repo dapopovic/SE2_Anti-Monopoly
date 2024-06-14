@@ -263,7 +263,7 @@ public class UserEventListener {
                 break;
             }
         }
-        User userCurrentSequence = users.iterator().next();
+        User userCurrentSequence = usersList.iterator().next();
         userCurrentSequence.setUnavailableRounds(0);
         return userCurrentSequence;
     }

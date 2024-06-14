@@ -209,6 +209,7 @@ public class ActivityGameField extends AppCompatActivity {
                     finish.setEnabled(true);
                     finish.setBackgroundColor(Color.parseColor("#DC3545"));
                 }
+                sendDice(number1, number2);
             }
 
         }
