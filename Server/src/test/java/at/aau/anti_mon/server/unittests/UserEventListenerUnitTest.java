@@ -257,6 +257,7 @@ class UserEventListenerUnitTest {
         //verify method calls
         verify(sessionManagementService, never()).getSessionForUser("Julia");
         mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(0));
+        mockedStatic.close();
     }
 
     @Test
@@ -276,6 +277,7 @@ class UserEventListenerUnitTest {
         //verify method calls
         verify(sessionManagementService, never()).getSessionForUser("Julia");
         mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(0));
+        mockedStatic.close();
     }
 
     @Test
@@ -299,6 +301,7 @@ class UserEventListenerUnitTest {
         //verify method calls
         verify(sessionManagementService).getSessionForUser("Julia");
         mockedStatic.verify(() -> JsonDataUtility.sendCheating(session), times(1));
+        mockedStatic.close();
     }
 
     @Test
