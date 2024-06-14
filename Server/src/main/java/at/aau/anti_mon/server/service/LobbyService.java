@@ -39,7 +39,7 @@ public class LobbyService {
     private final UserService userService;
 
     private final Random random = new Random();
-    int sequencenumber = 1;
+    int sequenceNumber = 0;
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
@@ -177,11 +177,11 @@ public class LobbyService {
 
             assignedFigures.add(randomFigure);
             user.setFigure(randomFigure);
-            user.setSequence(sequencenumber);
-            sequencenumber++;
+            user.setSequence(sequenceNumber);
+            sequenceNumber++;
             user.setLocation(1);
         });
-        sequencenumber = 1;
+        sequenceNumber = 0;
         lobby.startGame();
     }
 

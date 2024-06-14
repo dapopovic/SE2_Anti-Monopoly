@@ -1,15 +1,8 @@
 package at.aau.anti_mon.server.listener;
 
-import java.util.*;
-
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-import org.tinylog.Logger;
-
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -19,6 +12,15 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+import org.tinylog.Logger;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Event-Listener for user interactions
@@ -210,17 +212,29 @@ public class UserEventListener {
         Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
         String username = event.getUsername();
         User user = userService.getUser(username);
+        user.setHasPlayed(true);
         HashSet<User> users = user.getLobby().getUsers();
         int sequence = user.getSequence();
-        int playerNumber = users.size();
-        if (sequence == playerNumber) sequence = 0;
+        int playerAmount = users.size();
         sequence++;
-        reduceUnavailableRounds(users);
-        User userCurrentSequence = getNextPlayer(users, sequence, playerNumber);
+        if (haveAllPlayersPlayed(users)) {
+            Logger.info("Alle Spieler haben gespielt.");
+            for (User u : users) {
+                if(u.getUnavailableRounds() == 0) u.setHasPlayed(false);
+            }
+            sequence = 0;
+            reduceUnavailableRounds(users);
+        }
+        User userCurrentSequence = getNextPlayer(users, sequence, playerAmount);
         Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
+    }
+    private boolean haveAllPlayersPlayed(HashSet<User> users) {
+        int havePlayed = users.stream().filter(User::isHasPlayed).mapToInt(u -> 1).sum();
+        Logger.info("Spieler die gespielt haben: " + havePlayed);
+        return havePlayed == users.size();
     }
 
     private void reduceUnavailableRounds(HashSet<User> users) {
@@ -231,19 +245,22 @@ public class UserEventListener {
         }
     }
 
-    public User getNextPlayer(Set<User> users, int sequence, int playerNumber) {
+    public User getNextPlayer(Set<User> users, int sequence, int playerAmount) {
         ArrayList<User> usersList = new ArrayList<>(users);
         usersList.sort(Comparator.comparingInt(User::getSequence));
-        int isAtSequence = 0;
-        for (int i = sequence; i < usersList.size(); i = i == playerNumber - 1 ? 0 : i + 1){
+        int i = sequence;
+        while (i <= playerAmount) {
+            if(i == playerAmount) {
+                i = 0;
+            }
             User u = usersList.get(i);
+            Logger.info("Spieler " + u.getName() + " mit Sequence " + u.getSequence() + " und unavailableRounds " + u.getUnavailableRounds());
             if (u.getUnavailableRounds() == 0) {
                 return u;
-            } else if (isAtSequence == 2) {
-                break;
             }
-            if (i == sequence) {
-                isAtSequence++;
+            i++;
+            if(i == sequence) {
+                break;
             }
         }
         User userCurrentSequence = users.iterator().next();
@@ -258,7 +275,7 @@ public class UserEventListener {
         User user = userService.getUser(username);
         HashSet<User> users = user.getLobby().getUsers();
         Logger.info("Wir haben die Nummer: " + user.getSequence());
-        if (user.getSequence() == 1) {
+        if (user.getSequence() == 0) {
             Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
             for (User u : users) {
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()), user.getName());

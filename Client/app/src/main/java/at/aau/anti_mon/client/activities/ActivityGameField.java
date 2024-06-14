@@ -32,7 +32,6 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
-import at.aau.anti_mon.client.PopActivityDice;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
@@ -185,35 +184,33 @@ public class ActivityGameField extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "I am in onActivityResult");
-        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
-            if (data != null) {
-                int number1 = data.getIntExtra("zahl1", 0);
-                int number2 = data.getIntExtra("zahl2", 0);
-                boolean wurfel = data.getBooleanExtra("Wurfel", false);
+        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK && data != null) {
+            int number1 = data.getIntExtra("zahl1", 0);
+            int number2 = data.getIntExtra("zahl2", 0);
+            boolean wurfel = data.getBooleanExtra("Wurfel", false);
 
-                // Verarbeite die empfangenen Daten
-                Log.d("onActivityResult", "zahl1: " + number1);
-                Log.d("onActivityResult", "zahl2: " + number2);
-                Log.d("onActivityResult", "wurfel: " + wurfel);
+            // Verarbeite die empfangenen Daten
+            Log.d("onActivityResult", "zahl1: " + number1);
+            Log.d("onActivityResult", "zahl2: " + number2);
+            Log.d("onActivityResult", "wurfel: " + wurfel);
 
-                if (wurfel) {
-                    if (doubledice) {
-                        number2 = 0;
-                    }
-                    if (number1 == number2) {
-                        doubledice = true;
-                    }
-                    if (number1 != number2) {
-                        ImageButton dice = findViewById(R.id.btndice);
-                        dice.setEnabled(false);
-                        dice.setBackgroundColor(Color.parseColor("#6C757D"));
-                        Button finish = findViewById(R.id.btnfinish);
-                        finish.setEnabled(true);
-                        finish.setBackgroundColor(Color.parseColor("#DC3545"));
-                    }
-                    sendDice(number1, number2);
+            if (wurfel) {
+                if (doubledice) {
+                    number2 = 0;
+                }
+                if (number1 == number2) {
+                    doubledice = true;
+                }
+                if (number1 != number2) {
+                    ImageButton dice = findViewById(R.id.btndice);
+                    dice.setEnabled(false);
+                    dice.setBackgroundColor(Color.parseColor("#6C757D"));
+                    Button finish = findViewById(R.id.btnfinish);
+                    finish.setEnabled(true);
+                    finish.setBackgroundColor(Color.parseColor("#DC3545"));
                 }
             }
+
         }
     }
 

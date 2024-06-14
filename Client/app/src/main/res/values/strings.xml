@@ -18,4 +18,5 @@
     <string name="roles">Roles</string>
     <string name="x_close">X</string>
     <string name="your_role_is">You are a %1$s, your username is %2$s \n and you have the %3$s figure!</string>
+    <string name="figure">figure of player</string>
 </resources>
