@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class PlayerEntityIntegrationTest {
+class PlayerEntityIntegrationTest {
 
     @Autowired
     private PlayerService playerService;
 
     @Test
-    public void testCreatePlayer() {
+    void testCreatePlayer() {
         Player player = new Player.Builder()
                 .withName("TestPlayer")
                 .withBalance(2000)
@@ -42,7 +42,7 @@ public class PlayerEntityIntegrationTest {
     }
 
     @Test
-    public void createPlayerThrowsConstrainedValidationViolationException() {
+    void createPlayerThrowsConstrainedValidationViolationException() {
         Player player = new Player.Builder()
                 .withName("IntegrationTestPlayer")
                 .withBalance(2000)

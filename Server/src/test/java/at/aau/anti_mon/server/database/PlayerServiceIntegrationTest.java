@@ -19,14 +19,14 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @SpringBootTest
 @ActiveProfiles("databasetests")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PlayerServiceIntegrationTest extends TestDatabase {
+class PlayerServiceIntegrationTest extends TestDatabase {
 
     @Autowired
     private PlayerService playerService;
 
     @Test
     @Transactional
-    public void testPlayerCreation() {
+    void testPlayerCreation() {
         Player player = new Player.Builder()
                 .withName("Player1")
                 .withBalance(777)
@@ -42,7 +42,7 @@ public class PlayerServiceIntegrationTest extends TestDatabase {
     }
 
     @Test
-    public void updatePlayerSuccessfully() {
+    void updatePlayerSuccessfully() {
         Player existingPlayer = new Player.Builder()
                 .withName("ExistingPlayer")
                 .withBalance(999)
@@ -76,7 +76,7 @@ public class PlayerServiceIntegrationTest extends TestDatabase {
 
 
     @Test
-    public void updatePlayerWithNonExistingNameReturnsNull() {
+    void updatePlayerWithNonExistingNameReturnsNull() {
         Player newPlayer = new Player.Builder()
                 .withName("NewPlayer")
                 .withBalance(2000)

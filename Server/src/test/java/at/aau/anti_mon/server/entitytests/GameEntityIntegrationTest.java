@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class GameEntityIntegrationTest {
+class GameEntityIntegrationTest {
 
     @Autowired
     private GameService gameService;
 
     @Test
     @Transactional
-    public void testCreateAndSaveGame() {
+    void testCreateAndSaveGame() {
         Game newGame = gameService.createNewGame();
 
         assertNotNull(newGame);

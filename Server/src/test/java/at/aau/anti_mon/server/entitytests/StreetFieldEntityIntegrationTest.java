@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class StreetFieldEntityIntegrationTest {
+class StreetFieldEntityIntegrationTest {
 
     @Autowired
     private StreetFieldService streetFieldService;
 
     @Test
     @Transactional
-    public void testCreateAndSaveStreetField() {
+    void testCreateAndSaveStreetField() {
         StreetField newStreetField = new StreetField.Builder()
                 .withName("TestStreetField")
                 .withDescription("TestDescription")

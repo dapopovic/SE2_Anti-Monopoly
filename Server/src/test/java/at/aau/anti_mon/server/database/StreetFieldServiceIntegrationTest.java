@@ -20,7 +20,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @ActiveProfiles("databasetests")
 @AutoConfigureTestEntityManager
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class StreetFieldServiceIntegrationTest extends TestDatabase{
+class StreetFieldServiceIntegrationTest extends TestDatabase{
 
     @Autowired
     private StreetFieldService streetFieldService;
@@ -30,7 +30,7 @@ public class StreetFieldServiceIntegrationTest extends TestDatabase{
 
     @Test
     @Transactional
-    public void testStreetFieldCreation() {
+    void testStreetFieldCreation() {
         StreetField streetField = new StreetField.Builder().build();
        entityManager.persist(streetField);
        entityManager.flush();
