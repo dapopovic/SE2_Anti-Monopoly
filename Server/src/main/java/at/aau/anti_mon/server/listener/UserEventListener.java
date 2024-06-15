@@ -132,9 +132,6 @@ public class UserEventListener {
             JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
                     "Erfolgreich die Lobby verlassen.");
         }
-
-        // Test
-        //sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
     }
 
     @EventListener
@@ -247,10 +244,8 @@ public class UserEventListener {
         User user = userService.getUser(username);
         HashSet<User> users = user.getLobby().getUsers();
         Logger.info("Wir haben die Nummer: "+ user.getSequence());
-        boolean First = false;
         if(user.getSequence() == 1){
             Logger.info(player + event.getUsername() + " ist Spieler 1.");
-            First = true;
             for (User u : users){
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
             }

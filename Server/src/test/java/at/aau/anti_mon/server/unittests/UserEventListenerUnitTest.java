@@ -84,40 +84,9 @@ class UserEventListenerUnitTest {
         verify(lobbyService, times(1)).joinLobby(1234, "testUser");
     }
 
-    /*
-    @Test
-    void onUserJoinedLobbyEventLobbyIsFull()
-            throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException, URISyntaxException {
-
-        // Given
-        WebSocketSession session1 = mock(WebSocketSession.class);
-        WebSocketSession session2 = mock(WebSocketSession.class);
-
-        when(session1.isOpen()).thenReturn(true);
-
-        when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
-        HashSet<User> users = new HashSet<>();
-        User user1 = new User("lobbyCreator", session2);
-        User user2 = new User("testUser", session1);
-        users.add(user1);
-
-        Lobby lobby = mock(Lobby.class);
-        when(lobby.canAddPlayer()).thenReturn(false);
-        when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
-        when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
-
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false, false));
-
-        userEventListener.onUserJoinedLobbyEvent(event);
-        verify(lobbyService, times(0)).joinLobby(1234, "testUser");
-    }
-
-     */
-
     @Test
     void onLeaveLobbyEventShouldCallCorrectServiceMethod()
             throws UserNotFoundException, LobbyNotFoundException {
-        //WebSocketSession session1 = mock(WebSocketSession.class);
         WebSocketSession session2 = mock(WebSocketSession.class);
 
         when(session2.isOpen()).thenReturn(true);
@@ -125,7 +94,6 @@ class UserEventListenerUnitTest {
 
         HashSet<User> users = new HashSet<>();
         User user1 = new User("lobbyCreator", session2);
-        //User user2 = new User("testUser", session1);
         users.add(user1);
 
         Lobby lobby = mock(Lobby.class);

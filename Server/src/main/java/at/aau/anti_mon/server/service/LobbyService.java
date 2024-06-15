@@ -45,7 +45,6 @@ public class LobbyService {
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
     ) {
-        //this.messagingTemplate = messagingTemplate;
         this.userService = userService;
         this.lobbies = new ConcurrentHashMap<>();
         this.userLobbyMap = new ConcurrentHashMap<>();
@@ -185,17 +184,4 @@ public class LobbyService {
         sequencenumber = 1;
         lobby.startGame();
     }
-
-    /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an alle Clients im Lobby-Channel
-     * @param lobbyId ID der Lobby
-     * @param message Nachrichtenobjekt
-     */
-    /*public void sendToLobby(String lobbyId, Object message) {
-        String destination = "/topic/lobby." + lobbyId;
-        messagingTemplate.convertAndSend(destination, message);
-    }
-
-     */
-
 }
