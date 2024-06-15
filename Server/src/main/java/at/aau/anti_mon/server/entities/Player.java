@@ -69,11 +69,10 @@ public class Player implements Serializable {
      * The fields the player owns
      */
     @OneToMany(mappedBy = "owner")
-    Set<StreetField> streetFieldSet;
+    transient Set<StreetField> streetFieldSet;
 
     /**
      * The figure the player is using
-     * TODO: implement real figures later
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "player_figure")
@@ -82,7 +81,6 @@ public class Player implements Serializable {
 
     /**
      * The figure the player is using
-     * TODO: implement roles later
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "player_role")

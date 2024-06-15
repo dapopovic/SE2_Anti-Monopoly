@@ -47,7 +47,7 @@ public class Game implements Serializable {
      * The game fields of the game
      */
     @OneToMany(mappedBy = "game")
-    private Set<GameField> gameFields;
+    private transient Set<GameField> gameFields;
 
     @Column(name = "game_start_date")
     private Date startDate;

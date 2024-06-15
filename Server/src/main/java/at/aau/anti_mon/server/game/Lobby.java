@@ -59,34 +59,30 @@ public class Lobby {
     }
 
     public void removeUser(User user) throws UserNotFoundException {
-        if (users.contains(user)) {
-            if (user.equals(owner) && users.size() > 1) {
-                for (User next : users) {
-                    if (!next.equals(owner)) {
+        if (!users.contains(user)) throw new UserNotFoundException("User not found in lobby");
+        if (user.equals(owner) && users.size() > 1) {
+            for (User next : users) {
+                if (!next.equals(owner)) {
 
-                        // If the next user is not ready, set them to ready -> because he is the new owner
-                        if (!next.isReady()){
-                            readyUser(next);
-                        }
-
-                        setOwner(next);
-                        break;
+                    // If the next user is not ready, set them to ready -> because he is the new owner
+                    if (!next.isReady()){
+                        readyUser(next);
                     }
+
+                    setOwner(next);
+                    break;
                 }
             }
-            if (user.isReady()){
-                readyUser(user);
-            }
-            user.setLocation(1);
-            user.setRole(null);
-            users.remove(user);
-        } else {
-            throw new UserNotFoundException("User not found in lobby");
         }
+        if (user.isReady()){
+            readyUser(user);
+        }
+        user.setLocation(1);
+        user.setRole(null);
+        users.remove(user);
     }
 
     /**
-     * Todo: This method is not used in the codebase. It should be removed?
      * 
      * @param session The session to search for
      * @return The player with the given session
