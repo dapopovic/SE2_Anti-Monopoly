@@ -209,13 +209,13 @@ public class UserEventListener {
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
         String username = event.getUsername();
-        Integer new_balance = event.getNewBalance();
+        Integer newBalance = event.getNewBalance();
 
         User user = userService.getUser(username);
-        user.setMoney(new_balance);
+        user.setMoney(newBalance);
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
-            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, new_balance);
+            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, newBalance);
         }
     }
 

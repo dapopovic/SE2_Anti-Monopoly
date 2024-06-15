@@ -4,7 +4,6 @@ import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.websocket.handler.BroadcastWebSocketHandler;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +53,7 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
          * then the connection will be downgraded to HTTP and the communication between client and server can still continue.
          */
         registry
-                .addHandler(BroadcastWebSocketHandler(), "/broadcast")
+                .addHandler(broadcastWebSocketHandler(), "/broadcast")
                 .setAllowedOrigins("*")
                 .withSockJS()
         ;
@@ -63,7 +62,7 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
 
 
     @Bean
-    public WebSocketHandler BroadcastWebSocketHandler() {
+    public WebSocketHandler broadcastWebSocketHandler() {
 
         Logger.debug("Create EchoBroadcastWebSocketHandler");
 
