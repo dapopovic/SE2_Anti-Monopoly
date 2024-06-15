@@ -203,33 +203,30 @@ public class ActivityGameField extends AppCompatActivity {
         String onactivityresultstring = "onActivityResult";
         Log.d(onactivityresultstring, "I am in onActivityResult");
         if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
-            if (data != null) {
-                int number1 = data.getIntExtra("zahl1", 0);
-                int number2 = data.getIntExtra("zahl2", 0);
-                boolean wurfel = data.getBooleanExtra("Wurfel", false);
+            int number1 = data.getIntExtra("zahl1", 0);
+            int number2 = data.getIntExtra("zahl2", 0);
+            boolean wurfel = data.getBooleanExtra("Wurfel", false);
 
-                // Verarbeite die empfangenen Daten
-                Log.d(onactivityresultstring, "zahl1: " + number1);
-                Log.d(onactivityresultstring, "zahl2: " + number2);
-                Log.d(onactivityresultstring, "wurfel: " + wurfel);
+            // Verarbeite die empfangenen Daten
+            Log.d(onactivityresultstring, "zahl1: " + number1);
+            Log.d(onactivityresultstring, "zahl2: " + number2);
+            Log.d(onactivityresultstring, "wurfel: " + wurfel);
 
-                if (wurfel){
-                    if(doubledice){
-                        number2 = 0;
-                    }
-                    if(number1 == number2){
-                        doubledice = true;
-                    }
-                    if(number1!=number2){
-                        ImageButton dice = findViewById(R.id.btndice);
-                        dice.setEnabled(false);
-                        dice.setBackgroundColor(Color.parseColor(colorgrey));
-                        Button finish = findViewById(R.id.btnfinish);
-                        finish.setEnabled(true);
-                        finish.setBackgroundColor(Color.parseColor("#DC3545"));
-                    }
-                    sendDice(number1,number2,false);
+            if (wurfel) {
+                if (doubledice & number1 == number2) {
+                    number2 = 0;
                 }
+                if (number1 == number2) {
+                    doubledice = true;
+                } else {
+                    ImageButton dice = findViewById(R.id.btndice);
+                    dice.setEnabled(false);
+                    dice.setBackgroundColor(Color.parseColor(colorgrey));
+                    Button finish = findViewById(R.id.btnfinish);
+                    finish.setEnabled(true);
+                    finish.setBackgroundColor(Color.parseColor("#DC3545"));
+                }
+                sendDice(number1, number2, false);
             }
         }
     }
