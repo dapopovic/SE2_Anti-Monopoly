@@ -31,8 +31,8 @@ public class PlayerService {
         return playerDAO.save(player);
     }
 
-    public Player updatePlayer(Integer ID, Player player) {
-        Player existingPlayer = playerDAO.findById(ID).orElse(null);
+    public Player updatePlayer(Integer id, Player player) {
+        Player existingPlayer = playerDAO.findById(id).orElse(null);
         if (existingPlayer != null) {
             existingPlayer.setName(player.getName());
             existingPlayer.setBalance(player.getBalance());
@@ -42,7 +42,7 @@ public class PlayerService {
             existingPlayer.setPlayerRole(player.getPlayerRole());
             return playerDAO.save(existingPlayer);
         } else {
-            Logger.debug("Player with name {} not found", ID);
+            Logger.debug("Player with name {} not found", id);
             return null;
         }
     }

@@ -18,10 +18,10 @@ public class ChangeBalanceCommand implements Command {
     @Override
     public void execute(JsonDataDTO data) {
         String username = data.getData().get("username");
-        String new_balance = data.getData().get("new_balance");
-        Log.d("ChangeBalanceCommand", "Change balance command received: " + new_balance);
+        String newBalance = data.getData().get("new_balance");
+        Log.d("ChangeBalanceCommand", "Change balance command received: " + newBalance);
 
-        assert new_balance != null;
-        queue.enqueueEvent(new ChangeBalanceEvent(username, Integer.valueOf(new_balance)));
+        assert newBalance != null;
+        queue.enqueueEvent(new ChangeBalanceEvent(username, Integer.valueOf(newBalance)));
     }
 }

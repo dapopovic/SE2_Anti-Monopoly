@@ -52,15 +52,14 @@ public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
     private static final int REQUEST_CODE_POP_ACTIVITY_DICE = 1;
     private ActivityResultLauncher<Intent> activityResultLauncher;
-    private Random random;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
     User currentUser;
     String pin;
     boolean doubledice = false;
-    private final String COLOR_GRAY = "#6C757D";
-    private final String USERNAME_STRING = "username";
+    private static final String COLOR_GRAY = "#6C757D";
+    private static final String USERNAME_STRING = "username";
 
     @Inject
     WebSocketClient webSocketClient;
@@ -80,7 +79,6 @@ public class ActivityGameField extends AppCompatActivity {
         });
         initUI();
         processIntent();
-        random = new Random();
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
         sendfirst();
@@ -182,11 +180,6 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
@@ -247,14 +240,13 @@ public class ActivityGameField extends AppCompatActivity {
         int diceNumber = event.getDicenumber();
         String name = event.getFigure();
         int location = event.getLocation();
-        String username = event.getUsername();
         if (name == null) {
             Log.d("onDiceNumberReceivedEvent", "name is null");
             return;
         }
 
         ImageView figure = findViewById(getID(name, null));
-        moveFigure(username, location, diceNumber, figure);
+        moveFigure(location, diceNumber, figure);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -272,7 +264,7 @@ public class ActivityGameField extends AppCompatActivity {
         activityResultLauncher.launch(cheating);
     }
 
-    private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
+    private void moveFigure(int location, int diceNumber, ImageView figure) {
         for (int i = 1; i <= diceNumber; i++) {
             if (location == MAX_FIELD_COUNT) location = 0;
             location++;

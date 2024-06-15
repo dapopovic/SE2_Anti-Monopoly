@@ -47,9 +47,9 @@ class LobbyUnitTest {
         // User mit gemockter Session
         WebSocketSession playerSession = mock(WebSocketSession.class);
         when(playerSession.getId()).thenReturn("player1");
-        User player1 = new User("player1", playerSession);
+        User playertest = new User("player1", playerSession);
 
-        lobby.addUser(player1);
+        lobby.addUser(playertest);
 
         // Weitere Session
         WebSocketSession testSession = mock(WebSocketSession.class);
@@ -57,7 +57,7 @@ class LobbyUnitTest {
 
         User player = lobby.getUserWithSession(testSession);
         Assertions.assertNotNull(player);
-        Assertions.assertEquals(player1, player);
+        Assertions.assertEquals(playertest, player);
 
         // Überprüfe, ob getId() aufgerufen wurde
         verify(testSession).getId();

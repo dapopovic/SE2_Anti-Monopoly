@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StreetFieldEntityUnitTest {
+class StreetFieldEntityUnitTest {
 
     @Test
-    public void builderAssignsCorrectValues() {
+    void builderAssignsCorrectValues() {
         StreetField streetField = new StreetField.Builder()
                 .withName("TestStreetField")
                 .withDescription("TestDescription")
@@ -41,7 +41,7 @@ public class StreetFieldEntityUnitTest {
     }
 
     @Test
-    public void builderAssignsDefaultValues() {
+    void builderAssignsDefaultValues() {
         StreetField streetField = new StreetField.Builder().build();
 
         assertEquals("TestStreetField", streetField.getName());

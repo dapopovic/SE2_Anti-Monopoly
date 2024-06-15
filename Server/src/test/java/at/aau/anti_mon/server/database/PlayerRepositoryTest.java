@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @ActiveProfiles("databasetests")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PlayerRepositoryTest extends TestDatabase {
+class PlayerRepositoryTest extends TestDatabase {
 
     @Autowired
     private PlayerDAO playerDAO;
@@ -31,7 +31,7 @@ public class PlayerRepositoryTest extends TestDatabase {
     }
 
     @Test
-    public void testFindPlayerByID() {
+    void testFindPlayerByID() {
         Player player = new Player.Builder().build();
         playerDAO.save(player);
 
