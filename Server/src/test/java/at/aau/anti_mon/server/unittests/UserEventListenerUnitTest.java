@@ -137,7 +137,7 @@ class UserEventListenerUnitTest {
         verify(sessionManagementService).getSessionForUser("user1");
     }
     @Test
-    void onStartGameEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
+    void onStartGameEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
@@ -162,7 +162,7 @@ class UserEventListenerUnitTest {
         verify(sessionManagementService).getSessionForUser("user1");
     }
     @Test
-    void onRollDiceEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
+    void onRollDiceEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
@@ -209,7 +209,7 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void testCheckCheatingCanNotCheat() throws UserNotFoundException {
+    void testCheckCheatingCanNotCheat() {
         //Setup rng, server should not offer cheating despite good rng value(rngvalue>50)
         userEventListener.setFixProbabilityForCheating(65);
 
@@ -229,7 +229,7 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void testCheckCheatingCanCheatButNoOfferFromServer() throws UserNotFoundException {
+    void testCheckCheatingCanCheatButNoOfferFromServer() {
         //Setup rng, server should not offer cheating (rngvalue<50)
         userEventListener.setFixProbabilityForCheating(45);
 
@@ -249,7 +249,7 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void testCheckCheatingCanCheatAndOfferFromServer() throws UserNotFoundException {
+    void testCheckCheatingCanCheatAndOfferFromServer() {
         //Setup rng, server should offer cheating (rngvalue<50)
         userEventListener.setFixProbabilityForCheating(65);
 

@@ -2,7 +2,6 @@ package at.aau.anti_mon.server.integrationtests;
 
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
 import at.aau.anti_mon.server.game.User;
-import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
