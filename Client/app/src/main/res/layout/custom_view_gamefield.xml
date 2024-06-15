@@ -487,17 +487,17 @@
         />
 
     <ImageView
-        android:id="@+id/GreenTriangle"
+        android:id="@+id/GREEN_TRIANGLE"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/GreenCircle"
+        app:layout_constraintBottom_toTopOf="@+id/GREEN_CIRCLE"
         app:layout_constraintStart_toEndOf="@+id/field1"
-        app:layout_constraintTop_toBottomOf="@+id/GreenSquare"
+        app:layout_constraintTop_toBottomOf="@+id/GREEN_SQUARE"
         app:srcCompat="@drawable/greentriangle" />
 
     <ImageView
-        android:id="@+id/GreenSquare"
+        android:id="@+id/GREEN_SQUARE"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="4dp"
@@ -506,7 +506,7 @@
         app:srcCompat="@drawable/greensquare" />
 
     <ImageView
-        android:id="@+id/GreenCircle"
+        android:id="@+id/GREEN_CIRCLE"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="4dp"
@@ -515,7 +515,7 @@
         app:srcCompat="@drawable/greencircle" />
 
     <ImageView
-        android:id="@+id/BlueSquare"
+        android:id="@+id/BLUE_SQUARE"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="23dp"
@@ -524,17 +524,17 @@
         app:srcCompat="@drawable/bluesquare" />
 
     <ImageView
-        android:id="@+id/BlueTriangle"
+        android:id="@+id/BLUE_TRIANGLE"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="23dp"
-        app:layout_constraintBottom_toTopOf="@+id/BlueCircle"
+        app:layout_constraintBottom_toTopOf="@+id/BLUE_CIRCLE"
         app:layout_constraintStart_toEndOf="@+id/field1"
-        app:layout_constraintTop_toBottomOf="@+id/BlueSquare"
+        app:layout_constraintTop_toBottomOf="@+id/BLUE_SQUARE"
         app:srcCompat="@drawable/bluetriangle" />
 
     <ImageView
-        android:id="@+id/BlueCircle"
+        android:id="@+id/BLUE_CIRCLE"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="23dp"

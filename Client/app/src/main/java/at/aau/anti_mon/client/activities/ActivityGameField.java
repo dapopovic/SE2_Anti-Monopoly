@@ -200,35 +200,33 @@ public class ActivityGameField extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult", "I am in onActivityResult");
+        String onactivityresultstring = "onActivityResult";
+        Log.d(onactivityresultstring, "I am in onActivityResult");
         if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
-            if (data != null) {
-                int number1 = data.getIntExtra("zahl1", 0);
-                int number2 = data.getIntExtra("zahl2", 0);
-                boolean wurfel = data.getBooleanExtra("Wurfel", false);
+            int number1 = data.getIntExtra("zahl1", 0);
+            int number2 = data.getIntExtra("zahl2", 0);
+            boolean wurfel = data.getBooleanExtra("Wurfel", false);
 
-                // Verarbeite die empfangenen Daten
-                Log.d("onActivityResult", "zahl1: " + number1);
-                Log.d("onActivityResult", "zahl2: " + number2);
-                Log.d("onActivityResult", "wurfel: " + wurfel);
+            // Verarbeite die empfangenen Daten
+            Log.d(onactivityresultstring, "zahl1: " + number1);
+            Log.d(onactivityresultstring, "zahl2: " + number2);
+            Log.d(onactivityresultstring, "wurfel: " + wurfel);
 
-                if (wurfel){
-                    if(doubledice){
-                        number2 = 0;
-                    }
-                    if(number1 == number2){
-                        doubledice = true;
-                    }
-                    if(number1!=number2){
-                        ImageButton dice = findViewById(R.id.btndice);
-                        dice.setEnabled(false);
-                        dice.setBackgroundColor(Color.parseColor(colorgrey));
-                        Button finish = findViewById(R.id.btnfinish);
-                        finish.setEnabled(true);
-                        finish.setBackgroundColor(Color.parseColor("#DC3545"));
-                    }
-                    sendDice(number1,number2,false);
+            if (wurfel) {
+                if (doubledice && number1 == number2) {
+                    number2 = 0;
                 }
+                if (number1 == number2) {
+                    doubledice = true;
+                } else {
+                    ImageButton dice = findViewById(R.id.btndice);
+                    dice.setEnabled(false);
+                    dice.setBackgroundColor(Color.parseColor(colorgrey));
+                    Button finish = findViewById(R.id.btnfinish);
+                    finish.setEnabled(true);
+                    finish.setBackgroundColor(Color.parseColor("#DC3545"));
+                }
+                sendDice(number1, number2, false);
             }
         }
     }
@@ -315,15 +313,16 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNextPlayerEvent(NextPlayerEvent event) {
-        Log.d("onNextPlayerEvent", "I am in onNextPlayerEvent");
+        String onnextplayereventstring = "onNextPlayerEvent";
+        Log.d(onnextplayereventstring, "I am in onNextPlayerEvent");
         String username = event.getUsername();
-        Log.d("onNextPlayerEvent", "The next Player is: "+username);
-        Log.d("onNextPlayerEvent", "We are: "+currentUser.getUsername());
+        Log.d(onnextplayereventstring, "The next Player is: "+username);
+        Log.d(onnextplayereventstring, "We are: "+currentUser.getUsername());
 
         userAdapter.currentPlayer(username);
 
         if(Objects.equals(username, currentUser.getUsername())){
-            Log.d("onNextPlayerEvent", "We are in the if");
+            Log.d(onnextplayereventstring, "We are in the if");
             ImageButton dice = findViewById(R.id.btndice);
             dice.setEnabled(true);
             dice.setBackgroundColor(Color.parseColor("#28A745"));
