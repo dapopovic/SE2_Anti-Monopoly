@@ -10,7 +10,7 @@ public abstract class Event {
 
     private final WebSocketSession session;
 
-    public Event(WebSocketSession session) {
+    protected Event(WebSocketSession session) {
         this.session = session;
     }
 

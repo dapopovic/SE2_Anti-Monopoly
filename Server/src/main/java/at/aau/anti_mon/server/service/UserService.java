@@ -40,12 +40,7 @@ public class UserService {
      * @return Der gefundene oder erstellte Benutzer.
      */
     public User findOrCreateUser(String userId, WebSocketSession webSocketSession) {
-        if (!users.containsKey(userId)) {
-            User newUser = new User(userId, webSocketSession);
-            users.put(userId, newUser);
-            return newUser;
-        }
-        return users.get(userId);
+        return users.computeIfAbsent(userId, id -> new User(id, webSocketSession));
     }
 
     /**

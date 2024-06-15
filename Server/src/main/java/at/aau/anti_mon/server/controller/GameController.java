@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * Controller for the game
- * TODO: Implement
  */
 @RestController
 @RequestMapping("/games")
@@ -25,14 +24,12 @@ public class GameController {
     }
 
     @GetMapping("/all")
-    @ResponseBody
     public List<Game> getGames() {
         return gameService.getGames();
     }
 
     /**
      * Creates a new game
-     * TODO: Needs a "Marker" for the game, like LobbyID or Creator-UserID
      *
      * @return the created game
      */

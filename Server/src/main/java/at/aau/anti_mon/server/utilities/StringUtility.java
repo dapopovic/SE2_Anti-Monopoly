@@ -3,6 +3,8 @@ package at.aau.anti_mon.server.utilities;
 import org.tinylog.Logger;
 
 public class StringUtility {
+    private StringUtility() {
+    }
 
     public static String extractUserID(String query) {
         String[] params = query.split("&");

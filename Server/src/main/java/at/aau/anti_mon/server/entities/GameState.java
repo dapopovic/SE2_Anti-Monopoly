@@ -10,7 +10,6 @@ import java.sql.Date;
 
 /**
  * Represents the current state of the game
- * TODO: TEST if this is needed -> maybe just use snapshot of the "current tables"?
  */
 @Entity
 @Getter

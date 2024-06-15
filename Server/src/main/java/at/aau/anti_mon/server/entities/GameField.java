@@ -30,9 +30,6 @@ public class GameField {
     @Column(name = "gamefield_type")
     private String type;
 
-    /**
-     * TODO: Test till use of Enum?
-     */
     @Column(name = "gamefield_position")
     private Integer position;
 

@@ -25,17 +25,11 @@ public class GameService {
 
     /**
      * Creates a new game
-     * TODO: implement
      */
     public Game createNewGame() {
 
-        // TODO: ACHTUNG NUR TEST! Implementierung fehlt noch
         Game game = new Game.Builder().build();
-
-        // TODO Erstelle 44 GameFields
-
         // Erstelle Spieler
-        // TODO: Spielername sollte vom Client übergeben werden
 
         // Speichere das neue Spiel
         return gameDAO.save(game);
