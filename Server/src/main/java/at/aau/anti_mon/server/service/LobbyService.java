@@ -39,8 +39,8 @@ public class LobbyService {
     private final UserService userService;
 
     private final Random random = new Random();
-    int sequencenumber = 1;
-    String serverplayer = "SERVER: Spieler ";
+    private static final String SERVER_PLAYER = "SERVER: Spieler ";
+    int sequenceNumber = 0;
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
@@ -93,20 +93,20 @@ public class LobbyService {
         lobby.addUser(user);
         user.setLobby(lobby);
         addUserToLobby(userName, lobbyPin);
-        Logger.info(serverplayer + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
+        Logger.info(SERVER_PLAYER + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
     public void leaveLobby(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.removeUser(userService.getUser(userName));
         removeUserFromLobby(userName);
-        Logger.info(serverplayer + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
+        Logger.info(SERVER_PLAYER + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
     }
 
     public void readyUser(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.readyUser(userService.getUser(userName));
-        Logger.info(serverplayer + userName + " ist bereit.");
+        Logger.info(SERVER_PLAYER + userName + " ist bereit.");
     }
 
     /**
@@ -177,11 +177,11 @@ public class LobbyService {
 
             assignedFigures.add(randomFigure);
             user.setFigure(randomFigure);
-            user.setSequence(sequencenumber);
-            sequencenumber++;
+            user.setSequence(sequenceNumber);
+            sequenceNumber++;
             user.setLocation(1);
         });
-        sequencenumber = 1;
+        sequenceNumber = 0;
         lobby.startGame();
     }
 }

@@ -38,6 +38,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         String userInfo = holder.itemView.getContext().getString(R.string.player_info, username, user.getMoney() + " €");
         holder.playerInfo.setText(userInfo);
         holder.playerIcon.setImageResource(user.getRole() == Roles.MONOPOLIST ? R.drawable.monopolist : R.drawable.competititor);
+        switch(user.getFigure()) {
+            case BLUE_CIRCLE ->
+                holder.playerFigure.setImageResource(R.drawable.bluecircle);
+            case BLUE_SQUARE ->
+                holder.playerFigure.setImageResource(R.drawable.bluesquare);
+            case BLUE_TRIANGLE ->
+                holder.playerFigure.setImageResource(R.drawable.bluetriangle);
+            case GREEN_CIRCLE ->
+                holder.playerFigure.setImageResource(R.drawable.greencircle);
+            case GREEN_SQUARE ->
+                holder.playerFigure.setImageResource(R.drawable.greensquare);
+            case GREEN_TRIANGLE ->
+                holder.playerFigure.setImageResource(R.drawable.greentriangle);
+        }
 
         if (user.equals(currentUser)) {
             holder.itemView.setBackgroundColor(Color.parseColor("#ADD8E6"));
@@ -86,11 +100,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView playerInfo;
         ImageView playerIcon;
+        ImageView playerFigure;
 
         UserViewHolder(View itemView) {
             super(itemView);
             playerInfo = itemView.findViewById(R.id.player_name);
             playerIcon = itemView.findViewById(R.id.player_icon);
+            playerFigure = itemView.findViewById(R.id.player_figure);
         }
     }
 }
