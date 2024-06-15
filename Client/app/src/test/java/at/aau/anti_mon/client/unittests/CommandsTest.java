@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
+import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
@@ -22,6 +23,7 @@ import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
+import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -197,6 +199,16 @@ class CommandsTest {
         ChangeBalanceCommand changeBalanceCommand = new ChangeBalanceCommand(queue);
         changeBalanceCommand.execute(jsonData);
         verify(queue).enqueueEvent(any(ChangeBalanceEvent.class));
+    }
+
+    @Test
+    void cheatingCommandEnqueueEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.CHEATING);
+        assertEquals(Commands.CHEATING, jsonData.getCommand());
+        CheatingCommand cheatingCommand = new CheatingCommand(queue);
+        cheatingCommand.execute(jsonData);
+        verify(queue).enqueueEvent(any(CheatingEvent.class));
     }
 
     @Test

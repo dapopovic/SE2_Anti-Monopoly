@@ -9,10 +9,13 @@ public class DiceNumberEvent extends Event {
     private final String username;
     @Getter
     private final Integer dicenumber;
+    @Getter
+    private final Boolean cheat;
 
-    public DiceNumberEvent(WebSocketSession session,String username, Integer dicenumber){
+    public DiceNumberEvent(WebSocketSession session,String username, Integer dicenumber, Boolean cheat){
         super(session);
         this.username = username;
         this.dicenumber = dicenumber;
+        this.cheat = cheat;
     }
 }
