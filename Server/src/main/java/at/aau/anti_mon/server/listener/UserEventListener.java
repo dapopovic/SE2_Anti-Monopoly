@@ -32,7 +32,7 @@ import java.util.Set;
 public class UserEventListener {
     private static final String PLAYER_TAG = "Spieler ";
 
-    private SecureRandom random;
+    private final SecureRandom random;
     @Setter
     private int fixProbabilityForCheating = -1;
     private final LobbyService lobbyService;
@@ -208,7 +208,7 @@ public class UserEventListener {
 
     public void checkCheating(boolean canCheat, User user) {
         // suggest cheating with probability of 50% when it was not cheated till now
-        if(!canCheat || user.getUnavailableRounds() > 0) {
+        if (!canCheat || user.getUnavailableRounds() > 0) {
             return;
         }
         int probability = fixProbabilityForCheating;
@@ -248,7 +248,7 @@ public class UserEventListener {
         if (haveAllPlayersPlayed(users)) {
             Logger.info("Alle " + PLAYER_TAG + "haben gespielt.");
             for (User u : users) {
-                if(u.getUnavailableRounds() == 0) u.setHasPlayed(false);
+                if (u.getUnavailableRounds() == 0) u.setHasPlayed(false);
             }
             sequence = 0;
             reduceUnavailableRounds(users);
@@ -259,6 +259,7 @@ public class UserEventListener {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
     }
+
     private boolean haveAllPlayersPlayed(HashSet<User> users) {
         int havePlayed = users.stream().filter(User::isHasPlayed).mapToInt(u -> 1).sum();
         Logger.info(PLAYER_TAG + "die gespielt haben: " + havePlayed);
@@ -278,7 +279,7 @@ public class UserEventListener {
         usersList.sort(Comparator.comparingInt(User::getSequence));
         int i = sequence;
         while (i <= playerAmount) {
-            if(i == playerAmount) {
+            if (i == playerAmount) {
                 i = 0;
             }
             User u = usersList.get(i);
@@ -287,7 +288,7 @@ public class UserEventListener {
                 return u;
             }
             i++;
-            if(i == sequence) {
+            if (i == sequence) {
                 break;
             }
         }
@@ -305,7 +306,7 @@ public class UserEventListener {
         HashSet<User> users = user.getLobby().getUsers();
         Logger.info("Wir haben die Nummer: " + user.getSequence());
         if (user.getSequence() == 0) {
-            Logger.info(PLAYER_TAG + event.getUsername() + " ist Spieler 1.");
+            Logger.info(PLAYER_TAG + event.getUsername() + " ist " + PLAYER_TAG + "1.");
             for (User u : users) {
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()), user.getName());
             }
