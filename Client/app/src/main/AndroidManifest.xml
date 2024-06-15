@@ -21,9 +21,9 @@
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".PopActivityDice"
+            android:name=".activities.PopActivityDice"
             android:exported="false"
-            android:theme="@style/AppTheme_PopUp" />
+            android:theme="@style/AppTheme_PopUp"/>
         <activity
             android:name=".activities.PopActivityObjects"
             android:exported="false"

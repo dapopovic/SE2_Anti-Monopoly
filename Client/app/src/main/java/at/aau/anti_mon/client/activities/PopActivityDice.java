@@ -1,4 +1,4 @@
-package at.aau.anti_mon.client;
+package at.aau.anti_mon.client.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Random;
+
+import at.aau.anti_mon.client.R;
 
 public class PopActivityDice extends Activity implements SensorEventListener {
 

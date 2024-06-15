@@ -34,7 +34,6 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
-import at.aau.anti_mon.client.PopActivityDice;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
@@ -60,8 +59,8 @@ public class ActivityGameField extends AppCompatActivity {
     User currentUser;
     String pin;
     boolean doubledice = false;
-    String colorgrey = "#6C757D";
-    String usernamestring = "username";
+    private final String COLOR_GRAY = "#6C757D";
+    private final String USERNAME_STRING = "username";
 
     @Inject
     WebSocketClient webSocketClient;
@@ -100,16 +99,16 @@ public class ActivityGameField extends AppCompatActivity {
 
     }
 
-    private void sendfirst(){
+    private void sendfirst() {
         ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
-        dice.setBackgroundColor(Color.parseColor(colorgrey));
+        dice.setBackgroundColor(Color.parseColor(COLOR_GRAY));
         Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
-        finish.setBackgroundColor(Color.parseColor(colorgrey));
+        finish.setBackgroundColor(Color.parseColor(COLOR_GRAY));
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
-        jsonDataDTO.putData(usernamestring, currentUser.getUsername());
-        Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
+        jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+        Log.d("onCreateGame", "Send name:" + currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
     }
 
@@ -141,7 +140,7 @@ public class ActivityGameField extends AppCompatActivity {
         // show the current role of the user in a popup
         Intent i = new Intent(getApplicationContext(), PopActivityRole.class);
         i.putExtra("role", currentUser.getRole().name());
-        i.putExtra(usernamestring, currentUser.getUsername());
+        i.putExtra(USERNAME_STRING, currentUser.getUsername());
         i.putExtra("figure", currentUser.getFigure().name());
         startActivity(i);
     }
@@ -164,12 +163,12 @@ public class ActivityGameField extends AppCompatActivity {
     public void onEndGame(View view) {
         doubledice = false;
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
-        jsonDataDTO.putData(usernamestring, currentUser.getUsername());
-        Log.d("onEndGame", "Send name:"+currentUser.getUsername());
+        jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+        Log.d("onEndGame", "Send name:" + currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
         Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
-        finish.setBackgroundColor(Color.parseColor(colorgrey));
+        finish.setBackgroundColor(Color.parseColor(COLOR_GRAY));
     }
 
     @Override
@@ -181,6 +180,7 @@ public class ActivityGameField extends AppCompatActivity {
 
         queue.setEventBusReady(true);
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -196,20 +196,21 @@ public class ActivityGameField extends AppCompatActivity {
         Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
         startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String onactivityresultstring = "onActivityResult";
-        Log.d(onactivityresultstring, "I am in onActivityResult");
-        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK) {
+        final String ON_ACTIVITY_RESULT = "onActivityResult";
+        Log.d(ON_ACTIVITY_RESULT, "I am in onActivityResult");
+        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK && data != null) {
             int number1 = data.getIntExtra("zahl1", 0);
             int number2 = data.getIntExtra("zahl2", 0);
             boolean wurfel = data.getBooleanExtra("Wurfel", false);
 
             // Verarbeite die empfangenen Daten
-            Log.d(onactivityresultstring, "zahl1: " + number1);
-            Log.d(onactivityresultstring, "zahl2: " + number2);
-            Log.d(onactivityresultstring, "wurfel: " + wurfel);
+            Log.d(ON_ACTIVITY_RESULT, "zahl1: " + number1);
+            Log.d(ON_ACTIVITY_RESULT, "zahl2: " + number2);
+            Log.d(ON_ACTIVITY_RESULT, "wurfel: " + wurfel);
 
             if (wurfel) {
                 if (doubledice && number1 == number2) {
@@ -220,21 +221,20 @@ public class ActivityGameField extends AppCompatActivity {
                 } else {
                     ImageButton dice = findViewById(R.id.btndice);
                     dice.setEnabled(false);
-                    dice.setBackgroundColor(Color.parseColor(colorgrey));
+                    dice.setBackgroundColor(Color.parseColor(COLOR_GRAY));
                     Button finish = findViewById(R.id.btnfinish);
                     finish.setEnabled(true);
                     finish.setBackgroundColor(Color.parseColor("#DC3545"));
                 }
                 sendDice(number1, number2, false);
             }
+
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
-
         Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent");
-
 
         JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
         jsonData.putData("msg", "PONG");
@@ -252,10 +252,6 @@ public class ActivityGameField extends AppCompatActivity {
             Log.d("onDiceNumberReceivedEvent", "name is null");
             return;
         }
-        if (diceNumber < 1 || diceNumber > 12) {
-            Log.d("onDiceNumberReceivedEvent", "diceNumber is out of range, should be between 2 and 12");
-            return;
-        }
 
         ImageView figure = findViewById(getID(name, null));
         moveFigure(username, location, diceNumber, figure);
@@ -263,10 +259,10 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBalanceChangeReceivedEvent(ChangeBalanceEvent event) {
-        int new_balance = event.getBalance();
+        int newBalance = event.getBalance();
         String username = event.getUsername();
-        Log.d("Update_balance", String.valueOf(new_balance));
-        userAdapter.updateUserMoney(username, new_balance);
+        Log.d("Update_balance", String.valueOf(newBalance));
+        userAdapter.updateUserMoney(username, newBalance);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -278,25 +274,7 @@ public class ActivityGameField extends AppCompatActivity {
 
     private void moveFigure(String username, int location, int diceNumber, ImageView figure) {
         for (int i = 1; i <= diceNumber; i++) {
-            if (location == MAX_FIELD_COUNT) {
-                location = 0;
-                // increase here the balance on bank account on 100 Euro
-                if (username.equals(currentUser.getUsername())) {
-                    int new_balance;
-                    if (i == diceNumber) {
-                        new_balance = currentUser.getMoney() + 200;
-                    }
-                    else {
-                        new_balance = currentUser.getMoney() + 100;
-                    }
-                    JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-                    jsonData.putData("new_balance", String.valueOf(new_balance));
-                    jsonData.putData(usernamestring, currentUser.getUsername());
-                    String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
-                    webSocketClient.sendMessageToServer(jsonMessage);
-                }
-
-            }
+            if (location == MAX_FIELD_COUNT) location = 0;
             location++;
             Log.d("moveFigure", "location: " + location);
             ImageView field = findViewById(getID(String.valueOf(location), "field"));
@@ -312,28 +290,29 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNextPlayerEvent(NextPlayerEvent event) {
-        String onnextplayereventstring = "onNextPlayerEvent";
-        Log.d(onnextplayereventstring, "I am in onNextPlayerEvent");
+        final String ON_NEXT_PLAYER = "onNextPlayerEvent";
+        Log.d(ON_NEXT_PLAYER, "I am in onNextPlayerEvent");
         String username = event.getUsername();
-        Log.d(onnextplayereventstring, "The next Player is: "+username);
-        Log.d(onnextplayereventstring, "We are: "+currentUser.getUsername());
+        Log.d(ON_NEXT_PLAYER, "The next Player is: " + username);
+        Log.d(ON_NEXT_PLAYER, "We are: " + currentUser.getUsername());
 
         userAdapter.currentPlayer(username);
 
-        if(Objects.equals(username, currentUser.getUsername())){
-            Log.d(onnextplayereventstring, "We are in the if");
+        if (Objects.equals(username, currentUser.getUsername())) {
+            Log.d(ON_NEXT_PLAYER, "We are in the if");
             ImageButton dice = findViewById(R.id.btndice);
             dice.setEnabled(true);
             dice.setBackgroundColor(Color.parseColor("#28A745"));
         }
     }
-    public void sendDice(int dice1, int dice2, boolean cheat){
-        int dicenumber = dice1+dice2;
+
+    public void sendDice(int dice1, int dice2, boolean cheat) {
+        int dicenumber = dice1 + dice2;
         String dice = String.valueOf(dicenumber);
         String user = currentUser.getUsername();
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
         jsonData.putData("dicenumber", dice);
-        jsonData.putData(usernamestring, user);
+        jsonData.putData(USERNAME_STRING, user);
         jsonData.putData("cheat", String.valueOf(cheat));
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
