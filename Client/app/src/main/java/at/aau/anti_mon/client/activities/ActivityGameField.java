@@ -181,10 +181,6 @@ public class ActivityGameField extends AppCompatActivity {
 
         queue.setEventBusReady(true);
     }
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
 
     @Override
     protected void onStop() {
@@ -197,6 +193,7 @@ public class ActivityGameField extends AppCompatActivity {
         startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
     }
     @Override
+    @Deprecated
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String onactivityresultstring = "onActivityResult";
@@ -263,10 +260,10 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBalanceChangeReceivedEvent(ChangeBalanceEvent event) {
-        int new_balance = event.getBalance();
+        int newBalance = event.getBalance();
         String username = event.getUsername();
-        Log.d("Update_balance", String.valueOf(new_balance));
-        userAdapter.updateUserMoney(username, new_balance);
+        Log.d("Update_balance", String.valueOf(newBalance));
+        userAdapter.updateUserMoney(username, newBalance);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -282,15 +279,15 @@ public class ActivityGameField extends AppCompatActivity {
                 location = 0;
                 // increase here the balance on bank account on 100 Euro
                 if (username.equals(currentUser.getUsername())) {
-                    int new_balance;
+                    int newBalance;
                     if (i == diceNumber) {
-                        new_balance = currentUser.getMoney() + 200;
+                        newBalance = currentUser.getMoney() + 200;
                     }
                     else {
-                        new_balance = currentUser.getMoney() + 100;
+                        newBalance = currentUser.getMoney() + 100;
                     }
                     JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-                    jsonData.putData("new_balance", String.valueOf(new_balance));
+                    jsonData.putData("new_balance", String.valueOf(newBalance));
                     jsonData.putData(usernamestring, currentUser.getUsername());
                     String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
                     webSocketClient.sendMessageToServer(jsonMessage);
