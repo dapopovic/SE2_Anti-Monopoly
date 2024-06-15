@@ -39,17 +39,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.playerInfo.setText(userInfo);
         holder.playerIcon.setImageResource(user.getRole() == Roles.MONOPOLIST ? R.drawable.monopolist : R.drawable.competititor);
         switch(user.getFigure()) {
-            case BlueCircle ->
+            case BLUE_CIRCLE ->
                 holder.playerFigure.setImageResource(R.drawable.bluecircle);
-            case BlueSquare ->
+            case BLUE_SQUARE ->
                 holder.playerFigure.setImageResource(R.drawable.bluesquare);
-            case BlueTriangle ->
+            case BLUE_TRIANGLE ->
                 holder.playerFigure.setImageResource(R.drawable.bluetriangle);
-            case GreenCircle ->
+            case GREEN_CIRCLE ->
                 holder.playerFigure.setImageResource(R.drawable.greencircle);
-            case GreenSquare ->
+            case GREEN_SQUARE ->
                 holder.playerFigure.setImageResource(R.drawable.greensquare);
-            case GreenTriangle ->
+            case GREEN_TRIANGLE ->
                 holder.playerFigure.setImageResource(R.drawable.greentriangle);
         }
 
