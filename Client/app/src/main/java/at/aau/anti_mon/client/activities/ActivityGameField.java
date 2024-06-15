@@ -194,7 +194,6 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onFigureMove(View view) {
         Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
-        //startActivity(i);
         startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
     }
     @Override
@@ -326,8 +325,6 @@ public class ActivityGameField extends AppCompatActivity {
             ImageButton dice = findViewById(R.id.btndice);
             dice.setEnabled(true);
             dice.setBackgroundColor(Color.parseColor("#28A745"));
-            //Button Finish = findViewById(R.id.btnFinish);
-            //Finish.setEnabled(true);
         }
     }
     public void sendDice(int dice1, int dice2, boolean cheat){

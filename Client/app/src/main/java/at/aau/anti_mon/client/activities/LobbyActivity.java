@@ -89,9 +89,6 @@ public class LobbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_lobby);
-        // TODO:
-        // SharedPreferences für zu speichernde Key-Value Paare
-        // sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();
@@ -217,9 +214,9 @@ public class LobbyActivity extends AppCompatActivity {
     public void onReadyEvent(User eventUser) {
         AtomicBoolean allReady = new AtomicBoolean(true);
         availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
-            User currentUser = entry.getValue();
-            if (currentUser.getUsername().equals(eventUser.getUsername())) {
-                currentUser.setReady(eventUser.isReady());
+            User currentUseronreadyevent = entry.getValue();
+            if (currentUseronreadyevent.getUsername().equals(eventUser.getUsername())) {
+                currentUseronreadyevent.setReady(eventUser.isReady());
                 CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
                 cb.setChecked(eventUser.isReady());
                 Button readyButton = findViewById(R.id.lobby_ready);
@@ -228,7 +225,7 @@ public class LobbyActivity extends AppCompatActivity {
                 } else {
                     readyButton.setText(R.string.ready);
                 }
-                if (!currentUser.isReady()) {
+                if (!currentUseronreadyevent.isReady()) {
                     allReady.set(false);
                 }
             }
@@ -345,7 +342,6 @@ public class LobbyActivity extends AppCompatActivity {
         }
         EventBus.getDefault().unregister(this);
         Log.d(DEBUG_TAG, "EventBus unregistered");
-        //globalEventQueue.setEventBusReady(false);
         removeObservers();
     }
 
