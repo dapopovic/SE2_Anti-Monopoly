@@ -193,7 +193,6 @@ public class ActivityGameField extends AppCompatActivity {
         startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
     }
     @Override
-    @Deprecated
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String onactivityresultstring = "onActivityResult";
