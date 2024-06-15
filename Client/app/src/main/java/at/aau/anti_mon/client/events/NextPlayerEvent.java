@@ -1,6 +1,5 @@
 package at.aau.anti_mon.client.events;
 
-import at.aau.anti_mon.client.command.NextPlayerCommand;
 import lombok.Getter;
 
 @Getter

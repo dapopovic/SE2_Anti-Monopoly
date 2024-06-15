@@ -1,6 +1,5 @@
 package at.aau.anti_mon.client.activities;
 
-import android.util.Log;
 import android.widget.TextView;
 
 import at.aau.anti_mon.client.R;

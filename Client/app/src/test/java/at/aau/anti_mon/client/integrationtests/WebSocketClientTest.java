@@ -94,7 +94,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
     }
 
     @Test
-    void testNewUserCommandShouldFireUserJoinedLobbyEvent() throws InterruptedException {
+    void testNewUserCommandShouldFireUserJoinedLobbyEvent() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.NEW_USER);
         jsonDataDTO.putData("username", "testUser");
