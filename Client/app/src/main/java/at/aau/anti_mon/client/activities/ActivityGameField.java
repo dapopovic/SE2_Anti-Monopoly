@@ -213,7 +213,7 @@ public class ActivityGameField extends AppCompatActivity {
             Log.d(onactivityresultstring, "wurfel: " + wurfel);
 
             if (wurfel) {
-                if (doubledice & number1 == number2) {
+                if (doubledice && number1 == number2) {
                     number2 = 0;
                 }
                 if (number1 == number2) {
