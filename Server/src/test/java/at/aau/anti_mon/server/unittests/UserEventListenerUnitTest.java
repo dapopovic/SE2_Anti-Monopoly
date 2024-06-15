@@ -204,7 +204,7 @@ class UserEventListenerUnitTest {
 
         User user = mock(User.class);
         when(user.getName()).thenReturn("testuser");
-        when(user.getFigure()).thenReturn(Figures.GreenCircle);
+        when(user.getFigure()).thenReturn(Figures.GREEN_CIRCLE);
         when(user.getLocation()).thenReturn(0);
         when(user.getLobby()).thenReturn(lobby);
         HashSet<User> users = new HashSet<>();
