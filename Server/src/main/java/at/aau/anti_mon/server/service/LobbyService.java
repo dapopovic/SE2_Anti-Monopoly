@@ -39,7 +39,7 @@ public class LobbyService {
     private final UserService userService;
 
     private final Random random = new Random();
-    private final String SERVER_PLAYER = "SERVER: Spieler ";
+    private static final String SERVER_PLAYER = "SERVER: Spieler ";
     int sequenceNumber = 0;
     @Autowired
     public LobbyService(UserService userService

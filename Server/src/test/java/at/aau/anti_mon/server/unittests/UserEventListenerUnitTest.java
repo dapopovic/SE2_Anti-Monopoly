@@ -1,33 +1,9 @@
 package at.aau.anti_mon.server.unittests;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.net.URISyntaxException;
-import java.util.*;
-
-import java.util.HashSet;
-
-import at.aau.anti_mon.server.enums.Figures;
-import at.aau.anti_mon.server.events.*;
-import org.h2.util.json.JSONItemType;
-import org.junit.jupiter.api.RepeatedTest;
-import at.aau.anti_mon.server.utilities.JsonDataUtility;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.socket.WebSocketSession;
-
 import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.enums.Figures;
+import at.aau.anti_mon.server.events.*;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -37,16 +13,23 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
+import at.aau.anti_mon.server.utilities.JsonDataUtility;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.socket.WebSocketSession;
 
-import java.util.List;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

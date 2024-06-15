@@ -30,13 +30,14 @@ import java.util.Set;
  */
 @Component
 public class UserEventListener {
+    private static final String PLAYER_TAG = "Spieler ";
+
     private SecureRandom random;
     @Setter
     private int fixProbabilityForCheating = -1;
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
-    private final String PLAYER_TAG = "Spieler ";
 
     private static final int CHANGE_BALANCE = 100;
 
