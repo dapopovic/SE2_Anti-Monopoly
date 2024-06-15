@@ -119,8 +119,8 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.START_GAME);
         User[] users = {
-                new User("testUser", false, false, 1000, null, Figures.GreenCircle,false),
-                new User("testUser2", false, false, 1000, null, Figures.BlueCircle,false)
+                new User("testUser", false, false, 1000, null, Figures.GREEN_CIRCLE,false),
+                new User("testUser2", false, false, 1000, null, Figures.BLUE_CIRCLE,false)
         };
         jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
@@ -144,7 +144,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.setCommand(Commands.DICENUMBER);
         jsonDataDTO.putData("dicenumber", "8");
         jsonDataDTO.putData("name", "GreenTriangle");
-        jsonDataDTO.putData("figure", Figures.GreenTriangle.toString());
+        jsonDataDTO.putData("figure", Figures.GREEN_TRIANGLE.toString());
         jsonDataDTO.putData("location", "1");
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
         String message = JsonDataManager.createJsonMessage(jsonDataDTO);
