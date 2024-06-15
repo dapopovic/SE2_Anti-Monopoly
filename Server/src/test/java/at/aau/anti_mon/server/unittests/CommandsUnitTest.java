@@ -317,7 +317,7 @@ class CommandsUnitTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.NEXT_PLAYER);
         jsonData.putData("username", "Alex");
-        NextPlayerCommand nextPlayerCommand = new NextPlayerCommand(eventPublisher);
+        nextPlayerCommand = new NextPlayerCommand(eventPublisher);
         nextPlayerCommand.execute(session,jsonData);
         verify(eventPublisher,times(1)).publishEvent(any(NextPlayerEvent.class));
     }
@@ -327,7 +327,7 @@ class CommandsUnitTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.FIRST_PLAYER);
         jsonData.putData("username", "Alex");
-        FirstPlayerCommand firstPlayerCommand = new FirstPlayerCommand(eventPublisher);
+        firstPlayerCommand = new FirstPlayerCommand(eventPublisher);
         firstPlayerCommand.execute(session,jsonData);
         verify(eventPublisher,times(1)).publishEvent(any(FirstPlayerEvent.class));
     }
