@@ -23,11 +23,13 @@ public class DiceNumberCommand implements Command{
         String username = data.getData().get("username");
         String figure = data.getData().get("figure");
         Integer location = Integer.valueOf(data.getData().get("location"));
+        
+        String dicenumbercommandstring = "DiceNumberCommand";
 
-        Log.d("DiceNumberCommand", "Posting Dice received event with dice: " + dicenumber);
-        Log.d("DiceNumberCommand", "Posting Dice received event with name: " + username);
-        Log.d("DiceNumberCommand", "Posting Dice received event with figure: " + figure);
-        Log.d("DiceNumberCommand", "Posting Dice received event with location: " + location);
+        Log.d(dicenumbercommandstring, "Posting Dice received event with dice: " + dicenumber);
+        Log.d(dicenumbercommandstring, "Posting Dice received event with name: " + username);
+        Log.d(dicenumbercommandstring, "Posting Dice received event with figure: " + figure);
+        Log.d(dicenumbercommandstring, "Posting Dice received event with location: " + location);
 
         // Zugriff auf die GlobalEventQueue über die Application Instanz
         queue.enqueueEvent(new DiceNumberReceivedEvent(dicenumber,username,figure,location));

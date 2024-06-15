@@ -22,10 +22,7 @@ import org.tinylog.Logger;
 @EnableWebSocket
 public class WebSocketHandlerConfig implements WebSocketConfigurer {
 
-    //private final LobbyService lobbyService;
-    //private final SessionManagementService sessionManagementService;
     private final ApplicationEventPublisher eventPublisher;
-    //private final CommandFactory gameCommandFactory;
 
     @Autowired
     public WebSocketHandlerConfig(
@@ -34,9 +31,6 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
           //  CommandFactory gameCommandFactory,
             ApplicationEventPublisher eventPublisher
     ) {
-        //this.lobbyService = lobbyService;
-    //    this.gameCommandFactory = gameCommandFactory;
-    //    this.sessionManagementService = sessionManagementService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -54,8 +48,6 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
                                 eventPublisher
                         ), "/game")
                 .setAllowedOrigins("*");
-//               // .withSockJS()
-//               // .setHeartbeatTime(25000);
 
         /**
          * The advantage of using sockJS here is whenever the websocket connection is disconnected or the websocket connection can not be established,

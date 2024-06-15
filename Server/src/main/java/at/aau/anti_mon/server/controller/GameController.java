@@ -49,9 +49,6 @@ public class GameController {
 
     public ResponseEntity<String> addPlayer(@RequestBody Integer gameID,@RequestBody UserDTO player) {
 
-        //Player newPlayer = new Player.Builder()
-        //        .withName(player.getUsername())
-        //        .build();
         return gameService.addPlayer(gameID, player);
     }
 

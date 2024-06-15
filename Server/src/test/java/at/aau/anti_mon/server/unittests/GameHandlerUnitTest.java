@@ -79,8 +79,6 @@ class GameHandlerUnitTest {
         doCallRealMethod().when(gameCommandFactory).getCommand(Commands.CREATE_GAME.name());
 
         UserEventListener userEventListener = mock(UserEventListener.class);
-        // UserCreatedLobbyEvent createLobbyEvent = new UserCreatedLobbyEvent(session,
-        // new UserDTO("Test"));
 
         // GAME HANDLER:
         GameHandler gameHandler = new GameHandler(eventPublisher);
@@ -108,7 +106,6 @@ class GameHandlerUnitTest {
 
         // Konfigurieren des eventPublisher, um JsonDataManager.sendPin aufzurufen
         doAnswer(invocation -> {
-            // UserCreatedLobbyEvent event = invocation.getArgument(0);
             JsonDataUtility.sendPin(session, "1234");
             return null;
         }).when(eventPublisher).publishEvent(any(UserCreatedLobbyEvent.class));

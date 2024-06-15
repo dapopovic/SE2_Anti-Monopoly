@@ -179,7 +179,7 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.DICENUMBER);
         jsonDataDTO.putData("dicenumber", "8");
         jsonDataDTO.putData("name", "GreenTriangle");
-        jsonDataDTO.putData("figure", Figures.GreenTriangle.toString());
+        jsonDataDTO.putData("figure", Figures.GREEN_TRIANGLE.toString());
         jsonDataDTO.putData("location", "1");
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
 

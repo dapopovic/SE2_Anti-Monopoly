@@ -177,6 +177,8 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             case 6:
                 dice.setImageResource(R.drawable.dice6);
                 break;
+            default:
+                break;
         }
         return number;
     }

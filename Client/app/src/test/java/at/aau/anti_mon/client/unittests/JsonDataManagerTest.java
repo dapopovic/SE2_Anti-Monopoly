@@ -56,8 +56,8 @@ class JsonDataManagerTest {
 
     @Test
     void createStringFromJsonMessageUsingAnObjectShouldReturnValidValue() {
-        User user = new User("username", true, true, 1000, null, Figures.GreenCircle,false);
-        User user2 = new User("username2", false, false, 1500, null, Figures.BlueCircle,false);
+        User user = new User("username", true, true, 1000, null, Figures.GREEN_CIRCLE,false);
+        User user2 = new User("username2", false, false, 1500, null, Figures.BLUE_CIRCLE,false);
         User[] users = {user, user2};
         String json = JsonDataManager.createJsonMessage(users);
         ObjectMapper mapper = new ObjectMapper();

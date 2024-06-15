@@ -43,8 +43,6 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionDisconnected(SessionDisconnectEvent event) {
-        // Todo: Test
-      //  sessionManagementService.removeSessionById( event.getSession().getId(), event.getUserID());
         Logger.info("Session disconnected: " + event.getSession().getId());
     }
 

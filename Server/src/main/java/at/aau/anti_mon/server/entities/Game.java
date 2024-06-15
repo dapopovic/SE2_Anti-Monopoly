@@ -52,9 +52,6 @@ public class Game implements Serializable {
     @Column(name = "game_start_date")
     private Date startDate;
 
-    // @OneToOne(mappedBy = "playerID") // (optional = false    must specify a owner before creating a game
-    //  private Player creator;
-
     /**
      * Needed so the Tables can be automatically created in the DB
      * Protected since it should not be used directly

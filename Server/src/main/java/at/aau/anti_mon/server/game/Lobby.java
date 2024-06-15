@@ -28,16 +28,16 @@ public class Lobby {
     private Random random;
 
     public Lobby() {
-        SecureRandom random = new SecureRandom();
-        this.pin = random.nextInt(9000) + 1000;
+        SecureRandom secureRandom = new SecureRandom();
+        this.pin = secureRandom.nextInt(9000) + 1000;
         this.users = new HashSet<>();
         this.gameState = GameStateEnum.LOBBY;
         this.owner = null;
     }
 
     public Lobby(User user) {
-        SecureRandom random = new SecureRandom();
-        this.pin = random.nextInt(9000) + 1000;
+        SecureRandom secureRandom = new SecureRandom();
+        this.pin = secureRandom.nextInt(9000) + 1000;
         this.users = new HashSet<>();
         this.gameState = GameStateEnum.LOBBY;
         user.setReady(true);

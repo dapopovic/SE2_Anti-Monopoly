@@ -96,15 +96,4 @@ public class UserService {
 
         users.remove(userId);
     }
-
-    /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an einem bestimmten User
-     * @param message Nachrichtenobjekt
-     */
-    /*public void sendToUser(String username, Object message) {
-        String destination = "/user/" + username + "/queue/notifications";
-        messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
-    }*/
-
-
 }

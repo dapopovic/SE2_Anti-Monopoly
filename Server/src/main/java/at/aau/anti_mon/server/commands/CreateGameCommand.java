@@ -21,7 +21,6 @@ public class CreateGameCommand implements Command {
 
     @Override
     public void execute(WebSocketSession session, JsonDataDTO jsonData) throws CanNotExecuteJsonCommandException {
-        // data = {"username": "Test"}
         if (jsonData.getData() == null || jsonData.getData().get("username") == null) {
             Logger.error("SERVER: Required data for 'CREATE_GAME' is missing.");
             throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'CREATE_GAME' is missing.");

@@ -60,6 +60,8 @@ public class ActivityGameField extends AppCompatActivity {
     User currentUser;
     String pin;
     boolean doubledice = false;
+    String colorgrey = "#6C757D";
+    String usernamestring = "username";
 
     @Inject
     WebSocketClient webSocketClient;
@@ -101,12 +103,12 @@ public class ActivityGameField extends AppCompatActivity {
     private void sendfirst(){
         ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
-        dice.setBackgroundColor(Color.parseColor("#6C757D"));
+        dice.setBackgroundColor(Color.parseColor(colorgrey));
         Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
-        finish.setBackgroundColor(Color.parseColor("#6C757D"));
+        finish.setBackgroundColor(Color.parseColor(colorgrey));
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.FIRST_PLAYER, new HashMap<>());
-        jsonDataDTO.putData("username", currentUser.getUsername());
+        jsonDataDTO.putData(usernamestring, currentUser.getUsername());
         Log.d("onCreateGame", "Send name:"+currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
     }
@@ -139,7 +141,7 @@ public class ActivityGameField extends AppCompatActivity {
         // show the current role of the user in a popup
         Intent i = new Intent(getApplicationContext(), PopActivityRole.class);
         i.putExtra("role", currentUser.getRole().name());
-        i.putExtra("username", currentUser.getUsername());
+        i.putExtra(usernamestring, currentUser.getUsername());
         i.putExtra("figure", currentUser.getFigure().name());
         startActivity(i);
     }
@@ -162,12 +164,12 @@ public class ActivityGameField extends AppCompatActivity {
     public void onEndGame(View view) {
         doubledice = false;
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
-        jsonDataDTO.putData("username", currentUser.getUsername());
+        jsonDataDTO.putData(usernamestring, currentUser.getUsername());
         Log.d("onEndGame", "Send name:"+currentUser.getUsername());
         webSocketClient.sendJsonData(jsonDataDTO);
         Button finish = findViewById(R.id.btnfinish);
         finish.setEnabled(false);
-        finish.setBackgroundColor(Color.parseColor("#6C757D"));
+        finish.setBackgroundColor(Color.parseColor(colorgrey));
     }
 
     @Override
@@ -220,7 +222,7 @@ public class ActivityGameField extends AppCompatActivity {
                     if(number1!=number2){
                         ImageButton dice = findViewById(R.id.btndice);
                         dice.setEnabled(false);
-                        dice.setBackgroundColor(Color.parseColor("#6C757D"));
+                        dice.setBackgroundColor(Color.parseColor(colorgrey));
                         Button finish = findViewById(R.id.btnfinish);
                         finish.setEnabled(true);
                         finish.setBackgroundColor(Color.parseColor("#DC3545"));
@@ -292,7 +294,7 @@ public class ActivityGameField extends AppCompatActivity {
                     }
                     JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
                     jsonData.putData("new_balance", String.valueOf(new_balance));
-                    jsonData.putData("username", currentUser.getUsername());
+                    jsonData.putData(usernamestring, currentUser.getUsername());
                     String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
                     webSocketClient.sendMessageToServer(jsonMessage);
                 }
@@ -335,7 +337,7 @@ public class ActivityGameField extends AppCompatActivity {
         String user = currentUser.getUsername();
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
         jsonData.putData("dicenumber", dice);
-        jsonData.putData("username", user);
+        jsonData.putData(usernamestring, user);
         jsonData.putData("cheat", String.valueOf(cheat));
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
