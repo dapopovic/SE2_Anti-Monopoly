@@ -282,7 +282,7 @@ public class UserEventListener {
                 i = 0;
             }
             User u = usersList.get(i);
-            Logger.info("Spieler " + u.getName() + " mit Sequence " + u.getSequence() + " und unavailableRounds " + u.getUnavailableRounds());
+            Logger.info(PLAYER_TAG + u.getName() + " mit Sequence " + u.getSequence() + " und unavailableRounds " + u.getUnavailableRounds());
             if (u.getUnavailableRounds() == 0) {
                 return u;
             }
