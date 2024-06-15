@@ -129,9 +129,6 @@ class EventDrivenPatternTest {
     void onLeaveLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
 
         session1 = mock(WebSocketSession.class);
-//////////////// HEAD
-      //  lobbyService.addUserToLobby(user2.getName(), lobby.getPin());
-      //  UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1"));
 
 //// Merge issues backup
 

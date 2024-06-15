@@ -39,12 +39,12 @@ public class LobbyService {
     private final UserService userService;
 
     private final Random random = new Random();
+    private final String SERVER_PLAYER = "SERVER: Spieler ";
     int sequenceNumber = 0;
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
     ) {
-        //this.messagingTemplate = messagingTemplate;
         this.userService = userService;
         this.lobbies = new ConcurrentHashMap<>();
         this.userLobbyMap = new ConcurrentHashMap<>();
@@ -93,20 +93,20 @@ public class LobbyService {
         lobby.addUser(user);
         user.setLobby(lobby);
         addUserToLobby(userName, lobbyPin);
-        Logger.info("SERVER: Spieler " + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
+        Logger.info(SERVER_PLAYER + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
     public void leaveLobby(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.removeUser(userService.getUser(userName));
         removeUserFromLobby(userName);
-        Logger.info("SERVER: Spieler " + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
+        Logger.info(SERVER_PLAYER + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
     }
 
     public void readyUser(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.readyUser(userService.getUser(userName));
-        Logger.info("SERVER: Spieler " + userName + " ist bereit.");
+        Logger.info(SERVER_PLAYER + userName + " ist bereit.");
     }
 
     /**
@@ -184,17 +184,4 @@ public class LobbyService {
         sequenceNumber = 0;
         lobby.startGame();
     }
-
-    /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an alle Clients im Lobby-Channel
-     * @param lobbyId ID der Lobby
-     * @param message Nachrichtenobjekt
-     */
-    /*public void sendToLobby(String lobbyId, Object message) {
-        String destination = "/topic/lobby." + lobbyId;
-        messagingTemplate.convertAndSend(destination, message);
-    }
-
-     */
-
 }

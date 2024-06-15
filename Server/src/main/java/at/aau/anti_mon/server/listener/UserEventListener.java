@@ -36,6 +36,8 @@ public class UserEventListener {
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
+    private final String PLAYER_TAG = "Spieler ";
+
     private static final int CHANGE_BALANCE = 100;
 
     /**
@@ -117,7 +119,7 @@ public class UserEventListener {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
 
         lobbyService.leaveLobby(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " hat die Lobby verlassen.");
+        Logger.info(PLAYER_TAG + event.getUsername() + " hat die Lobby verlassen.");
 
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         for (User user : users) {
@@ -138,7 +140,7 @@ public class UserEventListener {
     public void onReadyUserEvent(UserReadyLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
         lobbyService.readyUser(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " ist bereit.");
+        Logger.info(PLAYER_TAG + event.getUsername() + " ist bereit.");
 
         User readiedUser = userService.getUser(event.getUsername());
 
@@ -152,7 +154,7 @@ public class UserEventListener {
     public void onStartGameEvent(UserStartedGameEvent event) throws LobbyNotFoundException {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
         lobbyService.startGame(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " hat das Spiel gestartet.");
+        Logger.info(PLAYER_TAG + event.getUsername() + " hat das Spiel gestartet.");
 
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         // convert to userDtos
@@ -205,8 +207,7 @@ public class UserEventListener {
 
     public void checkCheating(boolean canCheat, User user) {
         // suggest cheating with probability of 50% when it was not cheated till now
-        if(!canCheat || user.getUnavailableRounds() > 0)
-        {
+        if(!canCheat || user.getUnavailableRounds() > 0) {
             return;
         }
         int probability = fixProbabilityForCheating;
@@ -235,7 +236,7 @@ public class UserEventListener {
 
     @EventListener
     public void onNextPlayerEvent(NextPlayerEvent event) throws UserNotFoundException {
-        Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
+        Logger.info(PLAYER_TAG + event.getUsername() + " hat Finish ausgewählt.");
         String username = event.getUsername();
         User user = userService.getUser(username);
         user.setHasPlayed(true);
@@ -244,7 +245,7 @@ public class UserEventListener {
         int playerAmount = users.size();
         sequence++;
         if (haveAllPlayersPlayed(users)) {
-            Logger.info("Alle Spieler haben gespielt.");
+            Logger.info("Alle " + PLAYER_TAG + "haben gespielt.");
             for (User u : users) {
                 if(u.getUnavailableRounds() == 0) u.setHasPlayed(false);
             }
@@ -252,14 +253,14 @@ public class UserEventListener {
             reduceUnavailableRounds(users);
         }
         User userCurrentSequence = getNextPlayer(users, sequence, playerAmount);
-        Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
+        Logger.info(PLAYER_TAG + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
     }
     private boolean haveAllPlayersPlayed(HashSet<User> users) {
         int havePlayed = users.stream().filter(User::isHasPlayed).mapToInt(u -> 1).sum();
-        Logger.info("Spieler die gespielt haben: " + havePlayed);
+        Logger.info(PLAYER_TAG + "die gespielt haben: " + havePlayed);
         return havePlayed == users.size();
     }
 
@@ -294,6 +295,7 @@ public class UserEventListener {
         return userCurrentSequence;
     }
 
+
     @EventListener
     public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException {
         Logger.info("Wir sind in FirstPlayerEventListener.");
@@ -302,7 +304,7 @@ public class UserEventListener {
         HashSet<User> users = user.getLobby().getUsers();
         Logger.info("Wir haben die Nummer: " + user.getSequence());
         if (user.getSequence() == 0) {
-            Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
+            Logger.info(PLAYER_TAG + event.getUsername() + " ist Spieler 1.");
             for (User u : users) {
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()), user.getName());
             }

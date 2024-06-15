@@ -62,6 +62,7 @@ public class LobbyActivity extends AppCompatActivity {
     private User currentUser;
     private boolean leftLobby = false;
     private boolean gameStarted = false;
+    String usernamestring = "username";
 
     ///////////////////////////////////// Networking
 
@@ -88,9 +89,6 @@ public class LobbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_lobby);
-        // TODO:
-        // SharedPreferences für zu speichernde Key-Value Paare
-        // sharedPreferences = getSharedPreferences(username, MODE_PRIVATE);
 
         // Setup der UI und andere Initialisierungen
         initializeUI();
@@ -129,8 +127,8 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void processIntent() {
-        if (getIntent().hasExtra("username")) {
-            currentUser = new User(getIntent().getStringExtra("username"), getIntent().getBooleanExtra("isOwner", false), getIntent().getBooleanExtra("isReady", false));
+        if (getIntent().hasExtra(usernamestring)) {
+            currentUser = new User(getIntent().getStringExtra(usernamestring), getIntent().getBooleanExtra("isOwner", false), getIntent().getBooleanExtra("isReady", false));
             addUserToTable(currentUser);
         } else {
             Log.e(DEBUG_TAG, "Old Intent has no username");
@@ -216,9 +214,9 @@ public class LobbyActivity extends AppCompatActivity {
     public void onReadyEvent(User eventUser) {
         AtomicBoolean allReady = new AtomicBoolean(true);
         availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
-            User currentUser = entry.getValue();
-            if (currentUser.getUsername().equals(eventUser.getUsername())) {
-                currentUser.setReady(eventUser.isReady());
+            User currentUseronreadyevent = entry.getValue();
+            if (currentUseronreadyevent.getUsername().equals(eventUser.getUsername())) {
+                currentUseronreadyevent.setReady(eventUser.isReady());
                 CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
                 cb.setChecked(eventUser.isReady());
                 Button readyButton = findViewById(R.id.lobby_ready);
@@ -227,7 +225,7 @@ public class LobbyActivity extends AppCompatActivity {
                 } else {
                     readyButton.setText(R.string.ready);
                 }
-                if (!currentUser.isReady()) {
+                if (!currentUseronreadyevent.isReady()) {
                     allReady.set(false);
                 }
             }
@@ -281,7 +279,7 @@ public class LobbyActivity extends AppCompatActivity {
 
     private void leaveLobby() {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.LEAVE_GAME, new HashMap<>());
-        jsonData.putData("username", currentUser.getUsername());
+        jsonData.putData(usernamestring, currentUser.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
@@ -293,7 +291,7 @@ public class LobbyActivity extends AppCompatActivity {
     public void onStartGame(View view) {
         // send start game message to server
         JsonDataDTO jsonData = new JsonDataDTO(Commands.START_GAME, new HashMap<>());
-        jsonData.putData("username", currentUser.getUsername());
+        jsonData.putData(usernamestring, currentUser.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
@@ -303,7 +301,7 @@ public class LobbyActivity extends AppCompatActivity {
     public void onReady(View view) {
         // send ready message to server
         JsonDataDTO jsonData = new JsonDataDTO(Commands.READY, new HashMap<>());
-        jsonData.putData("username", currentUser.getUsername());
+        jsonData.putData(usernamestring, currentUser.getUsername());
         jsonData.putData("pin", pin);
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
@@ -344,7 +342,6 @@ public class LobbyActivity extends AppCompatActivity {
         }
         EventBus.getDefault().unregister(this);
         Log.d(DEBUG_TAG, "EventBus unregistered");
-        //globalEventQueue.setEventBusReady(false);
         removeObservers();
     }
 

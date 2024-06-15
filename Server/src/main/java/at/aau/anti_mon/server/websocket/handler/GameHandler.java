@@ -25,6 +25,7 @@ public class GameHandler implements WebSocketHandler {
 
     private final  ApplicationEventPublisher eventPublisher;
     private final CommandFactory gameCommandFactory;
+    String remoteaddressisnull = "RemoteAddress ist null";
 
     @Autowired
     public GameHandler(
@@ -61,8 +62,6 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        //String userID = extractUserID(session.getUri().getQuery());
-        //Logger.info( "Query " + session.getUri().getQuery() );
 
         Logger.error("Transportfehler in Session " + session.getId() + ": " + exception.getMessage());
         if (session.isOpen()) {
@@ -86,7 +85,7 @@ public class GameHandler implements WebSocketHandler {
         HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
 
         if (clientAddress == null) {
-            Logger.error("RemoteAddress ist null");
+            Logger.error(remoteaddressisnull);
         }else {
             Logger.info("Accepted connection from: {}:{}", clientAddress.getHostString(), clientAddress.getPort());
             Logger.debug("Client hostname: {}", clientAddress.getHostName());
@@ -95,7 +94,7 @@ public class GameHandler implements WebSocketHandler {
         }
 
         if (session.getRemoteAddress() == null) {
-            Logger.error("RemoteAddress ist null");
+            Logger.error(remoteaddressisnull);
         }else {
             Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
             Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
@@ -113,12 +112,6 @@ public class GameHandler implements WebSocketHandler {
             Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
         }
 
-        //Logger.debug("Handshake header: User-Agent {}", handshakeHeaders.get("User-Agent").toString());
-        //Logger.debug("Handshake header: Sec-WebSocket-Extensions {}", handshakeHeaders.get("Sec-WebSocket-Extensions").toString());
-        //Logger.debug("Handshake header: Sec-WebSocket-Key {}", handshakeHeaders.get("Sec-WebSocket-Key").toString());
-        //Logger.debug("Handshake header: Sec-WebSocket-Version {}", handshakeHeaders.get("Sec-WebSocket-Version").toString());
-        //////////////////////////////////////////////////////////////////// DEBUG
-
         eventPublisher.publishEvent(new SessionConnectEvent(session
         //        ,userID
         ));
@@ -132,7 +125,7 @@ public class GameHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, @NotNull CloseStatus closeStatus) {
         if (session.getRemoteAddress() == null) {
-            Logger.error("RemoteAddress ist null");
+            Logger.error(remoteaddressisnull);
         }else {
             Logger.info("Connection closed by {}:{}", session.getRemoteAddress().getHostString(), session.getRemoteAddress().getPort());
         }
