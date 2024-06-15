@@ -33,7 +33,7 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionConnected(SessionConnectEvent event) {
-        if (uriisNull(event.getSession())) return;
+        if (UriIsNull(event.getSession())) return;
         Logger.info("Session connected: " + event.getSession().getId());
     }
 
@@ -53,12 +53,12 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionCheckEvent(SessionCheckEvent event) {
-        if (uriisNull(event.getSession())) return;
+        if (UriIsNull(event.getSession())) return;
         WebSocketSession session = event.getSession();
         Logger.info("Heartbeat received from: " + session.getId());
     }
 
-    private boolean uriisNull(WebSocketSession session) {
+    private boolean UriIsNull(WebSocketSession session) {
         if (session.getUri() == null) {
             Logger.error("URI ist null");
             Logger.info("Session connected: " + session.getId());
