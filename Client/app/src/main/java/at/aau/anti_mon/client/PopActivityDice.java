@@ -43,7 +43,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
         try {
             getActionBar().hide();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
 
         DisplayMetrics dm = new DisplayMetrics();
