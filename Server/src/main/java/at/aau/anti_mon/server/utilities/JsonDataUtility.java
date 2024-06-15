@@ -22,6 +22,8 @@ import java.util.Map;
  */
 public class JsonDataUtility {
 
+    static String usernamestring = "username";
+
     private JsonDataUtility() {
     }
 
@@ -81,20 +83,20 @@ public class JsonDataUtility {
 
 
     public static void sendJoinedUser(WebSocketSession session, User user) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, user.getName(), "username");
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, user.getName(), usernamestring);
         jsonData.putData("isOwner", String.valueOf(user.isOwner()));
         jsonData.putData("isReady", String.valueOf(user.isReady()));
         send(session, jsonData);
     }
 
     public static void sendReadyUser(WebSocketSession session, String message, boolean isReady) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.READY, message, "username");
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.READY, message, usernamestring);
         jsonData.putData("isReady", String.valueOf(isReady));
         send(session, jsonData);
     }
 
     public static void sendLeavedUser(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.LEAVE_GAME, message, "username");
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.LEAVE_GAME, message, usernamestring);
         send(session, jsonData);
     }
 
@@ -145,7 +147,7 @@ public class JsonDataUtility {
 
     public static void sendDiceNumber(WebSocketSession session, String username, Integer dicenumber, Figures figure, Integer location){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
-        jsonData.putData("username",username);
+        jsonData.putData(usernamestring,username);
         jsonData.putData("dicenumber", String.valueOf(dicenumber));
         jsonData.putData("figure", String.valueOf(figure));
         jsonData.putData("location", String.valueOf(location));
@@ -155,7 +157,7 @@ public class JsonDataUtility {
 
     public static void sendNewBalance(WebSocketSession session, String username, Integer new_balance) {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-        jsonData.putData("username",username);
+        jsonData.putData(usernamestring,username);
         jsonData.putData("new_balance", String.valueOf(new_balance));
         send(session, jsonData);
     }
@@ -167,12 +169,12 @@ public class JsonDataUtility {
 
     public static void sendNextPlayer(WebSocketSession session, String username){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
-        jsonData.putData("username",username);
+        jsonData.putData(usernamestring,username);
         send(session,jsonData);
     }
     public static void sendFirstPlayer(WebSocketSession session, String username){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
-        jsonData.putData("username",username);
+        jsonData.putData(usernamestring,username);
         Logger.info("Wir senden den First Player:"+username);
         send(session,jsonData);
     }

@@ -40,6 +40,7 @@ public class LobbyService {
 
     private final Random random = new Random();
     int sequencenumber = 1;
+    String serverplayer = "SERVER: Spieler ";
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
@@ -93,20 +94,20 @@ public class LobbyService {
         lobby.addUser(user);
         user.setLobby(lobby);
         addUserToLobby(userName, lobbyPin);
-        Logger.info("SERVER: Spieler " + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
+        Logger.info(serverplayer + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
     public void leaveLobby(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.removeUser(userService.getUser(userName));
         removeUserFromLobby(userName);
-        Logger.info("SERVER: Spieler " + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
+        Logger.info(serverplayer + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
     }
 
     public void readyUser(int lobbyPin, String userName) throws UserNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
         lobby.readyUser(userService.getUser(userName));
-        Logger.info("SERVER: Spieler " + userName + " ist bereit.");
+        Logger.info(serverplayer + userName + " ist bereit.");
     }
 
     /**

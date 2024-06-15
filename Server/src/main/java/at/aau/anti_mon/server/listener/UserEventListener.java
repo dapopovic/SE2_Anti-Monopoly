@@ -32,6 +32,7 @@ public class UserEventListener {
     private final LobbyService lobbyService;
     private final SessionManagementService sessionManagementService;
     private final UserService userService;
+    String Player ="Spieler ";
 
     public void setFixProbabilityForCheating(int number) {
         this.fixProbabilityForCheating = number;
@@ -116,7 +117,7 @@ public class UserEventListener {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
 
         lobbyService.leaveLobby(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " hat die Lobby verlassen.");
+        Logger.info(Player + event.getUsername() + " hat die Lobby verlassen.");
 
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         for (User user : users) {
@@ -140,7 +141,7 @@ public class UserEventListener {
     public void onReadyUserEvent(UserReadyLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
         lobbyService.readyUser(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " ist bereit.");
+        Logger.info(Player + event.getUsername() + " ist bereit.");
 
         User readiedUser = userService.getUser(event.getUsername());
 
@@ -154,7 +155,7 @@ public class UserEventListener {
     public void onStartGameEvent(UserStartedGameEvent event) throws LobbyNotFoundException {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
         lobbyService.startGame(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " hat das Spiel gestartet.");
+        Logger.info(Player + event.getUsername() + " hat das Spiel gestartet.");
 
         HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
         // convert to userDtos
@@ -223,7 +224,7 @@ public class UserEventListener {
 
     @EventListener
     public void onNextPlayerEvent(NextPlayerEvent event) throws UserNotFoundException {
-        Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
+        Logger.info(Player + event.getUsername() + " hat Finish ausgewählt.");
         String username = event.getUsername();
         User user = userService.getUser(username);
         int sequence = user.getSequence();
@@ -234,7 +235,7 @@ public class UserEventListener {
 
         int finalSequence = sequence;
         User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
-        Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
+        Logger.info(Player + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
@@ -248,7 +249,7 @@ public class UserEventListener {
         Logger.info("Wir haben die Nummer: "+ user.getSequence());
         boolean First = false;
         if(user.getSequence() == 1){
-            Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
+            Logger.info(Player + event.getUsername() + " ist Spieler 1.");
             First = true;
             for (User u : users){
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
