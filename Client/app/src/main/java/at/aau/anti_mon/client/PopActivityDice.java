@@ -31,8 +31,8 @@ public class PopActivityDice extends Activity implements SensorEventListener {
     TextView touchorshake;
     Random random = new Random();
 
-    int Zahl1 = 0;
-    int Zahl2 = 0;
+    int number1 = 0;
+    int number2 = 0;
     boolean rolldice = true;
 
     @SuppressLint("MissingInflatedId")
@@ -65,8 +65,8 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
         dice1.setOnClickListener(v -> {
             rolldice = false;
-            Zahl1 = rolltheDice(dice1);
-            Zahl2 = rolltheDice(dice2);
+            number1 = rolltheDice(dice1);
+            number2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
             touchorshake.setVisibility(View.INVISIBLE);
@@ -74,8 +74,8 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
         dice2.setOnClickListener(v -> {
             rolldice = false;
-            Zahl1 = rolltheDice(dice1);
-            Zahl2 = rolltheDice(dice2);
+            number1 = rolltheDice(dice1);
+            number2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
             touchorshake.setVisibility(View.INVISIBLE);
@@ -83,8 +83,8 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
         touchorshake.setOnClickListener(v -> {
             rolldice = false;
-            Zahl1 = rolltheDice(dice1);
-            Zahl2 = rolltheDice(dice2);
+            number1 = rolltheDice(dice1);
+            number2 = rolltheDice(dice2);
             dice1.setEnabled(false);
             dice2.setEnabled(false);
             touchorshake.setVisibility(View.INVISIBLE);
@@ -151,8 +151,8 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             dice2.setEnabled(false);
             touchorshake.setVisibility(View.INVISIBLE);
 
-            Zahl1 = rolltheDice(dice1);
-            Zahl2 = rolltheDice(dice2);
+            number1 = rolltheDice(dice1);
+            number2 = rolltheDice(dice2);
         }
     }
     private int rolltheDice(ImageView dice){
@@ -187,9 +187,9 @@ public class PopActivityDice extends Activity implements SensorEventListener {
         Log.d("onX", "I am in onX from PopActivityDice");
         Intent resultIntent = new Intent();
 
-        if (Zahl1 != 0 && Zahl2 != 0) {
-            resultIntent.putExtra("zahl1", Zahl1);
-            resultIntent.putExtra("zahl2", Zahl2);
+        if (number1 != 0 && number2 != 0) {
+            resultIntent.putExtra("zahl1", number1);
+            resultIntent.putExtra("zahl2", number2);
             resultIntent.putExtra("Wurfel", true);
         } else {
             resultIntent.putExtra("Wurfel", false);
