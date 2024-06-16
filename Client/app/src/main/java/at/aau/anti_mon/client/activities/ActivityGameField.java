@@ -47,6 +47,7 @@ import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
+import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -356,4 +357,26 @@ public class ActivityGameField extends AppCompatActivity {
             userAdapter.lostthegame(event.getUsername());
         }
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWinGameEvent(WinGameEvent event) {
+        if(currentUser.getUsername()==event.getUsername()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Allert!!")
+                    .setMessage("You are the winner!!")
+                    .setPositiveButton("keep watching", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setNegativeButton("Exit Game", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }
+    }
+
 }

@@ -28,6 +28,7 @@ import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
+import at.aau.anti_mon.client.command.WinGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
@@ -209,4 +210,9 @@ public class NetworkModule {
     @IntoMap
     @StringKey("LOSE_GAME")
     Command provideLoseGameCommand(LoseGameCommand command) { return command; }
+
+    @Provides
+    @IntoMap
+    @StringKey("WIN_GAME")
+    Command provideWinGameCommand(WinGameCommand command) { return command; }
 }

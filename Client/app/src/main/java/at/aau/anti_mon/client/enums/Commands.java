@@ -25,6 +25,7 @@ public enum Commands {
     NEXT_PLAYER("NEXT_PLAYER"),
     FIRST_PLAYER("FIRST_PLAYER"),
     CHEATING("CHEATING"),
+    WIN_GAME("WIN_GAME"),
     LOSE_GAME("LOSE_GAME");
     // usw
 
