@@ -317,6 +317,7 @@ public class UserEventListener {
         Logger.info("Wir sind in LoseGameEventListener.");
         String username = event.getUsername();
         User user = userService.getUser(username);
+        user.setUnavailableRounds(-1);
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
             JsonDataUtility.sendLoseGame(sessionManagementService.getSessionForUser(u.getName()), user.getName());

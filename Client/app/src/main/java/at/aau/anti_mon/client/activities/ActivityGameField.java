@@ -103,7 +103,9 @@ public class ActivityGameField extends AppCompatActivity {
         minusmoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("MinusMoney", "Money:" + currentUser.getMoney());
                 currentUser.setMoney(-1);
+                Log.d("MinusMoney", "Money:" + currentUser.getMoney());
             }
         });
 
@@ -172,7 +174,8 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onEndGame(View view) {
         doubledice = false;
-        if(currentUser.getMoney()>0){
+        Log.d("MinusMoney", "Money:" + currentUser.getMoney());
+        if(currentUser.getMoney()<0){
             JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
             jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
             Log.d("onEndGame", "Send loser:" + currentUser.getUsername());

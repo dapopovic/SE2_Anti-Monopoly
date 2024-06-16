@@ -62,7 +62,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         if (!user.isCurrentPlayer()){
             holder.playerInfo.setTextColor(Color.parseColor("#000000"));
         }
-        if(!user.isInGame()){
+        if(user.isLostGame()){
             holder.itemView.setBackgroundColor(Color.parseColor("#6C757D"));
         }
     }
@@ -102,7 +102,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void lostthegame(String username){
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getUsername().equals(username)) {
-                users.get(i).setInGame(false);
+                users.get(i).setLostGame(true);
                 notifyItemChanged(i);  // Notify that the item at position i has changed
                 break;
             }
