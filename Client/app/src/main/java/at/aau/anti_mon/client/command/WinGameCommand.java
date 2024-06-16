@@ -19,6 +19,7 @@ public class WinGameCommand implements Command{
     @Override
     public void execute(JsonDataDTO data) {
         String username = data.getData().get("username");
+        Log.d("WinGameCommand", "We are in WinGameCommand");
         Log.d("WinGameCommand", "Get name: " + username);
 
         // Zugriff auf die GlobalEventQueue über die Application Instanz

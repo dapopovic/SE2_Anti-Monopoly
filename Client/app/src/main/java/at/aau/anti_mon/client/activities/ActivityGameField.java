@@ -359,7 +359,11 @@ public class ActivityGameField extends AppCompatActivity {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWinGameEvent(WinGameEvent event) {
-        if(currentUser.getUsername()==event.getUsername()){
+        Log.d("onWinGameEvent", "I am in onWinGameEvent");
+        Log.d("onWinGameEvent", currentUser.getUsername());
+        Log.d("onWinGameEvent", event.getUsername());
+        if(Objects.equals(currentUser.getUsername(), event.getUsername())){
+            Log.d("onWinGameEvent", "I am in the if");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Allert!!")
                     .setMessage("You are the winner!!")

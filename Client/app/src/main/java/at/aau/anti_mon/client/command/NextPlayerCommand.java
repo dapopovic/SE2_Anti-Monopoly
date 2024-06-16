@@ -20,6 +20,7 @@ public class NextPlayerCommand implements Command{
     @Override
     public void execute(JsonDataDTO data) {
         String username = data.getData().get("username");
+        Log.d("NextPlayerCommand", "We are in NextPlayerCommand");
         Log.d("NextPlayerCommand", "Get name: " + username);
 
         // Zugriff auf die GlobalEventQueue über die Application Instanz
