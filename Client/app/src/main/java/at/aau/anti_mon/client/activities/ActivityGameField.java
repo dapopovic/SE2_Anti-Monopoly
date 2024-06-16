@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -50,8 +50,8 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
-    private static final int REQUEST_CODE_POP_ACTIVITY_DICE = 1;
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private ActivityResultLauncher<Intent> diceActivityResultLauncher;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
@@ -81,23 +81,32 @@ public class ActivityGameField extends AppCompatActivity {
         processIntent();
         ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
 
-        sendfirst();
-
-        activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        String resultData = result.getData().getStringExtra("resultKey");
-                        if (resultData != null && resultData.equals("yes")) {
-                            sendDice(1, 0, true);
-                        }
-                    }
-                }
-        );
-
+        sendFirst();
+        initResultLaunchers();
     }
 
-    private void sendfirst() {
+    private void initResultLaunchers() {
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::handleCheatActivityResult
+        );
+        diceActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::handleDiceActivityResult
+        );
+    }
+
+    private void handleCheatActivityResult(ActivityResult result) {
+        Intent data = result.getData();
+        if (result.getResultCode() == RESULT_OK && data != null) {
+            String resultData = data.getStringExtra("resultKey");
+            if (resultData != null && resultData.equals("yes")) {
+                sendDice(1, 0, true);
+            }
+        }
+    }
+
+    private void sendFirst() {
         ImageButton dice = findViewById(R.id.btndice);
         dice.setEnabled(false);
         dice.setBackgroundColor(Color.parseColor(COLOR_GRAY));
@@ -187,41 +196,38 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onFigureMove(View view) {
         Intent i = new Intent(getApplicationContext(), PopActivityDice.class);
-        startActivityForResult(i, REQUEST_CODE_POP_ACTIVITY_DICE);
+        diceActivityResultLauncher.launch(i);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void handleDiceActivityResult(ActivityResult result) {
         final String ON_ACTIVITY_RESULT = "onActivityResult";
-        Log.d(ON_ACTIVITY_RESULT, "I am in onActivityResult");
-        if (requestCode == REQUEST_CODE_POP_ACTIVITY_DICE && resultCode == RESULT_OK && data != null) {
-            int number1 = data.getIntExtra("zahl1", 0);
-            int number2 = data.getIntExtra("zahl2", 0);
-            boolean wurfel = data.getBooleanExtra("Wurfel", false);
+        Intent data = result.getData();
+        if (result.getResultCode() == RESULT_OK && data != null) {
+            int firstNumber = data.getIntExtra("zahl1", 0);
+            int secondNumber = data.getIntExtra("zahl2", 0);
+            boolean dice = data.getBooleanExtra("Wurfel", false);
 
-            // Verarbeite die empfangenen Daten
-            Log.d(ON_ACTIVITY_RESULT, "zahl1: " + number1);
-            Log.d(ON_ACTIVITY_RESULT, "zahl2: " + number2);
-            Log.d(ON_ACTIVITY_RESULT, "wurfel: " + wurfel);
+            // Process the received data
+            Log.d(ON_ACTIVITY_RESULT, "zahl1: " + firstNumber);
+            Log.d(ON_ACTIVITY_RESULT, "zahl2: " + secondNumber);
+            Log.d(ON_ACTIVITY_RESULT, "wurfel: " + dice);
 
-            if (wurfel) {
-                if (doubledice && number1 == number2) {
-                    number2 = 0;
+            if (dice) {
+                if (doubledice && firstNumber == secondNumber) {
+                    secondNumber = 0;
                 }
-                if (number1 == number2) {
+                if (firstNumber == secondNumber) {
                     doubledice = true;
                 } else {
-                    ImageButton dice = findViewById(R.id.btndice);
-                    dice.setEnabled(false);
-                    dice.setBackgroundColor(Color.parseColor(COLOR_GRAY));
+                    ImageButton diceImageBtn = findViewById(R.id.btndice);
+                    diceImageBtn.setEnabled(false);
+                    diceImageBtn.setBackgroundColor(Color.parseColor(COLOR_GRAY));
                     Button finish = findViewById(R.id.btnfinish);
                     finish.setEnabled(true);
                     finish.setBackgroundColor(Color.parseColor("#DC3545"));
                 }
-                sendDice(number1, number2, false);
+                sendDice(firstNumber, secondNumber, false);
             }
-
         }
     }
 
