@@ -24,7 +24,8 @@ public enum Commands {
     CHANGE_BALANCE("CHANGE_BALANCE"),
     NEXT_PLAYER("NEXT_PLAYER"),
     FIRST_PLAYER("FIRST_PLAYER"),
-    CHEATING("CHEATING");
+    CHEATING("CHEATING"),
+    LOSE_GAME("LOSE_GAME");
     // usw
 
 

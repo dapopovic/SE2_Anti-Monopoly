@@ -160,6 +160,12 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onEndGame(View view) {
         doubledice = false;
+        if(currentUser.getMoney()>0){
+            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
+            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+            Log.d("onEndGame", "Send loser:" + currentUser.getUsername());
+            webSocketClient.sendJsonData(jsonDataDTO);
+        }
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
         Log.d("onEndGame", "Send name:" + currentUser.getUsername());
