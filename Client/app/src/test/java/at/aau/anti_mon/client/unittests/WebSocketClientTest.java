@@ -68,7 +68,7 @@ class WebSocketClientTest {
     @ValueSource(strings = {"wrongJson", "{\"command\": \"WRONG_COMMAND\"}", "{\"data\": {\"username\": \"testUser\"}}", "{\"data\": {\"username\": \"testUser\"}}"})
     void testHandleWrongIncomingMessage(String json) {
         WebSocket webSocket = mock(WebSocket.class);
-        webSocketListener.onMessage(webSocket, "wrongJson");
+        webSocketListener.onMessage(webSocket, json);
         verify(commandFactory, never()).getCommand(anyString());
     }
 

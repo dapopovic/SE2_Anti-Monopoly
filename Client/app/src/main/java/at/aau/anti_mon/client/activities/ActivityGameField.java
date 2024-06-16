@@ -233,7 +233,7 @@ public class ActivityGameField extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHeartBeatEvent(HeartBeatEvent event) {
-        Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent");
+        Log.d("ANTI-MONOPOLY-DEBUG", "HeartBeatEvent " + event.getHeartbeat());
 
         JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, new HashMap<>());
         jsonData.putData("msg", "PONG");

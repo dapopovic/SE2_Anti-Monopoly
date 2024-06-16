@@ -1,7 +1,5 @@
 package at.aau.anti_mon.client.command;
 
-import org.greenrobot.eventbus.EventBus;
-
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -19,6 +17,6 @@ public class AnswerCommand implements Command {
 
     @Override
     public void execute(JsonDataDTO data) {
-        EventBus.getDefault().post(new TestEvent(data.getData().get("msg")));
+        queue.enqueueEvent(new TestEvent(data.getData().get("msg")));
     }
 }

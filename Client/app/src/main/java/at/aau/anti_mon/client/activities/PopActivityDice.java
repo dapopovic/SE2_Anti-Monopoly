@@ -9,7 +9,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,7 +18,7 @@ import java.util.Random;
 
 import at.aau.anti_mon.client.R;
 
-public class PopActivityDice extends Activity implements SensorEventListener {
+public class PopActivityDice extends PopActivityObjects implements SensorEventListener {
 
     private static final float SHAKE_THRESHOLD = 1.5f;
     private static final int SHAKE_SLOP_TIME_MS = 500;
@@ -28,68 +27,55 @@ public class PopActivityDice extends Activity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    ImageView dice1;
-    ImageView dice2;
-    TextView touchorshake;
+    ImageView firstDice;
+    ImageView secondDice;
+    TextView touchOrShake;
     Random random = new Random();
 
     int number1 = 0;
     int number2 = 0;
-    boolean rolldice = true;
+    boolean rollDice = true;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pop_dice);
-        try {
-            getActionBar().hide();
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-
-        getWindow().setLayout((int)(width * .8), (int)(height * .8));
-
-        rolldice = true;
-        dice1 = findViewById(R.id.dice1);
-        dice2 = findViewById(R.id.dice2);
-        dice1.setEnabled(true);
-        dice2.setEnabled(true);
-        touchorshake = findViewById(R.id.txtTouchorShake);
-        touchorshake.setVisibility(View.VISIBLE);
+        rollDice = true;
+        firstDice = findViewById(R.id.dice1);
+        secondDice = findViewById(R.id.dice2);
+        firstDice.setEnabled(true);
+        secondDice.setEnabled(true);
+        touchOrShake = findViewById(R.id.txtTouchorShake);
+        touchOrShake.setVisibility(View.VISIBLE);
 
 
-        dice1.setOnClickListener(v -> {
-            rolldice = false;
-            number1 = rolltheDice(dice1);
-            number2 = rolltheDice(dice2);
-            dice1.setEnabled(false);
-            dice2.setEnabled(false);
-            touchorshake.setVisibility(View.INVISIBLE);
+        firstDice.setOnClickListener(v -> {
+            rollDice = false;
+            number1 = rollTheDice(firstDice);
+            number2 = rollTheDice(secondDice);
+            firstDice.setEnabled(false);
+            secondDice.setEnabled(false);
+            touchOrShake.setVisibility(View.INVISIBLE);
         });
 
-        dice2.setOnClickListener(v -> {
-            rolldice = false;
-            number1 = rolltheDice(dice1);
-            number2 = rolltheDice(dice2);
-            dice1.setEnabled(false);
-            dice2.setEnabled(false);
-            touchorshake.setVisibility(View.INVISIBLE);
+        secondDice.setOnClickListener(v -> {
+            rollDice = false;
+            number1 = rollTheDice(firstDice);
+            number2 = rollTheDice(secondDice);
+            firstDice.setEnabled(false);
+            secondDice.setEnabled(false);
+            touchOrShake.setVisibility(View.INVISIBLE);
         });
 
-        touchorshake.setOnClickListener(v -> {
-            rolldice = false;
-            number1 = rolltheDice(dice1);
-            number2 = rolltheDice(dice2);
-            dice1.setEnabled(false);
-            dice2.setEnabled(false);
-            touchorshake.setVisibility(View.INVISIBLE);
+        touchOrShake.setOnClickListener(v -> {
+            rollDice = false;
+            number1 = rollTheDice(firstDice);
+            number2 = rollTheDice(secondDice);
+            firstDice.setEnabled(false);
+            secondDice.setEnabled(false);
+            touchOrShake.setVisibility(View.INVISIBLE);
         });
 
         // SensorManager und Beschleunigungssensor initialisieren
@@ -122,7 +108,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && rolldice) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && rollDice) {
             handleShakeEvent(event.values);
         }
     }
@@ -148,16 +134,16 @@ public class PopActivityDice extends Activity implements SensorEventListener {
             mShakeTimestamp = now;
 
             Log.d("SHAKE_EVENT", "Shake detected!");  // Log-Ausgabe zur Fehlerbehebung
-            rolldice = false;
-            dice1.setEnabled(false);
-            dice2.setEnabled(false);
-            touchorshake.setVisibility(View.INVISIBLE);
+            rollDice = false;
+            firstDice.setEnabled(false);
+            secondDice.setEnabled(false);
+            touchOrShake.setVisibility(View.INVISIBLE);
 
-            number1 = rolltheDice(dice1);
-            number2 = rolltheDice(dice2);
+            number1 = rollTheDice(firstDice);
+            number2 = rollTheDice(secondDice);
         }
     }
-    private int rolltheDice(ImageView dice){
+    private int rollTheDice(ImageView dice){
         int number = random.nextInt(6) + 1;
         Log.i("ROLLING", String.valueOf(number));
         switch (number) {
@@ -185,6 +171,7 @@ public class PopActivityDice extends Activity implements SensorEventListener {
         return number;
     }
 
+    @Override
     public void onX(View view) {
         Log.d("onX", "I am in onX from PopActivityDice");
         Intent resultIntent = new Intent();
