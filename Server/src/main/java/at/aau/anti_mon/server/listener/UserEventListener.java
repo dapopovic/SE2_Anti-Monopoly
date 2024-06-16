@@ -297,7 +297,6 @@ public class UserEventListener {
         return userCurrentSequence;
     }
 
-
     @EventListener
     public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException {
         Logger.info("Wir sind in FirstPlayerEventListener.");
@@ -310,6 +309,17 @@ public class UserEventListener {
             for (User u : users) {
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()), user.getName());
             }
+        }
+    }
+
+    @EventListener
+    public void onLoseGameEvent(LoseGameEvent event) throws UserNotFoundException{
+        Logger.info("Wir sind in LoseGameEventListener.");
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        HashSet<User> users = user.getLobby().getUsers();
+        for (User u : users) {
+            JsonDataUtility.sendLoseGame(sessionManagementService.getSessionForUser(u.getName()), user.getName());
         }
     }
 }

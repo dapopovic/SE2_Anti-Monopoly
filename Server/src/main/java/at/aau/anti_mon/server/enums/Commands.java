@@ -74,6 +74,7 @@ public enum Commands {
     DICENUMBER("DICENUMBER"),
     NEXT_PLAYER("NEXT_PLAYER"),
     FIRST_PLAYER("FIRST_PLAYER"),
+    LOSE_GAME("LOSE_GAME"),
 
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
 
