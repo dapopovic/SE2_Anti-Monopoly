@@ -75,6 +75,7 @@ public enum Commands {
     NEXT_PLAYER("NEXT_PLAYER"),
     FIRST_PLAYER("FIRST_PLAYER"),
     LOSE_GAME("LOSE_GAME"),
+    WIN_GAME("WIN_GAME"),
 
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
 
