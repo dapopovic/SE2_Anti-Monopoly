@@ -221,4 +221,27 @@ class CommandsTest {
         nextPlayerCommand.execute(jsonDataDTO);
         verify(queue).enqueueEvent(any(NextPlayerEvent.class));
     }
+
+    @Test
+    void WinGameCommandEvent(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.WIN_GAME);
+        jsonDataDTO.putData("username", "user1");
+        assertEquals(Commands.WIN_GAME, jsonDataDTO.getCommand());
+        NextPlayerCommand nextPlayerCommand = new NextPlayerCommand(queue);
+        nextPlayerCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(NextPlayerEvent.class));
+    }
+
+    @Test
+    void LoseGameCommandEvent(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.LOSE_GAME);
+        jsonDataDTO.putData("username", "user1");
+        assertEquals(Commands.LOSE_GAME, jsonDataDTO.getCommand());
+        NextPlayerCommand nextPlayerCommand = new NextPlayerCommand(queue);
+        nextPlayerCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(NextPlayerEvent.class));
+    }
+
 }
