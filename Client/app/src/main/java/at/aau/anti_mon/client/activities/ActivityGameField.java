@@ -99,6 +99,14 @@ public class ActivityGameField extends AppCompatActivity {
                 }
         );
 
+        Button minusmoney = findViewById(R.id.btnminusmoney);
+        minusmoney.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentUser.setMoney(-1);
+            }
+        });
+
     }
 
     private void sendfirst() {

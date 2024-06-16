@@ -140,6 +140,15 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="-28dp">
 
+        <Button
+            android:id="@+id/btnminusmoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </at.aau.anti_mon.client.activities.CustomViewGameField>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
