@@ -211,4 +211,11 @@ class WebSocketClientTest {
         webSocketClient.sendMessageToServer("testMessage");
         verify(webSocket).send("testMessage");
     }
+    @Test
+    void testClose() {
+        WebSocket webSocket = mock(WebSocket.class);
+        webSocketClient.setWebSocket(webSocket);
+        webSocketClient.close();
+        verify(webSocket).close(1000, "Client disconnected");
+    }
 }
