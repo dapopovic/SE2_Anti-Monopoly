@@ -218,4 +218,12 @@ class WebSocketClientTest {
         webSocketClient.close();
         verify(webSocket).close(1000, "Client disconnected");
     }
+    @Test
+    void testCloseError() {
+        WebSocket webSocket = mock(WebSocket.class);
+        when(webSocket.close(1000, "Client disconnected")).thenThrow(new RuntimeException("Test"));
+        webSocketClient.setWebSocket(webSocket);
+        webSocketClient.close();
+        verify(webSocket).close(1000, "Client disconnected");
+    }
 }

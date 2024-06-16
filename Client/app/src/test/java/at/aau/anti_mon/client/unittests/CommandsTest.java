@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
+import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.enums.Commands;
@@ -70,8 +72,8 @@ class CommandsTest {
         jsonDataDTO.putData("msg", "testMessage");
         assertEquals(Commands.ANSWER, jsonDataDTO.getCommand());
 
-        InfoCommand infoCommand = new InfoCommand(queue);
-        infoCommand.execute(jsonDataDTO);
+        AnswerCommand answerCommand = new AnswerCommand(queue);
+        answerCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(TestEvent.class));
     }
@@ -83,8 +85,8 @@ class CommandsTest {
         jsonDataDTO.putData("msg", "testMessage");
         assertEquals(Commands.ERROR, jsonDataDTO.getCommand());
 
-        InfoCommand infoCommand = new InfoCommand(queue);
-        infoCommand.execute(jsonDataDTO);
+        ErrorCommand errorCommand = new ErrorCommand(queue);
+        errorCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(TestEvent.class));
     }
