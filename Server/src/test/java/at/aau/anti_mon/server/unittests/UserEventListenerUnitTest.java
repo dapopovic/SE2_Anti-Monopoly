@@ -293,7 +293,7 @@ class UserEventListenerUnitTest {
         verify(userService).getUser("user0");
         verify(sessionManagementService).getSessionForUser("user0");
     }
-/*
+
     @Test
     void onNextPlayerEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
         WebSocketSession session = mock(WebSocketSession.class);
@@ -302,9 +302,10 @@ class UserEventListenerUnitTest {
         User user = mock(User.class);
         when(user.getName()).thenReturn("user1");
         when(user.getLobby()).thenReturn(lobby);
+        when(user.getUnavailableRounds()).thenReturn(0);
         User user2 = mock(User.class);
         when(user2.getName()).thenReturn("user2");
-        when(user2.getLobby()).thenReturn(lobby);
+        when(user2.getUnavailableRounds()).thenReturn(0);
 
         HashSet<User> users = new HashSet<>();
         users.add(user);
@@ -313,12 +314,13 @@ class UserEventListenerUnitTest {
         when(lobby.getUsers()).thenReturn(users);
         when(userService.getUser("user1")).thenReturn(user);
         when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(sessionManagementService.getSessionForUser("user2")).thenReturn(session);
         when(user.getSequence()).thenReturn(1);
 
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
         verify(userService).getUser("user1");
         verify(sessionManagementService).getSessionForUser("user1");
-    }*/
+    }
     @Test
     void onNextPlayerEventAllPlayersPlayed() {
         HashSet<User> users = new HashSet<>();
