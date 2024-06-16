@@ -2,6 +2,9 @@ package at.aau.anti_mon.client.activities;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -42,6 +45,7 @@ import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
@@ -315,5 +319,30 @@ public class ActivityGameField extends AppCompatActivity {
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
         Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoseGameEvent(LoseGameEvent event) {
+        if(Objects.equals(event.getUsername(), currentUser.getUsername())){
+            userAdapter.lostthegame(event.getUsername());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Allert!!")
+                    .setMessage("You have lost!!")
+                    .setPositiveButton("keep watching", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setNegativeButton("Exit Game", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }else {
+            userAdapter.lostthegame(event.getUsername());
+        }
     }
 }
