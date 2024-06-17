@@ -101,13 +101,12 @@ public class ActivityGameField extends AppCompatActivity {
         );
 
         Button minusmoney = findViewById(R.id.btnminusmoney);
-        minusmoney.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("MinusMoney", "Money:" + currentUser.getMoney());
-                currentUser.setMoney(-1);
-                Log.d("MinusMoney", "Money:" + currentUser.getMoney());
-            }
+        minusmoney.setOnClickListener(v -> {
+            final String MINUS_MONEY = "MinusMoney";
+            final String MONEY = "Money";
+            Log.d(MINUS_MONEY, MONEY + currentUser.getMoney());
+            currentUser.setMoney(-1);
+            Log.d(MINUS_MONEY, MONEY + currentUser.getMoney());
         });
 
     }
@@ -344,11 +343,12 @@ public class ActivityGameField extends AppCompatActivity {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWinGameEvent(WinGameEvent event) {
-        Log.d("onWinGameEvent", "I am in onWinGameEvent");
-        Log.d("onWinGameEvent", currentUser.getUsername());
-        Log.d("onWinGameEvent", event.getUsername());
+        final String ON_WIN_GAME = "onWinGameEvent";
+        Log.d(ON_WIN_GAME, "I am in onWinGameEvent");
+        Log.d(ON_WIN_GAME, currentUser.getUsername());
+        Log.d(ON_WIN_GAME, event.getUsername());
         if(Objects.equals(currentUser.getUsername(), event.getUsername())){
-            Log.d("onWinGameEvent", "I am in the if");
+            Log.d(ON_WIN_GAME, "I am in the if");
             makeDialog("You are the winner!!");
         }
     }
@@ -357,18 +357,8 @@ public class ActivityGameField extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Allert!!")
                 .setMessage(message)
-                .setPositiveButton("keep watching", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton("Exit Game", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
+                .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
+                .setNegativeButton("Exit Game", (dialog, which) -> finish())
                 .show();
     }
 }
