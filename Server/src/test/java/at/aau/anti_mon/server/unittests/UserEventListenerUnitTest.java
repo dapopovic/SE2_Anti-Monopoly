@@ -348,6 +348,27 @@ class UserEventListenerUnitTest {
     }
 
     @Test
+    void onWinGameEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+        WebSocketSession session = mock(WebSocketSession.class);
+        LoseGameEvent event = new LoseGameEvent(session, "user1");
+        Lobby lobby = mock(Lobby.class);
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user1");
+        when(user.getLobby()).thenReturn(lobby);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+
+        when(lobby.getUsers()).thenReturn(users);
+        when(userService.getUser("user1")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+
+        assertDoesNotThrow(()-> userEventListener.onLoseGameEvent(event));
+        verify(userService).getUser("user1");
+        verify(sessionManagementService).getSessionForUser("user1");
+    }
+
+    @Test
     void onNextPlayerEventAllPlayersPlayed() {
         HashSet<User> users = new HashSet<>();
         Lobby lobby = mock(Lobby.class);
