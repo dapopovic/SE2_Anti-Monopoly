@@ -262,7 +262,7 @@ public class UserEventListener {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
     }
-    public void winGame(HashSet<User> users){
+    public void winGame(Set<User> users){
         int numberofplayers = 0;
         User winner = null;
         for (User u : users) {
