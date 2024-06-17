@@ -253,23 +253,23 @@ public class UserEventListener {
         }
         if (numberofplayers == 1) {
             JsonDataUtility.sendWinGame(sessionManagementService.getSessionForUser(winner.getName()), winner.getName());
-        } else {
-            int sequence = user.getSequence();
-            int playerAmount = users.size();
-            sequence++;
-            if (haveAllPlayersPlayed(users)) {
-                Logger.info("Alle " + PLAYER_TAG + "haben gespielt.");
-                for (User u : users) {
-                    if (u.getUnavailableRounds() == 0) u.setHasPlayed(false);
-                }
-                sequence = 0;
-                reduceUnavailableRounds(users);
-            }
-            User userCurrentSequence = getNextPlayer(users, sequence, playerAmount);
-            Logger.info(PLAYER_TAG + userCurrentSequence.getName() + " is the next Player.");
+        }
+
+        int sequence = user.getSequence();
+        int playerAmount = users.size();
+        sequence++;
+        if (haveAllPlayersPlayed(users)) {
+            Logger.info("Alle " + PLAYER_TAG + "haben gespielt.");
             for (User u : users) {
-                JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
+                if (u.getUnavailableRounds() == 0) u.setHasPlayed(false);
             }
+            sequence = 0;
+            reduceUnavailableRounds(users);
+        }
+        User userCurrentSequence = getNextPlayer(users, sequence, playerAmount);
+        Logger.info(PLAYER_TAG + userCurrentSequence.getName() + " is the next Player.");
+        for (User u : users) {
+            JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
     }
 
