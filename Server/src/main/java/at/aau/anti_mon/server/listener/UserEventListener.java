@@ -243,17 +243,7 @@ public class UserEventListener {
         user.setHasPlayed(true);
         HashSet<User> users = user.getLobby().getUsers();
 
-        int numberofplayers = 0;
-        User winner = user;
-        for (User u : users) {
-            if (u.getUnavailableRounds() >= 0) {
-                numberofplayers++;
-                winner = u;
-            }
-        }
-        if (numberofplayers == 1) {
-            JsonDataUtility.sendWinGame(sessionManagementService.getSessionForUser(winner.getName()), winner.getName());
-        }
+        winGame(users);
 
         int sequence = user.getSequence();
         int playerAmount = users.size();
@@ -270,6 +260,19 @@ public class UserEventListener {
         Logger.info(PLAYER_TAG + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
+        }
+    }
+    public void winGame(HashSet<User> users){
+        int numberofplayers = 0;
+        User winner = null;
+        for (User u : users) {
+            if (u.getUnavailableRounds() >= 0) {
+                numberofplayers++;
+                winner = u;
+            }
+        }
+        if (numberofplayers == 1) {
+            JsonDataUtility.sendWinGame(sessionManagementService.getSessionForUser(winner.getName()), winner.getName());
         }
     }
 

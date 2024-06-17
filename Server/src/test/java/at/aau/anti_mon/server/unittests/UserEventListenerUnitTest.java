@@ -348,24 +348,25 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void onWinGameEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+    void onWinGameEventShouldCallCorrectServiceMethod() {
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
         WebSocketSession session = mock(WebSocketSession.class);
-        LoseGameEvent event = new LoseGameEvent(session, "user1");
-        Lobby lobby = mock(Lobby.class);
+
         User user = mock(User.class);
         when(user.getName()).thenReturn("user1");
-        when(user.getLobby()).thenReturn(lobby);
+        when(user.getUnavailableRounds()).thenReturn(0);
 
         HashSet<User> users = new HashSet<>();
         users.add(user);
 
-        when(lobby.getUsers()).thenReturn(users);
-        when(userService.getUser("user1")).thenReturn(user);
         when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
 
-        assertDoesNotThrow(()-> userEventListener.onLoseGameEvent(event));
-        verify(userService).getUser("user1");
+        userEventListener.winGame(users);
+
         verify(sessionManagementService).getSessionForUser("user1");
+        mockedStatic.verify(() -> JsonDataUtility.sendWinGame(session,"user1"), times(1));
+        mockedStatic.close();
     }
 
     @Test
