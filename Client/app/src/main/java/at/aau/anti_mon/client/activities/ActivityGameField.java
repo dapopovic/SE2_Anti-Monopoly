@@ -337,22 +337,7 @@ public class ActivityGameField extends AppCompatActivity {
     public void onLoseGameEvent(LoseGameEvent event) {
         if(Objects.equals(event.getUsername(), currentUser.getUsername())){
             userAdapter.lostthegame(event.getUsername());
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Allert!!")
-                    .setMessage("You have lost!!")
-                    .setPositiveButton("keep watching", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setNegativeButton("Exit Game", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .show();
+            makeDialog("You have lost!!");
         }else {
             userAdapter.lostthegame(event.getUsername());
         }
@@ -364,23 +349,26 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("onWinGameEvent", event.getUsername());
         if(Objects.equals(currentUser.getUsername(), event.getUsername())){
             Log.d("onWinGameEvent", "I am in the if");
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Allert!!")
-                    .setMessage("You are the winner!!")
-                    .setPositiveButton("keep watching", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setNegativeButton("Exit Game", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .show();
+            makeDialog("You are the winner!!");
         }
     }
 
+    public void makeDialog(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Allert!!")
+                .setMessage(message)
+                .setPositiveButton("keep watching", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("Exit Game", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
+    }
 }
