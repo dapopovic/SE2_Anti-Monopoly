@@ -167,6 +167,14 @@ public class JsonDataUtility {
         send(session, jsonData);
     }
 
+    public static void sendCanDetectCheater(WebSocketSession session, String username, boolean can_detect_cheater, int location) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.CAN_DETECT_CHEATER, new HashMap<>());
+        jsonData.putData(usernamestring, username);
+        jsonData.putData("can_detect_cheater", String.valueOf(can_detect_cheater));
+        jsonData.putData("location", String.valueOf(location));
+        send(session, jsonData);
+    }
+
     public static void sendNextPlayer(WebSocketSession session, String username){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonData.putData(usernamestring,username);

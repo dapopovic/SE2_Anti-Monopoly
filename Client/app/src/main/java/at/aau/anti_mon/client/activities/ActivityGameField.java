@@ -38,6 +38,7 @@ import at.aau.anti_mon.client.PopActivityDice;
 import at.aau.anti_mon.client.adapters.UserAdapter;
 import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
+import at.aau.anti_mon.client.events.CanDetectCheaterEvent;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
@@ -274,6 +275,33 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("Cheating", "Cheating event received!");
         Intent cheating = new Intent(this, PopActivityCheating.class);
         activityResultLauncher.launch(cheating);
+    }
+
+    // here: when an event received, then set onClickListener to make it possible to detect a cheater
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCanDetectCheaterReceivedEvent(CanDetectCheaterEvent event) {
+        Log.d("Cheating", "Can detect cheater event received!");
+        String username = event.getUsername();
+        boolean canDetectCheater = event.getCanDetectCheater();
+        int location = event.getLocation();
+        ImageView field = findViewById(getID(String.valueOf(location), "field"));
+        if (canDetectCheater) {
+            field.setOnClickListener(view -> {
+                Log.d("Cheating", "Want to detect a cheater");
+
+                // here: PopUp if you want to detect a cheater
+                // if yes, send new command on server this user has cheated
+                JsonDataDTO jsonData = new JsonDataDTO(Commands.DETECT_CHEATER, new HashMap<>());
+                jsonData.putData("cheating_user", username);
+                jsonData.putData(usernamestring, currentUser.getUsername());
+                String jsonMessage = JsonDataManager.createJsonMessage(jsonData);
+                webSocketClient.sendMessageToServer(jsonMessage);
+            });
+        }
+        else {
+            field.setOnClickListener(null);
+        }
+
     }
 
     private void moveFigure(String username, int location, int diceNumber, ImageView figure) {

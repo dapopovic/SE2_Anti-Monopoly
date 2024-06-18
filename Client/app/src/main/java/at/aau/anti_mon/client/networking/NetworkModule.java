@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.AntiMonopolyApplication;
 import at.aau.anti_mon.client.command.AnswerCommand;
+import at.aau.anti_mon.client.command.CanDetectCheaterCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.Command;
@@ -203,6 +204,13 @@ public class NetworkModule {
     @IntoMap
     @StringKey("CHEATING")
     Command cheatingCommand(CheatingCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("CAN_DETECT_CHEATER")
+    Command canDetectCheaterCommand(CanDetectCheaterCommand command) {
         return command;
     }
 }

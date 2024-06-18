@@ -28,6 +28,12 @@ public class User {
     private int location;
     @Setter
     private int sequence;
+    @Setter
+    private boolean hasCheated;
+    @Setter
+    private int possibilitiesToCheat;
+    @Setter
+    private boolean hasToSkipOneRound;
 
     public User(String name, WebSocketSession session) {
         this.name = name;
@@ -39,6 +45,9 @@ public class User {
         this.figure = null;
         this.location = 1;
         this.sequence = 0;
+        this.hasCheated = false;
+        this.possibilitiesToCheat = 3;
+        this.hasToSkipOneRound = false;
     }
 
     public boolean isOwner() {

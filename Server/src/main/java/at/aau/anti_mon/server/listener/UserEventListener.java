@@ -189,10 +189,31 @@ public class UserEventListener {
 
     }
 
+    @EventListener
+    public void onDetectCheaterEvent(DetectCheaterEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        String cheating_username = event.getCheating_username();
+        User user = userService.getUser(username);
+        User cheating_user = userService.getUser(cheating_username);
+        if (cheating_user.isHasCheated()) {
+            System.out.println("The user " + cheating_user + " has actually cheated!");
+            cheating_user.setHasToSkipOneRound(true);
+        }
+        else {
+            System.out.println("The user " + cheating_user + " has not cheated!");
+            user.setHasToSkipOneRound(true);
+        }
+    }
+
     public void checkCheating(boolean canCheat, User user) {
         // suggest cheating with probability of 50% when it was not cheated till now
         if(!canCheat)
         {
+            // maybe here: send an event to set a clickListener on client to detect a cheater
+            WebSocketSession session = sessionManagementService.getSessionForUser(user.getName());
+            JsonDataUtility.sendCanDetectCheater(session, user.getName(), true, user.getLocation());
+            // and set: the user has cheated in the last two minutes
+            user.setHasCheated(true);
             return;
         }
         int probability = fixProbabilityForCheating;
@@ -232,6 +253,7 @@ public class UserEventListener {
 
         int finalSequence = sequence;
         User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
+        // check here if the user has to skip a round
         Logger.info(player + userCurrentSequence.getName() + " is the next Player.");
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
