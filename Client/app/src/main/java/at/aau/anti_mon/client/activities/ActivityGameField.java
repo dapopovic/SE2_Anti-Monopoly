@@ -90,12 +90,6 @@ public class ActivityGameField extends AppCompatActivity {
         initResultLaunchers();
         Button minusmoney = findViewById(R.id.btnminusmoney);
         minusmoney.setOnClickListener(v -> {
-            //final String MINUS_MONEY = "MinusMoney";
-            //final String MONEY = "Money";
-            //Log.d(MINUS_MONEY, MONEY + currentUser.getMoney());
-            //currentUser.setMoney(-1);
-            //Log.d(MINUS_MONEY, MONEY + currentUser.getMoney());
-
             JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
             jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
             jsonDataDTO.putData("new_balance", String.valueOf(-1));
