@@ -177,5 +177,16 @@ public class JsonDataUtility {
         Logger.info("Wir senden den First Player:"+username);
         send(session,jsonData);
     }
-
+    public static void sendLoseGame(WebSocketSession session, String username){
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
+        jsonData.putData(usernamestring,username);
+        Logger.info("Wir senden den Spieler der verloren hat:"+username);
+        send(session,jsonData);
+    }
+    public static void sendWinGame(WebSocketSession session, String username){
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.WIN_GAME, new HashMap<>());
+        jsonData.putData(usernamestring,username);
+        Logger.info("Wir senden den Spieler der verloren hat:"+username);
+        send(session,jsonData);
+    }
 }

@@ -242,6 +242,11 @@ public class UserEventListener {
         User user = userService.getUser(username);
         user.setHasPlayed(true);
         HashSet<User> users = user.getLobby().getUsers();
+
+        if (winGame(users)) {
+            return;
+        }
+
         int sequence = user.getSequence();
         int playerAmount = users.size();
         sequence++;
@@ -258,6 +263,21 @@ public class UserEventListener {
         for (User u : users) {
             JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
         }
+    }
+    public boolean winGame(Set<User> users){
+        int numberofplayers = 0;
+        User winner = null;
+        for (User u : users) {
+            if (u.getUnavailableRounds() >= 0) {
+                numberofplayers++;
+                winner = u;
+            }
+        }
+        boolean isWinner = numberofplayers == 1;
+        if (isWinner) {
+            JsonDataUtility.sendWinGame(sessionManagementService.getSessionForUser(winner.getName()), winner.getName());
+        }
+        return isWinner;
     }
 
     private boolean haveAllPlayersPlayed(HashSet<User> users) {
@@ -297,7 +317,6 @@ public class UserEventListener {
         return userCurrentSequence;
     }
 
-
     @EventListener
     public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException {
         Logger.info("Wir sind in FirstPlayerEventListener.");
@@ -310,6 +329,18 @@ public class UserEventListener {
             for (User u : users) {
                 JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()), user.getName());
             }
+        }
+    }
+
+    @EventListener
+    public void onLoseGameEvent(LoseGameEvent event) throws UserNotFoundException{
+        Logger.info("Wir sind in LoseGameEventListener.");
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        user.setUnavailableRounds(-1);
+        HashSet<User> users = user.getLobby().getUsers();
+        for (User u : users) {
+            JsonDataUtility.sendLoseGame(sessionManagementService.getSessionForUser(u.getName()), user.getName());
         }
     }
 }
