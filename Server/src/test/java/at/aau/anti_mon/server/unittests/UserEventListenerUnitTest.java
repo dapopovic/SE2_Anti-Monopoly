@@ -466,4 +466,27 @@ class UserEventListenerUnitTest {
         }
         verify(userList.get(nextUser), times(3 + AMOUNT_PLAYERS)).getName();
     }
+
+    @Test
+    void onGetPlayerOneUserUnavailableRoundsGreaterThan0AndOnlyOnePlayer() {
+        HashSet<User> users = new HashSet<>();
+        Lobby lobby = mock(Lobby.class);
+        when(lobby.getUsers()).thenReturn(users);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = mock(User.class);
+        int sequence = 0;
+        when(user.getName()).thenReturn("user0");
+        when(user.isHasPlayed()).thenReturn(true);
+        when(user.getSequence()).thenReturn(sequence);
+        when(user.getUnavailableRounds()).thenReturn(2);
+        when(sessionManagementService.getSessionForUser("user0")).thenReturn(session);
+        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user0");
+        users.add(user);
+        ArrayList<User> userList = new ArrayList<>(users);
+        userList.sort(Comparator.comparing(User::getSequence));
+        when(user.getLobby()).thenReturn(lobby);
+        when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user);
+        assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
+        verify(userList.get(0), times(3)).getName();
+    }
 }
