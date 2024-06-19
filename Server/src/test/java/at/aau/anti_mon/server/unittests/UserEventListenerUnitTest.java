@@ -368,6 +368,24 @@ class UserEventListenerUnitTest {
         mockedStatic.verify(() -> JsonDataUtility.sendWinGame(session,"user1"), times(1));
         mockedStatic.close();
     }
+    @Test
+    void onWinGameEventButAllAvailableRoundsMinus1() {
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        User user = mock(User.class);
+        when(user.getUnavailableRounds()).thenReturn(-1);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+
+        userEventListener.winGame(users);
+
+        verify(sessionManagementService, never()).getSessionForUser("user1");
+        mockedStatic.verify(() -> JsonDataUtility.sendWinGame(session,"user1"),never());
+        mockedStatic.close();
+    }
 
     @Test
     void onNextPlayerEventAllPlayersPlayed() {
