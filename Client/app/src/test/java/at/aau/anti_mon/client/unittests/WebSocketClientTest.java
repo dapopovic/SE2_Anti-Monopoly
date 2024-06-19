@@ -10,6 +10,8 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 
 import java.util.Objects;
@@ -26,6 +28,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+
 
 class WebSocketClientTest {
     private WebSocketListener webSocketListener;
@@ -60,24 +63,15 @@ class WebSocketClientTest {
         verify(commandFactory).getCommand("CREATE_GAME");
         verify(commandFactory.getCommand("CREATE_GAME")).execute(any(JsonDataDTO.class));
     }
-    @Test
-    void testHandleIncomingMessageWrongJson() {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"wrongJson", "{\"command\": \"WRONG_COMMAND\"}", "{\"data\": {\"username\": \"testUser\"}}", "{\"data\": {\"username\": \"testUser\"}}"})
+    void testHandleWrongIncomingMessage(String json) {
         WebSocket webSocket = mock(WebSocket.class);
-        webSocketListener.onMessage(webSocket, "wrongJson");
+        webSocketListener.onMessage(webSocket, json);
         verify(commandFactory, never()).getCommand(anyString());
     }
-    @Test
-    void testHandleIncomingMessageWithNoCommand() {
-        WebSocket webSocket = mock(WebSocket.class);
-        webSocketListener.onMessage(webSocket, "{\"data\": {\"username\": \"testUser\"}}");
-        verify(commandFactory, never()).getCommand(anyString());
-    }
-    @Test
-    void testHandleIncomingMessageWithWrongCommand() {
-        WebSocket webSocket = mock(WebSocket.class);
-        webSocketListener.onMessage(webSocket, "{\"command\": \"WRONG_COMMAND\", \"data\": {\"username\": \"testUser\"}}");
-        verify(commandFactory, never()).getCommand(anyString());
-    }
+
     @Test
     void testOnClosed() {
         webSocketListener.onClosed(webSocketClient.getWebSocket(), 1000, "testReason");
@@ -216,5 +210,20 @@ class WebSocketClientTest {
         webSocketListener.onOpen(webSocket, response);
         webSocketClient.sendMessageToServer("testMessage");
         verify(webSocket).send("testMessage");
+    }
+    @Test
+    void testClose() {
+        WebSocket webSocket = mock(WebSocket.class);
+        webSocketClient.setWebSocket(webSocket);
+        webSocketClient.close();
+        verify(webSocket).close(1000, "Client disconnected");
+    }
+    @Test
+    void testCloseError() {
+        WebSocket webSocket = mock(WebSocket.class);
+        when(webSocket.close(1000, "Client disconnected")).thenThrow(new RuntimeException("Test"));
+        webSocketClient.setWebSocket(webSocket);
+        webSocketClient.close();
+        verify(webSocket).close(1000, "Client disconnected");
     }
 }

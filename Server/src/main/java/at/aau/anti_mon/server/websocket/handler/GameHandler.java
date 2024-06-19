@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.tinylog.Logger;
 import java.net.InetSocketAddress;
+import java.net.URI;
 
 
 /**
@@ -58,7 +59,6 @@ public class GameHandler implements WebSocketHandler {
      * Sie schließt die WebSocket-Sitzung und entfernt sie aus der Session-Verwaltung.
      * @param session WebSocket-Sitzung
      * @param exception Ausnahme
-     * @throws Exception TODO: Exception
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
@@ -102,13 +102,14 @@ public class GameHandler implements WebSocketHandler {
             Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
             Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
         }
+        URI sessionUri = session.getUri();
 
-        if (session.getUri() == null) {
+        if (sessionUri == null) {
             Logger.error("URI ist null");
         }else {
-            Logger.debug("Session uri: {}", session.getUri().toString());
-            String userID = StringUtility.extractUserID(session.getUri().getQuery());
-            Logger.info( "Query " + session.getUri().getQuery() );
+            Logger.debug("Session uri: {}", sessionUri.toString());
+            String userID = StringUtility.extractUserID(sessionUri.getQuery());
+            Logger.info( "Query " + sessionUri.getQuery() );
             Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
         }
 
@@ -124,17 +125,19 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, @NotNull CloseStatus closeStatus) {
-        if (session.getRemoteAddress() == null) {
+        InetSocketAddress clientAddress = session.getRemoteAddress();
+        if (clientAddress == null) {
             Logger.error(remoteaddressisnull);
         }else {
-            Logger.info("Connection closed by {}:{}", session.getRemoteAddress().getHostString(), session.getRemoteAddress().getPort());
+            Logger.info("Connection closed by {}:{}", clientAddress.getHostString(), clientAddress.getPort());
         }
         Logger.info("WebSocket-Sitzung wird geschlossen: " + session.getId());
 
-        if (session.getUri() == null) {
+        URI sessionUri = session.getUri();
+        if (sessionUri == null) {
             Logger.error("URI ist null");
         }else {
-            Logger.info( "Query " + session.getUri().getQuery() );
+            Logger.info( "Query " + sessionUri.getQuery() );
         }
 
         eventPublisher.publishEvent(new SessionDisconnectEvent(session

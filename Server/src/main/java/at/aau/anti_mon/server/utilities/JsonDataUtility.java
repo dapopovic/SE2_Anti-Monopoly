@@ -65,14 +65,13 @@ public class JsonDataUtility {
             Logger.error("Fehler beim Senden der Nachricht: jsonResponse ist null");
             return;
         }
-
         try {
             synchronized (session) {
                 if (session.isOpen()) {
                     Logger.info("SERVER: Nachricht senden: " + jsonResponse);
                     session.sendMessage(new TextMessage(jsonResponse));
                 } else {
-                    System.err.println("SERVER: Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
+                    Logger.error("SERVER: Versuch, eine Nachricht zu senden, aber die Session ist bereits geschlossen.");
                     throw new IOException("Session is closed");
                 }
             }

@@ -7,7 +7,6 @@ import lombok.Setter;
 
 /**
  * Represents an event card in the game
- * TODO: First implementation will be a simple card with a value for every role
  * @author ottzoeke
  */
 @Getter

@@ -9,9 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.LoseGameCommand;
+import at.aau.anti_mon.client.command.ErrorCommand;
+import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.command.WinGameCommand;
 import at.aau.anti_mon.client.enums.Commands;
@@ -32,6 +35,7 @@ import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
+import at.aau.anti_mon.client.events.TestEvent;
 import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
@@ -52,7 +56,45 @@ class CommandsTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
-    
+
+    @Test
+    void infoCommandShouldFireTestEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.INFO);
+        jsonDataDTO.putData("msg", "testMessage");
+        assertEquals(Commands.INFO, jsonDataDTO.getCommand());
+
+        InfoCommand infoCommand = new InfoCommand(queue);
+        infoCommand.execute(jsonDataDTO);
+
+        verify(queue).enqueueEvent(any(TestEvent.class));
+    }
+    @Test
+    void answerCommandShouldFireTestEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.ANSWER);
+        jsonDataDTO.putData("msg", "testMessage");
+        assertEquals(Commands.ANSWER, jsonDataDTO.getCommand());
+
+        AnswerCommand answerCommand = new AnswerCommand(queue);
+        answerCommand.execute(jsonDataDTO);
+
+        verify(queue).enqueueEvent(any(TestEvent.class));
+    }
+
+    @Test
+    void errorCommandShouldFireTestEvent() {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.ERROR);
+        jsonDataDTO.putData("msg", "testMessage");
+        assertEquals(Commands.ERROR, jsonDataDTO.getCommand());
+
+        ErrorCommand errorCommand = new ErrorCommand(queue);
+        errorCommand.execute(jsonDataDTO);
+
+        verify(queue).enqueueEvent(any(TestEvent.class));
+    }
+
     @Test
     void joinGameCommandShouldFireUserJoinedLobbyEvent() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();

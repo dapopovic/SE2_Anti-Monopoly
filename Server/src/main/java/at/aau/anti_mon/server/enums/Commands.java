@@ -17,19 +17,19 @@ public enum Commands {
     ANSWER("ANSWER"),
 
     /**
-     * Command to get a PIN ? TODO: What is this, same as CREATE_GAME? -> fix!
+     * Command to get a PIN ?
      * format: {"command": "REGISTER", "user": "TestUser"}
      */
     PIN("PIN"),
 
     /**
-     * Command to register a new user???? TODO: fix
+     * Command to register a new user
      * format: {"command": "NEW_USER", "user": "TestUser"}
      */
     NEW_USER("NEW_USER"),
 
     /**
-     * Command to create a new game TODO: Better name: CREATE_LOBBY ?
+     * Command to create a new game
      * format: {"command": "CREATE_GAME", "user": "TestUser"}
      */
     CREATE_GAME("CREATE_GAME"),
@@ -62,7 +62,7 @@ public enum Commands {
 
     /**
      * Command to get all players in the lobby
-     * format: {"command": "LOBBY_PLAYERS"} TODO: What is this?
+     * format: {"command": "LOBBY_PLAYERS"}
      */
     LOBBY_PLAYERS("LOBBY_PLAYERS"),
 
@@ -102,7 +102,6 @@ public enum Commands {
     /**
      * Send by client to finish the round
      * format: {"command": "FINISHED_ROUND", "user": "TestUser", "pin": "1234"}
-     * TODO: better attributes?
      */
     FINISHED_ROUND("FINISHED_ROUND"),
 

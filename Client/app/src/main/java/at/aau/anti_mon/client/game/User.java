@@ -2,13 +2,12 @@ package at.aau.anti_mon.client.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import at.aau.anti_mon.client.enums.Roles;
 import at.aau.anti_mon.client.enums.Figures;
+import at.aau.anti_mon.client.enums.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.jbosslog.JBossLog;
 
 @AllArgsConstructor
 @NoArgsConstructor

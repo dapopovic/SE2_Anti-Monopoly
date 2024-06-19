@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
+import java.net.URI;
+
 /**
  * Event-Listener for WebSocket events and sessions
  */
@@ -33,7 +35,7 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionConnected(SessionConnectEvent event) {
-        if (UriIsNull(event.getSession())) return;
+        if (isUriNull(event.getSession())) return;
         Logger.info("Session connected: " + event.getSession().getId());
     }
 
@@ -53,19 +55,20 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionCheckEvent(SessionCheckEvent event) {
-        if (UriIsNull(event.getSession())) return;
+        if (isUriNull(event.getSession())) return;
         WebSocketSession session = event.getSession();
         Logger.info("Heartbeat received from: " + session.getId());
     }
 
-    private boolean UriIsNull(WebSocketSession session) {
-        if (session.getUri() == null) {
+    private boolean isUriNull(WebSocketSession session) {
+        URI sessionUri = session.getUri();
+        if (sessionUri == null) {
             Logger.error("URI ist null");
             Logger.info("Session connected: " + session.getId());
             return true;
         }
 
-        String userID = StringUtility.extractUserID(session.getUri().getQuery());
+        String userID = StringUtility.extractUserID(sessionUri.getQuery());
         sessionManagementService.registerUserWithSession( userID, session);
         return false;
     }

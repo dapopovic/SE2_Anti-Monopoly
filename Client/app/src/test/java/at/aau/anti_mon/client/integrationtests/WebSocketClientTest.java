@@ -1,7 +1,6 @@
 package at.aau.anti_mon.client.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -21,7 +20,6 @@ import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
-import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.DiceNumberCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
@@ -29,6 +27,7 @@ import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;

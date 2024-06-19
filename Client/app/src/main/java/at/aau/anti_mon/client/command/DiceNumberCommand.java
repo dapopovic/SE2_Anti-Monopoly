@@ -1,7 +1,6 @@
 package at.aau.anti_mon.client.command;
-import android.util.Log;
 
-import java.util.Objects;
+import android.util.Log;
 
 import javax.inject.Inject;
 

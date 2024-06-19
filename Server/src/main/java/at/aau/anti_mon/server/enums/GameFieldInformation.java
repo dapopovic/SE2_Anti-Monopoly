@@ -6,12 +6,12 @@ public enum GameFieldInformation {
 
     START("Start"),
     ROM1("Corso Impero"),
-    EVENT1("Aktionskarte"),
+    EVENT1(Constants.ACTION_CARD),
     ROM2("Villa Appina"),
     TAX1("Einkommenssteuer"),
     TRAFFIC1("Flughafen"),
     BERLIN1("Alexanderplatz"),
-    EVENT2("Aktionskarte"),
+    EVENT2(Constants.ACTION_CARD),
     BERLIN2("Kurfürstendamm"),
     BERLIN3("Potsdamer Platz"),
     PRISON1("Sightseeing Tour"),
@@ -21,12 +21,12 @@ public enum GameFieldInformation {
     MADRID3("Paeso de la Castellana"),
     TRAFFIC2("Straßenbahn"),
     AMSTERDAM1("Dam"),
-    EVENT3("Aktionskarte"),
+    EVENT3(Constants.ACTION_CARD),
     AMSTERDAM2("Leidenstraat"),
     AMSTERDAM3("Klavierstraat"),
     PRICEWAR("Preiskrieg"),
     PARIS1("Rue la Fayette"),
-    EVENT4("Aktionskarte"),
+    EVENT4(Constants.ACTION_CARD),
     PARIS2("Rue de la Paix"),
     PARIS3("Champs Elysees"),
     TRAFFIC3("Bahnhof"),
@@ -37,14 +37,13 @@ public enum GameFieldInformation {
     PRISON2("Gefängnis"),
     LONDON1("Park Lane"),
     LONDON2("Picadelly Circus"),
-    EVENT5("Aktionskarte"),
+    EVENT5(Constants.ACTION_CARD),
     LONDON3("Oxford Street"),
     TRAFFIC4("Busbetriebe"),
-    EVENT6("Aktionskarte"),
+    EVENT6(Constants.ACTION_CARD),
     ATHEN1("La Plaka"),
     TAX2("Zusatzsteuer"),
     ATHEN2("Syntagma");
-
 
     private final String name;
 
@@ -55,6 +54,9 @@ public enum GameFieldInformation {
     @JsonValue
     public String getName() {
         return name;
+    }
+    private static class Constants {
+        private static final String ACTION_CARD = "Aktionskarte";
     }
 }
 
