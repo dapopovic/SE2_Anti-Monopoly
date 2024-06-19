@@ -3,7 +3,6 @@ package at.aau.anti_mon.server.enums;
 import java.util.Random;
 
 /**
- * TODO only for tests
  */
 public enum Name {
 

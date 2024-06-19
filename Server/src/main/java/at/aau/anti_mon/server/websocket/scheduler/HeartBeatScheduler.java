@@ -9,7 +9,6 @@ import org.tinylog.Logger;
 
 /**
  * This Class is responsible for sending a heartbeat message to all active sessions every 25 seconds
- * TODO: TEST
  */
 @Component
 public class HeartBeatScheduler {

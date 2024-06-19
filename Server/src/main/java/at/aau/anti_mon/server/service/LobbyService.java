@@ -64,7 +64,6 @@ public class LobbyService {
 
     /**
      * Erstellt eine neue Lobby und fügt den Ersteller (User) hinzu
-     * TODO: Verbesserung des Handling bei bereits bestehendem PIN!
      *
      * @param user User
      */

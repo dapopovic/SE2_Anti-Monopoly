@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
+import java.net.URI;
+
 
 /**
  * Command to handle the heartbeat of the client
@@ -29,13 +31,13 @@ public class HeartBeatCommand implements Command{
         }
 
         Logger.info("SERVER : Heartbeat empfangen."+jsonData.getData().get("msg"));
-
-        if (session.getUri() == null) {
+        URI sessionUri = session.getUri();
+        if (sessionUri == null) {
             Logger.error(ERROR_MESSAGE);
             throw new CanNotExecuteJsonCommandException(ERROR_MESSAGE);
         }else{
-            String userID = StringUtility.extractUserID(session.getUri().getQuery());
-            Logger.info( "Query " + session.getUri().getQuery() );
+            String userID = StringUtility.extractUserID(sessionUri.getQuery());
+            Logger.info( "Query " + sessionUri.getQuery() );
             eventPublisher.publishEvent(new SessionCheckEvent(session,userID));
         }
 

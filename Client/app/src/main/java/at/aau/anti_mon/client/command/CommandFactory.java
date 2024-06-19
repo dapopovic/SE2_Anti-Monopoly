@@ -3,8 +3,6 @@ package at.aau.anti_mon.client.command;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 
 public class CommandFactory {
     private final Map<String, Command> commandMap;

@@ -49,11 +49,13 @@ class PlayerEntityUnitTest {
 
     @Test
     void builderDoesNotAllowNegativeBalance() {
-        assertThrows(IllegalArgumentException.class, () -> new Player.Builder().withBalance(-1).build());
+        Player.Builder builder = new Player.Builder();
+        assertThrows(IllegalArgumentException.class, () -> builder.withBalance(-1));
     }
 
     @Test
     void builderDoesNotAllowNegativePosition() {
-        assertThrows(IllegalArgumentException.class, () -> new Player.Builder().withPosition(-1).build());
+        Player.Builder builder = new Player.Builder();
+        assertThrows(IllegalArgumentException.class, () -> builder.withPosition(-1));
     }
 }

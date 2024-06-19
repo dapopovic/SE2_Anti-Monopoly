@@ -18,9 +18,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-/**
- * TODO: TEST
- */
 @Component
 public class HeartBeatManager {
 
@@ -35,10 +32,13 @@ public class HeartBeatManager {
         scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 10, TimeUnit.SECONDS);
     }
 
-    //@Scheduled(fixedRate = 25000)
+    /*
+    do not know if this is used:
+    @Scheduled(fixedRate = 25000)
     private void sendHeartbeat(WebSocketSession session) {
         sendHeartBeatMessage(session);
     }
+    */
 
     /**
      * Sends a heartbeat message to all active sessions

@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.sql.SQLOutput;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -33,20 +32,21 @@ import okhttp3.WebSocketListener;
  * It is injected into the activities and handles the communication with the server.
  * --> Singleton
  */
-public class WebSocketClient {
+public class WebSocketClient implements AutoCloseable{
 
     /**
      * localhost from the Android emulator is reachable as 10.0.2.2
-     * https://developer.android.com/studio/run/emulator-networking
-     */
-    //private static final String WEBSOCKET_URI = "ws://10.0.2.2:8080/game?userID=";
-    private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game?userID=";
-   //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
-
-    /**
+     * <a href="https://developer.android.com/studio/run/emulator-networking">...</a>
+     * URL for connecting to localhost:8080
+     * URL for testing to localhost:53215
+     * URL for testing outside of localhost
      * URL for testing connection to se2-server
      */
-   //private static final String WEBSOCKET_URI = "ws://se2-demo.aau.at:53215/game?userID=";
+    private static final String[] WEBSOCKET_URIS = {
+            "ws://10.0.2.2:8080/game?userID=",
+            "ws://10.0.2.2:53215/game?userID=",
+            "ws://192.168.31.176:53215/game",
+            "ws://se2-demo.aau.at:53215/game?userID="};
 
     @Getter
     @Setter
@@ -83,7 +83,7 @@ public class WebSocketClient {
         }
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = WEBSOCKET_URI + userID;
+        String urlWithUserId = WEBSOCKET_URIS[1] + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
@@ -219,7 +219,6 @@ public class WebSocketClient {
         return webSocket != null;
     }
 
-
     /**
      * Disconnects the WebSocket connection
      */
@@ -229,16 +228,6 @@ public class WebSocketClient {
             webSocket = null;
         }
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            disconnect();
-        } finally {
-            super.finalize();
-        }
-    }
-
     public LiveData<JsonDataDTO> getLiveData() {
         return liveData;
     }
@@ -251,4 +240,15 @@ public class WebSocketClient {
     }
 
 
+    @Override
+    public void close() {
+        if (webSocket == null) {
+            return;
+        }
+        try {
+            disconnect();
+        } catch (Exception e) {
+            Log.e(DEBUG_TAG, "Failed to disconnect WebSocket", e);
+        }
+    }
 }

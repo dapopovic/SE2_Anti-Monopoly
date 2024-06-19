@@ -44,12 +44,12 @@ class WebSocketHandlerIntegrationTest {
     void setup() throws Exception {
         messages = new LinkedBlockingQueue<>();
         WebSocketClient client = new StandardWebSocketClient();
-        String BASE_WEBSOCKET_URI = "ws://localhost:%d/game?userID=";
+        String BASE_WEBSOCKET_URI = "ws://localhost:%d/game?userID=%s";
 
         String userID = "Test";
 
         session = client
-                .execute(new WebSocketHandlerClientImpl(messages), String.format(BASE_WEBSOCKET_URI + userID, port))
+                .execute(new WebSocketHandlerClientImpl(messages), String.format(BASE_WEBSOCKET_URI, port, userID))//String.format(BASE_WEBSOCKET_URI + userID, port))
                 .get(3, TimeUnit.SECONDS);
     }
 

@@ -19,7 +19,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Matteo Baiguini
  * matteo@solidarchitectures.com
  * 12 Apr 2019
- * TODO: TEST
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)

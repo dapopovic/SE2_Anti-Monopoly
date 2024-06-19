@@ -36,18 +36,4 @@ class GameEntityUnitTest {
         assertEquals(testDate, game.getStartDate());
         assertEquals(5, game.getRoundNumber());
     }
-
-    @Test
-    void gettersShouldReturnCorrectValues() {
-        Date testDate = new Date();
-        Game game = new Game.Builder()
-                .withName("Test Game")
-                .withStartDate(testDate)
-                .withRoundNumber(5)
-                .build();
-
-        assertEquals("Test Game", game.getName());
-        assertEquals(testDate, game.getStartDate());
-        assertEquals(5, game.getRoundNumber());
-    }
 }
