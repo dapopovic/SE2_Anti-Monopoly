@@ -1,6 +1,7 @@
 package at.aau.anti_mon.server.unittests;
 
 import at.aau.anti_mon.server.enums.GameStateEnum;
+import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
