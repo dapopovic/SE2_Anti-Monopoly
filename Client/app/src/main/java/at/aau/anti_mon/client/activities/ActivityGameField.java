@@ -43,6 +43,7 @@ import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
+import at.aau.anti_mon.client.events.EndGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
@@ -402,5 +403,24 @@ public class ActivityGameField extends AppCompatActivity {
                     .setNegativeButton("Exit Game", (dialog, which) -> finish())
                     .show();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEndGameEvent(EndGameEvent event) {
+        int rank = event.getRank();
+
+        ImageButton diceImageBtn = findViewById(R.id.btndice);
+        diceImageBtn.setEnabled(false);
+        diceImageBtn.setBackgroundColor(Color.parseColor(COLOR_GRAY));
+        Button finish = findViewById(R.id.btnfinish);
+        finish.setEnabled(false);
+        finish.setBackgroundColor(Color.parseColor(COLOR_GRAY));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Allert!! end of game")
+                .setMessage("You are rank "+rank)
+                .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
+                .setNegativeButton("Exit Game", (dialog, which) -> finish())
+                .show();
     }
 }
