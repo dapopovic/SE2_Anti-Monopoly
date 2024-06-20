@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
+import at.aau.anti_mon.client.command.EndGameCommand;
 import at.aau.anti_mon.client.command.LoseGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
@@ -31,6 +32,7 @@ import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
+import at.aau.anti_mon.client.events.EndGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
@@ -290,4 +292,14 @@ class CommandsTest {
         verify(queue).enqueueEvent(any(LoseGameEvent.class));
     }
 
+    @Test
+    void EndGameCommandEvent(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.END_GAME);
+        jsonDataDTO.putData("rank","1");
+        assertEquals(Commands.END_GAME, jsonDataDTO.getCommand());
+        EndGameCommand endGameCommand = new EndGameCommand(queue);
+        endGameCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(EndGameEvent.class));
+    }
 }
