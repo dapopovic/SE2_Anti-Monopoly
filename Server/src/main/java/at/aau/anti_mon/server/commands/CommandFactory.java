@@ -27,6 +27,7 @@ public class CommandFactory {
         commandMap.put(Commands.NEXT_PLAYER.getCommand(), new NextPlayerCommand(eventPublisher));
         commandMap.put(Commands.FIRST_PLAYER.getCommand(), new FirstPlayerCommand(eventPublisher));
         commandMap.put(Commands.LOSE_GAME.getCommand(), new LoseGameCommand(eventPublisher));
+        commandMap.put(Commands.END_GAME.getCommand(), new EndGameCommand(eventPublisher));
         commandMap.forEach((key, value) -> Logger.debug("SERVER: Command in map: " + key));
     }
 
