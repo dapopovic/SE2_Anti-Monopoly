@@ -4,7 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.net.URISyntaxException;
+
 import java.util.HashSet;
 
 import at.aau.anti_mon.server.enums.Figures;
@@ -27,22 +27,12 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserEventListenerUnitTest {
@@ -67,22 +57,25 @@ class UserEventListenerUnitTest {
         WebSocketSession session1 = mock(WebSocketSession.class);
         WebSocketSession session2 = mock(WebSocketSession.class);
 
-        when(session1.isOpen()).thenReturn(true);
-        when(session2.isOpen()).thenReturn(true);
-
-        when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
-        when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
-
         HashSet<User> users = new HashSet<>();
         User user1 = new User("lobbyCreator", session2);
         User user2 = new User("testUser", session1);
         users.add(user1);
 
         Lobby lobby = mock(Lobby.class);
+        when(lobby.isFull()).thenReturn(false);
         when(lobby.getUsers()).thenReturn(users);
+        when(lobbyService.findOptionalLobbyByPin(1234)).thenReturn(Optional.of(lobby));
+        when(lobby.getPin()).thenReturn(1234);
+
+        when(session1.isOpen()).thenReturn(true);
+        when(session2.isOpen()).thenReturn(true);
+
+///        when(sessionManagementService.getSessionForUser("testUser")).thenReturn(session1);
+        when(sessionManagementService.getSessionForUser("lobbyCreator")).thenReturn(session2);
 
         when(userService.findOrCreateUser("testUser", session1)).thenReturn(user2);
-        when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
+        when(lobbyService.findOptionalLobbyByPin(1234)).thenReturn(Optional.of(lobby));
 
         UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session1, new LobbyDTO(1234), new UserDTO("testUser", false, false, null, null));
 
@@ -137,12 +130,14 @@ class UserEventListenerUnitTest {
         //User user2 = new User("testUser", session1);
         users.add(user1);
 
+
         Lobby lobby = mock(Lobby.class);
         when(lobby.getUsers()).thenReturn(users);
+        when(lobbyService.findOptionalLobbyByPin(1234)).thenReturn(Optional.of(lobby));
+        when(lobby.hasUser("lobbyCreator")).thenReturn(true);
+        when(lobby.getPin()).thenReturn(1234);
 
-        when(lobbyService.findLobbyByPin(1234)).thenReturn(lobby);
-
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2, new LobbyDTO(1234), new UserDTO("lobbyCreator", false, true, null, null));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session2,1234,"lobbyCreator");
 
         // When
         userEventListener.onLeaveLobbyEvent(event);
@@ -154,6 +149,7 @@ class UserEventListenerUnitTest {
     void onReadyUserEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
+        when(session.isOpen()).thenReturn(true);
 
         UserDTO userDTO = new UserDTO("user1", false, true, null, null);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
@@ -166,21 +162,24 @@ class UserEventListenerUnitTest {
 
         Lobby m = mock(Lobby.class);
         when(m.getUsers()).thenReturn(new HashSet<>(List.of(user)));
-        when(assertDoesNotThrow(() -> lobbyService.findLobbyByPin(1234))).thenReturn(m);
+        when(assertDoesNotThrow(() -> lobbyService.findOptionalLobbyByPin(1234))).thenReturn(Optional.of(m));
         when(userService.getUser("user1")).thenReturn(user);
         when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(lobbyService.findOptionalLobbyByPin(1234)).thenReturn(Optional.of(m));
+        when(m.hasUser("user1")).thenReturn(true);
+
+
         // When
         assertDoesNotThrow(() -> userEventListener.onReadyUserEvent(event));
         verify(lobbyService).readyUser(1234, "user1");
         verify(m).getUsers();
-        verify(lobbyService).findLobbyByPin(1234);
+        verify(lobbyService).findOptionalLobbyByPin(1234);
         verify(userService).getUser("user1");
-        verify(sessionManagementService).getSessionForUser("user1");
     }
     @Test
-    void onStartGameEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
-        // Given
+    void onStartGameEventShouldCallCorrectServiceMethod()  {
         WebSocketSession session = mock(WebSocketSession.class);
+        when(session.isOpen()).thenReturn(true);
 
         UserDTO userDTO = new UserDTO("user1", false, true, null, null);
         LobbyDTO lobbyDTO = new LobbyDTO(1234);
@@ -193,23 +192,25 @@ class UserEventListenerUnitTest {
 
         Lobby m = mock(Lobby.class);
         when(m.getUsers()).thenReturn(new HashSet<>(List.of(user)));
-        when(assertDoesNotThrow(() -> lobbyService.findLobbyByPin(1234))).thenReturn(m);
         when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
-        // When
+        when(lobbyService.findOptionalLobbyByPin(1234)).thenReturn(Optional.of(m));
+        when(m.hasUser("user1")).thenReturn(true);
+
         assertDoesNotThrow(() -> userEventListener.onStartGameEvent(event));
         verify(lobbyService).startGame(1234, "user1");
         verify(m).getUsers();
-        verify(lobbyService).findLobbyByPin(1234);
-        verify(sessionManagementService).getSessionForUser("user1");
+        verify(lobbyService).findOptionalLobbyByPin(1234);
     }
     @Test
-    void onRollDiceEventShouldCallCorrectServiceMethod() throws LobbyNotFoundException, UserNotFoundException {
+    void onRollDiceEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
         // Given
         WebSocketSession session = mock(WebSocketSession.class);
 
-        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5);
+        DiceNumberEvent event = new DiceNumberEvent(session, "testuser", 5,1234);
 
         Lobby lobby = mock(Lobby.class);
+        when(lobbyService.findOptionalLobbyByPin(1234)).thenReturn(Optional.of(lobby));
+        when(lobby.hasUser("testuser")).thenReturn(true);
 
         User user = mock(User.class);
         when(user.getName()).thenReturn("testuser");

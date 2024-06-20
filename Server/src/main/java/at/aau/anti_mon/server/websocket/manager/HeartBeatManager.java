@@ -1,16 +1,13 @@
 package at.aau.anti_mon.server.websocket.manager;
 
-import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.service.SessionManagementService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import at.aau.anti_mon.server.utilities.MessagingUtility;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -27,12 +24,13 @@ public class HeartBeatManager {
     private final SessionManagementService sessionManagementService;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
+    @Autowired
     public HeartBeatManager(SessionManagementService sessionManagementService) {
         this.sessionManagementService = sessionManagementService;
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 10, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 15, TimeUnit.SECONDS);
     }
 
     //@Scheduled(fixedRate = 25000)
@@ -44,24 +42,30 @@ public class HeartBeatManager {
      * Sends a heartbeat message to all active sessions
      */
     public void sendHeartbeatToAllSessions() {
-        sessionManagementService.getAllSessions().values().forEach(this::sendHeartBeatMessage);
+       // sessionManagementService.getAllSessions().values().forEach(this::sendHeartBeatMessage);
+
+        // TODO: TEST
+
+        // Iterieren über eine Kopie der Sessions, um ConcurrentModificationException zu vermeiden
+        new HashMap<>(sessionManagementService.getAllSessions()).forEach((sessionId, session) -> {
+            if (session.isOpen()) {
+                sendHeartBeatMessage(session);
+            } else {
+                // Entferne geschlossene Session aus beiden Maps
+                sessionManagementService.getAllSessions().remove(sessionId);
+                sessionManagementService.getUserSessionMap().entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(sessionId))
+                        .map(Map.Entry::getKey)
+                        .findFirst().ifPresent(userId -> sessionManagementService.getUserSessionMap().remove(userId));
+                // Logge die Entfernung der Session
+                System.out.println("Session mit ID " + sessionId + " wurde entfernt, da sie geschlossen ist.");
+            }
+        });
+
     }
 
     private void sendHeartBeatMessage(@NotNull WebSocketSession session) {
-        try {
-            Map<String, String> dataMap = new HashMap<>();
-            JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, dataMap);
-            jsonData.putData("msg", "PING");
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonMessage = mapper.writeValueAsString(jsonData);
-            TextMessage heartbeatMessage = new TextMessage(jsonMessage);
-
-            if (session.isOpen()) {
-                session.sendMessage(heartbeatMessage);
-            }
-        } catch (IOException e) {
-            Logger.error("Error sending heartbeat to session " + session.getId());
-        }
+        MessagingUtility.createHeartbeatMessage().send(session);
     }
 
 

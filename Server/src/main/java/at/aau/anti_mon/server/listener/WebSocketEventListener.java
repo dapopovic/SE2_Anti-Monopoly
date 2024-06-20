@@ -27,14 +27,24 @@ public class WebSocketEventListener {
     }
 
     /**
-     * Achtung: nicht SessionConnectEvent von Spring Messages
      * Diese Methode wird aufgerufen, wenn eine WebSocket-Sitzung verbunden wird.
-     * @param event Ereignis
+     * @param event SessionConnectEvent
      */
     @EventListener
     public void handleSessionConnected(SessionConnectEvent event) {
-        if (UriIsNull(event.getSession())) return;
-        Logger.info("Session connected: " + event.getSession().getId());
+        WebSocketSession session = event.getSession();
+        if (session == null || session.getUri() == null) {
+            Logger.error("Session or URI is null in handleSessionConnected");
+            return;
+        }
+
+        String userID = StringUtility.extractUserID(session.getUri().getQuery());
+        if (userID.equals("null")) {
+            Logger.error("UserID extraction failed for session: {}", session.getId());
+        } else {
+            sessionManagementService.registerUserWithSession(userID, session);
+            Logger.info("Session connected: {} for UserID: {}", session.getId(), userID);
+        }
     }
 
     /**
@@ -43,9 +53,18 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionDisconnected(SessionDisconnectEvent event) {
-        // Todo: Test
-      //  sessionManagementService.removeSessionById( event.getSession().getId(), event.getUserID());
-        Logger.info("Session disconnected: " + event.getSession().getId());
+        WebSocketSession session = event.getSession();
+        if (session == null || session.getUri() == null) {
+            Logger.error("Session or URI is null in handleSessionDisconnected");
+            return;
+        }
+        String userID = StringUtility.extractUserID(session.getUri().getQuery());
+        if (userID.equals("null")) {
+            Logger.error("UserID extraction failed for session: {}", session.getId());
+        } else {
+            sessionManagementService.removeSessionById(session.getId(), userID);
+            Logger.info("Session disconnected: {} for UserID: {}", session.getId(), userID);
+        }
     }
 
 
@@ -55,21 +74,12 @@ public class WebSocketEventListener {
      */
     @EventListener
     public void handleSessionCheckEvent(SessionCheckEvent event) {
-        if (UriIsNull(event.getSession())) return;
         WebSocketSession session = event.getSession();
-        Logger.info("Heartbeat received from: " + session.getId());
-    }
-
-    private boolean UriIsNull(WebSocketSession session) {
-        if (session.getUri() == null) {
-            Logger.error("URI ist null");
-            Logger.info("Session connected: " + session.getId());
-            return true;
+        if (session == null || session.getUri() == null) {
+            Logger.error("Session or URI is null in handleSessionCheckEvent");
+            return;
         }
-
-        String userID = StringUtility.extractUserID(session.getUri().getQuery());
-        sessionManagementService.registerUserWithSession( userID, session);
-        return false;
+        Logger.info("Heartbeat received from: {}", session.getId());
     }
 
 }

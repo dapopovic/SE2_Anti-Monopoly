@@ -1,13 +1,17 @@
 FROM openjdk:17
-#FROM maven:3.8.5-openjdk-17
 LABEL authors="ottzoeke"
 
+# Add a volume pointing to /tmp
 WORKDIR /Server
-#COPY . .
+
+# Add the application's jar to the container
 COPY /target/Server-0.0.1-SNAPSHOT.jar ServerApplication.jar
+
 #RUN mvn clean install
 VOLUME /tmp
 
-ENTRYPOINT ["java","-jar","ServerApplication.jar"]
-#CMD mvn spring-boot:run
+# Port to expose
 EXPOSE 53215
+
+# Start the application's jar file
+ENTRYPOINT ["java","-jar","ServerApplication.jar"]

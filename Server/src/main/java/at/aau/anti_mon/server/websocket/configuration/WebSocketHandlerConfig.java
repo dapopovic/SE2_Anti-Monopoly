@@ -1,10 +1,11 @@
 package at.aau.anti_mon.server.websocket.configuration;
 
+import at.aau.anti_mon.server.commands.CommandFactory;
 import at.aau.anti_mon.server.service.LobbyService;
+import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.websocket.handler.BroadcastWebSocketHandler;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,20 +24,20 @@ import org.tinylog.Logger;
 public class WebSocketHandlerConfig implements WebSocketConfigurer {
 
     //private final LobbyService lobbyService;
-    //private final SessionManagementService sessionManagementService;
+    private final SessionManagementService sessionManagementService;
     private final ApplicationEventPublisher eventPublisher;
-    //private final CommandFactory gameCommandFactory;
+    private final CommandFactory gameCommandFactory;
 
     @Autowired
     public WebSocketHandlerConfig(
             LobbyService lobbyService,
-    //        SessionManagementService sessionManagementService,
-          //  CommandFactory gameCommandFactory,
+            SessionManagementService sessionManagementService,
+            CommandFactory gameCommandFactory,
             ApplicationEventPublisher eventPublisher
     ) {
         //this.lobbyService = lobbyService;
-    //    this.gameCommandFactory = gameCommandFactory;
-    //    this.sessionManagementService = sessionManagementService;
+        this.gameCommandFactory = gameCommandFactory;
+        this.sessionManagementService = sessionManagementService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -49,10 +50,10 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
         registry.addHandler(new GameHandler
                         (
                                 //lobbyService,
-                        //gameCommandFactory,
-                        //        sessionManagementService,
-                                eventPublisher
-                        ), "/game")
+                                eventPublisher,
+                                gameCommandFactory,
+                                sessionManagementService
+                                ), "/game")
                 .setAllowedOrigins("*");
 //               // .withSockJS()
 //               // .setHeartbeatTime(25000);

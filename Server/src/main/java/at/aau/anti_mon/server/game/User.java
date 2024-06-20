@@ -10,23 +10,17 @@ import org.springframework.web.socket.WebSocketSession;
  * Represents a User of the App
  */
 @Getter
+@Setter
 public class User {
 
     private final String name;
     private WebSocketSession session;
-    @Setter
     private Lobby lobby;
-    @Setter
     private boolean isReady;
-    @Setter
     private int money;
-    @Setter
     private Roles role;
-    @Setter
     private Figures figure;
-    @Setter
     private int location;
-    @Setter
     private int sequence;
 
     public User(String name, WebSocketSession session) {
@@ -46,5 +40,15 @@ public class User {
             return false;
         }
         return lobby.getOwner().equals(this);
+    }
+
+    public void clear() {
+        this.lobby = null;
+        this.isReady = false;
+        this.money = 1500;
+        this.role = null;
+        this.figure = null;
+        this.location = 1;
+        this.sequence = 0;
     }
 }

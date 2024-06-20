@@ -1,7 +1,5 @@
 package at.aau.anti_mon.server.commands;
 
-import at.aau.anti_mon.server.dtos.LobbyDTO;
-import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
 import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
@@ -34,14 +32,12 @@ public class LeaveLobbyCommand implements Command{
             throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'LEAVE_GAME' is missing.");
         }
 
-        String playerName = jsonData.getData().get("username");
-        String pinString = jsonData.getData().get("pin");
+        String userName = jsonData.getData().get("username");
+        Integer pin = Integer.valueOf(jsonData.getData().get("pin"));
 
-        Logger.info("SERVER : LEAVE_GAME empfangen." + playerName + " hat die Lobby mit der PIN " + pinString + " verlassen.");
+        Logger.info("SERVER : LEAVE_GAME empfangen." + userName + " will die Lobby mit der PIN " + pin + " verlassen.");
 
-        UserDTO playerDTO = new UserDTO(playerName, false, true, null, null);
-        LobbyDTO lobbyDTO = new LobbyDTO(Integer.parseInt(pinString));
-        eventPublisher.publishEvent(new UserLeftLobbyEvent(session, lobbyDTO, playerDTO));
+        eventPublisher.publishEvent(new UserLeftLobbyEvent(session, pin, userName));
 
     }
 }

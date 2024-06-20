@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -55,9 +57,8 @@ class LobbyUnitTest {
         WebSocketSession testSession = mock(WebSocketSession.class);
         when(testSession.getId()).thenReturn("player1");
 
-        User player = lobby.getUserWithSession(testSession);
-        Assertions.assertNotNull(player);
-        Assertions.assertEquals(player1, player);
+        Optional<User> optionalUser = lobby.getUserWithSession(testSession);
+        optionalUser.ifPresentOrElse(user -> Assertions.assertEquals(player1, user), Assertions::fail);
 
         // Überprüfe, ob getId() aufgerufen wurde
         verify(testSession).getId();
@@ -70,8 +71,13 @@ class LobbyUnitTest {
     void lobbyShouldReturnNullWhenNoUserWithMatchingSession() {
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("player2");
-        User user = lobby.getUserWithSession(session);
-        Assertions.assertNull(user);
+
+        Optional<User> optionalUser = lobby.getUserWithSession(session);
+
+        // Extrahieren des Werts (falls vorhanden) oder null
+        User user = optionalUser.orElse(null);
+
+        Assertions.assertNull(user, "User should be null");
     }
 
     @Test

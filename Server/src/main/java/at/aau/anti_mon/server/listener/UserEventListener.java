@@ -3,11 +3,14 @@ package at.aau.anti_mon.server.listener;
 import java.util.*;
 
 import at.aau.anti_mon.server.dtos.UserDTO;
+import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
+import at.aau.anti_mon.server.utilities.MessagingUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
@@ -32,14 +35,14 @@ public class UserEventListener {
 
     /**
      * Konstruktor für UserEventListener
-     * Dependency Injection für LobbyService
-     * 
-     * @param lobbyService LobbyService
+     * Constructor Dependency Injection
      */
     @Autowired
-    UserEventListener(LobbyService lobbyService,
+    UserEventListener(
+            LobbyService lobbyService,
             SessionManagementService sessionManagementService,
-            UserService userService) {
+            UserService userService
+    ) {
         this.lobbyService = lobbyService;
         this.sessionManagementService = sessionManagementService;
         this.userService = userService;
@@ -48,18 +51,16 @@ public class UserEventListener {
     /**
      * Logik zum Erstellen einer Lobby
      * PIN der Lobby wird an den Benutzer zurückgegeben
-     * 
+     *
      * @param event Ereignis
      */
     @EventListener
     public void onCreateLobbyEvent(UserCreatedLobbyEvent event) {
-        // create User
+        sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
         User user = userService.findOrCreateUser(event.getUsername(), event.getSession());
-        // create Lobby
         Lobby newLobby = lobbyService.createLobby(user);
-
         Logger.info("SERVER: Spiel erstellt mit PIN: " + newLobby.getPin());
-        JsonDataUtility.sendPin(event.getSession(), String.valueOf(newLobby.getPin()));
+        MessagingUtility.createMessage("pin", newLobby.getPin().toString(), Commands.PIN).send(event.getSession());
     }
 
     /**
@@ -70,32 +71,59 @@ public class UserEventListener {
     @EventListener
     public void onUserJoinedLobbyEvent(UserJoinedLobbyEvent event)
             throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
-
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
-
-        // create User
-        User joinedUser = userService.findOrCreateUser(event.getUsername(), event.getSession());
-        Logger.debug("User " + joinedUser.getName() + " joined the lobby." + " Is owner: " + joinedUser.isOwner());
-
-        Lobby joinedLobby = lobbyService.findLobbyByPin(event.getPin());
-        // Füge den joinedUser zur Lobby hinzu
-        lobbyService.joinLobby(event.getPin(), joinedUser.getName());
-
-        HashSet<User> users = joinedLobby.getUsers();
-        Logger.info("Users in Lobby: " + users.size());
-        // Sende allen Spielern in der Lobby die Information, dass der Spieler der Lobby
-        // beigetreten ist
-        for (User user : users) {
-            if (!user.equals(joinedUser))
-                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(user.getName()), joinedUser);
+        Lobby lobby = validateLobbyForJoin(event.getPin(), event.getUsername(), event.getSession());
+        if (lobby == null) {
+            return;
         }
+        User joinedUser = userService.findOrCreateUser(event.getUsername(), event.getSession());
+        handleUserLobbyJoin(joinedUser, lobby, event.getSession());
+    }
 
-        // Sende dem neuen Spieler alle Spieler in der Lobby
+    private Lobby validateLobbyForJoin(Integer pin, String username, WebSocketSession session) {
+        Optional<Lobby> optionalLobby = lobbyService.findOptionalLobbyByPin(pin);
+        if (optionalLobby.isEmpty()) {
+            Logger.error("Lobby mit PIN " + pin + " nicht gefunden.");
+            MessagingUtility.createErrorMessage("Lobby mit PIN " + pin + " nicht gefunden.", "ERROR_JOIN_GAME").send(session);
+            return null;
+        }
+        Lobby lobby = optionalLobby.get();
+        if (lobby.isFull()) {
+            Logger.error("Lobby mit PIN " + pin + " ist voll.");
+            MessagingUtility.createErrorMessage("Lobby mit PIN " + pin + " ist voll.", "ERROR_JOIN_GAME").send(session);
+            return null;
+        }
+        //if (!lobby.hasUser(username)) {
+        //    Logger.error("User " + username + " ist nicht in der Lobby.");
+        //    MessagingUtility.createErrorMessage("User " + username + " ist nicht in der Lobby.", "ERROR_JOIN_GAME").send(session);
+        //    return null;
+        //}
+        return lobby;
+    }
+
+    private void handleUserLobbyJoin(User joinedUser, Lobby joinedLobby, WebSocketSession session) throws LobbyNotFoundException, UserNotFoundException, LobbyIsFullException {
+        if (joinedUser.getLobby() != null) {
+            Logger.error("User " + joinedUser.getName() + " is already in a lobby. --> Leave Lobby.");
+            lobbyService.leaveLobby(joinedUser.getLobby().getPin(), joinedUser.getName());
+            joinedUser.clear();
+        }
+        lobbyService.joinLobby(joinedLobby.getPin(), joinedUser.getName());
+        Logger.debug("User " + joinedUser.getName() + " joined the lobby. Is owner: " + joinedUser.isOwner());
+        MessagingUtility.createInfoMessage("Erfolgreich der Lobby beigetreten.", "INFO_JOIN_GAME").send(session);
+
+        notifyUsersInLobby(joinedLobby, joinedUser, Commands.NEW_USER);
+        Logger.info("User " + joinedUser.getName() + " joined the lobby with " + joinedLobby.getUsers().size() + " users.");
+    }
+
+
+    private void notifyUsersInLobby(Lobby lobby, User eventUser, Commands command) {
+        Set<User> users = lobby.getUsers();
         for (User user : users) {
-            if (!user.equals(joinedUser))
-                JsonDataUtility.sendJoinedUser(sessionManagementService.getSessionForUser(joinedUser.getName()), user);
+            MessagingUtility.createUserMessage(eventUser, command).send(sessionManagementService.getSessionForUser(user.getName()));
+            MessagingUtility.createUserMessage(user, command).send(sessionManagementService.getSessionForUser(eventUser.getName()));
         }
     }
+
 
     /**
      * Entfernt den Benutzer aus der Lobby
@@ -104,92 +132,111 @@ public class UserEventListener {
      */
     @EventListener
     public void onLeaveLobbyEvent(UserLeftLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException {
-
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
-
-        lobbyService.leaveLobby(event.getPin(), event.getUsername());
-        Logger.info("Spieler " + event.getUsername() + " hat die Lobby verlassen.");
-
-        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
-        for (User user : users) {
-
-            // Sende allen Spielern in der Lobby die Information, dass der Spieler die Lobby
-            // verlassen hat
-            JsonDataUtility.sendLeavedUser(sessionManagementService.getSessionForUser(user.getName()),
-                    event.getUsername());
-
-            // Sende dem neuen Spieler Bestätigung des Verlassens
-            JsonDataUtility.sendAnswer(sessionManagementService.getSessionForUser(event.getUsername()), "SUCCESS");
-            JsonDataUtility.sendInfo(sessionManagementService.getSessionForUser(event.getUsername()),
-                    "Erfolgreich die Lobby verlassen.");
+        Lobby lobby = validateLobby(event.getPin(), event.getUsername());
+        if (lobby == null) {
+            return;
         }
+        handleUserLobbyLeave(event.getUsername(), lobby, event.getSession());
+    }
 
-        // Test
-        //sessionManagementService.removeSessionById(event.getSession().getId(), event.getUsername());
+    private void handleUserLobbyLeave(String username, Lobby lobby, WebSocketSession session) throws LobbyNotFoundException, UserNotFoundException {
+        lobbyService.leaveLobby(lobby.getPin(), username);
+        MessagingUtility.createInfoMessage("Erfolgreich die Lobby verlassen.", "INFO_JOIN_GAME").send(session);
+        Logger.info("Spieler " + username + " hat die Lobby verlassen.");
+        notifyUsersOfLeave(lobby, username);
+    }
+
+    private void notifyUsersOfLeave(Lobby lobby, String username) {
+        Set<User> users = lobby.getUsers();
+        for (User user : users) {
+            MessagingUtility.createUsernameMessage(username, Commands.LEAVE_GAME).send(sessionManagementService.getSessionForUser(user.getName()));
+            MessagingUtility.createInfoMessage("User " + username + " hat die Lobby verlassen.", "INFO_LOBBY").send(sessionManagementService.getSessionForUser(user.getName()));
+        }
     }
 
     @EventListener
     public void onReadyUserEvent(UserReadyLobbyEvent event) throws UserNotFoundException, LobbyNotFoundException {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
+
+        Lobby lobby = validateLobby(event.getPin(), event.getUsername());
+        if (lobby == null) {
+            return;
+        }
+
         lobbyService.readyUser(event.getPin(), event.getUsername());
         Logger.info("Spieler " + event.getUsername() + " ist bereit.");
-
-        User readiedUser = userService.getUser(event.getUsername());
-
-        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
-        for (User user : users) {
-            JsonDataUtility.sendReadyUser(sessionManagementService.getSessionForUser(user.getName()), event.getUsername(), readiedUser.isReady());
-        }
+        notifyUsersInLobby(lobby, userService.getUser(event.getUsername()), Commands.READY);
     }
 
     @EventListener
-    public void onStartGameEvent(UserStartedGameEvent event) throws LobbyNotFoundException {
+    public void onStartGameEvent(UserStartedGameEvent event)  {
         sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
+        Lobby lobby = validateLobby(event.getPin(), event.getUsername());
+        if (lobby == null) {
+            return;
+        }
         lobbyService.startGame(event.getPin(), event.getUsername());
         Logger.info("Spieler " + event.getUsername() + " hat das Spiel gestartet.");
+        notifyStartGame(lobby);
+    }
 
-        HashSet<User> users = lobbyService.findLobbyByPin(event.getPin()).getUsers();
-        // convert to userDtos
-        ArrayList<UserDTO> usersList = new ArrayList<>();
-        for (User user : users) {
-            usersList.add(new UserDTO(user.getName(), user.isOwner(), user.isReady(), user.getRole(), user.getFigure()));
-        }
-        for (User user : users) {
-            JsonDataUtility.sendStartGame(sessionManagementService.getSessionForUser(user.getName()), usersList);
-        }
+    private void notifyStartGame(Lobby lobby) {
+        Set<User> users = lobby.getUsers();
+        List<UserDTO> userDTOList = users.stream()
+                .map(user -> new UserDTO(user.getName(), user.isOwner(), user.isReady(), user.getRole(), user.getFigure()))
+                .toList();
+        users.forEach(user -> MessagingUtility.createUserCollectionMessage(Commands.START_GAME, userDTOList)
+                .send(sessionManagementService.getSessionForUser(user.getName())));
+        users.forEach(user -> MessagingUtility.createUsernameMessage(user.getName(), Commands.FIRST_PLAYER)
+                .send(sessionManagementService.getSessionForUser(user.getName())));
     }
 
     @EventListener
     public void onDiceNumberEvent(DiceNumberEvent event) throws UserNotFoundException {
-        String username = event.getUsername();
-        Integer dicenumber = event.getDicenumber();
+        sessionManagementService.registerUserWithSession(event.getUsername(), event.getSession());
 
-        User user = userService.getUser(username);
+        Lobby lobby = validateLobby(event.getPin(), event.getUsername());
+        if (lobby == null) {
+            return;
+        }
+        User eventUser = userService.getUser(event.getUsername());
+        processDiceRoll(eventUser, event.getDicenumber());
+        sendDiceMessages(eventUser, event.getDicenumber());
+    }
+
+    private void processDiceRoll(User user, int diceNumber) {
         Figures figure = user.getFigure();
         int location = user.getLocation();
-        int nextlocation = location+dicenumber;
+        int nextLocation = (location + diceNumber) % 40;
+        user.setLocation(nextLocation);
+    }
 
-        if(nextlocation>40){
-            nextlocation = nextlocation-40;
-        }
-        user.setLocation(nextlocation);
+    private void sendDiceMessages(User eventUser, int diceNumber) {
+        Set<User> users = eventUser.getLobby().getUsers();
+        String username = eventUser.getName();
+        Figures figure = eventUser.getFigure();
+        int location = eventUser.getLocation();
 
-        HashSet<User> users = user.getLobby().getUsers();
-        for (User u : users) {
-            JsonDataUtility.sendDiceNumber(sessionManagementService.getSessionForUser(u.getName()), username,dicenumber, figure,location);
+        for (User user : users) {
+            MessagingUtility.createGameMessage(username, diceNumber, figure, location, Commands.DICE)
+                    .send(sessionManagementService.getSessionForUser(user.getName()));
         }
     }
 
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
         String username = event.getUsername();
-        Integer new_balance = event.getNewBalance();
-
+        Integer newBalance = event.getNewBalance();
         User user = userService.getUser(username);
-        user.setMoney(new_balance);
-        HashSet<User> users = user.getLobby().getUsers();
+        user.setMoney(newBalance);
+        notifyBalanceChange(user, newBalance);
+    }
+
+    private void notifyBalanceChange(User user, int newBalance) {
+        Set<User> users = user.getLobby().getUsers();
         for (User u : users) {
-            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, new_balance);
+            JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), user.getName(), newBalance);
         }
     }
 
@@ -198,33 +245,53 @@ public class UserEventListener {
         Logger.info("Spieler " + event.getUsername() + " hat Finish ausgewählt.");
         String username = event.getUsername();
         User user = userService.getUser(username);
+        setNextPlayer(user);
+    }
+
+    private void setNextPlayer(User user) {
         int sequence = user.getSequence();
-        HashSet<User> users = user.getLobby().getUsers();
-        int playernumber = users.size();
-        if(sequence==playernumber){sequence=0;}
-        sequence++;
+        Set<User> users = user.getLobby().getUsers();
+        int playerNumber = users.size();
+        sequence = (sequence % playerNumber) + 1;
 
         int finalSequence = sequence;
-        User userCurrentSequence = users.stream().filter(u -> u.getSequence() == finalSequence).toList().get(0);
-        Logger.info("Spieler " + userCurrentSequence.getName() + " is the next Player.");
-        for (User u : users) {
-            JsonDataUtility.sendNextPlayer(sessionManagementService.getSessionForUser(u.getName()), userCurrentSequence.getName());
-        }
-    }
-    @EventListener
-    public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException{
-        Logger.info("Wir sind in FirstPlayerEventListener.");
-        String username = event.getUsername();
-        User user = userService.getUser(username);
-        HashSet<User> users = user.getLobby().getUsers();
-        Logger.info("Wir haben die Nummer: "+ user.getSequence());
-        boolean First = false;
-        if(user.getSequence() == 1){
-            Logger.info("Spieler " + event.getUsername() + " ist Spieler 1.");
-            First = true;
-            for (User u : users){
-                JsonDataUtility.sendFirstPlayer(sessionManagementService.getSessionForUser(u.getName()),user.getName());
+        User nextPlayer = users.stream().filter(u -> u.getSequence() == finalSequence).findFirst().orElse(null);
+        if (nextPlayer != null) {
+            Logger.info("Spieler " + nextPlayer.getName() + " is the next Player.");
+            for (User u : users) {
+                MessagingUtility.createUsernameMessage(nextPlayer.getName(), Commands.NEXT_PLAYER).send(sessionManagementService.getSessionForUser(u.getName()));
             }
         }
     }
+
+    @EventListener
+    public void onFirstPlayerEvent(FirstPlayerEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        if (user.getSequence() == 1) {
+            notifyFirstPlayer(user);
+        }
+    }
+
+    private void notifyFirstPlayer(User user) {
+        Set<User> users = user.getLobby().getUsers();
+        for (User u : users) {
+            MessagingUtility.createUsernameMessage(user.getName(), Commands.FIRST_PLAYER).send(sessionManagementService.getSessionForUser(u.getName()));
+        }
+    }
+
+    private Lobby validateLobby(Integer pin, String username) {
+        Optional<Lobby> optionalLobby = lobbyService.findOptionalLobbyByPin(pin);
+        if (optionalLobby.isEmpty()) {
+            Logger.error("Lobby mit PIN " + pin + " nicht gefunden.");
+            return null;
+        }
+        Lobby lobby = optionalLobby.get();
+        if (!lobby.hasUser(username)) {
+            Logger.error("User " + username + " ist nicht in der Lobby.");
+            return null;
+        }
+        return lobby;
+    }
+
 }

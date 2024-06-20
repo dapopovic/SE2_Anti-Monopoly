@@ -36,9 +36,7 @@ class EventUnitTest {
     @Test
     void userLeftLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1", false, true, null, null);
-        LobbyDTO lobbyDTO = new LobbyDTO(1234);
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session, lobbyDTO, userDTO);
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session, 1234,"user1");
 
         assertEquals("user1", event.getUsername());
         assertEquals("session1", event.getUserSessionID());

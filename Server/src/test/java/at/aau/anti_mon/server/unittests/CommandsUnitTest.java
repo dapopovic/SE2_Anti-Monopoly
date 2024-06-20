@@ -49,6 +49,21 @@ class CommandsUnitTest {
     private NextPlayerCommand nextPlayerCommand;
     @InjectMocks
     private FirstPlayerCommand firstPlayerCommand;
+    @InjectMocks
+    private DiceNumberCommand diceNumberCommand;
+
+    @Test
+    void diceCommandShouldPublishEvent(){
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.DICE);
+        jsonData.putData("dicenumber", "2");
+        jsonData.putData("username", "testUser");
+        jsonData.putData("pin", "1234");
+
+        diceNumberCommand.execute(session, jsonData);
+
+        verify(eventPublisher, times(1)).publishEvent(any(DiceNumberEvent.class));
+    }
 
     @Test
     void joinLobbyCommandShouldPublishEvent() {
@@ -218,9 +233,7 @@ class CommandsUnitTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.READY);
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            lobbyReadyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> lobbyReadyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -229,9 +242,7 @@ class CommandsUnitTest {
         jsonData.setCommand(Commands.READY);
         jsonData.putData("test", "test");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            lobbyReadyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> lobbyReadyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -240,9 +251,7 @@ class CommandsUnitTest {
         jsonData.setCommand(Commands.READY);
         jsonData.putData("username", "testUser");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            lobbyReadyCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> lobbyReadyCommand.execute(session, jsonData));
     }
 
     @Test
@@ -262,9 +271,7 @@ class CommandsUnitTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.START_GAME);
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            startGameCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> startGameCommand.execute(session, jsonData));
     }
 
     @Test
@@ -273,9 +280,7 @@ class CommandsUnitTest {
         jsonData.setCommand(Commands.START_GAME);
         jsonData.putData("test", "test");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            startGameCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> startGameCommand.execute(session, jsonData));
     }
 
     @Test
@@ -284,9 +289,7 @@ class CommandsUnitTest {
         jsonData.setCommand(Commands.START_GAME);
         jsonData.putData("username", "testUser");
 
-        assertThrows(CanNotExecuteJsonCommandException.class, () -> {
-            startGameCommand.execute(session, jsonData);
-        });
+        assertThrows(CanNotExecuteJsonCommandException.class, () -> startGameCommand.execute(session, jsonData));
     }
     @Test
     void diceNumberCommandShouldPublishEvent() {
@@ -294,6 +297,7 @@ class CommandsUnitTest {
         jsonData.setCommand(Commands.DICENUMBER);
         jsonData.putData("dicenumber", "2");
         jsonData.putData("username", "testUser");
+        jsonData.putData("pin", "1234");
 
         DiceNumberCommand diceNumberCommand = new DiceNumberCommand(eventPublisher);
         diceNumberCommand.execute(session, jsonData);

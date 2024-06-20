@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Represents a lobby in the game
@@ -20,32 +21,30 @@ import java.util.*;
 public class Lobby {
 
     private final Integer pin;
-    private final HashSet<User> users;
+    private final Set<User> users;
     private User owner;
     private static final int MAX_USERS = 6;
     private GameStateEnum gameState;
-
-    private Random random;
+    private final SecureRandom random;
 
     public Lobby() {
-        SecureRandom random = new SecureRandom();
-        this.pin = random.nextInt(9000) + 1000;
-        this.users = new HashSet<>();
-        this.gameState = GameStateEnum.LOBBY;
-        this.owner = null;
+        this(null);
     }
 
     public Lobby(User user) {
-        SecureRandom random = new SecureRandom();
+        random = new SecureRandom();
         this.pin = random.nextInt(9000) + 1000;
-        this.users = new HashSet<>();
+        this.users = new CopyOnWriteArraySet<>(); // Thread-sicheres Set
         this.gameState = GameStateEnum.LOBBY;
-        user.setReady(true);
-        this.users.add(user);
-        this.owner = user;
+
+        if (user != null) {
+            user.setReady(true);
+            this.users.add(user);
+            this.owner = user;
+        }
     }
 
-    public void addUser(User user) throws LobbyIsFullException {
+    public synchronized void addUser(User user) throws LobbyIsFullException {
         if (users.size() >= MAX_USERS) {
             throw new LobbyIsFullException("Lobby is full. Cannot add more players.");
         } else if (users.contains(user)) {
@@ -54,11 +53,11 @@ public class Lobby {
         users.add(user);
     }
 
-    public void readyUser(User user) {
+    public synchronized void toggleReady(User user) {
         user.setReady(!user.isReady());
     }
 
-    public void removeUser(User user) throws UserNotFoundException {
+    public synchronized void removeUser(User user) throws UserNotFoundException {
         if (users.contains(user)) {
             if (user.equals(owner) && users.size() > 1) {
                 for (User next : users) {
@@ -66,16 +65,15 @@ public class Lobby {
 
                         // If the next user is not ready, set them to ready -> because he is the new owner
                         if (!next.isReady()){
-                            readyUser(next);
+                            toggleReady(next);
                         }
-
                         setOwner(next);
                         break;
                     }
                 }
             }
             if (user.isReady()){
-                readyUser(user);
+                toggleReady(user);
             }
             user.setLocation(1);
             user.setRole(null);
@@ -85,36 +83,71 @@ public class Lobby {
         }
     }
 
+    public synchronized void nextOwner(User user){
+        owner = users.stream().filter(u -> !u.equals(user)).findFirst().orElse(null);
+        if (owner != null && !owner.isReady()) {
+            toggleReady(owner);
+        }
+    }
+
     /**
-     * Todo: This method is not used in the codebase. It should be removed?
-     * 
      * @param session The session to search for
      * @return The player with the given session
      */
-    public User getUserWithSession(WebSocketSession session) {
-        return users.stream().filter(player -> player.getSession().getId().equals(session.getId())).findFirst()
-                .orElse(null);
+    public synchronized Optional<User> getUserWithSession(WebSocketSession session) {
+        return users.stream()
+                .filter(user -> user.getSession().getId().equals(session.getId()))
+                .findFirst();
     }
 
-    public boolean isPlayerInLobby(User user) {
+    public synchronized boolean isPlayerInLobby(User user) {
         return users.contains(user);
     }
 
-    public boolean canAddPlayer() {
+    public synchronized boolean canAddPlayer() {
         return this.users.size() < MAX_USERS;
     }
 
-    public void startGame() {
-        ArrayList<User> userList = new ArrayList<>(users);
-        random = new Random();
-        Collections.shuffle(userList, random);
-        users.forEach(user ->
-            user.setRole(userList.indexOf(user) < userList.size() / 2 ? Roles.MONOPOLIST : Roles.COMPETITOR)
-        );
+    public synchronized void startGame() {
+        //setRandomRoles();
         this.gameState = GameStateEnum.INGAME;
     }
 
-    public boolean isEveryoneReady() {
+    // Backup
+    // Method -> to LobbyService
+    public synchronized void setRandomRoles(){
+        List<User> shuffledUsers = new ArrayList<>(users);
+        Collections.shuffle(shuffledUsers, random);
+
+        // Berechne die Anzahl der Monopolisten
+        int monopolistCount = (int) Math.floor(shuffledUsers.size() / 2.0);
+
+        // Setze die Rollen basierend auf der Position in der gemischten Liste
+        for (int i = 0; i < shuffledUsers.size(); i++) {
+            User user = shuffledUsers.get(i);
+            if (i < monopolistCount) {
+                user.setRole(Roles.MONOPOLIST);
+            } else {
+                user.setRole(Roles.COMPETITOR);
+            }
+        }
+    }
+
+    public synchronized boolean isEveryoneReady() {
         return users.stream().allMatch(User::isReady);
+    }
+
+    public synchronized boolean isFull() {
+        return users.size() == MAX_USERS;
+    }
+
+    public synchronized void clear() {
+        users.clear();
+        owner = null;
+        gameState = GameStateEnum.LOBBY;
+    }
+
+    public synchronized boolean hasUser(String username) {
+        return users.stream().anyMatch(user -> user.getName().equals(username));
     }
 }

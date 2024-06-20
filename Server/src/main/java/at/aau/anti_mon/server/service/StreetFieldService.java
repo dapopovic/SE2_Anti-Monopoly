@@ -21,9 +21,6 @@ public class StreetFieldService {
         return streetFieldDAO.findAll();
     }
 
-
-
-
     public StreetField getGameFieldByID(Integer id) {
         return streetFieldDAO.findById(id).orElse(null);
     }

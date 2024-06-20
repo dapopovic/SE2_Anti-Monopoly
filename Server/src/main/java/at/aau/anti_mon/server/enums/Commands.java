@@ -16,6 +16,8 @@ public enum Commands {
      */
     ANSWER("ANSWER"),
 
+    RANDOM_DICE("RANDOM_DICE"),
+
     /**
      * Command to get a PIN ? TODO: What is this, same as CREATE_GAME? -> fix!
      * format: {"command": "REGISTER", "user": "TestUser"}
@@ -41,7 +43,7 @@ public enum Commands {
     JOIN_GAME("JOIN_GAME"),
 
     /**
-     * Command to leave a game
+     * Command to join a game
      * format: {"command": "LEAVE_GAME", "user": "TestUser", "pin": "1234"}
      */
     JOIN("JOIN"),
@@ -72,30 +74,11 @@ public enum Commands {
      */
     ERROR("ERROR"),
     DICENUMBER("DICENUMBER"),
+    DICE("DICE"),
     NEXT_PLAYER("NEXT_PLAYER"),
     FIRST_PLAYER("FIRST_PLAYER"),
 
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
-
-    /**
-     * Send by server to broadcast to all players in the lobby
-     * format: CONNECTED, [room id], [session Id], [player id], [role], [name], <br>
-     *                               [session Id], [player id], [role], [name], <br>
-     *                               [session Id], [player id], [role], [name], <br>
-     *                               ...
-     */
-    CONNECTED("CONNECTED"),
-
-    /**
-     * Send by server to send a player to one specific connection
-     * format: PLAYER, [session Id], [player id] <br>
-     */
-    PLAYER("PLAYER"),
-
-    /**
-     *
-     */
-    RECONNECTION("RECONNECTION"),
 
     /**
      * Send by client to finish the round

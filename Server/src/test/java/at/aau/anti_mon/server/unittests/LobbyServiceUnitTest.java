@@ -12,8 +12,6 @@ import at.aau.anti_mon.server.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +25,7 @@ class LobbyServiceUnitTest {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
         lobbyService.addUserToLobby("user1", 1234);
-        assertEquals(1234, lobbyService.getLobbyIDForUserID("user1"));
+        assertEquals(1234, lobbyService.getLobbyIDForUserID("user1").get());
     }
 
     @Test
@@ -36,7 +34,7 @@ class LobbyServiceUnitTest {
         LobbyService lobbyService = new LobbyService(userService);
         lobbyService.addUserToLobby("user1", 1234);
         lobbyService.removeUserFromLobby("user1");
-        assertNull(lobbyService.getLobbyIDForUserID("user1"));
+        assertNull(lobbyService.getLobbyIDForUserID("user1").orElse(null));
     }
 
     @Test
@@ -71,10 +69,10 @@ class LobbyServiceUnitTest {
     }
 
     @Test
-    void findOptionalLobbyByPinReturnsEmptyOptional() {
+    void findOptionalLobbyByPinReturnsNull() {
         UserService userService = mock(UserService.class);
         LobbyService lobbyService = new LobbyService(userService);
-        assertEquals(Optional.empty(), lobbyService.findOptionalLobbyByPin(1234));
+        assertNull(lobbyService.findOptionalLobbyByPin(1234).orElse(null));
     }
 
     @Test

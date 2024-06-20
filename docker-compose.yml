@@ -1,31 +1,33 @@
-version: "3.8"
 services:
-  server:
-    build:
-      context: .
-    restart: on-failure
+  backend:
+    build: .\Server
+      #context: Server
+      #dockerfile: Server/Dockerfile
+    #restart: on-failure
     container_name: Anti-Monopoly-Server
     depends_on:
-      - redis
+   #   - redis
       - postgres
     ports:
       - "53215:8080"
     environment:
       SPRING_APPLICATION_JSON: '{
-         "spring.datasource.url"  : "jdbc:postgresql://postgres:5432/postgres",
+         "spring.datasource.url"  : "jdbc:postgresql://postgres:5432/postgresdb",
          "spring.datasource.username" : "postgres",
          "spring.datasource.password" : "#Postgr3sPWD",
          "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
+         "spring.datasource.driver-class-name" : "org.postgresql.Driver",
          "hibernate.transaction.coordinator_class" : "jta",
          "spring.jpa.hibernate.ddl-auto" : "update"
        }'
 
-  redis:
-    image: 'redis/redis-stack-server:latest'
-    container_name: redis-backend
-    command: redis-server --requirepass "#R3disPWD"
-    ports:
-      - '6379:6379'
+
+  #redis:
+  #  image: 'redis/redis-stack-server:latest'
+  #  container_name: redis-backend
+  #  command: redis-server --requirepass "#R3disPWD"
+  #  ports:
+  #    - '6379:6379'
 
   postgres:
     image: 'postgres:alpine'
@@ -36,8 +38,7 @@ services:
       - POSTGRES_PASSWORD=#Postgr3sPWD
       - POSTGRES_DB=postgresdb
     ports:
-      - "5432:5432"
+      - "5555:5432"
 volumes:
     postgres:
       driver: local
-        - "8080:8080"

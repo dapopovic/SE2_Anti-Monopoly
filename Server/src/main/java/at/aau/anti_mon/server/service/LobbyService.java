@@ -1,6 +1,7 @@
 package at.aau.anti_mon.server.service;
 
 import at.aau.anti_mon.server.enums.Figures;
+import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -35,16 +36,14 @@ public class LobbyService {
      */
     private final Map<String, Integer> userLobbyMap;
 
-
     private final UserService userService;
-
     private final Random random = new Random();
-    int sequencenumber = 1;
+    private int sequenceNumber = 1;
+
+
     @Autowired
     public LobbyService(UserService userService
-                        //SimpMessagingTemplate messagingTemplate
     ) {
-        //this.messagingTemplate = messagingTemplate;
         this.userService = userService;
         this.lobbies = new ConcurrentHashMap<>();
         this.userLobbyMap = new ConcurrentHashMap<>();
@@ -54,8 +53,8 @@ public class LobbyService {
         userLobbyMap.put(userId, lobbyId);
     }
 
-    public Integer getLobbyIDForUserID(String userId) {
-        return userLobbyMap.get(userId);
+    public Optional<Integer> getLobbyIDForUserID(String userId) {
+        return Optional.ofNullable(userLobbyMap.get(userId));
     }
 
     public void removeUserFromLobby(String userId) {
@@ -71,12 +70,11 @@ public class LobbyService {
     public Lobby createLobby(User user) {
         Lobby newLobby = new Lobby(user);
         userLobbyMap.put(user.getName(), newLobby.getPin());
-
-        Lobby existing = lobbies.putIfAbsent(newLobby.getPin(), newLobby);
-        if (existing != null) {
+        if (lobbies.putIfAbsent(newLobby.getPin(), newLobby) != null) {
             throw new IllegalStateException("Lobby mit PIN " + newLobby.getPin() + " existiert bereits.");
         }
         user.setLobby(newLobby);
+        Logger.info("SERVER: Lobby " + newLobby.getPin() + " wurde erstellt.");
         return newLobby;
     }
 
@@ -87,8 +85,8 @@ public class LobbyService {
      * @param userName Name des Benutzers
      * @throws UserNotFoundException wenn der Benutzer nicht gefunden wird
      */
-    public void joinLobby(int lobbyPin, String userName) throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
-        Lobby lobby = findLobbyByPin(lobbyPin);
+    public void joinLobby(Integer lobbyPin, String userName) throws UserNotFoundException, LobbyIsFullException, LobbyNotFoundException {
+        Lobby lobby = findLobbyByPin(lobbyPin).orElseThrow(() -> new LobbyNotFoundException("Lobby mit PIN " + lobbyPin + " nicht gefunden."));
         User user = userService.getUser(userName);
         lobby.addUser(user);
         user.setLobby(lobby);
@@ -96,16 +94,35 @@ public class LobbyService {
         Logger.info("SERVER: Spieler " + userName + " ist der Lobby " + lobby.getPin() + " beigetreten.");
     }
 
-    public void leaveLobby(int lobbyPin, String userName) throws UserNotFoundException {
+    /**
+     * Entfernt einen Benutzer aus einer Lobby
+     * @param lobbyPin PIN der Lobby
+     * @param userName Name des Benutzers
+     * @throws UserNotFoundException wenn der Benutzer nicht gefunden wird
+     */
+    public void leaveLobby(Integer lobbyPin, String userName) throws UserNotFoundException, LobbyNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
-        lobby.removeUser(userService.getUser(userName));
+        if (lobby == null) {
+            throw new LobbyNotFoundException("Lobby mit PIN " + lobbyPin + " nicht gefunden.");
+        }
+        User user = userService.getUser(userName);
+        lobby.removeUser(user);
         removeUserFromLobby(userName);
         Logger.info("SERVER: Spieler " + userName + " hat die Lobby  " + lobby.getPin() + "  verlassen.");
     }
 
-    public void readyUser(int lobbyPin, String userName) throws UserNotFoundException {
+    /**
+     * Setzt den Status des Benutzers auf bereit
+     * @param lobbyPin PIN der Lobby
+     * @param userName Name des Benutzers
+     * @throws UserNotFoundException wenn der Benutzer nicht gefunden wird
+     */
+    public void readyUser(Integer lobbyPin, String userName) throws UserNotFoundException, LobbyNotFoundException {
         Lobby lobby = lobbies.get(lobbyPin);
-        lobby.readyUser(userService.getUser(userName));
+        if (lobby == null) {
+            throw new LobbyNotFoundException("Lobby mit PIN " + lobbyPin + " nicht gefunden.");
+        }
+        lobby.toggleReady(userService.getUser(userName));
         Logger.info("SERVER: Spieler " + userName + " ist bereit.");
     }
 
@@ -115,13 +132,13 @@ public class LobbyService {
      * @param pin PIN der Lobby
      * @return Lobby oder Exception, wenn keine Lobby mit der gegebenen PIN gefunden wurde
      */
-    public Lobby findLobbyByPin(int pin) throws LobbyNotFoundException {
-        for (Lobby lobby : lobbies.values()) {
-            if (lobby.getPin() == pin) {
-                return lobby;
-            }
+    public Optional<Lobby> findLobbyByPin(Integer pin) throws LobbyNotFoundException {
+        //return Optional.ofNullable(lobbies.get(pin));
+        Lobby lobby = lobbies.get(pin);
+        if (lobby == null) {
+            throw new LobbyNotFoundException("Lobby mit PIN " + pin + " nicht gefunden.");
         }
-        throw new LobbyNotFoundException("Lobby mit PIN " + pin + " nicht gefunden.");
+        return Optional.of(lobby);
     }
 
     /**
@@ -130,71 +147,102 @@ public class LobbyService {
      * @param pin PIN der Lobby
      * @return Lobby oder null, wenn keine Lobby mit der gegebenen PIN gefunden wurde
      */
-    public Optional<Lobby> findOptionalLobbyByPin(int pin) {
-        for (Lobby lobby : lobbies.values()) {
-            if (lobby.getPin() == pin) {
+    public Optional<Lobby> findOptionalLobbyByPin(Integer pin) {
+        /*for (Lobby lobby : lobbies.values()) {
+            if (Objects.equals(lobby.getPin(), pin)) {
                 return Optional.of(lobby);
             }
         }
-        return Optional.empty();
+         */
+        return Optional.ofNullable(lobbies.get(pin));
     }
+    //public Optional<Lobby> findOptionalLobbyByPin(int pin) {
+    //    return Optional.ofNullable(lobbies.get(pin));
+    //}
 
     /**
      * Durchsuche die Liste der Lobbies nach dem gegebenen Usernamen und den Benutzer zurück.
-     *
-     * @param usrID Name des Users
+     * @param userName Name des Users
      * @return Player oder null, wenn kein Spieler mit dem gegebenen Namen gefunden wurde
      */
-    public User findUserInAllLobbies(String usrID) throws UserNotFoundException {
-        for (Lobby lobby : lobbies.values()) {
-            for (User user : lobby.getUsers()) {
-                if (user.getName().equals(usrID)) {
-                    return user;
-                }
-            }
-        }
-        throw new UserNotFoundException("User mit Name " + usrID + " nicht gefunden.");
-    }
-
-    public void startGame(Integer pin, String username) {
-        Lobby lobby = lobbies.get(pin);
-        if (!lobby.getOwner().getName().equals(username)) {
-            Logger.error("SERVER: User " + username + " is not the owner of the lobby.");
-            return;
-        }
-        // check if everyone is ready
-        if (!lobby.isEveryoneReady()) {
-            Logger.error("SERVER: Not everyone is ready.");
-            return;
-        }
-        HashSet<User> users = lobby.getUsers();
-        HashSet<Figures> assignedFigures = new HashSet<>();
-        users.forEach(user -> {
-            Figures randomFigure;
-            do {
-                randomFigure = Figures.values()[random.nextInt(Figures.values().length)];
-            } while(assignedFigures.contains(randomFigure));
-
-            assignedFigures.add(randomFigure);
-            user.setFigure(randomFigure);
-            user.setSequence(sequencenumber);
-            sequencenumber++;
-            user.setLocation(1);
-        });
-        sequencenumber = 1;
-        lobby.startGame();
+    public User findUserInAllLobbies(String userName) throws UserNotFoundException {
+        return lobbies.values().stream()
+                .flatMap(lobby -> lobby.getUsers().stream())
+                .filter(user -> user.getName().equals(userName))
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException("User mit Name " + userName + " nicht gefunden."));
     }
 
     /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an alle Clients im Lobby-Channel
-     * @param lobbyId ID der Lobby
-     * @param message Nachrichtenobjekt
+     * Startet das Spiel in der Lobby
+     * @param pin PIN der Lobby
+     * @param username Name des Owner
      */
-    /*public void sendToLobby(String lobbyId, Object message) {
-        String destination = "/topic/lobby." + lobbyId;
-        messagingTemplate.convertAndSend(destination, message);
+    public void startGame(Integer pin, String username) {
+        Optional<Lobby> optionalLobby = findOptionalLobbyByPin(pin);
+        optionalLobby.ifPresentOrElse(lobby -> {
+
+            // check if command sender is the owner
+            if (!isOwner(lobby, username)) {
+                Logger.error("SERVER: User " + username + " is not the owner of the lobby.");
+                return;
+            }
+            // check if everyone is ready
+            if (!lobby.isEveryoneReady()) {
+                Logger.error("SERVER: Not everyone is ready.");
+                return;
+            }
+
+            assignFiguresToUsers(lobby.getUsers());
+            resetSequenceNumber();
+            setRandomRoles(lobby);
+            lobby.startGame();
+        }, () -> Logger.error("SERVER: Lobby with PIN " + pin + " not found."));
     }
 
-     */
+    public void setRandomRoles(Lobby lobby){
+        List<User> shuffledUsers = new ArrayList<>(lobby.getUsers());
+        Collections.shuffle(shuffledUsers, random);
+
+        // Berechne die Anzahl der Monopolisten
+        int monopolistCount = (int) Math.floor(shuffledUsers.size() / 2.0);
+
+        // Setze die Rollen basierend auf der Position in der gemischten Liste
+        for (int i = 0; i < shuffledUsers.size(); i++) {
+            User user = shuffledUsers.get(i);
+            if (i < monopolistCount) {
+                user.setRole(Roles.MONOPOLIST);
+            } else {
+                user.setRole(Roles.COMPETITOR);
+            }
+        }
+    }
+
+    private boolean isOwner(Lobby lobby, String username) {
+        return lobby.getOwner().getName().equals(username);
+    }
+
+    private void assignFiguresToUsers(Set<User> users) {
+        Set<Figures> assignedFigures = new HashSet<>();
+        users.forEach(user -> {
+            Figures randomFigure = getRandomFigure(assignedFigures);
+            assignedFigures.add(randomFigure);
+            user.setFigure(randomFigure);
+            user.setSequence(sequenceNumber++);
+            user.setLocation(1);
+        });
+    }
+
+    private Figures getRandomFigure(Set<Figures> assignedFigures) {
+        Figures randomFigure;
+        do {
+            randomFigure = Figures.values()[random.nextInt(Figures.values().length)];
+        } while (assignedFigures.contains(randomFigure));
+        return randomFigure;
+    }
+
+    private void resetSequenceNumber() {
+        sequenceNumber = 1;
+    }
 
 }

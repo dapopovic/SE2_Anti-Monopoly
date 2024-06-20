@@ -7,9 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import at.aau.anti_mon.server.service.SessionManagementService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -20,6 +22,8 @@ import at.aau.anti_mon.server.game.Lobby;
 import at.aau.anti_mon.server.game.User;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.UserService;
+
+import java.util.Optional;
 
 /**
  * Integration tests for the LobbyService
@@ -33,6 +37,9 @@ class LobbyServiceIntegrationTest {
 
     @Autowired
     private UserService userService;
+
+    @MockBean
+    SessionManagementService sessionManagementService;
 
     @Test
     void createLobbyShouldCreateNewLobby() {
@@ -63,15 +70,18 @@ class LobbyServiceIntegrationTest {
     }
 
     @Test
-    void findLobbyByPinShouldReturnLobbyWhenLobbyExists() throws LobbyNotFoundException {
+    void findLobbyByPinShouldReturnLobbyWhenLobbyExists() {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
-        Lobby foundLobby = lobbyService.findLobbyByPin(lobby.getPin());
-        assertEquals(lobby, foundLobby);
+
+        Optional<Lobby> optionalLobby = lobbyService.findOptionalLobbyByPin(lobby.getPin());
+        optionalLobby.ifPresentOrElse( foundLobby -> assertEquals(lobby, foundLobby), () -> {
+            throw new AssertionError("Lobby not found");
+        });
     }
 
     @Test
     void findLobbyByPinShouldThrowExceptionWhenLobbyDoesNotExist() {
-        assertThrows(LobbyNotFoundException.class, () -> lobbyService.findLobbyByPin(9999));
+        assertThrows(LobbyNotFoundException.class, () -> lobbyService.findLobbyByPin(9999).get());
     }
 }

@@ -35,7 +35,6 @@ public class SessionManagementService {
      */
     private final Map<String, String> userSessionMap;
 
-
     public SessionManagementService() {
         sessions = new ConcurrentHashMap<>();
         userSessionMap = new ConcurrentHashMap<>();
@@ -57,7 +56,6 @@ public class SessionManagementService {
 
         Logger.info("Session {} registered with user: {}", session.getId(), userId);
     }
-
 
     public WebSocketSession getSession(String sessionId) {
         return sessions.get(sessionId);

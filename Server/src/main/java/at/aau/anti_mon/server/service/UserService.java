@@ -41,9 +41,10 @@ public class UserService {
      */
     public User findOrCreateUser(String userId, WebSocketSession webSocketSession) {
         if (!users.containsKey(userId)) {
-            User newUser = new User(userId, webSocketSession);
-            users.put(userId, newUser);
-            return newUser;
+            //User newUser = new User(userId, webSocketSession);
+            //users.put(userId, newUser);
+            //return newUser;
+            return createUser(userId, webSocketSession);
         }
         return users.get(userId);
     }
@@ -96,15 +97,5 @@ public class UserService {
 
         users.remove(userId);
     }
-
-    /**
-     * Konvertiert Nachrichtenobjekt in JSON und sendet es an einem bestimmten User
-     * @param message Nachrichtenobjekt
-     */
-    /*public void sendToUser(String username, Object message) {
-        String destination = "/user/" + username + "/queue/notifications";
-        messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
-    }*/
-
 
 }

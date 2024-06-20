@@ -6,10 +6,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import at.aau.anti_mon.server.commands.DiceNumberCommand;
+import at.aau.anti_mon.server.events.DiceNumberEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -38,6 +41,7 @@ import at.aau.anti_mon.server.listener.UserEventListener;
 import at.aau.anti_mon.server.service.LobbyService;
 import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.service.UserService;
+import org.tinylog.Logger;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -95,6 +99,49 @@ class EventDrivenPatternTest {
 
     }
 
+
+    @Test
+    void testDiceCommand() throws UserNotFoundException {
+
+        DiceNumberEvent event = new DiceNumberEvent(session2, "test", 2,1234);
+        DiceNumberCommand diceNumberCommand = mock(DiceNumberCommand.class);
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.DICE);
+        jsonDataDTO.putData("username", "user2");
+        jsonDataDTO.putData("dicenumber", "2");
+
+
+        //String msg = "{\"command\":\"DICE\",\"data\":{\"username\":\"Test\",\"dicenumber\":5}}";
+        // Use Message for Pin as Dice Message while testing
+        Logger.info("TEST - sending message: " + jsonDataDTO.toString());
+
+        // Mock Event Handling
+        doAnswer((Answer<Void>) invocation -> {
+            eventPublisher.publishEvent(event);
+            return null;
+        }).when(diceNumberCommand).execute(session2, jsonDataDTO);
+
+        doAnswer((Answer<Void>) invocation -> {
+            userEventListener.onDiceNumberEvent(invocation.getArgument(0));
+            return null;
+        }).when(eventPublisher).publishEvent(event);
+
+
+        //session.sendMessage(new TextMessage(msg));
+
+        //String messageResponse = messages.poll(10, TimeUnit.SECONDS);
+        //Logger.info("TEST - received messageResponse: " + messageResponse);
+
+        // When JsonCommand is executed
+        diceNumberCommand.execute(session2, jsonDataDTO);
+
+        // Then
+        verify(userEventListener, times(1)).onDiceNumberEvent(event);
+
+
+    }
+
+
     @Test
     void onUserJoinedLobbyEventShouldCallCorrectServiceMethod() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
 
@@ -136,7 +183,7 @@ class EventDrivenPatternTest {
 //// Merge issues backup
 
         lobbyService.addUserToLobby( user2.getName(),lobby.getPin());
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, new LobbyDTO(lobby.getPin()), new UserDTO("user1", false, false, null, null));
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, lobby.getPin(), "user1");
 //////////////// MAIN
         leaveLobbyCommand = mock(LeaveLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();

@@ -40,6 +40,8 @@ class WebSocketHandlerIntegrationTest {
     private BlockingQueue<String> messages;
     private WebSocketSession session;
 
+
+
     @BeforeEach
     void setup() throws Exception {
         messages = new LinkedBlockingQueue<>();
@@ -72,6 +74,7 @@ class WebSocketHandlerIntegrationTest {
         Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
     }
 
+
     @Test
     void testNewCreateGameAndGetPin() throws Exception {
         // Beispiel: Verwendung der JsonDataDTO Klasse
@@ -103,6 +106,40 @@ class WebSocketHandlerIntegrationTest {
         Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
         Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
     }
+
+    @Test
+    void testDiceCommandAnd() throws Exception {
+        // Beispiel: Verwendung der JsonDataDTO Klasse
+
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.CREATE_GAME, new HashMap<>());
+        jsonData.putData("username", "Test");
+
+        String jsonMessage = JsonDataUtility.createStringFromJsonMessage(jsonData);
+
+        // Senden des serialisierten JSON-Strings über eine WebSocket-Session
+        assert jsonMessage != null;
+        session.sendMessage(new TextMessage(jsonMessage));
+
+        String messageResponse = messages.poll(10, TimeUnit.SECONDS); // Erhöhe Timeout für Sicherheit
+        Assertions.assertNotNull(messageResponse, "Response should not be null");
+        Logger.info("TEST - received messageResponse: " + messageResponse);
+
+        JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse, JsonDataDTO.class);
+
+        // Zugriff auf die Daten
+        assert receivedData != null;
+        Commands command = receivedData.getCommand();
+        Map<String, String> data = receivedData.getData();
+        String pin = data.get("pin");
+
+        Logger.info("Received command: " + command);
+        Logger.info("Received name: " + pin);
+
+        Assertions.assertFalse(pin.isEmpty(), "PIN should not be empty");
+        Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
+    }
+
+
 
     @AfterEach
     void tearDown() throws Exception {

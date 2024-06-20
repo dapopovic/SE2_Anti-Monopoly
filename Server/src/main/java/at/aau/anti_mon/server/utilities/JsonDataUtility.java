@@ -1,18 +1,17 @@
 package at.aau.anti_mon.server.utilities;
 
-import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.game.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,14 +21,16 @@ import java.util.Map;
  */
 public class JsonDataUtility {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+
     private JsonDataUtility() {
     }
 
     public static String createStringFromJsonMessage(Commands command, Map<String, String> data) {
         try {
             JsonDataDTO jsonDataDTO = new JsonDataDTO(command, data);
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(jsonDataDTO);
+            return MAPPER.writeValueAsString(jsonDataDTO);
         } catch (JsonProcessingException e) {
             Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;
@@ -43,14 +44,24 @@ public class JsonDataUtility {
     }
 
     public static <T> T parseJsonMessage(String json, Class<T> clazz) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, clazz);
+        Logger.debug("SERVER: JSON-Nachricht empfangen - parse : " + json);
+
+        try {
+            T result = MAPPER.readValue(json, clazz);
+            Logger.debug("SERVER: JSON erfolgreich geparst: " + result);
+            return result;
+        } catch (InvalidFormatException e) {
+            Logger.error("Fehler beim Parsen der JSON-Nachricht: Ungültiges Format - " + e.getMessage());
+            throw e;
+        } catch (JsonProcessingException e) {
+            Logger.error("Fehler beim Parsen der JSON-Nachricht: " + e.getMessage());
+            throw e;
+        }
     }
 
     public static String createStringFromJsonMessage(Object object) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(object);
+            return MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;
@@ -87,37 +98,6 @@ public class JsonDataUtility {
         send(session, jsonData);
     }
 
-    public static void sendReadyUser(WebSocketSession session, String message, boolean isReady) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.READY, message, "username");
-        jsonData.putData("isReady", String.valueOf(isReady));
-        send(session, jsonData);
-    }
-
-    public static void sendLeavedUser(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.LEAVE_GAME, message, "username");
-        send(session, jsonData);
-    }
-
-    public static void sendError(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.ERROR, message, "message");
-        send(session, jsonData);
-    }
-
-    public static void sendInfo(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.INFO, message, "message");
-        send(session, jsonData);
-    }
-
-    /**
-     * Sendet eine Nachricht an den Benutzer
-     *
-     * @param session WebSocket-Sitzung
-     * @param message Nachricht
-     */
-    public static void sendAnswer(WebSocketSession session, String message) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.ANSWER, message, "answer");
-        send(session, jsonData);
-    }
 
     /**
      * Sendet eine Nachricht an den Benutzer
@@ -131,17 +111,6 @@ public class JsonDataUtility {
     }
 
 
-    public static void sendStartGame(WebSocketSession sessionForUser, Collection<UserDTO> users) {
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.START_GAME, new HashMap<>());
-        // create a list of all users in the lobby
-        StringBuilder usersString = new StringBuilder();
-        for (UserDTO user : users) {
-            usersString.append(JsonDataUtility.createStringFromJsonMessage(user)).append(",");
-        }
-        usersString.deleteCharAt(usersString.length() - 1);
-        jsonData.putData("users", "[" + usersString + "]");
-        send(sessionForUser, jsonData);
-    }
 
     public static void sendDiceNumber(WebSocketSession session, String username, Integer dicenumber, Figures figure, Integer location){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.DICENUMBER, new HashMap<>());
@@ -149,7 +118,6 @@ public class JsonDataUtility {
         jsonData.putData("dicenumber", String.valueOf(dicenumber));
         jsonData.putData("figure", String.valueOf(figure));
         jsonData.putData("location", String.valueOf(location));
-
         send(session,jsonData);
     }
 
@@ -158,18 +126,6 @@ public class JsonDataUtility {
         jsonData.putData("username",username);
         jsonData.putData("new_balance", String.valueOf(new_balance));
         send(session, jsonData);
-    }
-
-    public static void sendNextPlayer(WebSocketSession session, String username){
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
-        jsonData.putData("username",username);
-        send(session,jsonData);
-    }
-    public static void sendFirstPlayer(WebSocketSession session, String username){
-        JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
-        jsonData.putData("username",username);
-        Logger.info("Wir senden den First Player:"+username);
-        send(session,jsonData);
     }
 
 }
