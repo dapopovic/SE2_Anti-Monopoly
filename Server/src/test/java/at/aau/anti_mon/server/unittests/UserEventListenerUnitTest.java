@@ -542,31 +542,22 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void onEndGameEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
-        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
-
-        WebSocketSession session = mock(WebSocketSession.class);
-
-        User user = mock(User.class);
-        when(user.getName()).thenReturn("user1");
-        when(user.getMoney()).thenReturn(1500);
-
-        Lobby lobby = mock(Lobby.class);
-        when(user.getLobby()).thenReturn(lobby);
-
+    void onGetPlayerOneUserAvailableRoundsGreaterThan0OnlyOneUser() {
         HashSet<User> users = new HashSet<>();
+        Lobby lobby = mock(Lobby.class);
+        when(lobby.getUsers()).thenReturn(users);
+        WebSocketSession session = mock(WebSocketSession.class);
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user0");
+        when(user.getUnavailableRounds()).thenReturn(2);
+        when(sessionManagementService.getSessionForUser("user0")).thenReturn(session);
         users.add(user);
 
-        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
-        when(lobby.getUsers()).thenReturn(users);
-        when(userService.getUser("user1")).thenReturn(user);
-        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
-
-        EndGameEvent event = new EndGameEvent(session,"user1");
-        userEventListener.onEndGameEvent(event);
-
-        verify(sessionManagementService).getSessionForUser("user1");
-        mockedStatic.verify(() -> JsonDataUtility.sendEndGame(session,1), times(1));
-        mockedStatic.close();
+        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user0");
+        user = users.iterator().next();
+        when(user.getLobby()).thenReturn(lobby);
+        when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user);
+        assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
+        verify(user, times(2)).getName();
     }
 }

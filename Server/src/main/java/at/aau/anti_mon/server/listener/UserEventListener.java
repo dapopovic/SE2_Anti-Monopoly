@@ -295,6 +295,9 @@ public class UserEventListener {
     }
 
     public User getNextPlayer(Set<User> users, int sequence, int playerAmount) {
+        if (playerAmount == 1) {
+            return users.iterator().next();
+        }
         ArrayList<User> usersList = new ArrayList<>(users);
         usersList.sort(Comparator.comparingInt(User::getSequence));
         int i = sequence;

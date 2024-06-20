@@ -12,8 +12,11 @@ import at.aau.anti_mon.client.R;
 
 public class PopActivityObjects extends Activity {
     private int layout = R.layout.activity_pop_objects;
+    private static final float POPUP_SIZE = 0.65f;
+
     public PopActivityObjects() {
     }
+
     public PopActivityObjects(int layout) {
         this.layout = layout;
     }
@@ -40,13 +43,14 @@ public class PopActivityObjects extends Activity {
             height = dm.heightPixels;
         }
 
-        getWindow().setLayout((int)(width*.8),(int)(height*.8));
+        getWindow().setLayout((int) (width * POPUP_SIZE), (int) (height * POPUP_SIZE));
         processIntent();
     }
 
     public void onX(View view) {
         finish();
     }
+
     void processIntent() {
         Log.d(this.getClass().getName(), "in processIntent");
     }
