@@ -1,7 +1,6 @@
 package at.aau.anti_mon.server.unittests;
 
 import at.aau.anti_mon.server.enums.GameStateEnum;
-import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -16,7 +15,8 @@ import org.springframework.web.socket.WebSocketSession;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the LobbyService
