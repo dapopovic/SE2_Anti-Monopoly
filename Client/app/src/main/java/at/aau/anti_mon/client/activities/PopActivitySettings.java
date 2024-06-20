@@ -19,8 +19,6 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 
 public class PopActivitySettings extends PopActivityObjects {
 
-    @Inject
-    WebSocketClient webSocketClient;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +27,7 @@ public class PopActivitySettings extends PopActivityObjects {
 
         Intent intent = getIntent();
         boolean isOwner = intent.getBooleanExtra("isOwner", false);
+        String setting = "setting";
 
         Button endgame = findViewById(R.id.btnendgame);
         if(isOwner){
@@ -36,7 +35,7 @@ public class PopActivitySettings extends PopActivityObjects {
             endgame.setVisibility(View.VISIBLE);
             endgame.setOnClickListener(v -> {
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("setting", "endgame");
+                resultIntent.putExtra(setting, "endgame");
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             });
@@ -49,7 +48,7 @@ public class PopActivitySettings extends PopActivityObjects {
 
         surrender.setOnClickListener(v ->{
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("setting", "surrender");
+            resultIntent.putExtra(setting, "surrender");
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         });
@@ -58,7 +57,7 @@ public class PopActivitySettings extends PopActivityObjects {
 
         exitgame.setOnClickListener(v -> {
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("setting", "exitgame");
+            resultIntent.putExtra(setting, "exitgame");
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         });
@@ -66,7 +65,7 @@ public class PopActivitySettings extends PopActivityObjects {
         Button x = findViewById(R.id.X);
         x.setOnClickListener(v ->{
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("setting", "x");
+            resultIntent.putExtra(setting, "x");
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         });

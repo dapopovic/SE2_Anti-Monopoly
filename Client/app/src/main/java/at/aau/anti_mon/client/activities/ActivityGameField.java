@@ -67,8 +67,8 @@ public class ActivityGameField extends AppCompatActivity {
     boolean doubledice = false;
     private static final String COLOR_GRAY = "#6C757D";
     private static final String USERNAME_STRING = "username";
-    Boolean showDialog = true;
-    Boolean surrender = false;
+    boolean showDialog = true;
+    boolean surrender = false;
 
     @Inject
     WebSocketClient webSocketClient;
