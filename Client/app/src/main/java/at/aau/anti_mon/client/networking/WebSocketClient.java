@@ -44,7 +44,7 @@ public class WebSocketClient implements AutoCloseable{
      */
     private static final String[] WEBSOCKET_URIS = {
             "ws://10.0.2.2:8080/game?userID=",
-            "ws://10.0.2.2:53215/game?userID=",
+            "ws://192.168.0.11:53215/game?userID=",
             "ws://192.168.31.176:53215/game",
             "ws://se2-demo.aau.at:53215/game?userID="};
 

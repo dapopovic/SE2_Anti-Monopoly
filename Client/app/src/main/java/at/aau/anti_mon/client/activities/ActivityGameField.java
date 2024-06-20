@@ -113,6 +113,11 @@ public class ActivityGameField extends AppCompatActivity {
         assert data != null;
         String setting = data.getStringExtra("setting");
 
+        if(Objects.equals(setting, "endgame")){
+            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.END_GAME, new HashMap<>());
+            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+            webSocketClient.sendJsonData(jsonDataDTO);
+        }
         if (Objects.equals(setting, "surrender")){
             minusmoney();
             losegame();
@@ -199,6 +204,7 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onSettings(View view) {
         Intent i = new Intent(getApplicationContext(), PopActivitySettings.class);
+        i.putExtra("isOwner",currentUser.isOwner());
         settingsActivityResultLauncher.launch(i);
     }
 
