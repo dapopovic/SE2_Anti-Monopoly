@@ -3,27 +3,27 @@ package at.aau.anti_mon.client.game;
 public class AntiMonopolyst implements GameRole{
 
     @Override
-    public void buyHouse(GameStreet street) {
+    public void buyHouse(PropertyGameCard street) {
 
     }
 
     @Override
-    public void sellHouse(GameStreet street) {
+    public void sellHouse(PropertyGameCard street) {
 
     }
 
     @Override
-    public void buyHotel(GameStreet street) {
+    public void buyHotel(PropertyGameCard street) {
 
     }
 
     @Override
-    public void sellHotel(GameStreet street) {
+    public void sellHotel(PropertyGameCard street) {
 
     }
 
     @Override
-    public void payRent(GameStreet street) {
+    public void payRent(PropertyGameCard street) {
 
     }
 

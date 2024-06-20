@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="appUser" type="at.aau.anti_mon.client.game.User"/>
+
+        <variable
+            name="viewModel"
+            type="at.aau.anti_mon.client.ui.lobby.LobbyViewModel" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/lobby_constraintlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.LobbyActivity">
+    tools:context=".ui.lobby.LobbyActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUsers"
@@ -34,8 +44,9 @@
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:onClick="onStartGame"
         android:text="@string/Startgame"
+        app:visibility="@{viewModel.isOwner}"
+        android:enabled="@{viewModel.startGameEnabled}"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@+id/guideline8" />
     <Button
@@ -43,181 +54,17 @@
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:onClick="onReady"
-        android:text="@string/ready"
-        android:visibility="invisible"
+        android:text="@{viewModel.appUserIsReady() ? @string/ready : @string/unready}"
+        app:visibility="@{!viewModel.isOwner}"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
-        app:layout_constraintEnd_toStartOf="@+id/guideline8" />
-
-    <!--<TableLayout
-        android:id="@+id/table"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toTopOf="@+id/guideline5">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:id="@+id/user1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/border"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:minWidth="150dp"
-                    android:padding="20sp"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/user4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/border"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:minWidth="150dp"
-                    android:padding="20sp"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"/>
-            </LinearLayout>
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:id="@+id/user2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/border"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:minWidth="150dp"
-                    android:padding="20sp"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/user5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/border"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:minWidth="150dp"
-                    android:padding="20sp"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"/>
-            </LinearLayout>
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:id="@+id/user3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/border"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:minWidth="150dp"
-                    android:padding="20sp"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/user6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/border"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:minWidth="150dp"
-                    android:padding="20sp"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"/>
-            </LinearLayout>
-        </TableRow>
-
-    </TableLayout> -->
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        android:onClick="@{() -> viewModel.onToggleReadyButton()}" />
 
     <Button
         android:id="@+id/lobby_cancel"
         style="@style/Buttons_Style"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:onClick="onCancelLobby"
         android:text="@string/cancel"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline7" />
@@ -228,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="36dp"
-        android:text="Pin:"
+        android:text="@{viewModel.appUserPin.toString()}"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/Pin"
@@ -287,3 +134,5 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

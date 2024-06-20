@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/custom_view_gamefield"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -22,7 +20,6 @@
         app:layout_constraintGuide_percent="0.12" />
 
 
-
     <ImageView
         android:id="@+id/field_square"
         android:layout_width="0dp"
@@ -37,14 +34,16 @@
         app:srcCompat="@drawable/field_square" />
 
     <ImageView
-        android:id="@+id/start_field"
+        android:id="@+id/startField"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/start_field"
+        app:constraint_referenced_tags=""
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintEnd_toEndOf="@id/field_square"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
+        android:onClick="@{() -> viewModel.onImageViewClick(startField)}"
         app:srcCompat="@drawable/start" />
 
     <ImageView
@@ -56,21 +55,23 @@
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintStart_toStartOf="@id/field_square"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
+        android:onClick="@{() -> viewModel.onImageViewClick(prison)}"
         app:srcCompat="@drawable/price_war" />
 
     <ImageView
-        android:id="@+id/sitting_field"
+        android:id="@+id/sittingField"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/sitting"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintStart_toStartOf="@id/field_square"
+        android:onClick="@{() -> viewModel.onImageViewClick(sittingField)}"
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
         app:srcCompat="@drawable/sitting" />
 
     <ImageView
-        android:id="@+id/unlucky_field"
+        android:id="@+id/unluckyField"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/price_war"
@@ -78,18 +79,21 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintEnd_toEndOf="@id/field_square"
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
+        android:onClick="@{() -> viewModel.onImageViewClick(unluckyField)}"
         app:srcCompat="@drawable/unlucky_field" />
 
     <ImageView
-        android:id="@+id/field1"
+        android:id="@+id/rom1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/rom1"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/start_field"
+        app:layout_constraintRight_toLeftOf="@id/startField"
         app:layout_constraintLeft_toRightOf="@id/rom2"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom1)}"
+
         app:layout_constraintHorizontal_chainStyle="spread_inside"/>
 
     <ImageView
@@ -100,7 +104,8 @@
         app:srcCompat="@drawable/take"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintRight_toLeftOf="@id/rom"
+        app:layout_constraintRight_toLeftOf="@id/rom1"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom2)}"
         app:layout_constraintLeft_toRightOf="@id/rom3"/>
 
     <ImageView
@@ -112,6 +117,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom2"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom3)}"
         app:layout_constraintLeft_toRightOf="@id/rom4"/>
 
     <ImageView
@@ -123,6 +129,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom3"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom4)}"
         app:layout_constraintLeft_toRightOf="@id/rom5"/>
 
     <ImageView
@@ -134,6 +141,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom4"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom5)}"
         app:layout_constraintLeft_toRightOf="@id/rom6"/>
 
     <ImageView
@@ -145,6 +153,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom5"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom6)}"
         app:layout_constraintLeft_toRightOf="@id/rom7"/>
 
     <ImageView
@@ -156,6 +165,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom6"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom7)}"
         app:layout_constraintLeft_toRightOf="@id/rom8"/>
 
     <ImageView
@@ -167,6 +177,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom7"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom8)}"
         app:layout_constraintLeft_toRightOf="@id/rom9"/>
 
     <ImageView
@@ -178,34 +189,35 @@
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:layout_constraintBottom_toBottomOf="@id/field_square"
         app:layout_constraintRight_toLeftOf="@id/rom8"
+        android:onClick="@{() -> viewModel.onImageViewClick(rom9)}"
         app:layout_constraintLeft_toRightOf="@id/prison"/>
 
 
 
 
     <ImageView
-        android:id="@+id/left_1"
+        android:id="@+id/left1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/sitting_field"
-        app:layout_constraintBottom_toTopOf="@id/left_2"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintTop_toBottomOf="@id/sittingField"
+        app:layout_constraintBottom_toTopOf="@id/left2"
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left1)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
-        android:id="@+id/left_2"
+        android:id="@+id/left2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/left_1"
+        app:layout_constraintTop_toBottomOf="@id/left1"
         app:layout_constraintBottom_toTopOf="@id/left_3"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left2)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/left_3"
@@ -213,9 +225,10 @@
         android:layout_height="0dp"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/left_2"
+        app:layout_constraintTop_toBottomOf="@id/left2"
         app:layout_constraintBottom_toTopOf="@id/left_4"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left3)}"
         app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
@@ -226,9 +239,9 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_3"
         app:layout_constraintBottom_toTopOf="@id/left_5"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left4)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/left_5"
@@ -238,9 +251,9 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/left_4"
         app:layout_constraintBottom_toTopOf="@id/left_6"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left5)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/left_6"
@@ -250,9 +263,9 @@
         app:srcCompat="@drawable/madrid_3"
         app:layout_constraintTop_toBottomOf="@id/left_5"
         app:layout_constraintBottom_toTopOf="@id/left_7"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left6)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/left_7"
@@ -262,9 +275,9 @@
         app:srcCompat="@drawable/madrid_2"
         app:layout_constraintTop_toBottomOf="@id/left_6"
         app:layout_constraintBottom_toTopOf="@id/left_8"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left7)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/left_8"
@@ -274,9 +287,9 @@
         app:srcCompat="@drawable/madrid_2"
         app:layout_constraintTop_toBottomOf="@id/left_7"
         app:layout_constraintBottom_toTopOf="@id/left_9"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left8)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/left_9"
@@ -286,9 +299,9 @@
         app:srcCompat="@drawable/madrid_1"
         app:layout_constraintTop_toBottomOf="@id/left_8"
         app:layout_constraintBottom_toTopOf="@id/prison"
-        app:layout_constraintEnd_toEndOf="@id/sitting_field"
-        app:layout_constraintStart_toStartOf="@id/field_square"
-        />
+        app:layout_constraintEnd_toEndOf="@id/sittingField"
+        android:onClick="@{() -> viewModel.onImageViewClick(left9)}"
+        app:layout_constraintStart_toStartOf="@id/field_square" />
 
     <ImageView
         android:id="@+id/top_1"
@@ -300,8 +313,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_2"
-        app:layout_constraintLeft_toRightOf="@id/sitting_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top1)}"
+        app:layout_constraintLeft_toRightOf="@id/sittingField" />
 
     <ImageView
         android:id="@+id/top_2"
@@ -313,8 +326,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_3"
-        app:layout_constraintLeft_toRightOf="@id/top_1"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top2)}"
+        app:layout_constraintLeft_toRightOf="@id/top_1" />
 
     <ImageView
         android:id="@+id/top_3"
@@ -326,8 +339,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_4"
-        app:layout_constraintLeft_toRightOf="@id/top_2"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top3)}"
+        app:layout_constraintLeft_toRightOf="@id/top_2" />
 
     <ImageView
         android:id="@+id/top_4"
@@ -339,8 +352,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_5"
-        app:layout_constraintLeft_toRightOf="@id/top_3"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top4)}"
+        app:layout_constraintLeft_toRightOf="@id/top_3" />
 
     <ImageView
         android:id="@+id/top_5"
@@ -352,8 +365,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_6"
-        app:layout_constraintLeft_toRightOf="@id/top_4"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top5)}"
+        app:layout_constraintLeft_toRightOf="@id/top_4" />
 
     <ImageView
         android:id="@+id/top_6"
@@ -365,8 +378,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_7"
-        app:layout_constraintLeft_toRightOf="@id/top_5"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top6)}"
+        app:layout_constraintLeft_toRightOf="@id/top_5" />
 
     <ImageView
         android:id="@+id/top_7"
@@ -378,8 +391,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_8"
-        app:layout_constraintLeft_toRightOf="@id/top_6"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top7)}"
+        app:layout_constraintLeft_toRightOf="@id/top_6" />
 
     <ImageView
         android:id="@+id/top_8"
@@ -391,8 +404,8 @@
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/top_9"
-        app:layout_constraintLeft_toRightOf="@id/top_7"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(top8)}"
+        app:layout_constraintLeft_toRightOf="@id/top_7" />
 
     <ImageView
         android:id="@+id/top_9"
@@ -403,7 +416,8 @@
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/field_square"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
-        app:layout_constraintRight_toLeftOf="@id/unlucky_field"
+        app:layout_constraintRight_toLeftOf="@id/unluckyField"
+        android:onClick="@{() -> viewModel.onImageViewClick(top9)}"
         app:layout_constraintLeft_toRightOf="@id/top_8" />
 
     <ImageView
@@ -413,13 +427,12 @@
         android:contentDescription="@string/todo"
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
-        app:layout_constraintTop_toBottomOf="@id/unlucky_field"
+        app:layout_constraintTop_toBottomOf="@id/unluckyField"
         app:layout_constraintBottom_toTopOf="@id/right_2"
         app:layout_constraintRight_toRightOf="@id/field_square"
-        app:layout_constraintLeft_toLeftOf="@id/start_field"
-        app:layout_constraintVertical_chainStyle="spread"
-
-        />
+        app:layout_constraintLeft_toLeftOf="@id/startField"
+        android:onClick="@{() -> viewModel.onImageViewClick(right1)}"
+        app:layout_constraintVertical_chainStyle="spread" />
 
     <ImageView
         android:id="@+id/right_2"
@@ -431,8 +444,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_1"
         app:layout_constraintBottom_toTopOf="@id/right_3"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right2)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_3"
@@ -444,8 +457,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_2"
         app:layout_constraintBottom_toTopOf="@id/right_4"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right3)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_4"
@@ -457,8 +470,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_3"
         app:layout_constraintBottom_toTopOf="@id/right_5"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right4)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_5"
@@ -470,8 +483,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_4"
         app:layout_constraintBottom_toTopOf="@id/right_6"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right5)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_6"
@@ -483,8 +496,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_5"
         app:layout_constraintBottom_toTopOf="@id/right_7"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right6)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_7"
@@ -496,8 +509,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_6"
         app:layout_constraintBottom_toTopOf="@id/right_8"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right7)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_8"
@@ -509,7 +522,8 @@
         app:layout_constraintTop_toBottomOf="@id/right_7"
         app:layout_constraintBottom_toTopOf="@id/right_9"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field" />
+        android:onClick="@{() -> viewModel.onImageViewClick(right8)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/right_9"
@@ -519,18 +533,19 @@
         android:rotation="180"
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/right_8"
-        app:layout_constraintBottom_toTopOf="@id/start_field"
+        app:layout_constraintBottom_toTopOf="@id/startField"
         app:layout_constraintEnd_toEndOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/start_field"
-        />
+        android:onClick="@{() -> viewModel.onImageViewClick(right9)}"
+        app:layout_constraintStart_toStartOf="@id/startField" />
 
     <ImageView
         android:id="@+id/GreenTriangle"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="4dp"
+        android:contentDescription="@string/player_figure"
         app:layout_constraintBottom_toTopOf="@+id/GreenCircle"
-        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintStart_toEndOf="@+id/rom1"
         app:layout_constraintTop_toBottomOf="@+id/GreenSquare"
         app:srcCompat="@drawable/greentriangle" />
 
@@ -539,7 +554,8 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="4dp"
-        app:layout_constraintStart_toEndOf="@+id/field1"
+        android:contentDescription="@string/player_figure"
+        app:layout_constraintStart_toEndOf="@+id/rom1"
         app:layout_constraintTop_toTopOf="@+id/guideline_bottom"
         app:srcCompat="@drawable/greensquare" />
 
@@ -548,8 +564,9 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="4dp"
+        android:contentDescription="@string/player_figure"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintStart_toEndOf="@+id/rom1"
         app:srcCompat="@drawable/greencircle" />
 
     <ImageView
@@ -557,7 +574,8 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="23dp"
-        app:layout_constraintStart_toEndOf="@+id/field1"
+        android:contentDescription="@string/player_figure"
+        app:layout_constraintStart_toEndOf="@+id/rom1"
         app:layout_constraintTop_toTopOf="@+id/guideline_bottom"
         app:srcCompat="@drawable/bluesquare" />
 
@@ -566,8 +584,9 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="23dp"
+        android:contentDescription="@string/player_figure"
         app:layout_constraintBottom_toTopOf="@+id/BlueCircle"
-        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintStart_toEndOf="@+id/rom1"
         app:layout_constraintTop_toBottomOf="@+id/BlueSquare"
         app:srcCompat="@drawable/bluetriangle" />
 
@@ -576,8 +595,9 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="23dp"
+        android:contentDescription="@string/player_figure"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/field1"
+        app:layout_constraintStart_toEndOf="@+id/rom1"
         app:srcCompat="@drawable/bluecircle" />
 
 

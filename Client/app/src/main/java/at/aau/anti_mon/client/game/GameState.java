@@ -3,10 +3,13 @@ package at.aau.anti_mon.client.game;
 public enum GameState {
 
     /**
-     * The game is in the start phase.
-     * --> Dice roll
+     * The game is in the initialization phase.
      */
-    START_TURN,
+    INITIALIZED,
+
+    ROLL_DICE,
+
+    MOVE_FIGURE,
 
     /**
      * The player is in turn.
@@ -19,16 +22,8 @@ public enum GameState {
      */
     PLAYER_TURN,
 
-    THROW_DICE,
+    NEXT_PLAYER
 
-    WINNING,
-
-    LOOSING,
-
-    /**
-     *
-     */
-    END_TURN;
 
 
 

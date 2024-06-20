@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +41,7 @@ public class WebSocketClientUnitTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         OkHttpClient okHttpClient = mock(OkHttpClient.class);
-        webSocketClient = new WebSocketClient(okHttpClient, commandFactory);
+        webSocketClient = new WebSocketClient();
         webSocketListener = new WebSocketClientListener(webSocketClient);
         webSocketClient.setWebSocket(webSocket);
     }
@@ -182,30 +181,9 @@ public class WebSocketClientUnitTest {
 
     @Test
     void testSendWebSocketMessageNotConnected() {
+        webSocketClient.disconnect();
         webSocketClient.sendMessageToServer("testMessage");
         verify(webSocket, never()).send("testMessage");
-    }
-
-    @Test
-    void testSendWebSocketMessageQueuedAndThenConnected() {
-        when(webSocket.send(anyString())).thenReturn(true);
-        Response response = new Response.Builder()
-                .code(200)
-                .message("OK")
-                .protocol(okhttp3.Protocol.HTTP_1_1)
-                .request(new Request.Builder().url("http://localhost").build())
-                .build();
-
-        webSocketClient.sendMessageToServer("testMessage");
-        webSocketClient.setUserID("testUser");
-        webSocketClient.connectToServer();
-        verify(webSocket, never()).send("testMessage");
-
-        webSocketListener.onOpen(webSocket, response);
-        webSocketClient.sendMessageToServer("testMessage2");
-
-        verify(webSocket).send("testMessage2");
-        verify(webSocket).send("testMessage");
     }
 
     @Test

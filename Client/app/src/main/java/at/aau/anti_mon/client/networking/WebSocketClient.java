@@ -4,10 +4,6 @@ import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.itkacher.okprofiler.BuildConfig;
 import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor;
 
@@ -25,9 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
 
 
 /**
@@ -39,23 +33,14 @@ import okhttp3.WebSocketListener;
 @Setter
 public class WebSocketClient {
 
-    /**
-     * localhost from the Android emulator is reachable as 10.0.2.2
-     * https://developer.android.com/studio/run/emulator-networking
-     */
-   // private static final String WEBSOCKET_URI = "ws://10.0.2.2:8080/game?userID=";
-   // private static final String WEBSOCKET_URI = "ws://10.0.2.2:53215/game";
-   //private static final String WEBSOCKET_URI = "ws://192.168.31.176:53215/game";
-
-    /**
-     * URL for testing connection to se2-server
-     */
-    private static final String WEBSOCKET_URI = "http://se2-demo.aau.at:53215/game?userID=";
+    private static final String LOCAL_WEBSOCKET_URI_1 = "ws://10.0.2.2:8080/game?userID=";
+    private static final String LOCAL_WEBSOCKET_URI_2 = "ws://10.0.2.2:53215/game";
+    private static final String SE2_SERVER_WEBSOCKET_URI = "http://se2-demo.aau.at:53215/game?userID=";
 
     private WebSocket webSocket;
     private final OkHttpClient client;
     private final CommandFactory commandFactory;
-    private final MutableLiveData<JsonDataDTO> liveData = new MutableLiveData<>();
+    //private final MutableLiveData<JsonDataDTO> liveData = new MutableLiveData<>();
     private boolean isConnected = false;
     private String userID;
 
@@ -66,41 +51,41 @@ public class WebSocketClient {
 
 
     @Inject
-    public WebSocketClient(CommandFactory commandFactory) {
-
+    public WebSocketClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(new OkHttpProfilerInterceptor());
         }
         this.client = builder.build();
-
-        this.commandFactory = commandFactory;
-
-        // Todo: TEst
-        //connectToServer(); // -> keine dauerhafte Verbindung
-        connectToServer(userID); // -> keine dauerhafte Verbindung
+        //this.commandFactory = commandFactory;
+        commandFactory = CommandFactory.getInstance();
 
 
-        // TODO: Derzeit MUSS der WebSocketClient im Konstruktor entweder in MessageService oder nach altem Design in
-        // JsonDataManager initialisiert werden. Dies sollte in Zukunft durch Dagger erfolgen oder durch Nutzung eines besseren Designs?
-        MessagingService.initialize(this);
-        //JsonDataManager.initialize(this);
+        //MessagingService.initialize(this);
+
+        // Todo: TEst -> keine dauerhafte Verbindung
+        //connectToServer(userID);
     }
+
+
+
+
 
     /**
      * Connects to the server
      */
     public synchronized void connectToServer() {
         Log.d(DEBUG_TAG, "Connecting to server");
+
         // Mehrfache Verbindungen verhindern:
         if (webSocket != null){
             Log.d(DEBUG_TAG, "Connection already established");
             return;
         }
 
-        // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithoutUserId = WEBSOCKET_URI + userID;
-        Request request = new Request.Builder().url(urlWithoutUserId).build();
+        // Um Sessions besser zu speichern wird die Base URI mit der User ID erweitert:
+        String urlWithUserID = SE2_SERVER_WEBSOCKET_URI + userID;
+        Request request = new Request.Builder().url(urlWithUserID).build();
         webSocket = client.newWebSocket(request, new WebSocketClientListener(this));
 
         Log.d(DEBUG_TAG, "Connection established");
@@ -111,22 +96,8 @@ public class WebSocketClient {
      * Connects to the server
      */
     public synchronized void connectToServer(String userID) {
-        Log.d(DEBUG_TAG, "Connecting to server");
-        // Mehrfache Verbindungen verhindern:
-        if (webSocket != null){
-            Log.d(DEBUG_TAG, "Connection already established");
-            return;
-        }
-
         this.userID = userID;
-
-        // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = WEBSOCKET_URI + userID;
-        Request request = new Request.Builder().url(urlWithUserId).build();
-        webSocket = client.newWebSocket(request, new WebSocketClientListener(this));
-
-        Log.d(DEBUG_TAG, "Connection established");
-        setConnected(true);
+        connectToServer();
     }
 
     /**
@@ -146,7 +117,7 @@ public class WebSocketClient {
         }
         Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
         command.execute(jsonDataDTO);
-        liveData.postValue(jsonDataDTO);
+        //liveData.postValue(jsonDataDTO);
     }
 
     /**
@@ -202,7 +173,7 @@ public class WebSocketClient {
 
     /**
      * Checks if the WebSocket connection is established
-     * @return True if the connection is established, false otherwise
+     * @return True if the connection is established and websocket is not null, false otherwise
      */
     public boolean isConnected() {
         return isConnected && webSocket != null;
@@ -222,11 +193,7 @@ public class WebSocketClient {
      */
     public synchronized void disconnect(String reason) {
         if (webSocket != null) {
-            if (reason != null) {
-                webSocket.close(1000, reason);
-            } else {
-                webSocket.close(1000, "Client disconnected");
-            }
+            webSocket.close(1000, Objects.requireNonNullElse(reason, "Client disconnected"));
             webSocket = null;
             isConnected = false;
         }
@@ -250,17 +217,8 @@ public class WebSocketClient {
      * Restarts the WebSocket connection
      */
     public synchronized void restartConnection() {
-        disconnect("Client disconnected because of reconnection!"); // Disconnect if already connected
-        connectToServer(userID); // Reconnect
+        disconnect("Client disconnected because of reconnection!");
+        connectToServer();
     }
 
-    /**
-     * TODO: TEST !
-     * @param userID The user ID to set
-     */
-    public void setUserID(String userID){
-        this.userID = userID;
-        disconnect();
-        restartConnection();
-    }
 }

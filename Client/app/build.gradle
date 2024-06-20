@@ -18,14 +18,6 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    //signingConfigs {
-    //    release {
-            // storeFile KeyStoreFile zum Signieren etc.
-            // storePassword Passwort für den Keystore
-            // keyAlias Name des Schlüssels der App im KeyStore
-            // keyPassword Passwort des Schlüssels der App
-    //    }
-    //}
     buildTypes {
         release {
             //signingConfig signingConfigs.release
@@ -33,12 +25,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        //release {
-        //    minifyEnabled false
-        //    //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        //    signingConfig signingConfigs.debug
-        //}
     }
+    buildFeatures {
+        dataBinding true
+    }
+    //dataBinding {
+    //    enabled = true
+    //}
     compileOptions {
 
         sourceCompatibility JavaVersion.VERSION_17
@@ -86,6 +79,14 @@ sonar {
   }
 }
 
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs << "-Xmaxerrs" << "500" // or whatever number you want -> https://github.com/google/dagger
+        }
+    }
+}
+
 dependencies {
     implementation libs.gson
     implementation libs.appcompat
@@ -105,16 +106,32 @@ dependencies {
     implementation libs.okhttpprofiler
     implementation libs.logging.interceptor
 
+    implementation libs.cardview
+
 
     // Dagger Dependency Injection
-    implementation libs.dagger.android
-    implementation libs.dagger.android.support
-    testImplementation libs.dagger.android.support
-    testImplementation libs.dagger.android.processor
-    annotationProcessor libs.dagger.android.processor
-    annotationProcessor libs.dagger.compiler
-    testAnnotationProcessor libs.dagger.android.processor
-    testAnnotationProcessor libs.dagger.compiler
+    //implementation libs.dagger.android
+    //implementation libs.dagger.android.support
+    //implementation libs.databinding.runtime
+    //testImplementation libs.dagger.android.support
+    //testImplementation libs.dagger.android.processor
+    //annotationProcessor libs.dagger.android.processor
+    //annotationProcessor libs.dagger.compiler
+    //testAnnotationProcessor libs.dagger.android.processor
+    //testAnnotationProcessor libs.dagger.compiler
+
+    // Dagger Core
+    implementation libs.dagger.v2511
+    annotationProcessor libs.dagger.compiler.v2511
+
+    // Dagger Android
+    implementation libs.dagger.android.v251
+    implementation libs.dagger.android.support.v251 // if you use the support libraries
+    annotationProcessor libs.dagger.android.processor.v251
+
+    // DataBinding (falls erforderlich)
+    implementation libs.databinding.runtime
+
 
     testImplementation libs.mockito.core
     testImplementation libs.mockwebserver

@@ -2,15 +2,15 @@ package at.aau.anti_mon.client.game;
 
 public interface GameRole {
 
-    void buyHouse(GameStreet street);
+    void buyHouse(PropertyGameCard street);
 
-    void sellHouse(GameStreet street);
+    void sellHouse(PropertyGameCard street);
 
-    void buyHotel(GameStreet street);
+    void buyHotel(PropertyGameCard street);
 
-    void sellHotel(GameStreet street);
+    void sellHotel(PropertyGameCard street);
 
-    void payRent(GameStreet street);
+    void payRent(PropertyGameCard street);
 
     void payTax();
 

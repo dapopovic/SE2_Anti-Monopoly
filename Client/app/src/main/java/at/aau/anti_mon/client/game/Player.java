@@ -1,55 +1,83 @@
 package at.aau.anti_mon.client.game;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import at.aau.anti_mon.client.enums.Figures;
+import at.aau.anti_mon.client.enums.Roles;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Player extends GameComponent {
 
-    GameRole role;
+    GameRole gameRole;
+    Roles role;
     User user;
     int money;
+    Figures figure;
+    PlayerInventory playerInventory;
+    boolean isActive;
+    String userName;
 
 
-    public Player(GameRole role, User user) {
-        this.role = role;
+    public Player(User user) {
+        super(user.hashCode(), user.getLocation());
+
         this.user = user;
+        this.userName = user.getUsername();
+        this.role = user.getRole();
+        this.figure = user.getFigure();
+        this.money = DEFAULT_MONEY;
+
+        // Initialisiere die Spielerrolle basierend auf der Benutzerrolle
+        if (user.getRole().equals(Roles.COMPETITOR)) {
+            this.gameRole = new AntiMonopolyst();
+        } else {
+            this.gameRole = new Monopolyst();
+        }
+
+        this.playerInventory = new PlayerInventory();
     }
 
-    public void buyHouse(GameStreet street) {
-        role.buyHouse(street);
+
+    public void buyHouse(PropertyGameCard street) {
+        gameRole.buyHouse(street);
     }
 
-    public void sellHouse(GameStreet street) {
-        role.sellHouse(street);
+    public void sellHouse(PropertyGameCard street) {
+        gameRole.sellHouse(street);
     }
 
-    public void buyHotel(GameStreet street) {
-        role.buyHotel(street);
+    public void buyHotel(PropertyGameCard street) {
+        gameRole.buyHotel(street);
     }
 
-    public void sellHotel(GameStreet street) {
-        role.sellHotel(street);
+    public void sellHotel(PropertyGameCard street) {
+        gameRole.sellHotel(street);
     }
 
-    public void payRent(GameStreet street) {
-        role.payRent(street);
+    public void payRent(PropertyGameCard street) {
+        gameRole.payRent(street);
     }
 
     public void payTax() {
-        role.payTax();
+        gameRole.payTax();
     }
 
     public void drawCard() {
-        role.drawCard();
+        gameRole.drawCard();
     }
 
-    public String getRole() {
-        return role.getRole();
+    public String getGameRole() {
+        return gameRole.getRole();
+    }
+
+    public String getName() {
+        return user.getUsername();
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void move(int diceNumber) {
+
     }
 }

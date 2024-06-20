@@ -1,13 +1,25 @@
 [versions]
 agp = "8.3.2"
+cardview = "1.0.0"
 converterJackson = "2.7.2"
 coreTesting = "2.2.0"
 coreTestingVersion = "2.1.0"
+dagger = "2.x"
+daggerAndroidSupportVersion = "2.x"
+daggerAndroidProcessorVersion = "2.x"
+daggerAndroidVersion = "2.x"
 daggerCompiler = "2.20"
 daggerAndroidProcessor = "2.20"
 daggerAndroidSupport = "2.20"
 daggerAndroid = "2.20"
+daggerCompilerVersion = "2.x"
+daggerVersion = "2.51.1"
+databindingRuntimeVersion = "4.x.x"
 eventbus = "3.2.0"
+googleDaggerAndroid = "2.51"
+googleDaggerAndroidProcessor = "2.51"
+googleDaggerAndroidSupport = "2.51"
+googleDaggerCompiler = "2.51.1"
 hiltCompiler = "2.44"
 hiltAndroid = "2.44"
 jacksonDatabind = "2.10.3"
@@ -35,16 +47,29 @@ retrofit = "(insert latest version)"
 retrofitVersion = "2.9.0"
 squareupRetrofit = "2.1.0"
 runner = "1.5.2"
+databindingRuntime = "8.4.2"
 
 [libraries]
+cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
 converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "converterJackson" }
 converter-name = { module = "com.squareup.retrofit2:converter-name", version.ref = "retrofitVersion" }
 core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 core-testing-v210 = { module = "androidx.arch.core:core-testing", version.ref = "coreTestingVersion" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-android-processor-v251 = { module = "com.google.dagger:dagger-android-processor", version.ref = "googleDaggerAndroidProcessor" }
+dagger-android-processor-v2x = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessorVersion" }
+dagger-android-support-v251 = { module = "com.google.dagger:dagger-android-support", version.ref = "googleDaggerAndroidSupport" }
+dagger-android-support-v2x = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupportVersion" }
+dagger-android-v251 = { module = "com.google.dagger:dagger-android", version.ref = "googleDaggerAndroid" }
+dagger-android-v2x = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroidVersion" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessor" }
 dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupport" }
 dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroid" }
+dagger-compiler-v2511 = { module = "com.google.dagger:dagger-compiler", version.ref = "googleDaggerCompiler" }
+dagger-compiler-v2x = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompilerVersion" }
+dagger-v2511 = { module = "com.google.dagger:dagger", version.ref = "daggerVersion" }
+databinding-runtime-v4xx = { module = "androidx.databinding:databinding-runtime", version.ref = "databindingRuntimeVersion" }
 eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -77,6 +102,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-v210 = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
 retrofit-v290 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

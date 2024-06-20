@@ -4,8 +4,7 @@ import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import at.aau.anti_mon.client.command.Commands;
-import at.aau.anti_mon.client.networking.WebSocketClient;
+
 import lombok.Getter;
 
 /**
@@ -16,55 +15,11 @@ import lombok.Getter;
 @Getter
 public class JsonDataManager {
 
-    @Getter private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String FAILURE_MESSAGE = "Failed to create JSON message";
-
-    //private static WebSocketClient webSocketClient;
 
     private JsonDataManager(){
     }
-
-    // Todo:  Dies könnte durch Dagger injiziert werden, sobald WebSocketClient konfiguriert ist.
-   /* public static void initialize(WebSocketClient client) {
-        if (webSocketClient == null) {
-            webSocketClient = client;
-        } else {
-            Log.d(DEBUG_TAG, "WebSocketClient is already initialized.");
-        }
-    }
-
-    */
-
-
-    /**
-     * This class is used to send messages to the server.
-     * Don't convert to record -> Android-Studio has problems with records
-     */
-    /*public static class MessageSender {
-        private final String message;
-
-        public MessageSender(String message) {
-            this.message = message;
-        }
-
-        //@SneakyThrows
-        public MessageSender(JsonDataDTO jsonDataDTO) {
-                //message = MAPPER.writeValueAsString(jsonDataDTO);
-            this.message = createJsonMessage(jsonDataDTO);
-        }
-
-        public void sendMessage() {
-           // JsonDataManager.getInstance().sendMessage(message);
-            JsonDataManager.sendMessage(this.message);
-        }
-
-        public String getMessage() {
-            return message;
-        }
-    }
-
-     */
-
 
     public static <T> T parseJsonMessage(String json, Class<T> clazz) {
         Log.d(DEBUG_TAG, "parseJsonMessage: " + json);

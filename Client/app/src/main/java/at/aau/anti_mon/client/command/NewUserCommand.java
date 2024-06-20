@@ -4,8 +4,9 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
+import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
+import at.aau.anti_mon.client.ui.lobby.LobbyViewModel;
 
 public class NewUserCommand implements Command{
     private final LobbyViewModel viewModel;
@@ -15,6 +16,7 @@ public class NewUserCommand implements Command{
         this.viewModel = viewModel;
     }
 
+    // TODO: Deserialize User-Object from JsonDataDTO and update LiveData
     @Override
     public void execute(JsonDataDTO data) {
         boolean isOwner = Boolean.parseBoolean( data.getData().get("isOwner"));
@@ -23,6 +25,10 @@ public class NewUserCommand implements Command{
 
         Log.d("NewUserCommand", "New user joined: " + username + " isOwner: " + isOwner + " isReady: " + isReady);
         // Update LiveData for UI-bound updates
-        viewModel.userJoined(username, isOwner, isReady);
+
+        User user = new User(username, isOwner, isReady);
+        viewModel.addUser(user);
+
+        //viewModel.onUserJoined(username, isOwner, isReady);
     }
 }

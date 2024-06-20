@@ -1,10 +1,10 @@
 package at.aau.anti_mon.client.game;
 
-import javax.annotation.Signed;
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Singleton;
 
-import at.aau.anti_mon.client.viewmodels.GameFieldViewModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,10 +17,22 @@ import lombok.Setter;
 public class GameController {
     private boolean isPaused;
 
-    private GameFieldViewModel gameFieldViewModel;
+    private List<Player> playerList;
+    private GameState gameState;
+    int currentPlayerIndex;
 
     public GameController() {
+        playerList = new ArrayList<>();
         this.isPaused = false;
+        this.gameState = GameState.INITIALIZED;
+    }
+
+    public Player getCurrentPlayer() {
+        return playerList.get(currentPlayerIndex);
+    }
+
+    public void addPlayer(Player player) {
+        playerList.add(player);
     }
 
     public void initializeGame() {
@@ -99,15 +111,6 @@ public class GameController {
         return false;
     }
 
-    public void throwDice(){
-        gameFieldViewModel.setGameState(GameState.THROW_DICE);
-    }
-
-
-    @Inject
-    public void setGameFieldViewModel(GameFieldViewModel gameFieldViewModel) {
-        this.gameFieldViewModel = gameFieldViewModel;
-    }
 
 
 

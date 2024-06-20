@@ -13,7 +13,7 @@
     <string name="Startgame">Start game</string>
     <string name="Load">Load</string>
     <string name="ready">ready</string>
-    <string name="not_ready">Unready</string>
+    <string name="not_ready">not ready</string>
     <string name="player_info">%1$s: %2$s</string>
     <string name="imagebutton">ImageButton</string>
     <string name="finish">Finish</string>
@@ -47,6 +47,22 @@
     <string name="price">Price:</string>
     <string name="textview">TextView</string>
     <string name="owner">Owner:</string>
+
+    <string name="roles">Roles</string>
+    <string name="x_close">X</string>
+    <string name="your_role_is">You are a %1$s, your username is %2$s \n and you have the %3$s figure!</string>
+    <string name="player_figure">Player figure</string>
+    <string name="roll_dice">roll dice</string>
+    <string name="buy">Buy</string>
+    <string name="hypothek">Hypothek</string>
+    <string name="buy_house">Buy House</string>
+    <string name="settings">Settings</string>
+    <string name="x">X</string>
+    <string name="avatar">Avatar</string>
+    <string name="unready">not ready</string>
+    <string name="player_name">Player Name</string>
+    <string name="back">Back</string>
+    <string name="join">Join</string>
 
 
 </resources>

@@ -2,10 +2,19 @@ package at.aau.anti_mon.client;
 
 import android.app.Application;
 
+import javax.inject.Inject;
+
+import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
-import at.aau.anti_mon.client.json.JsonDataManager;
-import at.aau.anti_mon.client.networking.NetworkModule;
+import at.aau.anti_mon.client.manager.PreferenceManager;
+import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.networking.WebSocketClient;
+import at.aau.anti_mon.client.dependencyinjection.AppComponent;
+import at.aau.anti_mon.client.dependencyinjection.AppModule;
+import at.aau.anti_mon.client.dependencyinjection.DaggerAppComponent;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,30 +24,32 @@ import lombok.Setter;
  * It is responsible for creating the Dagger AppComponent and the GlobalEventQueue.
  */
 @Getter
-public class AntiMonopolyApplication extends Application {
+@Setter
+public class AntiMonopolyApplication extends Application implements HasAndroidInjector {
 
     public static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
-    private AppComponent appComponent;
-    @Setter
-    private GlobalEventQueue globalEventQueue;
+    public AppComponent appComponent;
+
+    @Inject GlobalEventQueue globalEventQueue;
+    @Inject CommandFactory commandFactory;
+    @Inject PreferenceManager preferenceManager;
+    @Inject WebSocketClient webSocketClient;
+    @Inject MessagingService messagingService;
+
+    @Inject DispatchingAndroidInjector<Object> androidInjector;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        appComponent = DaggerAppComponent.builder()
-                .networkModule(new NetworkModule(this))
-                .build();
+        appComponent = DaggerAppComponent.factory().create(new AppModule(this));
         appComponent.inject(this);
-        globalEventQueue = new GlobalEventQueue();
         globalEventQueue.setEventBusReady(true);
-
-        // Bitte noch nicht löschen, da es noch nicht klar ist, ob es noch benötigt wird.
-        // -> Design ohne MessagingService als Facade zwischen JsonDataManager und WebSocketClient
-        //JsonDataManager.initialize(appComponent.getWebSocketClient());
+        webSocketClient.connectToServer();
     }
 
-    public WebSocketClient getWebSocketClient() {
-        return appComponent.getWebSocketClient();
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return androidInjector;
     }
 
 }

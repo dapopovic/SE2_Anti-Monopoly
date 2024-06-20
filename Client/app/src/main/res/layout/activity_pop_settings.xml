@@ -2,14 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/lobby_constraintlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PopActivitySettings">
+    tools:context=".ui.popups.PopActivitySettings">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:text="@string/settings"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,12 +18,12 @@
 
 
     <Button
-        android:id="@+id/X"
+        android:id="@+id/popup_close"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:backgroundTint="#FD0303"
         android:onClick="onX"
-        android:text="X"
+        android:text="@string/x"
         android:textAlignment="center"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

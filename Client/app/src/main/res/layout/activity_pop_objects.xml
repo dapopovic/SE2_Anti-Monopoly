@@ -1,24 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="player" type="at.aau.anti_mon.client.game.Player"/>
+        <variable name="playerInventory" type="at.aau.anti_mon.client.game.PlayerInventory"/>
+        <variable
+            name="viewModel"
+            type="at.aau.anti_mon.client.ui.popups.PopUpActivityObjectsViewModel" />
+    </data>
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PopActivityObjects"
+    tools:context=".ui.popups.PopActivityObjects"
     >
 
+    <TextView
+        android:id="@+id/textViewPlayerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/player_name"
+        android:textSize="18sp"
+        android:padding="8dp"/>
+
+
     <Button
-        android:id="@+id/X"
+        android:id="@+id/popup_close"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:backgroundTint="#FD0303"
         android:onClick="onX"
-        android:text="X"
+        android:text="@string/x_close"
         android:textAlignment="center"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</layout>
