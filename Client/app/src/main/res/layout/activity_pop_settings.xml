@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.PopActivitySettings">
+
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Settings"
@@ -28,4 +30,37 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnendgame"
+        style="@style/Buttons_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="END GAME"
+        app:layout_constraintBottom_toTopOf="@+id/btnsurrender"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/btnsurrender"
+        style="@style/Buttons_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SURRENDER"
+        app:layout_constraintBottom_toTopOf="@+id/btnexitgame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnendgame" />
+
+    <Button
+        android:id="@+id/btnexitgame"
+        style="@style/Buttons_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EXIT GAME"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnsurrender" />
 </androidx.constraintlayout.widget.ConstraintLayout>

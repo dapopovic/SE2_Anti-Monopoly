@@ -57,6 +57,7 @@ public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityResultLauncher<Intent> diceActivityResultLauncher;
+    private ActivityResultLauncher<Intent> settingsActivityResultLauncher;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
@@ -65,6 +66,8 @@ public class ActivityGameField extends AppCompatActivity {
     boolean doubledice = false;
     private static final String COLOR_GRAY = "#6C757D";
     private static final String USERNAME_STRING = "username";
+    Boolean showDialog = true;
+    Boolean surrender = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -88,13 +91,6 @@ public class ActivityGameField extends AppCompatActivity {
 
         sendFirst();
         initResultLaunchers();
-        Button minusmoney = findViewById(R.id.btnminusmoney);
-        minusmoney.setOnClickListener(v -> {
-            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
-            jsonDataDTO.putData("new_balance", String.valueOf(-1));
-            webSocketClient.sendJsonData(jsonDataDTO);
-        });
     }
 
     private void initResultLaunchers() {
@@ -106,6 +102,43 @@ public class ActivityGameField extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 this::handleDiceActivityResult
         );
+        settingsActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::handleSettingsActivityResult
+        );
+    }
+
+    private void handleSettingsActivityResult(ActivityResult result) {
+        Intent data = result.getData();
+        assert data != null;
+        String setting = data.getStringExtra("setting");
+
+        if (Objects.equals(setting, "surrender")){
+            minusmoney();
+            losegame();
+            surrender = true;
+        }
+        if (Objects.equals(setting, "exitgame")){
+            if(!surrender){
+                minusmoney();
+                showDialog =false;
+                losegame();
+            }
+            finish();
+        }
+    }
+
+    private void minusmoney(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
+        jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+        jsonDataDTO.putData("new_balance", String.valueOf(-1));
+        webSocketClient.sendJsonData(jsonDataDTO);
+    }
+
+    private void losegame(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
+        jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+        webSocketClient.sendJsonData(jsonDataDTO);
     }
 
     private void handleCheatActivityResult(ActivityResult result) {
@@ -166,7 +199,7 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onSettings(View view) {
         Intent i = new Intent(getApplicationContext(), PopActivitySettings.class);
-        startActivity(i);
+        settingsActivityResultLauncher.launch(i);
     }
 
     public void onHandel(View view) {
@@ -183,10 +216,7 @@ public class ActivityGameField extends AppCompatActivity {
         doubledice = false;
         Log.d("MinusMoney", "Money:" + currentUser.getMoney());
         if(currentUser.getMoney()<0){
-            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
-            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
-            Log.d("onEndGame", "Send loser:" + currentUser.getUsername());
-            webSocketClient.sendJsonData(jsonDataDTO);
+            losegame();
         }
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
@@ -358,11 +388,13 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void makeDialog(String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Allert!!")
-                .setMessage(message)
-                .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
-                .setNegativeButton("Exit Game", (dialog, which) -> finish())
-                .show();
+        if(showDialog){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Allert!!")
+                    .setMessage(message)
+                    .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
+                    .setNegativeButton("Exit Game", (dialog, which) -> finish())
+                    .show();
+        }
     }
 }
