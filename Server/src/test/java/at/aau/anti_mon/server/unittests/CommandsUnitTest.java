@@ -52,6 +52,9 @@ class CommandsUnitTest {
     @InjectMocks
     private LoseGameCommand loseGameCommand;
 
+    @InjectMocks
+    private EndGameCommand endGameCommand;
+
     @Test
     void joinLobbyCommandShouldPublishEvent() {
         JsonDataDTO jsonData = new JsonDataDTO();
@@ -342,5 +345,15 @@ class CommandsUnitTest {
         loseGameCommand = new LoseGameCommand(eventPublisher);
         loseGameCommand.execute(session,jsonData);
         verify(eventPublisher,times(1)).publishEvent(any(LoseGameEvent.class));
+    }
+
+    @Test
+    void endGameCommandShouldPublishEvent(){
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.END_GAME);
+        jsonData.putData("username", "Alex");
+        endGameCommand = new EndGameCommand(eventPublisher);
+        endGameCommand.execute(session,jsonData);
+        verify(eventPublisher,times(1)).publishEvent(any(EndGameEvent.class));
     }
 }

@@ -540,4 +540,33 @@ class UserEventListenerUnitTest {
         }
         verify(userList.get(nextUser), times(3 + AMOUNT_PLAYERS)).getName();
     }
+
+    @Test
+    void onEndGameEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user1");
+        when(user.getMoney()).thenReturn(1500);
+
+        Lobby lobby = mock(Lobby.class);
+        when(user.getLobby()).thenReturn(lobby);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(lobby.getUsers()).thenReturn(users);
+        when(userService.getUser("user1")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+
+        EndGameEvent event = new EndGameEvent(session,"user1");
+        userEventListener.onEndGameEvent(event);
+
+        verify(sessionManagementService).getSessionForUser("user1");
+        mockedStatic.verify(() -> JsonDataUtility.sendEndGame(session,1), times(1));
+        mockedStatic.close();
+    }
 }
