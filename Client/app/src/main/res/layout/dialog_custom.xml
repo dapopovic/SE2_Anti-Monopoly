@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <ImageView
+        android:id="@+id/dialog_image"
+        android:layout_width="108dp"
+        android:layout_height="92dp"
+        android:contentDescription="@string/todo"
+        android:scaleType="fitXY"
+        android:src="@drawable/rom_1"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_streetname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:gravity="start"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:text="@string/street_name"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_price_label"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/price"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_owner_label"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_price_number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_streetname" />
+
+    <TextView
+        android:id="@+id/dialog_houseprice_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="25dp"
+        android:gravity="start"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:text="@string/house_price"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_houseprice_number"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_rent_label" />
+
+
+    <TextView
+        android:id="@+id/dialog_hotelprice_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="25dp"
+        android:gravity="start"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:text="@string/hotel_price"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_hotelprice_number"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_houseprice_label" />
+
+
+    <TextView
+        android:id="@+id/dialog_rent_label"
+        android:layout_width="0dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="start"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:text="@string/rent"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_rent_number"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="4dp"
+        android:background="#F6EFE7"
+        android:text="@string/berlin1_field_description"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:barrierMargin="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_button_buy" />
+
+    <TextView
+        android:id="@+id/dialog_rent_number"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/textview"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_houseprice_number"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/textview"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_rent_number" />
+
+    <TextView
+        android:id="@+id/dialog_hotelprice_number"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/textview"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_houseprice_number" />
+
+    <TextView
+        android:id="@+id/dialog_price_number"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+
+        android:layout_marginTop="50dp"
+        android:text="@string/textview"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/dialog_price_label"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_streetname" />
+
+    <TextView
+        android:id="@+id/dialog_owner_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/owner"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_description"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_street_owner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_streetname" />
+
+    <TextView
+        android:id="@+id/dialog_street_owner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="12dp"
+
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/textview"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_description"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_button_hypothek"
+        app:layout_constraintStart_toEndOf="@+id/dialog_owner_label"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_price_number" />
+
+    <Button
+        android:id="@+id/dialog_button_buy"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/buy"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_description"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_button_buy_house"
+        app:layout_constraintStart_toEndOf="@+id/dialog_button_hypothek"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_image" />
+
+    <Button
+        android:id="@+id/dialog_button_hypothek"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/hypothek"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_description"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_button_buy"
+        app:layout_constraintStart_toEndOf="@+id/dialog_price_number"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_image"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/dialog_button_buy_house"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/buy_house"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dialog_button_buy"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_image" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

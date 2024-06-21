@@ -1,26 +1,43 @@
 [versions]
 agp = "8.3.2"
+cardview = "1.0.0"
 converterJackson = "2.7.2"
 coreTesting = "2.2.0"
+coreTestingVersion = "2.1.0"
+dagger = "2.x"
+daggerAndroidSupportVersion = "2.x"
+daggerAndroidProcessorVersion = "2.x"
+daggerAndroidVersion = "2.x"
 daggerCompiler = "2.20"
 daggerAndroidProcessor = "2.20"
 daggerAndroidSupport = "2.20"
 daggerAndroid = "2.20"
+daggerCompilerVersion = "2.x"
+daggerVersion = "2.51.1"
+databindingRuntimeVersion = "4.x.x"
 eventbus = "3.2.0"
+googleDaggerAndroid = "2.51"
+googleDaggerAndroidProcessor = "2.51"
+googleDaggerAndroidSupport = "2.51"
+googleDaggerCompiler = "2.51.1"
 hiltCompiler = "2.44"
 hiltAndroid = "2.44"
 jacksonDatabind = "2.10.3"
 junit = "4.13.2"
 junitJupiterApi = "5.10.2"
+junitJupiterApiVersion = "5.10.0"
+junitJupiterEngine = "5.10.0"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
+junitVintageEngine = "5.10.0"
 loggingInterceptor = "4.12.0"
 lombok = "1.18.32"
 material = "1.11.0"
 activity = "1.8.2"
 constraintlayout = "2.1.4"
 mockitoCore = "3.11.2"
+mockitoKotlin = "5.2.1"
 mockwebserver = "5.0.0-alpha.12"
 multidex = "2.0.1"
 okhttpprofiler = "1.0.8"
@@ -30,15 +47,29 @@ retrofit = "(insert latest version)"
 retrofitVersion = "2.9.0"
 squareupRetrofit = "2.1.0"
 runner = "1.5.2"
+databindingRuntime = "8.4.2"
 
 [libraries]
+cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
 converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "converterJackson" }
 converter-name = { module = "com.squareup.retrofit2:converter-name", version.ref = "retrofitVersion" }
 core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
+core-testing-v210 = { module = "androidx.arch.core:core-testing", version.ref = "coreTestingVersion" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-android-processor-v251 = { module = "com.google.dagger:dagger-android-processor", version.ref = "googleDaggerAndroidProcessor" }
+dagger-android-processor-v2x = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessorVersion" }
+dagger-android-support-v251 = { module = "com.google.dagger:dagger-android-support", version.ref = "googleDaggerAndroidSupport" }
+dagger-android-support-v2x = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupportVersion" }
+dagger-android-v251 = { module = "com.google.dagger:dagger-android", version.ref = "googleDaggerAndroid" }
+dagger-android-v2x = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroidVersion" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessor" }
 dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupport" }
 dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroid" }
+dagger-compiler-v2511 = { module = "com.google.dagger:dagger-compiler", version.ref = "googleDaggerCompiler" }
+dagger-compiler-v2x = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompilerVersion" }
+dagger-v2511 = { module = "com.google.dagger:dagger", version.ref = "daggerVersion" }
+databinding-runtime-v4xx = { module = "androidx.databinding:databinding-runtime", version.ref = "databindingRuntimeVersion" }
 eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -50,13 +81,17 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitV
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-api-v5100 = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApiVersion" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterApi" }
+junit-jupiter-engine-v5100 = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junitVintageEngine" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 gson = "com.google.code.gson:gson:2.10.1"
@@ -67,6 +102,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-v210 = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
 retrofit-v290 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

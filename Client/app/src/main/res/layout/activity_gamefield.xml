@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="at.aau.anti_mon.client.ui.gamefield.GameFieldViewModel" />
+    </data>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/game_field_constraintlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ActivityGameField"
+    tools:context=".ui.gamefield.GameFieldActivity"
     android:background="@drawable/background">
 
     <androidx.constraintlayout.widget.Guideline
@@ -19,19 +28,7 @@
         android:id="@+id/btndice"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:elevation="1dp"
-        android:onClick="onFigureMove"
-        android:src="@drawable/dice"
-
-        app:layout_constraintBottom_toTopOf="@+id/guideline18"
-        app:layout_constraintEnd_toStartOf="@+id/guideline14"
-        app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/btnobjects"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:contentDescription="@string/imagebutton"
         android:onClick="onObjects"
         android:src="@drawable/objects0"
         android:scaleType="fitCenter"
@@ -47,6 +44,7 @@
         android:id="@+id/btnhandel"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/imagebutton"
         android:onClick="onHandel"
         android:src="@drawable/handel0"
         android:scaleType="fitCenter"
@@ -62,6 +60,7 @@
         android:id="@+id/btnsettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/imagebutton"
         android:onClick="onSettings"
         android:src="@drawable/settings0"
         android:scaleType="fitCenter"
@@ -71,15 +70,14 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
         app:layout_constraintTop_toTopOf="@+id/guideline16"
-        android:elevation="1dp"
-        />
+        android:elevation="1dp" />
 
     <Button
         android:id="@+id/btnfinish"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onEndGame"
-        android:text="Finish"
+        android:text="@string/finish"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -119,12 +117,12 @@
         android:id="@+id/players_recycler_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:elevation="1dp"
         android:layout_margin="8dp"
+        android:layout_marginBottom="60dp"
+        android:elevation="1dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/game_field"
         app:layout_constraintTop_toTopOf="@+id/guideline17" />
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline18"
@@ -133,13 +131,25 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
-    <at.aau.anti_mon.client.activities.CustomViewGameField
+    <at.aau.anti_mon.client.layout.CustomViewGameField
         android:id="@+id/game_field"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="0dp">
+        android:elevation="0dp"
+        tools:layout_editor_absoluteX="48dp"
+        tools:layout_editor_absoluteY="16dp">
 
-    </at.aau.anti_mon.client.activities.CustomViewGameField>
+    </at.aau.anti_mon.client.layout.CustomViewGameField>
+
+    <Button
+        android:id="@+id/roll_dice_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onFigureMove"
+        android:text="@string/roll_dice"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:elevation="1dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

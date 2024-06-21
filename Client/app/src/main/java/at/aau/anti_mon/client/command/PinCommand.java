@@ -5,9 +5,14 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
+import at.aau.anti_mon.client.ui.creategame.CreateGameViewModel;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PinCommand implements Command {
+
     private final CreateGameViewModel viewModel;
 
     @Inject
@@ -21,7 +26,7 @@ public class PinCommand implements Command {
         Log.d("PinCommand", "Posting pin received event with pin: " + pin);
 
         // Update LiveData for UI-bound updates
-        viewModel.createGame(pin);
+        //viewModel.createGame(pin);
+        viewModel.onPinReceived(pin);
     }
-
 }

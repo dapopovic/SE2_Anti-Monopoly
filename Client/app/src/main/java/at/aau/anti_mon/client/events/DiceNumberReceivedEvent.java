@@ -1,6 +1,7 @@
 package at.aau.anti_mon.client.events;
 import lombok.Getter;
 
+
 @Getter
 public class DiceNumberReceivedEvent {
     private final Integer dicenumber;
@@ -15,3 +16,5 @@ public class DiceNumberReceivedEvent {
         this.location = location;
     }
 }
+
+

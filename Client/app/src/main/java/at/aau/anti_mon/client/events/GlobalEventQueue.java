@@ -17,6 +17,18 @@ public class GlobalEventQueue {
     private final Queue<Object> eventQueue = new LinkedList<>();
     private boolean isEventBusReady = false;
 
+    private GlobalEventQueue() {
+        Log.d(DEBUG_TAG, "GlobalEventQueue created");
+    }
+
+    private static final class InstanceHolder {
+        private static final GlobalEventQueue instance = new GlobalEventQueue();
+    }
+
+    public static GlobalEventQueue getInstance() {
+        return InstanceHolder.instance;
+    }
+
     public synchronized void enqueueEvent(Object event) {
         Log.d(DEBUG_TAG, "Enqueue Event: " + event);
         if (isEventBusReady) {
@@ -30,7 +42,6 @@ public class GlobalEventQueue {
 
     /**
      * Set the EventBus ready
-     * @param ready
      */
     public synchronized void setEventBusReady(boolean ready) {
         Log.d(DEBUG_TAG, "EventBus ready: " + ready);

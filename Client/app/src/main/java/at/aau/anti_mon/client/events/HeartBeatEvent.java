@@ -1,10 +1,10 @@
 package at.aau.anti_mon.client.events;
 
 public class HeartBeatEvent {
-    private final String heartbeat;
+    private final String msg;
 
     public HeartBeatEvent(String msg) {
-        this.heartbeat = msg;
+        this.msg = msg;
     }
 
 }

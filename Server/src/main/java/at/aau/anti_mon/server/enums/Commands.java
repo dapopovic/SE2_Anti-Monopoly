@@ -73,10 +73,6 @@ public enum Commands {
      * format: {"command": "ERROR", "msg": "Hello World!"}
      */
     ERROR("ERROR"),
-    DICENUMBER("DICENUMBER"),
-    DICE("DICE"),
-    NEXT_PLAYER("NEXT_PLAYER"),
-    FIRST_PLAYER("FIRST_PLAYER"),
 
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
 
@@ -101,7 +97,7 @@ public enum Commands {
 	*/
     READY("READY"),
     START_GAME("START_GAME"),
-    CHANGE_BALANCE("CHANGE_BALANCE");
+    DICENUMBER("DICENUMBER");
 
     // usw
 

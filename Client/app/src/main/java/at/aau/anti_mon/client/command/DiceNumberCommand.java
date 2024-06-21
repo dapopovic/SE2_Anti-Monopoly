@@ -1,20 +1,22 @@
 package at.aau.anti_mon.client.command;
 import android.util.Log;
 
-import java.util.Objects;
-
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.json.JsonDataDTO;
+import at.aau.anti_mon.client.ui.gamefield.GameFieldViewModel;
+
 public class DiceNumberCommand implements Command{
 
     private final GlobalEventQueue queue;
+    private final GameFieldViewModel gameFieldViewModel;
 
     @Inject
-    public DiceNumberCommand(GlobalEventQueue queue) {
+    public DiceNumberCommand(GlobalEventQueue queue, GameFieldViewModel gameFieldViewModel) {
         this.queue = queue;
+        this.gameFieldViewModel = gameFieldViewModel;
     }
 
     @Override
@@ -31,5 +33,10 @@ public class DiceNumberCommand implements Command{
 
         // Zugriff auf die GlobalEventQueue über die Application Instanz
         queue.enqueueEvent(new DiceNumberReceivedEvent(dicenumber,username,figure,location));
+
+        // TODO: USe ViewModel---->
+
+        gameFieldViewModel.rollDice(username, dicenumber, figure, location);
+
     }
 }

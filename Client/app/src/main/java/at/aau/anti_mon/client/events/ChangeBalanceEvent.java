@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class ChangeBalanceEvent {
     private final String username;
-    private Integer balance;
+    private final Integer balance;
 
     public ChangeBalanceEvent(String username, Integer balance) {
         this.username = username;

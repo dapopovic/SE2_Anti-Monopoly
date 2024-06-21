@@ -5,7 +5,6 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
-import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 
