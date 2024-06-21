@@ -1,6 +1,7 @@
 package at.aau.anti_mon.server.service;
 
 import at.aau.anti_mon.server.enums.Figures;
+import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
@@ -168,10 +169,23 @@ public class LobbyService {
         }
         HashSet<User> users = lobby.getUsers();
         HashSet<Figures> assignedFigures = new HashSet<>();
+        sequenceNumber = 0;
+        lobby.startGame();
+
         users.forEach(user -> {
             Figures randomFigure;
+            String color = "BLUE";
+            if(Roles.COMPETITOR == user.getRole()){
+                color = "GREEN";
+            }
+            Logger.error("Color is:"+color+" Role is: "+user.getRole());
+
             do {
-                randomFigure = Figures.values()[random.nextInt(Figures.values().length)];
+                String finalColor = color;
+                List<Figures> filteredFigures = Arrays.stream(Figures.values())
+                        .filter(f -> f.name().startsWith(finalColor))
+                        .toList();
+                randomFigure = filteredFigures.get(random.nextInt(filteredFigures.size()));
             } while(assignedFigures.contains(randomFigure));
 
             assignedFigures.add(randomFigure);
@@ -180,7 +194,5 @@ public class LobbyService {
             sequenceNumber++;
             user.setLocation(1);
         });
-        sequenceNumber = 0;
-        lobby.startGame();
     }
 }

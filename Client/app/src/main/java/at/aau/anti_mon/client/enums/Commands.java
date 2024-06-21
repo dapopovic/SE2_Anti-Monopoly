@@ -26,7 +26,8 @@ public enum Commands {
     FIRST_PLAYER("FIRST_PLAYER"),
     CHEATING("CHEATING"),
     WIN_GAME("WIN_GAME"),
-    LOSE_GAME("LOSE_GAME");
+    LOSE_GAME("LOSE_GAME"),
+    END_GAME("END_GAME");
     // usw
 
 

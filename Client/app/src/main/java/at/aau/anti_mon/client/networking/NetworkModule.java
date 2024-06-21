@@ -17,6 +17,7 @@ import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.DiceNumberCommand;
+import at.aau.anti_mon.client.command.EndGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
@@ -215,4 +216,9 @@ public class NetworkModule {
     @IntoMap
     @StringKey("WIN_GAME")
     Command provideWinGameCommand(WinGameCommand command) { return command; }
+
+    @Provides
+    @IntoMap
+    @StringKey("END_GAME")
+    Command provideEndGameCommand(EndGameCommand command) { return command; }
 }

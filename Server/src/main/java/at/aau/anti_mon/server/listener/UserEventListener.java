@@ -346,4 +346,22 @@ public class UserEventListener {
             JsonDataUtility.sendLoseGame(sessionManagementService.getSessionForUser(u.getName()), user.getName());
         }
     }
+
+    @EventListener
+    public void onEndGameEvent(EndGameEvent event) throws UserNotFoundException {
+        Logger.info("Wir sind in EndGameEventListener.");
+        String username = event.getUsername();
+        User user = userService.getUser(username);
+        HashSet<User> users = user.getLobby().getUsers();
+        int rank;
+        for (User user1 : users) {
+            rank = 1;
+            for (User user2 : users) {
+                if(user1.getMoney()<user2.getMoney()){
+                    rank++;
+                }
+            }
+            JsonDataUtility.sendEndGame(sessionManagementService.getSessionForUser(user1.getName()),rank);
+        }
+    }
 }

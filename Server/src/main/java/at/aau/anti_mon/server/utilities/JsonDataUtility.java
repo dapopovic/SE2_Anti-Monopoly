@@ -189,4 +189,9 @@ public class JsonDataUtility {
         Logger.info("Wir senden den Spieler der verloren hat:"+username);
         send(session,jsonData);
     }
+    public static void sendEndGame(WebSocketSession session, int rank){
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.END_GAME, new HashMap<>());
+        jsonData.putData("rank", String.valueOf(rank));
+        send(session,jsonData);
+    }
 }

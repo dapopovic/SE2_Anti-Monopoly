@@ -43,6 +43,7 @@ import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
+import at.aau.anti_mon.client.events.EndGameEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
@@ -57,6 +58,7 @@ public class ActivityGameField extends AppCompatActivity {
     private static final int MAX_FIELD_COUNT = 40;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityResultLauncher<Intent> diceActivityResultLauncher;
+    private ActivityResultLauncher<Intent> settingsActivityResultLauncher;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
@@ -65,6 +67,8 @@ public class ActivityGameField extends AppCompatActivity {
     boolean doubledice = false;
     private static final String COLOR_GRAY = "#6C757D";
     private static final String USERNAME_STRING = "username";
+    boolean showDialog = true;
+    boolean surrender = false;
 
     @Inject
     WebSocketClient webSocketClient;
@@ -88,13 +92,6 @@ public class ActivityGameField extends AppCompatActivity {
 
         sendFirst();
         initResultLaunchers();
-        Button minusmoney = findViewById(R.id.btnminusmoney);
-        minusmoney.setOnClickListener(v -> {
-            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
-            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
-            jsonDataDTO.putData("new_balance", String.valueOf(-1));
-            webSocketClient.sendJsonData(jsonDataDTO);
-        });
     }
 
     private void initResultLaunchers() {
@@ -106,6 +103,48 @@ public class ActivityGameField extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 this::handleDiceActivityResult
         );
+        settingsActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::handleSettingsActivityResult
+        );
+    }
+
+    private void handleSettingsActivityResult(ActivityResult result) {
+        Intent data = result.getData();
+        assert data != null;
+        String setting = data.getStringExtra("setting");
+
+        if(Objects.equals(setting, "endgame")){
+            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.END_GAME, new HashMap<>());
+            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+            webSocketClient.sendJsonData(jsonDataDTO);
+        }
+        if (Objects.equals(setting, "surrender")){
+            minusmoney();
+            losegame();
+            surrender = true;
+        }
+        if (Objects.equals(setting, "exitgame")){
+            if(!surrender){
+                minusmoney();
+                showDialog =false;
+                losegame();
+            }
+            finish();
+        }
+    }
+
+    private void minusmoney(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
+        jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+        jsonDataDTO.putData("new_balance", String.valueOf(-1));
+        webSocketClient.sendJsonData(jsonDataDTO);
+    }
+
+    private void losegame(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
+        jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+        webSocketClient.sendJsonData(jsonDataDTO);
     }
 
     private void handleCheatActivityResult(ActivityResult result) {
@@ -166,7 +205,8 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onSettings(View view) {
         Intent i = new Intent(getApplicationContext(), PopActivitySettings.class);
-        startActivity(i);
+        i.putExtra("isOwner",currentUser.isOwner());
+        settingsActivityResultLauncher.launch(i);
     }
 
     public void onHandel(View view) {
@@ -183,10 +223,7 @@ public class ActivityGameField extends AppCompatActivity {
         doubledice = false;
         Log.d("MinusMoney", "Money:" + currentUser.getMoney());
         if(currentUser.getMoney()<0){
-            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
-            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
-            Log.d("onEndGame", "Send loser:" + currentUser.getUsername());
-            webSocketClient.sendJsonData(jsonDataDTO);
+            losegame();
         }
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
@@ -358,9 +395,30 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     public void makeDialog(String message){
+        if(showDialog){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Allert!!")
+                    .setMessage(message)
+                    .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
+                    .setNegativeButton("Exit Game", (dialog, which) -> finish())
+                    .show();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEndGameEvent(EndGameEvent event) {
+        int rank = event.getRank();
+
+        ImageButton diceImageBtn = findViewById(R.id.btndice);
+        diceImageBtn.setEnabled(false);
+        diceImageBtn.setBackgroundColor(Color.parseColor(COLOR_GRAY));
+        Button finish = findViewById(R.id.btnfinish);
+        finish.setEnabled(false);
+        finish.setBackgroundColor(Color.parseColor(COLOR_GRAY));
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Allert!!")
-                .setMessage(message)
+        builder.setTitle("Allert!! end of game")
+                .setMessage("You are rank "+rank)
                 .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
                 .setNegativeButton("Exit Game", (dialog, which) -> finish())
                 .show();
