@@ -16,7 +16,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
+// fixme avoid static methods and use instance methods instead to stay in oop
+// fixme avoid manual creation of jsons, use the dtos and autoserialize
 /**
  * This class is a utility and responsible for creating and parsing JSON messages.
  */

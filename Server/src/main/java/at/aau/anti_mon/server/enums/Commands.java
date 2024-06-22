@@ -3,6 +3,7 @@ package at.aau.anti_mon.server.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+// fixme dont use the same string as the enum, use Enum::name
 /**
  * Enum that represents the different commands that can be sent to the server
  */

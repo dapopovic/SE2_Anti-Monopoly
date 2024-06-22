@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+// fixme avoid using different names for code and database
+// fixme this applies to all entities
 /**
  * Represents an event card in the game
  * @author ottzoeke

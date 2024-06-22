@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 
-
+// fixme remove the string parameter, see backend comments
 /**
  * Enum that represents the different commands that can be sent to the server
  */

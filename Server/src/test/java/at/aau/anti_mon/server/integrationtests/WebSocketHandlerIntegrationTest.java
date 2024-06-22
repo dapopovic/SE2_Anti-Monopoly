@@ -72,6 +72,7 @@ class WebSocketHandlerIntegrationTest {
         Assertions.assertTrue(pin.matches("\\d{4}"), "PIN should be a 4-digit number");
     }
 
+    // fixme split in indidivual tests (also for preconditions)
     @Test
     void testNewCreateGameAndGetPin() throws Exception {
         // Beispiel: Verwendung der JsonDataDTO Klasse
@@ -92,6 +93,7 @@ class WebSocketHandlerIntegrationTest {
         JsonDataDTO receivedData = JsonDataUtility.parseJsonMessage(messageResponse, JsonDataDTO.class);
 
         // Zugriff auf die Daten
+        // fixme never use the assert keyword
         assert receivedData != null;
         Commands command = receivedData.getCommand();
         Map<String, String> data = receivedData.getData();
