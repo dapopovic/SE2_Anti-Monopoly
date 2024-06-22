@@ -302,17 +302,91 @@ class UserEventListenerUnitTest {
         User user = mock(User.class);
         when(user.getName()).thenReturn("user1");
         when(user.getLobby()).thenReturn(lobby);
+        when(user.getUnavailableRounds()).thenReturn(0);
+        User user2 = mock(User.class);
+        when(user2.getName()).thenReturn("user2");
+        when(user2.getUnavailableRounds()).thenReturn(0);
+
         HashSet<User> users = new HashSet<>();
         users.add(user);
+        users.add(user2);
+
         when(lobby.getUsers()).thenReturn(users);
         when(userService.getUser("user1")).thenReturn(user);
         when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(sessionManagementService.getSessionForUser("user2")).thenReturn(session);
         when(user.getSequence()).thenReturn(1);
 
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
         verify(userService).getUser("user1");
         verify(sessionManagementService).getSessionForUser("user1");
     }
+
+    @Test
+    void onLoseGameEventShouldCallCorrectServiceMethod() throws UserNotFoundException {
+        WebSocketSession session = mock(WebSocketSession.class);
+        LoseGameEvent event = new LoseGameEvent(session, "user1");
+        Lobby lobby = mock(Lobby.class);
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user1");
+        when(user.getLobby()).thenReturn(lobby);
+        User user2 = mock(User.class);
+        when(user2.getName()).thenReturn("user2");
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+        users.add(user2);
+
+        when(lobby.getUsers()).thenReturn(users);
+        when(userService.getUser("user1")).thenReturn(user);
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+        when(sessionManagementService.getSessionForUser("user2")).thenReturn(session);
+
+        assertDoesNotThrow(()-> userEventListener.onLoseGameEvent(event));
+        verify(userService).getUser("user1");
+        verify(sessionManagementService).getSessionForUser("user1");
+    }
+
+    @Test
+    void onWinGameEventShouldCallCorrectServiceMethod() {
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        User user = mock(User.class);
+        when(user.getName()).thenReturn("user1");
+        when(user.getUnavailableRounds()).thenReturn(0);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+
+        when(sessionManagementService.getSessionForUser("user1")).thenReturn(session);
+
+        userEventListener.winGame(users);
+
+        verify(sessionManagementService).getSessionForUser("user1");
+        mockedStatic.verify(() -> JsonDataUtility.sendWinGame(session,"user1"), times(1));
+        mockedStatic.close();
+    }
+    @Test
+    void onWinGameEventButAllAvailableRoundsMinus1() {
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        User user = mock(User.class);
+        when(user.getUnavailableRounds()).thenReturn(-1);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(user);
+
+        userEventListener.winGame(users);
+
+        verify(sessionManagementService, never()).getSessionForUser("user1");
+        mockedStatic.verify(() -> JsonDataUtility.sendWinGame(session,"user1"),never());
+        mockedStatic.close();
+    }
+
     @Test
     void onNextPlayerEventAllPlayersPlayed() {
         HashSet<User> users = new HashSet<>();
@@ -468,25 +542,22 @@ class UserEventListenerUnitTest {
     }
 
     @Test
-    void onGetPlayerOneUserUnavailableRoundsGreaterThan0AndOnlyOnePlayer() {
+    void onGetPlayerOneUserAvailableRoundsGreaterThan0OnlyOneUser() {
         HashSet<User> users = new HashSet<>();
         Lobby lobby = mock(Lobby.class);
         when(lobby.getUsers()).thenReturn(users);
         WebSocketSession session = mock(WebSocketSession.class);
         User user = mock(User.class);
-        int sequence = 0;
         when(user.getName()).thenReturn("user0");
-        when(user.isHasPlayed()).thenReturn(true);
-        when(user.getSequence()).thenReturn(sequence);
         when(user.getUnavailableRounds()).thenReturn(2);
         when(sessionManagementService.getSessionForUser("user0")).thenReturn(session);
-        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user0");
         users.add(user);
-        ArrayList<User> userList = new ArrayList<>(users);
-        userList.sort(Comparator.comparing(User::getSequence));
+
+        NextPlayerEvent event = new NextPlayerEvent(mock(WebSocketSession.class), "user0");
+        user = users.iterator().next();
         when(user.getLobby()).thenReturn(lobby);
         when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user);
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
-        verify(userList.get(0), times(3)).getName();
+        verify(user, times(2)).getName();
     }
 }

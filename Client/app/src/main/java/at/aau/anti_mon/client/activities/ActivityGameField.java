@@ -2,6 +2,9 @@ package at.aau.anti_mon.client.activities;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -42,7 +45,9 @@ import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
+import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -83,6 +88,13 @@ public class ActivityGameField extends AppCompatActivity {
 
         sendFirst();
         initResultLaunchers();
+        Button minusmoney = findViewById(R.id.btnminusmoney);
+        minusmoney.setOnClickListener(v -> {
+            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.CHANGE_BALANCE, new HashMap<>());
+            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+            jsonDataDTO.putData("new_balance", String.valueOf(-1));
+            webSocketClient.sendJsonData(jsonDataDTO);
+        });
     }
 
     private void initResultLaunchers() {
@@ -169,6 +181,13 @@ public class ActivityGameField extends AppCompatActivity {
 
     public void onEndGame(View view) {
         doubledice = false;
+        Log.d("MinusMoney", "Money:" + currentUser.getMoney());
+        if(currentUser.getMoney()<0){
+            JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.LOSE_GAME, new HashMap<>());
+            jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
+            Log.d("onEndGame", "Send loser:" + currentUser.getUsername());
+            webSocketClient.sendJsonData(jsonDataDTO);
+        }
         JsonDataDTO jsonDataDTO = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonDataDTO.putData(USERNAME_STRING, currentUser.getUsername());
         Log.d("onEndGame", "Send name:" + currentUser.getUsername());
@@ -315,5 +334,35 @@ public class ActivityGameField extends AppCompatActivity {
         String jsonDataString = JsonDataManager.createJsonMessage(jsonData);
         webSocketClient.sendMessageToServer(jsonDataString);
         Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoseGameEvent(LoseGameEvent event) {
+        if(Objects.equals(event.getUsername(), currentUser.getUsername())){
+            userAdapter.lostthegame(event.getUsername());
+            makeDialog("You have lost!!");
+        }else {
+            userAdapter.lostthegame(event.getUsername());
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWinGameEvent(WinGameEvent event) {
+        final String ON_WIN_GAME = "onWinGameEvent";
+        Log.d(ON_WIN_GAME, "I am in onWinGameEvent");
+        Log.d(ON_WIN_GAME, currentUser.getUsername());
+        Log.d(ON_WIN_GAME, event.getUsername());
+        if(Objects.equals(currentUser.getUsername(), event.getUsername())){
+            Log.d(ON_WIN_GAME, "I am in the if");
+            makeDialog("You are the winner!!");
+        }
+    }
+
+    public void makeDialog(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Allert!!")
+                .setMessage(message)
+                .setPositiveButton("keep watching", (dialog, which) -> dialog.cancel())
+                .setNegativeButton("Exit Game", (dialog, which) -> finish())
+                .show();
     }
 }

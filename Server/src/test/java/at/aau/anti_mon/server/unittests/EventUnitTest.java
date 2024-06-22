@@ -88,4 +88,13 @@ class EventUnitTest {
         assertEquals("session1", event.getSession().getId());
         assertEquals("user1", event.getUsername());
     }
+
+    @Test
+    void loseGameEventShouldReturnCorrectValues(){
+        when(session.getId()).thenReturn("session1");
+        String username = "user1";
+        LoseGameEvent event = new LoseGameEvent(session,username);
+        assertEquals("session1", event.getSession().getId());
+        assertEquals("user1", event.getUsername());
+    }
 }

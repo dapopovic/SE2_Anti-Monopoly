@@ -26,6 +26,8 @@ public class User {
     private Figures figure;
     @Setter
     private boolean currentPlayer;
+    @Setter
+    private boolean lostGame;
 
     public User(String username, boolean isOwner, boolean isReady) {
         this.username = username;
@@ -35,6 +37,7 @@ public class User {
         this.role = null;
         this.figure = null;
         this.currentPlayer=false;
+        this.lostGame = false;
     }
 
     @Override

@@ -12,9 +12,11 @@ import org.mockito.MockitoAnnotations;
 import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
+import at.aau.anti_mon.client.command.LoseGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
+import at.aau.anti_mon.client.command.WinGameCommand;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.DiceNumberCommand;
@@ -31,8 +33,10 @@ import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.events.TestEvent;
+import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
@@ -90,7 +94,7 @@ class CommandsTest {
 
         verify(queue).enqueueEvent(any(TestEvent.class));
     }
-    
+
     @Test
     void joinGameCommandShouldFireUserJoinedLobbyEvent() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
@@ -263,4 +267,27 @@ class CommandsTest {
         nextPlayerCommand.execute(jsonDataDTO);
         verify(queue).enqueueEvent(any(NextPlayerEvent.class));
     }
+
+    @Test
+    void WinGameCommandEvent(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.WIN_GAME);
+        jsonDataDTO.putData("username", "user1");
+        assertEquals(Commands.WIN_GAME, jsonDataDTO.getCommand());
+        WinGameCommand winGameCommand = new WinGameCommand(queue);
+        winGameCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(WinGameEvent.class));
+    }
+
+    @Test
+    void LoseGameCommandEvent(){
+        JsonDataDTO jsonDataDTO = new JsonDataDTO();
+        jsonDataDTO.setCommand(Commands.LOSE_GAME);
+        jsonDataDTO.putData("username", "user1");
+        assertEquals(Commands.LOSE_GAME, jsonDataDTO.getCommand());
+        LoseGameCommand loseGameCommand = new LoseGameCommand(queue);
+        loseGameCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(LoseGameEvent.class));
+    }
+
 }

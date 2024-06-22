@@ -22,11 +22,13 @@ import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
+import at.aau.anti_mon.client.command.LoseGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
+import at.aau.anti_mon.client.command.WinGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
 import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
@@ -195,9 +197,7 @@ public class NetworkModule {
     @Provides
     @IntoMap
     @StringKey("NEXT_PLAYER")
-    Command provideNextPlayerCommand(NextPlayerCommand command) {
-        return command;
-    }
+    Command provideNextPlayerCommand(NextPlayerCommand command) { return command; }
 
     @Provides
     @IntoMap
@@ -205,4 +205,14 @@ public class NetworkModule {
     Command cheatingCommand(CheatingCommand command) {
         return command;
     }
+
+    @Provides
+    @IntoMap
+    @StringKey("LOSE_GAME")
+    Command provideLoseGameCommand(LoseGameCommand command) { return command; }
+
+    @Provides
+    @IntoMap
+    @StringKey("WIN_GAME")
+    Command provideWinGameCommand(WinGameCommand command) { return command; }
 }
