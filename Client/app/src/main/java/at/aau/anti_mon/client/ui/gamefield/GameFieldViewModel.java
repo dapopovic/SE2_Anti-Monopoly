@@ -24,7 +24,7 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.game.Game;
 import at.aau.anti_mon.client.game.GameState;

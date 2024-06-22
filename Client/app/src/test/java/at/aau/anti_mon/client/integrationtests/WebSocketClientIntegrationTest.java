@@ -22,7 +22,6 @@ import java.util.Arrays;
 
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
-import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;

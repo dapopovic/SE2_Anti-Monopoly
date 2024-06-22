@@ -124,7 +124,8 @@ public enum Commands {
      * Send by client to change the balance
      * format: {"command": "CHANGE_BALANCE", "user" : "TestUser", "pin": "1234" ,balance": 100}
      */
-    CHANGE_BALANCE("CHANGE_BALANCE");
+    CHANGE_BALANCE("CHANGE_BALANCE"),
+    NEXT_PLAYER("NEXT_PLAYER");
 
 
 

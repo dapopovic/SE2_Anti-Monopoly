@@ -1,6 +1,6 @@
 package at.aau.anti_mon.client.networking;
 
-import at.aau.anti_mon.client.command.Commands;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 import at.aau.anti_mon.client.json.JsonDataManager;
 import lombok.Getter;

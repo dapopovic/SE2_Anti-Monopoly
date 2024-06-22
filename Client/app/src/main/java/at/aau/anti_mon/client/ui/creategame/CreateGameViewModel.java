@@ -11,9 +11,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import javax.inject.Inject;
 
-import at.aau.anti_mon.client.command.Commands;
 import at.aau.anti_mon.client.data.SingleLiveEventData;
 import at.aau.anti_mon.client.databinding.ActivityStartNewGameBinding;
+import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.networking.MessagingService;
 import at.aau.anti_mon.client.ui.base.BaseViewModel;
 import lombok.Getter;
