@@ -33,7 +33,7 @@ import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.EndGameEvent;
-import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
@@ -41,9 +41,9 @@ import at.aau.anti_mon.client.events.TestEvent;
 import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.json.JsonDataManager;
-import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
-import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
+import at.aau.anti_mon.client.utilities.JsonDataUtility;
+import at.aau.anti_mon.client.ui.creategame.CreateGameViewModel;
+import at.aau.anti_mon.client.ui.lobby.LobbyViewModel;
 
 class CommandsTest {
 
@@ -197,7 +197,7 @@ class CommandsTest {
         User user = new User("username", true, true );
         User user2 = new User("username2", false, false);
         User[] users = {user, user2};
-        jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
+        jsonDataDTO.putData("users", JsonDataUtility.createJsonMessage(users));
         assertEquals(Commands.START_GAME, jsonDataDTO.getCommand());
 
         StartGameCommand startGameCommand = new StartGameCommand(lobbyViewModel);

@@ -8,16 +8,10 @@ import org.springframework.web.socket.WebSocketSession;
  * Event that is fired when a session is checked for still being active
  */
 @Getter
-@Setter
-public class SessionCheckEvent extends Event{
-
-    private final String userID;
-
+public class SessionCheckEvent extends BaseUserEvent{
     public SessionCheckEvent(WebSocketSession session, String userID) {
-        super(session);
-        this.userID = userID;
+        super(session, userID);
     }
-
 }
 
 

@@ -88,8 +88,8 @@ class LobbyUnitTest {
     }
 
     @Test
-    void lobbyShouldReturnTrueWhenCanAddPlayer() {
-        Assertions.assertTrue(lobby.canAddPlayer());
+    void lobbyShouldReturnTrueWhenIsFull() {
+        Assertions.assertTrue(lobby.isFull());
     }
 
     @Test
@@ -97,7 +97,7 @@ class LobbyUnitTest {
         for (int i = 0; i < 6; i++) {
             lobby.addUser(createUserWithOpenSession("player" + i));
         }
-        Assertions.assertFalse(lobby.canAddPlayer());
+        Assertions.assertFalse(lobby.isFull());
     }
 
     @Test

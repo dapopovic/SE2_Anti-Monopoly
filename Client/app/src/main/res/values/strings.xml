@@ -12,12 +12,60 @@
     <string name="create">Create</string>
     <string name="Startgame">Start game</string>
     <string name="Load">Load</string>
-    <string name="ready">ready up</string>
-    <string name="unready">Unready</string>
+    <string name="ready">ready</string>
+    <string name="not_ready">not ready</string>
     <string name="player_info">%1$s: %2$s</string>
+    <string name="imagebutton">ImageButton</string>
+    <string name="finish">Finish</string>
+    <string name="field_square">field_square</string>
+    <string name="start_field">start_field</string>
+    <string name="price_war">price_war</string>
+    <string name="sitting">sitting</string>
+    <string name="rom1">Rom</string>
+    <string name="take">take</string>
+
+    <!-- Field descriptions -->
+    <string name="field_square_description">Dies ist ein allgemeines Feld.</string>
+    <string name="start_field_description">Dies ist das Startfeld.</string>
+    <string name="prison_field_description">Dies ist das Gefängnisfeld.</string>
+    <string name="price_war_field_description">Dies ist das Preis- und Kriegsfeld.</string>
+    <string name="sitting_field_description">Dies ist das Sitzfeld.</string>
+    <string name="rom1_field_description">Dies ist das Rom-Feld.</string>
+    <string name="take_field_description">Dies ist ein Event-Feld.</string>
+    <string name="income_tax_field_description">Einkommenssteuer </string>
+    <string name="airport_field_description">Flughafen</string>
+    <string name="railway_field_description">Bahnhof</string>
+    <string name="company_field_description">Unternehmen</string>
+    <string name="berlin1_field_description">Berkin1.</string>
+    <string name="berlin2_field_description">Berkin2.</string>
+    <string name="berlin3_field_description">Berkin3.</string>
+    <string name="todo">TODO</string>
+    <string name="rent">Rent:</string>
+    <string name="hotel_price">Hotel Price:</string>
+    <string name="house_price">House Price:</string>
+    <string name="street_name">Street Name:</string>
+    <string name="price">Price:</string>
+    <string name="textview">TextView</string>
+    <string name="owner">Owner:</string>
+
     <string name="roles">Roles</string>
     <string name="x_close">X</string>
     <string name="your_role_is">You are a %1$s, your username is %2$s \n and you have the %3$s figure!</string>
-    <string name="Cheating">You have a possibility to cheat now! You can go to the next field. Do you want to use this possibility?</string>
-    <string name="figure">figure of player</string>
+    <string name="player_figure">Player figure</string>
+    <string name="roll_dice">roll dice</string>
+    <string name="buy">Buy</string>
+    <string name="hypothek">Hypothek</string>
+    <string name="buy_house">Buy House</string>
+    <string name="settings">Settings</string>
+    <string name="x">X</string>
+    <string name="avatar">Avatar</string>
+    <string name="unready">not ready</string>
+    <string name="player_name">Player Name</string>
+    <string name="back">Back</string>
+    <string name="join">Join</string>
+    <string name="Cheating">Cheating</string>
+    <string name="figure">Figure</string>
+    <string name="pin">Pin:</string>
+
+
 </resources>

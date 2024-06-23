@@ -4,9 +4,12 @@ import at.aau.anti_mon.server.commands.CommandFactory;
 import at.aau.anti_mon.server.commands.CreateGameCommand;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
+import at.aau.anti_mon.server.enums.Figures;
+import at.aau.anti_mon.server.enums.Roles;
 import at.aau.anti_mon.server.events.UserCreatedLobbyEvent;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.listener.UserEventListener;
+import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.websocket.handler.GameHandler;
 import at.aau.anti_mon.server.events.SessionConnectEvent;
 import at.aau.anti_mon.server.events.SessionDisconnectEvent;
@@ -34,6 +37,21 @@ import static org.mockito.Mockito.*;
  */
 class GameHandlerUnitTest {
 
+    ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+    CommandFactory gameCommandFactory = mock(CommandFactory.class);
+    SessionManagementService sessionManagementService = mock(SessionManagementService.class);
+
+    private WebSocketSession setupMockWebSocketSession() throws URISyntaxException {
+        WebSocketSession session = mock(WebSocketSession.class);
+        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
+        when(session.getId()).thenReturn("session1");
+        when(session.getAcceptedProtocol()).thenReturn("protocol");
+        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
+        when(session.isOpen()).thenReturn(true);
+        return session;
+    }
+
     @Test
     void testHandleMessageInvalidCommand() throws URISyntaxException, IOException {
 
@@ -43,7 +61,7 @@ class GameHandlerUnitTest {
             CommandFactory gameCommandFactory = mock(CommandFactory.class);
 
             ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-            GameHandler gameHandler = new GameHandler(eventPublisher);
+            GameHandler gameHandler = new GameHandler(eventPublisher, gameCommandFactory, sessionManagementService);
             String json = "{\"command\":\"INVALID_COMMAND\",\"data\":{\"err\":\"Test\"}}";
             when(gameCommandFactory.getCommand("INVALID_COMMAND")).thenReturn(null);
             WebSocketMessage<?> message = new TextMessage(json);
@@ -63,25 +81,15 @@ class GameHandlerUnitTest {
     @Test
     void handleMessageShouldExecuteCommandAndSendAnswer() throws Exception {
 
-        WebSocketSession session = mock(WebSocketSession.class);
-        when(session.isOpen()).thenReturn(true);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
-
+        //Given
+        WebSocketSession session = setupMockWebSocketSession();
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
         CreateGameCommand createGameCommand = mock(CreateGameCommand.class);
-
-        // Angenommen, dass dies auch ein Mock sein kann
-        CommandFactory gameCommandFactory = mock(CommandFactory.class);
-        doCallRealMethod().when(gameCommandFactory).getCommand(Commands.CREATE_GAME.name());
-
-        UserEventListener userEventListener = mock(UserEventListener.class);
+        UserEventListener gameEventListener = mock(UserEventListener.class);
+        when(gameCommandFactory.getCommand(Commands.CREATE_GAME.toString())).thenReturn(createGameCommand);
 
         // GAME HANDLER:
-        GameHandler gameHandler = new GameHandler(eventPublisher);
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
 
         // Erstellen der Testdaten:
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
@@ -98,29 +106,29 @@ class GameHandlerUnitTest {
 
         // Konfigurieren des Command, um die Interaction weiterzuleiten
         doAnswer(invocation -> {
-            ApplicationEventPublisher publisher = invocation.getArgument(0, ApplicationEventPublisher.class);
-            UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, new UserDTO("Test", true, true, null, null));
-            publisher.publishEvent(event);
+            UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, "Test");
+            eventPublisher.publishEvent(event);
             return null;
         }).when(createGameCommand).execute(any(), any());
 
         // Konfigurieren des eventPublisher, um JsonDataManager.sendPin aufzurufen
         doAnswer(invocation -> {
+            // UserCreatedLobbyEvent event = invocation.getArgument(0);
             JsonDataUtility.sendPin(session, "1234");
             return null;
         }).when(eventPublisher).publishEvent(any(UserCreatedLobbyEvent.class));
 
-        // When onCreateLobbyEvent() is called, trigger sendPin()
+        // When onCreateLobbyEvent() is called -> sendPin()
         doAnswer((Answer<Void>) invocation -> {
             UserCreatedLobbyEvent event = invocation.getArgument(0);
             JsonDataUtility.sendPin(event.getSession(), "1234");
             return null;
-        }).when(userEventListener).onCreateLobbyEvent(any(UserCreatedLobbyEvent.class));
+        }).when(gameEventListener).onCreateLobbyEvent(any(UserCreatedLobbyEvent.class));
 
-        // Ausführen der Methode, die getestet wird
+        // When
         gameHandler.handleMessage(session, message);
 
-        // Ausführung des Tests
+        // Then
         verify(session, times(1)).sendMessage(any());
     }
 
@@ -135,7 +143,7 @@ class GameHandlerUnitTest {
             when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
 
             ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-            GameHandler gameHandler = new GameHandler(eventPublisher);
+            GameHandler gameHandler = new GameHandler(eventPublisher, gameCommandFactory, sessionManagementService);
 
             WebSocketMessage<?> message = new TextMessage("Test");
 
@@ -147,93 +155,83 @@ class GameHandlerUnitTest {
 
     @Test
     void handleTransportErrorShouldCloseSession() throws Exception {
+        // Given
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        WebSocketSession session = mock(WebSocketSession.class);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
-        when(session.isOpen()).thenReturn(true);
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
+        WebSocketSession session = setupMockWebSocketSession();
         Exception exception = new Exception("Test exception");
 
+        // When
         gameHandler.handleTransportError(session, exception);
 
+        // Then
         verify(session, times(1)).close(CloseStatus.SERVER_ERROR.withReason(exception.getMessage()));
     }
 
     @Test
     void afterConnectionEstablishedShouldPublishEvent() throws Exception {
+        // Given
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        WebSocketSession session = mock(WebSocketSession.class);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
+        WebSocketSession session = setupMockWebSocketSession();
 
+        // When
         gameHandler.afterConnectionEstablished(session);
 
+        // Then
         verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
     }
+
     @Test
     void afterConnectionEstablishedNoClientAddress() throws Exception {
+        // Given
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        WebSocketSession session = mock(WebSocketSession.class);
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
+        WebSocketSession session = setupMockWebSocketSession();
         when(session.getRemoteAddress()).thenReturn(null);
-        when(session.getId()).thenReturn("session1");
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080/game?userID=Test"));
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
 
+        // When
         gameHandler.afterConnectionEstablished(session);
 
+        // Then
         verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
     }
     @Test
-    void afterConnectionEstablishedNoUri() {
+    void afterConnectionEstablishedNoUri() throws URISyntaxException {
+        // Given
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        WebSocketSession session = mock(WebSocketSession.class);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
+        WebSocketSession session = setupMockWebSocketSession();
         when(session.getUri()).thenReturn(null);
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
 
+        // When
         gameHandler.afterConnectionEstablished(session);
 
+        // Then
         verify(eventPublisher, times(1)).publishEvent(any(SessionConnectEvent.class));
     }
 
     @Test
     void afterConnectionClosedShouldPublishEvent() throws Exception {
+        // Given
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        WebSocketSession session = mock(WebSocketSession.class);
-        when(session.getRemoteAddress()).thenReturn(new InetSocketAddress(1234));
-        when(session.getId()).thenReturn("session1");
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080"));
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
+        WebSocketSession session = setupMockWebSocketSession();
 
+        // When
         gameHandler.afterConnectionClosed(session, CloseStatus.NORMAL);
 
+        // Then
         verify(eventPublisher, times(1)).publishEvent(any(SessionDisconnectEvent.class));
     }
+
     @Test
     void afterConnectionClosedNoClientAddress() throws Exception {
+        // Given
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        GameHandler gameHandler = new GameHandler(eventPublisher);
-        WebSocketSession session = mock(WebSocketSession.class);
+        GameHandler gameHandler = new GameHandler(eventPublisher,gameCommandFactory,sessionManagementService);
+        WebSocketSession session = setupMockWebSocketSession();
         when(session.getRemoteAddress()).thenReturn(null);
-        when(session.getId()).thenReturn("session1");
-        when(session.getUri()).thenReturn(new URI("ws://localhost:8080"));
-        when(session.getAcceptedProtocol()).thenReturn("protocol");
-        when(session.getHandshakeHeaders()).thenReturn(new HttpHeaders());
 
         gameHandler.afterConnectionClosed(session, CloseStatus.NORMAL);
 

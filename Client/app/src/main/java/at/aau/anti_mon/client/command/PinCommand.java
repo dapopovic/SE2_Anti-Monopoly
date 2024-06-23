@@ -5,7 +5,7 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
+import at.aau.anti_mon.client.ui.creategame.CreateGameViewModel;
 
 public class PinCommand implements Command {
     private final CreateGameViewModel viewModel;

@@ -32,15 +32,14 @@ import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
-import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.json.JsonDataManager;
-import at.aau.anti_mon.client.networking.NetworkModule;
+import at.aau.anti_mon.client.utilities.JsonDataUtility;
 import at.aau.anti_mon.client.networking.WebSocketClient;
-import at.aau.anti_mon.client.viewmodels.CreateGameViewModel;
-import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
+import at.aau.anti_mon.client.ui.creategame.CreateGameViewModel;
+import at.aau.anti_mon.client.ui.lobby.LobbyViewModel;
 
 class WebSocketClientTest extends AntiMonopolyApplication {
     @Inject
@@ -76,7 +75,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.PIN);
         jsonDataDTO.putData("pin", "1234");
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
     }
@@ -86,7 +85,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.HEARTBEAT);
         jsonDataDTO.putData("msg", "test");
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
         verify(globalEventQueue).enqueueEvent(any(HeartBeatEvent.class));
@@ -99,7 +98,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("username", "testUser");
         jsonDataDTO.putData("isOwner", "false");
         jsonDataDTO.putData("isReady", "false");
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
     }
@@ -109,7 +108,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.LEAVE_GAME);
         jsonDataDTO.putData("username", "testUser");
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
     }
@@ -121,8 +120,8 @@ class WebSocketClientTest extends AntiMonopolyApplication {
                 new User("testUser", false, false, 1000, null, Figures.GREEN_CIRCLE,false,false),
                 new User("testUser2", false, false, 1000, null, Figures.BLUE_CIRCLE,false,false)
         };
-        jsonDataDTO.putData("users", JsonDataManager.createJsonMessage(users));
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        jsonDataDTO.putData("users", JsonDataUtility.createJsonMessage(users));
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
     }
@@ -132,7 +131,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.setCommand(Commands.READY);
         jsonDataDTO.putData("username", "testUser");
         jsonDataDTO.putData("isReady", "true");
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
     }
@@ -146,7 +145,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("figure", Figures.GREEN_TRIANGLE.toString());
         jsonDataDTO.putData("location", "1");
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
-        String message = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
 
@@ -161,7 +160,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonData.putData("new_balance", "1700");
         assertEquals(Commands.CHANGE_BALANCE, jsonData.getCommand());
 
-        String message = JsonDataManager.createJsonMessage(jsonData);
+        String message = JsonDataUtility.createJsonMessage(jsonData);
         assert message != null;
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
 
@@ -174,7 +173,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonData.setCommand(Commands.CHEATING);
         assertEquals(Commands.CHEATING, jsonData.getCommand());
 
-        String message = JsonDataManager.createJsonMessage(jsonData);
+        String message = JsonDataUtility.createJsonMessage(jsonData);
         assert message != null;
         client.getWebSocketListener().onMessage(client.getWebSocket(), message);
 

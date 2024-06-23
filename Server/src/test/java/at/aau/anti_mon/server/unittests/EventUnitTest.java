@@ -20,36 +20,28 @@ class EventUnitTest {
 
     @Test
     void userJoinedLobbyEventShouldReturnCorrectValues(){
-
         when(session.getId()).thenReturn("session1");
-
-        when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1", false, true, null, null);
-        LobbyDTO lobbyDTO = new LobbyDTO(1234);
-        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session, lobbyDTO, userDTO);
-
+        UserJoinedLobbyEvent event = new UserJoinedLobbyEvent(session, 1234, "user1");
         assertEquals("user1", event.getUsername());
         assertEquals("session1", event.getUserSessionID());
-        assertEquals(1234, event.getPin());
+        assertEquals(1234, event.getLobbyPIN());
     }
 
     @Test
     void userLeftLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1", false, true, null, null);
-        LobbyDTO lobbyDTO = new LobbyDTO(1234);
-        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session, lobbyDTO, userDTO);
+        UserLeftLobbyEvent event = new UserLeftLobbyEvent(session, 1234, "user1");
 
         assertEquals("user1", event.getUsername());
         assertEquals("session1", event.getUserSessionID());
-        assertEquals(1234, event.getPin());
+        assertEquals(1234, event.getLobbyPIN());
     }
 
     @Test
     void userCreatedLobbyEventShouldReturnCorrectValues() {
         when(session.getId()).thenReturn("session1");
-        UserDTO userDTO = new UserDTO("user1", false, true, null, null);
-        UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, userDTO);
+        //UserDTO userDTO = new UserDTO("user1", false, true, null, null);
+        UserCreatedLobbyEvent event = new UserCreatedLobbyEvent(session, "user1");
 
         assertEquals("user1", event.getUsername());
         assertEquals("session1", event.getUserSessionID());
@@ -93,7 +85,7 @@ class EventUnitTest {
     void loseGameEventShouldReturnCorrectValues(){
         when(session.getId()).thenReturn("session1");
         String username = "user1";
-        LoseGameEvent event = new LoseGameEvent(session,username);
+        LooseGameEvent event = new LooseGameEvent(session,username);
         assertEquals("session1", event.getSession().getId());
         assertEquals("user1", event.getUsername());
     }

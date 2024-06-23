@@ -4,6 +4,9 @@ import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import org.springframework.web.socket.WebSocketSession;
 
+/**
+ * Event that is fired when a player starts a game
+ */
 public class UserStartedGameEvent extends Event{
     private final LobbyDTO lobbyDTO;
     private final UserDTO userDTO;

@@ -20,7 +20,7 @@ import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.utilities.JsonDataUtility;
 import at.aau.anti_mon.client.networking.WebSocketClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -35,6 +35,7 @@ class WebSocketClientTest {
     private WebSocketClient webSocketClient;
     @Mock
     private CommandFactory commandFactory;
+
 
     @BeforeEach
     void setUp() {
@@ -54,7 +55,7 @@ class WebSocketClientTest {
         jsonDataDTO.putData("username", "testUser");
 
         WebSocket webSocket = mock(WebSocket.class);
-        String jsonData = JsonDataManager.createJsonMessage(jsonDataDTO);
+        String jsonData = JsonDataUtility.createJsonMessage(jsonDataDTO);
         if (jsonData == null) {
             fail("Failed to create JSON message");
             return;
@@ -137,7 +138,7 @@ class WebSocketClientTest {
         jsonDataDTO.setCommand(Commands.CREATE_GAME);
         jsonDataDTO.putData("username", "testUser");
         webSocketClient.sendJsonData(jsonDataDTO);
-        verify(webSocket).send(Objects.requireNonNull(JsonDataManager.createJsonMessage(jsonDataDTO)));
+        verify(webSocket).send(Objects.requireNonNull(JsonDataUtility.createJsonMessage(jsonDataDTO)));
     }
     @Test
     void testSendJsonDataWithSendFailed() {
@@ -148,7 +149,7 @@ class WebSocketClientTest {
         jsonDataDTO.setCommand(Commands.CREATE_GAME);
         jsonDataDTO.putData("username", "testUser");
         webSocketClient.sendJsonData(jsonDataDTO);
-        verify(webSocket).send(Objects.requireNonNull(JsonDataManager.createJsonMessage(jsonDataDTO)));
+        verify(webSocket).send(Objects.requireNonNull(JsonDataUtility.createJsonMessage(jsonDataDTO)));
     }
 
     @Test

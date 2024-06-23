@@ -7,6 +7,7 @@ import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.game.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class JsonDataUtility {
 
     static String usernamestring = "username";
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private JsonDataUtility() {
     }
@@ -30,8 +32,7 @@ public class JsonDataUtility {
     public static String createStringFromJsonMessage(Commands command, Map<String, String> data) {
         try {
             JsonDataDTO jsonDataDTO = new JsonDataDTO(command, data);
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(jsonDataDTO);
+            return MAPPER.writeValueAsString(jsonDataDTO);
         } catch (JsonProcessingException e) {
             Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;
@@ -45,14 +46,23 @@ public class JsonDataUtility {
     }
 
     public static <T> T parseJsonMessage(String json, Class<T> clazz) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, clazz);
+        Logger.debug("SERVER: JSON-Nachricht empfangen - parse : " + json);
+        try {
+            T result = MAPPER.readValue(json, clazz);
+            Logger.debug("SERVER: JSON erfolgreich geparst: " + result);
+            return result;
+        } catch (InvalidFormatException e) {
+            Logger.error("Fehler beim Parsen der JSON-Nachricht: Ungültiges Format - " + e.getMessage());
+            throw e;
+        } catch (JsonProcessingException e) {
+            Logger.error("Fehler beim Parsen der JSON-Nachricht: " + e.getMessage());
+            throw e;
+        }
     }
 
     public static String createStringFromJsonMessage(Object object) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(object);
+            return MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             Logger.error("Fehler beim Erstellen der JSON-Nachricht: " + e.getMessage());
             return null;

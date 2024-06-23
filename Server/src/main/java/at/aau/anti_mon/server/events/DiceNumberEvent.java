@@ -4,18 +4,20 @@ package at.aau.anti_mon.server.events;
 import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 
-public class DiceNumberEvent extends Event {
-    @Getter
-    private final String username;
-    @Getter
+/**
+ * Event that is fired when a player rolls the dice
+ */
+@Getter
+public class DiceNumberEvent extends BaseUserEvent {
+
     private final Integer dicenumber;
-    @Getter
+    private final Integer pin;
     private final Boolean cheat;
 
-    public DiceNumberEvent(WebSocketSession session,String username, Integer dicenumber, Boolean cheat){
-        super(session);
-        this.username = username;
-        this.dicenumber = dicenumber;
+    public DiceNumberEvent(WebSocketSession session,String userName, Integer diceNumber,Integer lobbyPIN, Boolean cheat){
+        super(session,userName);
+        this.dicenumber = diceNumber;
+        this.pin = lobbyPIN;
         this.cheat = cheat;
     }
 }

@@ -2,6 +2,7 @@ package at.aau.anti_mon.server.integrationtests;
 
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
+import at.aau.anti_mon.server.utilities.MessagingUtility;
 import at.aau.anti_mon.server.websocketclient.WebSocketHandlerClientImpl;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,7 +56,9 @@ class WebSocketHandlerIntegrationTest {
 
     @Test
     void testCreateGameAndGetPin() throws Exception {
-        String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
+        //String message = "{\"command\":\"CREATE_GAME\",\"data\":{\"username\":\"Test\"}}";
+        String message = MessagingUtility.createUsernameMessage("Test", Commands.CREATE_GAME).getMessage();
+
         Logger.info("TEST - sending message: " + message);
         session.sendMessage(new TextMessage(message));
 

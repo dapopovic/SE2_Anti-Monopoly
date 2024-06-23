@@ -2,7 +2,7 @@ package at.aau.anti_mon.client.command;
 
 import javax.inject.Inject;
 
-import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.events.TestEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 

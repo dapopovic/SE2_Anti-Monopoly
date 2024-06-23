@@ -4,7 +4,7 @@ package at.aau.anti_mon.client.command;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.events.EndGameEvent;
-import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 
 public class EndGameCommand implements Command{

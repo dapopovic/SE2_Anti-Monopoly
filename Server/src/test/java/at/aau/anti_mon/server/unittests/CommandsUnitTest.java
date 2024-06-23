@@ -5,6 +5,7 @@ import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.*;
 import at.aau.anti_mon.server.exceptions.CanNotExecuteJsonCommandException;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
+import at.aau.anti_mon.server.utilities.MessagingUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -295,10 +296,14 @@ class CommandsUnitTest {
     }
     @Test
     void diceNumberCommandShouldPublishEvent() {
-        JsonDataDTO jsonData = new JsonDataDTO();
-        jsonData.setCommand(Commands.DICENUMBER);
-        jsonData.putData("dicenumber", "2");
-        jsonData.putData("username", "testUser");
+
+        JsonDataDTO jsonData = new JsonDataDTO.Builder(Commands.DICENUMBER)
+                .addInt("dicenumber", 2)
+                .addString("username", "testUser")
+                .addInt("pin", 1234)
+                .addBoolean("cheat", false)
+                .build();
+
 
         DiceNumberCommand diceNumberCommand = new DiceNumberCommand(eventPublisher);
         diceNumberCommand.execute(session, jsonData);
@@ -344,7 +349,7 @@ class CommandsUnitTest {
         jsonData.putData("username", "Alex");
         loseGameCommand = new LoseGameCommand(eventPublisher);
         loseGameCommand.execute(session,jsonData);
-        verify(eventPublisher,times(1)).publishEvent(any(LoseGameEvent.class));
+        verify(eventPublisher,times(1)).publishEvent(any(LooseGameEvent.class));
     }
 
     @Test

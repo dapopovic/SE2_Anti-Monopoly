@@ -4,13 +4,13 @@ import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
+/**
+ * Event that is fired when a player ends the game
+ */
 @Getter
-public class EndGameEvent extends Event{
+public class EndGameEvent extends BaseUserEvent{
 
-    private final String username;
     public EndGameEvent(WebSocketSession session, String username){
-        super(session);
-        this.username = username;
-        Logger.info("Wir sind in EndGameEvent.");
+        super(session,username);
     }
 }

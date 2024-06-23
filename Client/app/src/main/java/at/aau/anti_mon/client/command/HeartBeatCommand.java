@@ -4,7 +4,7 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
-import at.aau.anti_mon.client.events.GlobalEventQueue;
+import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.json.JsonDataDTO;
 

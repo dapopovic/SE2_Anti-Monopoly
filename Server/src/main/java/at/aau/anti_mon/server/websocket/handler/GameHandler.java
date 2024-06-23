@@ -4,6 +4,7 @@ import at.aau.anti_mon.server.commands.Command;
 import at.aau.anti_mon.server.commands.CommandFactory;
 import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.events.*;
+import at.aau.anti_mon.server.service.SessionManagementService;
 import at.aau.anti_mon.server.utilities.JsonDataUtility;
 import at.aau.anti_mon.server.utilities.StringUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,17 +27,27 @@ public class GameHandler implements WebSocketHandler {
 
     private final  ApplicationEventPublisher eventPublisher;
     private final CommandFactory gameCommandFactory;
-    String remoteaddressisnull = "RemoteAddress ist null";
+    private final SessionManagementService sessionManagementService;
+    String REMOTE_ADDRESS_IS_NULL = "RemoteAddress ist null";
 
     @Autowired
     public GameHandler(
-                       ApplicationEventPublisher eventPublisher
+            ApplicationEventPublisher eventPublisher,
+            CommandFactory gameCommandFactory,
+            SessionManagementService sessionManagementService
     ) {
         this.eventPublisher = eventPublisher;
+        this.gameCommandFactory = gameCommandFactory;
+        this.sessionManagementService = sessionManagementService;
         Logger.info("SERVER : GameHandler created");
-        this.gameCommandFactory = new CommandFactory(eventPublisher);
     }
 
+    /**
+     * Diese Methode wird aufgerufen, wenn eine Nachricht empfangen wird.
+     * @param session WebSocket-Sitzung
+     * @param message WebSocket-Nachricht
+     * @throws JsonProcessingException Fehler beim Parsen der JSON-Nachricht
+     */
     @Override
     public void handleMessage(@NotNull WebSocketSession session, WebSocketMessage<?> message) throws JsonProcessingException {
         Logger.info("SERVER : handleMessage called from session: " + session.getId() + " with payload: " + message.getPayload());
@@ -62,15 +73,13 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-
+        String errorMessage = exception.getMessage() != null ? exception.getMessage() : "Unknown error";
         Logger.error("Transportfehler in Session " + session.getId() + ": " + exception.getMessage());
         if (session.isOpen()) {
-            session.close(CloseStatus.SERVER_ERROR.withReason(exception.getMessage()));
+            session.close(CloseStatus.SERVER_ERROR.withReason(errorMessage));
         }
 
-        eventPublisher.publishEvent(new SessionDisconnectEvent(session
-        //        ,userID
-        ));
+        eventPublisher.publishEvent(new SessionDisconnectEvent(session));
     }
 
     /**
@@ -79,43 +88,35 @@ public class GameHandler implements WebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-
-        //////////////////////////////////////////////////////////////////// DEBUG
         InetSocketAddress clientAddress = session.getRemoteAddress();
         HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
 
-        if (clientAddress == null) {
-            Logger.error(remoteaddressisnull);
-        }else {
+        if (clientAddress != null) {
             Logger.info("Accepted connection from: {}:{}", clientAddress.getHostString(), clientAddress.getPort());
             Logger.debug("Client hostname: {}", clientAddress.getHostName());
             Logger.debug("Client ip: {}", clientAddress.getAddress().getHostAddress());
             Logger.debug("Client port: {}", clientAddress.getPort());
+
+        }else {
+            Logger.error("RemoteAddress ist null");
         }
 
-        if (session.getRemoteAddress() == null) {
-            Logger.error(remoteaddressisnull);
-        }else {
-            Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
-            Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
-            Logger.debug("Session id: {}", session.getId());
-            Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
-            Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
-        }
-        URI sessionUri = session.getUri();
+        Logger.debug("Session accepted protocols: {}", session.getAcceptedProtocol());
+        Logger.debug("Session binary message size limit: {}", session.getBinaryMessageSizeLimit());
+        Logger.debug("Session id: {}", session.getId());
+        Logger.debug("Session text message size limit: {}", session.getTextMessageSizeLimit());
+        Logger.debug("Handshake header: Accept {}", handshakeHeaders.toString());
 
-        if (sessionUri == null) {
-            Logger.error("URI ist null");
-        }else {
-            Logger.debug("Session uri: {}", sessionUri.toString());
-            String userID = StringUtility.extractUserID(sessionUri.getQuery());
-            Logger.info( "Query " + sessionUri.getQuery() );
+
+        if (session.getUri() != null) {
+            String userID = StringUtility.extractUserID(session.getUri().getQuery());
             Logger.info("Neue WebSocket-Sitzung für UserID {}: {}", userID, session.getId());
+            sessionManagementService.registerUserWithSession(userID, session);
+        }else {
+            Logger.error("URI ist null");
         }
 
-        eventPublisher.publishEvent(new SessionConnectEvent(session
-        //        ,userID
-        ));
+        eventPublisher.publishEvent(new SessionConnectEvent(session));
     }
 
     /**
@@ -126,23 +127,23 @@ public class GameHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, @NotNull CloseStatus closeStatus) {
         InetSocketAddress clientAddress = session.getRemoteAddress();
-        if (clientAddress == null) {
-            Logger.error(remoteaddressisnull);
-        }else {
+        if (clientAddress != null) {
             Logger.info("Connection closed by {}:{}", clientAddress.getHostString(), clientAddress.getPort());
+        } else {
+            Logger.error("RemoteAddress ist null");
         }
+
         Logger.info("WebSocket-Sitzung wird geschlossen: " + session.getId());
 
-        URI sessionUri = session.getUri();
-        if (sessionUri == null) {
-            Logger.error("URI ist null");
+        if (session.getUri() != null) {
+            Logger.info( "Query " + session.getUri().getQuery() );
+            //String userID = StringUtility.extractUserID(session.getUri().getQuery());
+            //sessionManagementService.removeSessionById(session.getId(), userID);
         }else {
-            Logger.info( "Query " + sessionUri.getQuery() );
+            Logger.error("URI ist null");
         }
 
-        eventPublisher.publishEvent(new SessionDisconnectEvent(session
-              //  ,userID
-        ));
+        eventPublisher.publishEvent(new SessionDisconnectEvent(session));
     }
 
     /**

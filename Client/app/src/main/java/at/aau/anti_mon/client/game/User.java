@@ -12,22 +12,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class User {
+
     private String username;
     @JsonProperty("owner")
     private boolean isOwner;
-    @Setter
     private boolean isReady;
-    @Setter
     private int money;
-    @Setter
     private Roles role;
-    @Setter
     private Figures figure;
-    @Setter
     private boolean currentPlayer;
-    @Setter
     private boolean lostGame;
+
+    int playerLocation;
 
     public User(String username, boolean isOwner, boolean isReady) {
         this.username = username;
@@ -38,6 +36,7 @@ public class User {
         this.figure = null;
         this.currentPlayer=false;
         this.lostGame = false;
+        this.playerLocation = 0;
     }
 
     @Override
@@ -49,5 +48,9 @@ public class User {
             return false;
         }
         return username.equals(user.username) && isOwner == user.isOwner && isReady == user.isReady && money == user.money;
+    }
+
+    public int getLocation() {
+        return playerLocation;
     }
 }

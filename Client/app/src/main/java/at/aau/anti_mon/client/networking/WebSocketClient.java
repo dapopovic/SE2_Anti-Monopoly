@@ -4,9 +4,8 @@ import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import com.itkacher.okprofiler.BuildConfig;
+import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -17,14 +16,12 @@ import javax.inject.Inject;
 import at.aau.anti_mon.client.command.Command;
 import at.aau.anti_mon.client.command.CommandFactory;
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.json.JsonDataManager;
+import at.aau.anti_mon.client.utilities.JsonDataUtility;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
 
 
 /**
@@ -32,7 +29,9 @@ import okhttp3.WebSocketListener;
  * It is injected into the activities and handles the communication with the server.
  * --> Singleton
  */
-public class WebSocketClient implements AutoCloseable{
+@Setter
+@Getter
+public class WebSocketClient { // implements AutoCloseable --> not needed i think?
 
     /**
      * localhost from the Android emulator is reachable as 10.0.2.2
@@ -48,15 +47,16 @@ public class WebSocketClient implements AutoCloseable{
             "ws://192.168.31.176:53215/game",
             "ws://se2-demo.aau.at:53215/game?userID="};
 
-    @Getter
-    @Setter
+    private static final String LOCAL_WEBSOCKET_URI_1 = "ws://10.0.2.2:8080/game?userID=";
+    private static final String LOCAL_WEBSOCKET_URI_2 = "ws://10.0.2.2:53215/game";
+    private static final String SE2_SERVER_WEBSOCKET_URI = "http://se2-demo.aau.at:53215/game?userID=";
+
     private WebSocket webSocket;
     private final OkHttpClient client;
-    @Setter
     private CommandFactory commandFactory;
-    private final MutableLiveData<JsonDataDTO> liveData = new MutableLiveData<>();
+    //private final MutableLiveData<JsonDataDTO> liveData = new MutableLiveData<>();
     private boolean isConnected = false;
-    private String userID;
+    public String userID;
 
     /**
      * Queue to store messages that are not sent yet ( because the connection is not established yet)
@@ -64,10 +64,15 @@ public class WebSocketClient implements AutoCloseable{
     private final Queue<String> messageQueue = new LinkedList<>();
 
     @Inject
-    public WebSocketClient(OkHttpClient client, CommandFactory commandFactory) {
-        this.client = client;
-        this.commandFactory = commandFactory;
-        connectToServer(); // -> keine dauerhafte Verbindung
+    public WebSocketClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(new OkHttpProfilerInterceptor());
+        }
+        this.client = builder.build();
+        commandFactory = CommandFactory.getInstance();
+
+       // connectToServer(); // -> keine dauerhafte Verbindung
     }
 
 
@@ -76,75 +81,36 @@ public class WebSocketClient implements AutoCloseable{
      */
     public synchronized void connectToServer() {
         Log.d(DEBUG_TAG, "Connecting to server");
+
         // Mehrfache Verbindungen verhindern:
-        if (webSocket != null || userID == null){
-            Log.d(DEBUG_TAG, "Connection already established or no userID set");
+        if (webSocket != null){
+            Log.d(DEBUG_TAG, "Connection already established");
             return;
         }
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = WEBSOCKET_URIS[1] + userID;
+        String urlWithUserId = SE2_SERVER_WEBSOCKET_URI + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
-        webSocket = client.newWebSocket(request, createWebSocketListener());
+        webSocket = client.newWebSocket(request, new WebSocketClientListener(this));
+        Log.d(DEBUG_TAG, "Connection established");
+        setConnected(true);
     }
 
     /**
-     * Creates a WebSocketListener to handle WebSocket events
-     * @return The WebSocketListener
+     * Connects to the server with a specific user ID
      */
-    private WebSocketListener createWebSocketListener() {
-        return new WebSocketListener() {
-            @Override
-            public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                Log.d(DEBUG_TAG, "Opened Connection: " + response.message());
-
-                isConnected = true;
-                // Versuche alle wartenden Nachrichten zu senden
-                flushMessageQueue();
-            }
-
-            @Override
-            public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
-                handleIncomingMessage(text);
-            }
-
-            @Override
-            public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
-                Log.d(DEBUG_TAG, "Closed Connection " + reason);
-
-                isConnected = false;
-                WebSocketClient.this.webSocket = null;
-            }
-
-            @Override
-            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
-                String errorMessage = (response != null) ? response.message() : "No response";
-                Log.e(DEBUG_TAG, "WebSocket - Failure - Error: " + t.getMessage() + ", Response Message: " + errorMessage);
-
-                isConnected = false;
-
-                if (response != null) {
-                    Log.e(DEBUG_TAG, "WebSocket - Failure - Response Message: " + response.message());
-                } else {
-                    Log.e(DEBUG_TAG, "WebSocket - Failure - Received null response");
-                }
-                WebSocketClient.this.webSocket = null;
-                Log.e(DEBUG_TAG, "Connection Failure", t);
-
-                // TODO: Eventuell erneut versuchen, die Verbindung herzustellen ?
-                connectToServer();  // TEST!
-            }
-        };
+    public synchronized void connectToServer(String userID) {
+        this.userID = userID;
+        connectToServer();
     }
-
 
     /**
      * Handles incoming messages from the server
      * @param text The message from the server
      */
-    private void handleIncomingMessage(String text) {
+    void handleIncomingMessage(String text) {
         Log.d(DEBUG_TAG, "Received message: " + text);
-        JsonDataDTO jsonDataDTO = JsonDataManager.parseJsonMessage(text, JsonDataDTO.class);
+        JsonDataDTO jsonDataDTO = JsonDataUtility.parseJsonMessage(text, JsonDataDTO.class);
         if (jsonDataDTO == null) {
             Log.e(DEBUG_TAG, "Failed to parse JSON message");
             return;
@@ -155,7 +121,7 @@ public class WebSocketClient implements AutoCloseable{
         }
         Command command = commandFactory.getCommand(jsonDataDTO.getCommand().name());
         command.execute(jsonDataDTO);
-        liveData.postValue(jsonDataDTO);
+        //liveData.postValue(jsonDataDTO);
     }
 
 
@@ -203,7 +169,7 @@ public class WebSocketClient implements AutoCloseable{
      * @param message The message to send as JsonDataDTO
      */
     public void sendJsonData(JsonDataDTO message) {
-        if (webSocket != null && webSocket.send(Objects.requireNonNull(JsonDataManager.createJsonMessage(message)))) {
+        if (webSocket != null && webSocket.send(Objects.requireNonNull(JsonDataUtility.createJsonMessage(message)))) {
             Log.d(DEBUG_TAG, "Message sent: " + message);
         } else {
             Log.e(DEBUG_TAG, "Failed to send message or WebSocket not connected");
@@ -212,35 +178,21 @@ public class WebSocketClient implements AutoCloseable{
 
     /**
      * Checks if the WebSocket connection is established
-     * @return True if the connection is established, false otherwise
+     * @return True if the connection is established and websocket is not null, false otherwise
      */
     public boolean isConnected() {
-        // TODO: Implement isConnected
-        return webSocket != null;
+        return isConnected && webSocket != null;
     }
-
-    /**
-     * Disconnects the WebSocket connection
-     */
-    public synchronized void disconnect() {
-        if (webSocket != null) {
-            webSocket.close(1000, "Client disconnected");
-            webSocket = null;
-        }
-    }
-    public LiveData<JsonDataDTO> getLiveData() {
-        return liveData;
-    }
-    public WebSocketListener getWebSocketListener() {
-        return createWebSocketListener();
-    }
-
-    public void setUserId(String userID) {
-        this.userID = userID;
-    }
-
 
     @Override
+    protected void finalize() throws Throwable {
+        try {
+            disconnect();
+        } finally {
+            super.finalize();
+        }
+    }
+
     public void close() {
         if (webSocket == null) {
             return;
@@ -251,4 +203,39 @@ public class WebSocketClient implements AutoCloseable{
             Log.e(DEBUG_TAG, "Failed to disconnect WebSocket", e);
         }
     }
+
+
+    /**
+     * Disconnects the WebSocket connection
+     */
+    public synchronized void disconnect(String reason) {
+        if (webSocket != null) {
+            webSocket.close(1000, Objects.requireNonNullElse(reason, "Client disconnected"));
+            webSocket = null;
+            isConnected = false;
+        }
+    }
+    public synchronized void disconnect() {
+        disconnect("no reason given");
+    }
+
+
+    public void onOpen() {
+        isConnected = true;
+        flushMessageQueue();
+    }
+
+    public void onClose() {
+        isConnected = false;
+        webSocket = null;
+    }
+
+    /**
+     * Restarts the WebSocket connection
+     */
+    public synchronized void restartConnection() {
+        disconnect("Client disconnected because of reconnection!");
+        connectToServer();
+    }
+
 }

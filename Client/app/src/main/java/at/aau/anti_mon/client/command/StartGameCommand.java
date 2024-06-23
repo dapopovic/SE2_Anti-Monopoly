@@ -9,8 +9,8 @@ import javax.inject.Inject;
 
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.json.JsonDataManager;
-import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
+import at.aau.anti_mon.client.utilities.JsonDataUtility;
+import at.aau.anti_mon.client.ui.lobby.LobbyViewModel;
 
 public class StartGameCommand implements Command {
     LobbyViewModel lobbyViewModel;
@@ -21,7 +21,7 @@ public class StartGameCommand implements Command {
     @Override
     public void execute(JsonDataDTO data) {
         Log.d("StartGameCommand", "Game started " + data.getData().get("users"));
-        User[] users = JsonDataManager.parseJsonMessage(data.getData().get("users"), User[].class);
+        User[] users = JsonDataUtility.parseJsonMessage(data.getData().get("users"), User[].class);
         lobbyViewModel.startGame(new ArrayList<>(Arrays.asList(users)));
     }
 }

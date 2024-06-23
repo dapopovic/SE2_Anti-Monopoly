@@ -53,4 +53,16 @@ public class User {
         }
         return lobby.getOwner().equals(this);
     }
+
+    public void clear() {
+        this.lobby = null;
+        this.isReady = false;
+        this.money = 1500;
+        this.role = null;
+        this.figure = null;
+        this.location = 1;
+        this.sequence = 0;
+        this.unavailableRounds = 0;
+        this.hasPlayed = false;
+    }
 }

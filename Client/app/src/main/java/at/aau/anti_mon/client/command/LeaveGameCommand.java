@@ -4,7 +4,7 @@ package at.aau.anti_mon.client.command;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.json.JsonDataDTO;
-import at.aau.anti_mon.client.viewmodels.LobbyViewModel;
+import at.aau.anti_mon.client.ui.lobby.LobbyViewModel;
 
 public class LeaveGameCommand implements Command {
     private final LobbyViewModel viewModel;

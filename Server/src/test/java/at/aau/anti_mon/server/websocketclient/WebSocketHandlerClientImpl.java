@@ -45,7 +45,7 @@ public class WebSocketHandlerClientImpl implements WebSocketHandler {
                 Logger.info("CLIENT : Data: " + data);
 
                 switch (commands) {
-                    case PIN -> messagesQueue.add(json);
+                    case PIN, START_GAME, CREATE_GAME, NEW_USER, LEAVE_GAME, READY, DICENUMBER, END_GAME, JOIN_GAME -> messagesQueue.add(json);
                     case HEARTBEAT -> Logger.info("CLIENT : Heartbeat received");
                     default -> Logger.error("CLIENT :  Unbekannter oder nicht unterstützter Befehl: " + commands);
                 }

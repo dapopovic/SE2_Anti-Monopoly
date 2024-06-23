@@ -15,63 +15,57 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WebSocketDemoApp"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:screenOrientation="landscape"
+        tools:ignore="DiscouragedApi">
         <activity
-            android:name=".activities.PopActivityCheating"
+            android:name=".ui.popups.PopActivityCheating"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activities.PopActivityDice"
+            android:name=".ui.popups.PopActivityDice"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp"/>
         <activity
-            android:name=".activities.PopActivityObjects"
+            android:name=".ui.popups.PopActivityObjects"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activities.PopActivityHandel"
+            android:name=".ui.popups.PopActivityHandel"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activities.PopActivitySettings"
+            android:name=".ui.popups.PopActivitySettings"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activities.PopActivityRole"
+            android:name=".ui.popups.PopActivityRole"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
-            android:name=".activities.ActivityGameField"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:name=".ui.gameboard.GameBoardActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.JoinGameActivity"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:name=".ui.joingame.JoinGameActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.LobbyActivity"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:name=".ui.lobby.LobbyActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.LoadGameActivity"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:name=".ui.loadgame.LoadGameActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.StartNewGameActivity"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:name=".ui.creategame.CreateGameActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.GameInstructionsActivity"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:name=".ui.instructions.GameInstructionsActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.StartMenuActivity"
-            android:exported="true"
-            android:screenOrientation="sensorLandscape">
-
+            android:name=".ui.startmenu.StartMenuActivity"
+            android:exported="true">
             <!-- Define this activity as the default/main activity -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,5 +74,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

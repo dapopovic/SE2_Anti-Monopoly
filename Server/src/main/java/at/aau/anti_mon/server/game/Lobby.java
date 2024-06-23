@@ -96,7 +96,7 @@ public class Lobby {
         return users.contains(user);
     }
 
-    public boolean canAddPlayer() {
+    public boolean isFull() {
         return this.users.size() < MAX_USERS;
     }
 
@@ -112,5 +112,9 @@ public class Lobby {
 
     public boolean isEveryoneReady() {
         return users.stream().allMatch(User::isReady);
+    }
+
+    public boolean hasUser(String username) {
+        return users.stream().anyMatch(user -> user.getName().equals(username));
     }
 }

@@ -18,14 +18,9 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    //signingConfigs {
-    //    release {
-            // storeFile KeyStoreFile zum Signieren etc.
-            // storePassword Passwort für den Keystore
-            // keyAlias Name des Schlüssels der App im KeyStore
-            // keyPassword Passwort des Schlüssels der App
-    //    }
-    //}
+    buildFeatures {
+        dataBinding true
+    }
     buildTypes {
         release {
             //signingConfig signingConfigs.release
@@ -33,17 +28,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        //release {
-        //    minifyEnabled false
-        //    //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        //    signingConfig signingConfigs.debug
-        //}
     }
     compileOptions {
-
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-
     }
 
     testOptions {
@@ -69,8 +57,6 @@ tasks.register('jacocoTestReport', JacocoReport) {
 
     sourceDirectories.setFrom(files([mainSrc]))
     classDirectories.setFrom(files([debugTree]))
-    //sourceDirectories.from = files([mainSrc])
-    //classDirectories.from = files([debugTree])
     executionData.from = files("${project.layout.buildDirectory.get().asFile}/jacoco/testDebugUnitTest.exec")
 }
 
@@ -80,10 +66,19 @@ sonar {
     property "sonar.organization", "dapopovic"
     property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.java.coveragePlugin", "jacoco"
-      property "sonar.gradle.skipCompiler", "true"
+    property "sonar.gradle.skipCompiler", "true"
     property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
     property "sonar.coverage.exclusions", "***/activities/**, **/client/*.*, **/adapters/**, **/events/GlobalEventQueue.*, **/viewmodels/SingleLiveEvent.*"
   }
+}
+
+// @see :  https://github.com/google/dagger
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs << "-Xmaxerrs" << "500" // or whatever number you want
+        }
+    }
 }
 
 dependencies {
@@ -93,12 +88,8 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.runner
-    testImplementation libs.mockito.core
-    testImplementation libs.mockwebserver
-
 
     implementation libs.retrofit
-
     implementation libs.converter.jackson
     implementation libs.jackson.databind
     implementation libs.jackson.core
@@ -107,28 +98,32 @@ dependencies {
     implementation libs.multidex
     implementation libs.eventbus
 
-    implementation(libs.okio)
+    implementation libs.okio
     implementation libs.okhttp3.okhttp
-    implementation(libs.okhttpprofiler)
-    implementation(libs.logging.interceptor)
+    implementation libs.okhttpprofiler
+    implementation libs.logging.interceptor
 
-    //implementation(libs.okhttp.v490)
+    // Add Dagger dependencies
+    implementation libs.dagger
+    annotationProcessor libs.dagger.compiler.v2511
 
-    // Dagger Dependency Injection
-    implementation libs.dagger.android
-    implementation libs.dagger.android.support
-    testImplementation libs.dagger.android.support
-    testImplementation libs.dagger.android.processor
-    annotationProcessor libs.dagger.android.processor
-    annotationProcessor libs.dagger.compiler
-    testAnnotationProcessor libs.dagger.android.processor
-    testAnnotationProcessor libs.dagger.compiler
+    // Dagger Android
+    implementation libs.dagger.android.v251
+    implementation libs.dagger.android.support.v251 // if you use the support libraries
+    annotationProcessor libs.dagger.android.processor.v251
 
+    // DataBinding
+    implementation libs.viewbinding
+    implementation libs.databinding.common
+    implementation libs.databinding.runtime
+    implementation libs.databinding.adapters
 
+    testImplementation libs.mockito.core
+    testImplementation libs.mockwebserver
+    testImplementation libs.core.testing
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testImplementation(libs.junit.jupiter.params)
-
     testRuntimeOnly libs.junit.jupiter.engine
 
     compileOnly libs.lombok
