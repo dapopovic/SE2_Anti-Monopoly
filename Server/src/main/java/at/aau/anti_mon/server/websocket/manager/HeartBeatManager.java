@@ -1,69 +1,71 @@
 package at.aau.anti_mon.server.websocket.manager;
 
-import at.aau.anti_mon.server.enums.Commands;
-import at.aau.anti_mon.server.dtos.JsonDataDTO;
 import at.aau.anti_mon.server.service.SessionManagementService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import at.aau.anti_mon.server.utilities.MessagingUtility;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 
 @Component
 public class HeartBeatManager {
 
     private final SessionManagementService sessionManagementService;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final Map<String, Long> sessionLastActivityMap = new ConcurrentHashMap<>();
 
+    @Autowired
     public HeartBeatManager(SessionManagementService sessionManagementService) {
         this.sessionManagementService = sessionManagementService;
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 10, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::sendHeartbeatToAllSessions, 0, 15, TimeUnit.SECONDS);
     }
 
-    /*
-    do not know if this is used:
-    @Scheduled(fixedRate = 25000)
-    private void sendHeartbeat(WebSocketSession session) {
-        sendHeartBeatMessage(session);
-    }
-    */
-
-    /**
-     * Sends a heartbeat message to all active sessions
-     */
     public void sendHeartbeatToAllSessions() {
-        sessionManagementService.getAllSessions().values().forEach(this::sendHeartBeatMessage);
+        long inactivityThreshold = TimeUnit.SECONDS.toMillis(30); // Beispiel: 30 Sekunden Inaktivität
+        new HashMap<>(sessionManagementService.getAllSessions()).forEach((sessionId, session) -> {
+            if (session.isOpen()) {
+                if (isSessionInactive(session, inactivityThreshold)) {
+                    sendHeartBeatMessage(session);
+                }
+            } else {
+                removeClosedSession(sessionId);
+            }
+        });
     }
 
     private void sendHeartBeatMessage(@NotNull WebSocketSession session) {
-        try {
-            Map<String, String> dataMap = new HashMap<>();
-            JsonDataDTO jsonData = new JsonDataDTO(Commands.HEARTBEAT, dataMap);
-            jsonData.putData("msg", "PING");
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonMessage = mapper.writeValueAsString(jsonData);
-            TextMessage heartbeatMessage = new TextMessage(jsonMessage);
-
-            if (session.isOpen()) {
-                session.sendMessage(heartbeatMessage);
-            }
-        } catch (IOException e) {
-            Logger.error("Error sending heartbeat to session " + session.getId());
-        }
+        MessagingUtility.createHeartbeatMessage().send(session);
+        updateSessionActivity(session);
     }
 
+    private void updateSessionActivity(WebSocketSession session) {
+        sessionLastActivityMap.put(session.getId(), System.currentTimeMillis());
+    }
+
+    private boolean isSessionInactive(WebSocketSession session, long inactivityThreshold) {
+        Long lastActivityTime = sessionLastActivityMap.get(session.getId());
+        return lastActivityTime != null && (System.currentTimeMillis() - lastActivityTime > inactivityThreshold);
+    }
+
+    private void removeClosedSession(String sessionId) {
+        sessionManagementService.getAllSessions().remove(sessionId);
+        sessionManagementService.getUserSessionMap().entrySet().stream()
+                .filter(entry -> entry.getValue().equals(sessionId))
+                .map(Map.Entry::getKey)
+                .findFirst().ifPresent(userId -> sessionManagementService.getUserSessionMap().remove(userId));
+        System.out.println("Session mit ID " + sessionId + " wurde entfernt, da sie geschlossen ist.");
+    }
 
     public void stop() {
         scheduler.shutdown();

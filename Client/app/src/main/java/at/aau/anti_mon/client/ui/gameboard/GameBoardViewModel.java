@@ -2,38 +2,33 @@ package at.aau.anti_mon.client.ui.gameboard;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
-import android.app.AlertDialog;
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.collection.SparseArrayCompat;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
-import at.aau.anti_mon.client.R;
 import at.aau.anti_mon.client.enums.Commands;
+import at.aau.anti_mon.client.events.ChangeBalanceEvent;
+import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
+import at.aau.anti_mon.client.events.LooseGameEvent;
+import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.game.Game;
 import at.aau.anti_mon.client.game.GameState;
-import at.aau.anti_mon.client.game.Player;
+import at.aau.anti_mon.client.game.PropertyGameCard;
+import at.aau.anti_mon.client.game.PropertyGameCardInitializer;
 import at.aau.anti_mon.client.game.User;
-import at.aau.anti_mon.client.utilities.JsonDataUtility;
+import at.aau.anti_mon.client.utilities.DiceUtility;
+import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.utilities.MessagingUtility;
 import at.aau.anti_mon.client.ui.base.BaseViewModel;
-import at.aau.anti_mon.client.utilities.ResourceManager;
 import at.aau.anti_mon.client.utilities.SingleLiveEvent;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,312 +39,188 @@ import lombok.Setter;
  * Provides a clear separation of concerns between the UI and the game logic.
  * This ViewModel is responsible for managing the game state, game logic and users.
  */
-@Getter
 @Setter
+@Getter
 public class GameBoardViewModel extends BaseViewModel {
 
-    private static final int MAX_FIELD_COUNT = 40;
+    // Game
+    private final MutableLiveData<Game> gameLiveData = new MutableLiveData<>();
+    private final MutableLiveData<GameState> gameState = new MutableLiveData<>(GameState.INITIALIZED);
+    private final SparseArrayCompat<PropertyGameCard> propertyGameCardMap;
 
-    // Game-Model
-    private MutableLiveData<Game> gameLiveData;
-    private MutableLiveData<Player> currentPlayerLiveData;
+    // User
+    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> appUsersTurn = new MutableLiveData<>(false);
 
-    private MutableLiveData<GameState> gameState = new MutableLiveData<>(GameState.INITIALIZED);
+    // Dice:
+    private final MutableLiveData<DiceUtility.DiceResult> diceResultLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> doubleDiceLiveData = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> enableFinishButtonLiveData = new MutableLiveData<>(false);
 
-    private MutableLiveData<Player> currentPlayer = new MutableLiveData<>();
-    private MutableLiveData<User> currentUser = new MutableLiveData<>();
-    private MutableLiveData<List<User>> userTurnData = new MutableLiveData<>(new ArrayList<>());
-
-    private MutableLiveData<Integer> diceRoll = new MutableLiveData<>();
-    private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
-
-    private SingleLiveEvent<String> showDialogEvent = new SingleLiveEvent<>();
+    //CommandEvents
+    private final SingleLiveEvent<NextPlayerEvent> nextPlayerLiveData = new SingleLiveEvent<>();
+    private final SingleLiveEvent<ChangeBalanceEvent> balanceChangeEventData = new SingleLiveEvent<>();
+    private final SingleLiveEvent<LooseGameEvent> looseGameEventData = new SingleLiveEvent<>();
     private final SingleLiveEvent<DiceNumberReceivedEvent> diceNumberData = new SingleLiveEvent<>();
+    private final SingleLiveEvent<CheatingEvent> cheatingEventData = new SingleLiveEvent<>();
 
-    // SparseArrayCompat für das Mapping von View-IDs zu Bild- und Textressourcen
-    private SparseArrayCompat<int[]> resourceMap;
-    private SparseArrayCompat<Integer> fieldPositions;
-    // Positionen der Spielfiguren
-    private MutableLiveData<int[]> figurePositions = new MutableLiveData<>(new int[40]);
-    private SparseArrayCompat<View> fieldViews = new SparseArrayCompat<>();
+    //Events
+    private final SingleLiveEvent<Void> launchDiceActivityEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> launchSettingsActivityEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> launchHandelActivityEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> launchObjectsActivityEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> launchRoleActivityEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Void> finishRoundEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<View> launchImageViewEvent = new SingleLiveEvent<>();
 
-    private Random random = new Random();
 
-    private ArrayList<User> users;
+    private final SingleLiveEvent<String> errorLiveData = new SingleLiveEvent<>();
+    private final SingleLiveEvent<String> infoLiveData = new SingleLiveEvent<>();
 
-    private String appUserPin;
+
+
+    private final MutableLiveData<List<User>> users = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> showDialog = new MutableLiveData<>(true);
+    private final MutableLiveData<Boolean> surrender = new MutableLiveData<>(false);
+    private final MutableLiveData<String> pin = new MutableLiveData<>();
+
+    @Inject GlobalEventQueue queue;
+
     private User appUser;
-    private int currentPlayerIndex = 0;
-
-    private ResourceManager resourceManager = new ResourceManager();
+    private Integer lobbyPin;
 
     @Inject
-    public GameBoardViewModel(Application application){
+    public GameBoardViewModel(Application application) {
         super(application);
-        gameLiveData = new MutableLiveData<>();
-        currentPlayerLiveData = new MutableLiveData<>();
+        propertyGameCardMap = PropertyGameCardInitializer.initializePropertyGameCards();
     }
 
-    public void processIntent(Intent intent) {
-        if (!intent.hasExtra("users") || !intent.hasExtra("currentUser") || !intent.hasExtra("pin")) {
-            Log.e(DEBUG_TAG, "Intent is missing extras");
-            return;
+
+
+    public MutableLiveData<View> getLaunchImageViewEvent() {
+        return launchImageViewEvent;
+    }
+
+
+
+    public void sendDice(int dice1, int dice2, boolean cheat) {
+        int dicenumber = dice1 + dice2;
+        MessagingUtility.createDiceNumberMessage(appUser.getUserName(), dicenumber,lobbyPin,cheat).sendMessage();
+        Log.println(Log.DEBUG, "ActivityGameField", "Send dicenumber to server.");
+    }
+
+    public void onChangeBalanceEvent(){
+        MessagingUtility.createChangeBalanceMessage(getCurrentUserFromLiveData().getUserName(), -1 ).sendMessage();
+    }
+
+    public void onLooseGameEvent(){
+        MessagingUtility.createUserMessage(getCurrentUserFromLiveData().getUserName(), Commands.LOSE_GAME).sendMessage();
+    }
+
+    public User getCurrentUserFromLiveData() {
+        return currentUser.getValue();
+    }
+
+    public void setCurrentUser(User appUser) {
+        this.currentUser.postValue(appUser);
+    }
+
+    public void setDoubleDice(Boolean value) {
+        this.doubleDiceLiveData.postValue(value);
+    }
+
+    public LiveData<Void> getLaunchDiceActivityEvent() {
+        return launchDiceActivityEvent;
+    }
+
+    public void onFinishRound(){
+        Log.d(DEBUG_TAG, "Player ends turn - Send name:" + appUser.getUserName());
+        Log.d(DEBUG_TAG, "Player Money:" + appUser.getPlayerMoney());
+        if(appUser.getPlayerMoney()<0){
+            onLooseGameEvent();
         }
-
-        User[] usersList = JsonDataUtility.parseJsonMessage(intent.getStringExtra("users"), User[].class);
-        List<User> users = new ArrayList<>();
-        Collections.addAll(users, usersList);
-        setUserTurnData(users);
-
-
-        // Erstelle Player-Objekte aus den User-Objekten
-        List<Player> players = new ArrayList<>();
-        for (User user : users) {
-            Player player = new Player(user);
-            Log.d(DEBUG_TAG, "Player: " + player.getName() + " money: " + player.getMoney() + " location: " + player.getPosition() + " isActive: " + player.isActive() + " role: " + player.getRole() + " figure: " + player.getFigure());
-            players.add(player);
-        }
-
-        appUser = JsonDataUtility.parseJsonMessage(intent.getStringExtra("currentUser"), User.class);
-        if (appUser != null) {
-            Log.d(DEBUG_TAG, "Current User: " + appUser.getUsername() + " isOwner: " + appUser.isOwner() + " isReady: " + appUser.isReady() + " money: " + appUser.getMoney());
-        }
-
-        setAppUserPin(intent.getStringExtra("pin"));
-
-        // TODO: Von Alexanderr
-        //gameFieldViewModel.notifyCurrentPlayer();
-        // show the current role of the user in a popup
-        //Intent i = new Intent(getApplicationContext(), PopActivityRole.class);
-        //i.putExtra("role", currentUser.getRole().name());
-        //i.putExtra("username", currentUser.getUsername());
-        //i.putExtra("figure", currentUser.getFigure().name());
-        //startActivity(i);
+        appUsersTurn.postValue(false);
+        MessagingUtility.createUserMessage(appUser.getUserName(), Commands.NEXT_PLAYER).sendMessage();
+        finishRoundEvent.trigger();
     }
 
-    public void leaveGame() {
-        MessagingUtility.createUserMessage(appUser.getUsername(),appUserPin, Commands.LEAVE_GAME).sendMessage();
+    public void onFigureMove() {
+        launchDiceActivityEvent.trigger();
     }
 
-    public void rollDice(String username, Integer dicenumber, String figure, Integer location) {
-        Log.d("LobbyViewModel", "User is ready " + username);
-        diceNumberData.postValue(new DiceNumberReceivedEvent(dicenumber, username, figure, location));
+    public void onRoleClick() {
+        launchRoleActivityEvent.trigger();
     }
 
-    public void rollLocalDice() {
-        int diceNumber = new Random().nextInt(6) + 1; // Würfeln
-        diceRoll.setValue(diceNumber);
-        // gameController.handleDiceRoll(diceNumber);
+    public void onObjectsClick() {
+        launchObjectsActivityEvent.trigger();
     }
 
-    public void notifyCurrentPlayer() {
-        //Player currentPlayer = gameController.getCurrentPlayer();
-        //this.currentPlayer.setValue(currentPlayer);
-        //showDialogEvent.setValue("Player " + currentPlayer.getName() + ", it's your turn!");
+    public void onSettingsClick() {
+        launchSettingsActivityEvent.trigger();
     }
 
-
-    public void setUserTurnData(List<User> userTurnData) {
-        this.usersLiveData.setValue(userTurnData);
+    public void onHandelClick() {
+        launchHandelActivityEvent.trigger();
     }
-
-    public void setCurrentUser(User user) {
-        this.currentUser.setValue(user);
-    }
-
-    public SparseArrayCompat<int[]> getResourceMap() {
-        return resourceManager.getResourceMap();
-    }
-
-    public SparseArrayCompat<Integer> getFieldPositions() {
-        return resourceManager.getFieldPositions();
-    }
-
-    public int rollDice() {
-        return random.nextInt(11) + 2;
-    }
-
-    private void updateBalanceForLapCompletion(String username, boolean isEndOfTurn) {
-        if (username.equals(currentUser.getValue().getUsername())) {
-            int new_balance = currentUser.getValue().getMoney() + (isEndOfTurn ? 200 : 100);
-            MessagingUtility.createGameBalanceMessage(currentUser.getValue().getUsername(), new_balance, Commands.CHANGE_BALANCE).sendMessage();
-        }
-    }
-
-
-
-    public void setUpResourceMap(){
-        resourceManager = new ResourceManager();
-        resourceMap = resourceManager.getResourceMap();
-        fieldPositions = resourceManager.getFieldPositions();
-    }
-
 
     public void onImageViewClick(View view) {
-        int viewId = view.getId();
-        int[] resources = getResourceMap().get(viewId);
-        if (resources != null) {
-            showCustomDialog(view.getContext(), resources[0], view.getContext().getString(resources[1]));
-        }
+        launchImageViewEvent.setValue(view);
     }
 
-    private void showCustomDialog(Context context, int imageResId, String message) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.dialog_custom_layout, null);
-
-        ImageView imageView = view.findViewById(R.id.dialog_image);
-        imageView.setImageResource(imageResId);
-
-        TextView textView = view.findViewById(R.id.dialog_description);
-        textView.setText(message);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setView(view)
-                .setTitle("Feldinformation")
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-
-        builder.create().show();
+    public LiveData<Void> getLaunchSettingsActivityEvent() {
+        return launchSettingsActivityEvent;
     }
 
-
-
-    public void setFieldView(int position, View view) {
-        fieldViews.put(position, view);
+    public LiveData<Void> getLaunchHandelActivityEvent() {
+        return launchHandelActivityEvent;
     }
 
-    public View getFieldView(int position) {
-        return fieldViews.get(position);
+    public LiveData<Void> getLaunchObjectsActivityEvent() {
+        return launchObjectsActivityEvent;
     }
 
-    public void moveFigure(Player player, int diceNumber) {
-        int currentPosition = player.getPosition();
-        int newPosition = (currentPosition + diceNumber) % MAX_FIELD_COUNT;
-        player.setPosition(newPosition);
-        updateFigurePosition(player);
+    public LiveData<Void> getLaunchRoleActivityEvent() {
+        return launchRoleActivityEvent;
     }
 
-    private void updateFigurePosition(Player player) {
-        View newPositionView = getFieldView(player.getPosition());
-        if (newPositionView != null) {
-            // Aktualisiere die Position der Spielfigur
-            //player.getFigure().set(newPositionView.getX());
-            //player.getFigure().setY(newPositionView.getY());
-        }
+    public LiveData<Void> getFinishRoundEvent() {
+        return finishRoundEvent;
     }
 
-    void moveFigure(String username, int location, int diceNumber, ImageView figure, Context context) {
-        for (int i = 1; i <= diceNumber; i++) {
-            if (location == MAX_FIELD_COUNT) {
-                location = 0;
-                updateBalanceForLapCompletion(username, i == diceNumber);
-            }
-            location++;
-            //updateFigurePosition(location, figure, context );
-        }
+    public PropertyGameCard getPropertyGameCard(int viewId) {
+        return propertyGameCardMap.get(viewId);
     }
 
-    public void updateFigurePosition(int figureIndex, int newPosition) {
-        int[] positions = figurePositions.getValue();
-        if (positions != null && figureIndex >= 0 && figureIndex < positions.length) {
-            positions[figureIndex] = newPosition;
-            figurePositions.setValue(positions);
-        }
+    public void onFieldClick(int fieldPosition) {
+        // Logik für den Klick auf ein Spielfeld
+        Log.d("GameBoardViewModel", "Field " + fieldPosition + " clicked");
     }
 
-    private int updateLocation(int currentLocation, int diceNumber) {
-        return (currentLocation + diceNumber > MAX_FIELD_COUNT) ? 1 : currentLocation + diceNumber;
+    public void setAppUsersTurn(boolean b) {
+        this.appUsersTurn.postValue(b);
     }
 
 
-
-    public void onEndGame(View view) {
-        MessagingUtility.createUserMessage(appUser.getUsername(), appUserPin, Commands.LEAVE_GAME).sendMessage();
+    public void nextPlayerEvent(NextPlayerEvent event) {
+        nextPlayerLiveData.postValue(event);
     }
 
-    public void onFigureMove(View view) {
-        //int randomNumber = random.nextInt(11) + 2;
-        int randomNumber = 7;
-        MessagingUtility.createGameMessage(appUser.getUsername(), randomNumber, Commands.DICENUMBER).sendMessage();
-        Log.d("ActivityGameField", "Send dicenumber to server.");
+    public void balanceChangeEvent(ChangeBalanceEvent changeBalanceEvent) {
+        balanceChangeEventData.postValue(changeBalanceEvent);
     }
 
-
-    private void logUsersInfo() {
-        users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getMoney()));
+    public void looseGameEvent(LooseGameEvent looseGameEvent) {
+        looseGameEventData.postValue(looseGameEvent);
     }
 
-
-    public void nextTurn() {
-        List<User> userList = userTurnData.getValue();
-        if (userList != null && !userList.isEmpty()) {
-            currentPlayerIndex = (currentPlayerIndex + 1) % userList.size();
-            currentUser.setValue(userList.get(currentPlayerIndex));
-        }
+    public void diceNumberReceivedEvent(DiceNumberReceivedEvent diceNumberReceivedEvent) {
+        diceNumberData.postValue(diceNumberReceivedEvent);
     }
 
-    public void addUser(User user) {
-        List<User> userList = userTurnData.getValue();
-        if (userList != null) {
-            userList.add(user);
-            userTurnData.setValue(userList);
-        }
-    }
-
-    public void startGame() {
-        List<User> userList = userTurnData.getValue();
-        if (userList != null && !userList.isEmpty()) {
-            currentPlayerIndex = 0;
-            currentUser.setValue(userList.get(currentPlayerIndex));
-        }
-    }
-
-    public void addPlayer(User user) {
-        List<User> userList = userTurnData.getValue();
-        if (userList != null) {
-            userList.add(user);
-            userTurnData.setValue(userList);
-        }
+    public void cheatingEvent(CheatingEvent cheatingEvent) {
+        cheatingEventData.postValue(cheatingEvent);
     }
 
 
-    /////////////////////////////////////////// GAME MODEL:
-
-    public void startNewGame(List<Player> players) {
-        Game game = new Game(players);
-        gameLiveData.setValue(game);
-        currentPlayerLiveData.setValue(game.getCurrentPlayer());
-    }
-
-    public void moveCurrentPlayer(int diceNumber) {
-        Game game = gameLiveData.getValue();
-        if (game != null && game.getCurrentState() == GameState.MOVE_FIGURE) {
-            game.getCurrentPlayer().move(diceNumber); // Implementiere die Logik zur Bewegung des Spielers
-            advanceGameState();
-        }
-    }
-
-    public void advanceGameState() {
-        Game game = gameLiveData.getValue();
-        if (game != null) {
-            game.nextState();
-            gameLiveData.setValue(game);
-            currentPlayerLiveData.setValue(game.getCurrentPlayer());
-            gameState.setValue(game.getCurrentState());
-        }
-    }
-
-    public void performAction() {
-        //  Logik für die Aufgaben des aktuellen Spielers
-        advanceGameState();
-    }
-
-
-
-    public void clearObservers(LifecycleOwner owner) {
-
-    }
-
-
-    public void setFirstPlayer(String username) {
-    }
 }

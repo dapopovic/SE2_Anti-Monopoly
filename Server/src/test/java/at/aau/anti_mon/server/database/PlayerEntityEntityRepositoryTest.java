@@ -1,7 +1,7 @@
 package at.aau.anti_mon.server.database;
 
 import at.aau.anti_mon.server.dao.PlayerDAO;
-import at.aau.anti_mon.server.entities.Player;
+import at.aau.anti_mon.server.entities.PlayerEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @ActiveProfiles("databasetests")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class PlayerRepositoryTest extends TestDatabase {
+class PlayerEntityEntityRepositoryTest extends TestDatabase {
 
     @Autowired
     private PlayerDAO playerDAO;
@@ -32,15 +32,15 @@ class PlayerRepositoryTest extends TestDatabase {
 
     @Test
     void testFindPlayerByID() {
-        Player player = new Player.Builder().build();
-        playerDAO.save(player);
+        PlayerEntity playerEntity = new PlayerEntity.Builder().build();
+        playerDAO.save(playerEntity);
 
-        Player found = playerDAO.findById(player.getPlayerID()).orElse(null);
+        PlayerEntity found = playerDAO.findById(playerEntity.getPlayerID()).orElse(null);
 
         assertThat(found).isNotNull();
         assertThat(found.getName()).isNotNull();
-        assertThat(found.getName()).isEqualTo(player.getName());
-        assertThat(found.getBalance()).isEqualTo(player.getBalance());
-        assertThat(found.getPosition()).isEqualTo(player.getPosition());
+        assertThat(found.getName()).isEqualTo(playerEntity.getName());
+        assertThat(found.getBalance()).isEqualTo(playerEntity.getBalance());
+        assertThat(found.getPosition()).isEqualTo(playerEntity.getPosition());
     }
 }

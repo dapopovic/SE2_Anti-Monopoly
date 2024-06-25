@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -55,7 +57,8 @@ class LobbyUnitTest {
         WebSocketSession testSession = mock(WebSocketSession.class);
         when(testSession.getId()).thenReturn("player1");
 
-        User player = lobby.getUserWithSession(testSession);
+        Optional<User> optionalUser= lobby.getUserWithSession(testSession);
+        User player = optionalUser.orElse(null);
         Assertions.assertNotNull(player);
         Assertions.assertEquals(playertest, player);
 
@@ -70,8 +73,9 @@ class LobbyUnitTest {
     void lobbyShouldReturnNullWhenNoUserWithMatchingSession() {
         WebSocketSession session = mock(WebSocketSession.class);
         when(session.getId()).thenReturn("player2");
-        User user = lobby.getUserWithSession(session);
-        Assertions.assertNull(user);
+        Optional<User> optionalUser= lobby.getUserWithSession(session);
+        User player = optionalUser.orElse(null);
+        Assertions.assertNull(player);
     }
 
     @Test
@@ -88,16 +92,16 @@ class LobbyUnitTest {
     }
 
     @Test
-    void lobbyShouldReturnTrueWhenIsFull() {
-        Assertions.assertTrue(lobby.isFull());
+    void lobbyShouldReturnFalseWhenIsNotFull() {
+        Assertions.assertFalse(lobby.isFull());
     }
 
     @Test
-    void lobbyShouldReturnFalseWhenCannotAddPlayer() throws LobbyIsFullException {
+    void lobbyShouldReturnTrueWhenCannotAddPlayer() throws LobbyIsFullException {
         for (int i = 0; i < 6; i++) {
             lobby.addUser(createUserWithOpenSession("player" + i));
         }
-        Assertions.assertFalse(lobby.isFull());
+        Assertions.assertTrue(lobby.isFull());
     }
 
     @Test

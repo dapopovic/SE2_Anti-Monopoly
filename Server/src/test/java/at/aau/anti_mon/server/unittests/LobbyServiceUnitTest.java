@@ -102,7 +102,7 @@ class LobbyServiceUnitTest {
         userService.findOrCreateUser("user2", session);
         Lobby lobby = lobbyService.createLobby(user1);
         lobbyService.joinLobby(lobby.getPin(), "user2");
-        assertTrue(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2")));
+        assertTrue(lobby.getUsers().stream().anyMatch(u -> u.getUserName().equals("user2")));
     }
 
     @Test
@@ -116,7 +116,7 @@ class LobbyServiceUnitTest {
         Lobby lobby = lobbyService.createLobby(user1);
         lobbyService.joinLobby(lobby.getPin(), "user2");
         lobbyService.leaveLobby(lobby.getPin(), "user2");
-        assertFalse(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2")));
+        assertFalse(lobby.getUsers().stream().anyMatch(u -> u.getUserName().equals("user2")));
     }
     @Test
     void readyUserShouldSetUserReady() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {
@@ -130,7 +130,7 @@ class LobbyServiceUnitTest {
         lobbyService.joinLobby(lobby.getPin(), "user2");
         lobbyService.readyUser(lobby.getPin(), "user2");
 
-        assertTrue(lobby.getUsers().stream().anyMatch(u -> u.getName().equals("user2") && u.isReady()));
+        assertTrue(lobby.getUsers().stream().anyMatch(u -> u.getUserName().equals("user2") && u.isReady()));
     }
     @Test
     void startGameShouldStartGame() throws UserNotFoundException, LobbyNotFoundException, LobbyIsFullException {

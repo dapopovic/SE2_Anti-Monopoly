@@ -43,7 +43,7 @@ public class LobbyUserAdapter extends RecyclerView.Adapter<LobbyUserAdapter.User
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = differ.getCurrentList().get(position);
         holder.bind(user, viewModel);
-        Log.d("LobbyUserAdapter", "Binding user: " + user.getUsername() + " isReady: " + user.isReady());
+        Log.d("LobbyUserAdapter", "Binding user: " + user.getUserName() + " isReady: " + user.isReady());
     }
 
     @Override
@@ -59,14 +59,29 @@ public class LobbyUserAdapter extends RecyclerView.Adapter<LobbyUserAdapter.User
     public void updateUser(User user) {
         List<User> currentList = new ArrayList<>(differ.getCurrentList());
         for (int i = 0; i < currentList.size(); i++) {
-            if (currentList.get(i).getUsername().equals(user.getUsername())) {
+            if (currentList.get(i).getUserName().equals(user.getUserName())) {
                 currentList.set(i, user);
                 differ.submitList(currentList);
-                Log.d("LobbyUserAdapter", "Updated user: " + user.getUsername() + " isReady: " + user.isReady());
+                Log.d("LobbyUserAdapter", "Updated user: " + user.getUserName() + " isReady: " + user.isReady());
                 return;
             }
         }
-        Log.d("LobbyUserAdapter", "User not found: " + user.getUsername());
+        Log.d("LobbyUserAdapter", "User not found: " + user.getUserName());
+
+    }
+
+    public void addUser(User user) {
+        List<User> currentList = new ArrayList<>(differ.getCurrentList());
+        currentList.add(user);
+        differ.submitList(currentList);
+        Log.d("LobbyUserAdapter", "Added user: " + user.getUserName() + " isReady: " + user.isReady());
+    }
+
+    public void removeUser(String user) {
+        List<User> currentList = new ArrayList<>(differ.getCurrentList());
+        currentList.removeIf(u -> u.getUserName().equals(user));
+        differ.submitList(currentList);
+        Log.d("LobbyUserAdapter", "Removed user: " + user);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
@@ -88,7 +103,7 @@ public class LobbyUserAdapter extends RecyclerView.Adapter<LobbyUserAdapter.User
 
         @Override
         public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
-            return oldItem.getUsername().equals(newItem.getUsername());
+            return oldItem.getUserName().equals(newItem.getUserName());
         }
 
         @Override

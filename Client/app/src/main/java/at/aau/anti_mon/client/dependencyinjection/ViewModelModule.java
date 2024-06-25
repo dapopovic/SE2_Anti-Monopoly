@@ -40,6 +40,7 @@ public abstract class ViewModelModule {
     @ViewModelKey(StartMenuViewModel.class)
     abstract ViewModel bindStartMenuViewModel(StartMenuViewModel startMenuViewModel);
 
+
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);
 

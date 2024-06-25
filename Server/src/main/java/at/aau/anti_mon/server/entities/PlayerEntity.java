@@ -18,7 +18,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "PLAYER")
-public class Player implements Serializable {
+public class PlayerEntity implements Serializable {
 
     /**
      * The ID of the player
@@ -91,10 +91,10 @@ public class Player implements Serializable {
      * Needed so the Tables can be automatically created in the DB
      * Protected since it should not be used directly
      */
-    protected Player() {
+    protected PlayerEntity() {
     }
 
-    private Player(Builder builder) {
+    private PlayerEntity(Builder builder) {
         this.name = builder.name;
         this.balance = builder.balance;
         this.position = builder.position;
@@ -155,8 +155,8 @@ public class Player implements Serializable {
             return this;
         }
 
-        public Player build() {
-            return new Player(this); // Richtig so: Erstelle ein neues Player-Objekt mit dem Builder als Parameter
+        public PlayerEntity build() {
+            return new PlayerEntity(this); // Richtig so: Erstelle ein neues Player-Objekt mit dem Builder als Parameter
         }
     }
 

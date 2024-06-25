@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import javax.inject.Singleton;
 
 import at.aau.anti_mon.client.ui.creategame.CreateGameViewModel;
+import at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel;
 import at.aau.anti_mon.client.ui.joingame.JoinGameViewModel;
 import at.aau.anti_mon.client.ui.lobby.LobbyViewModel;
 import dagger.Module;
@@ -64,6 +65,24 @@ public abstract class LiveDataModule {
     static MutableLiveData<String> provideLobbyErrorLiveData(LobbyViewModel lobbyViewModel) {
         return lobbyViewModel.getErrorLiveData();
     }
+
+    @Provides
+    @Singleton
+    @IntoMap
+    @StringKey("INFO_GAME_BOARD")
+    static MutableLiveData<String> provideGameBoardInfoLiveData(GameBoardViewModel gameBoardViewModel) {
+        return gameBoardViewModel.getInfoLiveData();
+
+    }
+
+    @Provides
+    @Singleton
+    @IntoMap
+    @StringKey("ERROR_GAME_BOARD")
+    static MutableLiveData<String> provideGameBoardErrorLiveData(GameBoardViewModel gameBoardViewModel) {
+        return gameBoardViewModel.getErrorLiveData();
+    }
+
 
 
 }

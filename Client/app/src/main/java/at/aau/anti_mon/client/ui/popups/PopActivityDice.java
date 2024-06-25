@@ -14,11 +14,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.game.User;
+import at.aau.anti_mon.client.utilities.DiceUtility;
+import at.aau.anti_mon.client.utilities.PreferenceManager;
 
-public class PopActivityDice extends PopActivityObjects implements SensorEventListener {
+public class PopActivityDice extends BasePopUp implements SensorEventListener {
 
     private static final float SHAKE_THRESHOLD = 1.5f;
     private static final int SHAKE_SLOP_TIME_MS = 500;
@@ -36,15 +40,22 @@ public class PopActivityDice extends PopActivityObjects implements SensorEventLi
     int number2 = 0;
     boolean rollDice = true;
 
+    private User appUser;
+    private ArrayList<DiceUtility.DiceResult> diceResults = new ArrayList<>();
+
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.popup_dice);
 
+        appUser = PreferenceManager.getInstance().getAppUser();
+
         rollDice = true;
-        firstDice = findViewById(R.id.dice1);
-        secondDice = findViewById(R.id.dice2);
+        firstDice = findViewById(R.id.imageview_dice1);
+        secondDice = findViewById(R.id.imageview_dice2);
         firstDice.setEnabled(true);
         secondDice.setEnabled(true);
         touchOrShake = findViewById(R.id.txtTouchorShake);
@@ -139,12 +150,13 @@ public class PopActivityDice extends PopActivityObjects implements SensorEventLi
             secondDice.setEnabled(false);
             touchOrShake.setVisibility(View.INVISIBLE);
 
+            //DiceUtility.rollTwoDice(appUser.getUserName());
             number1 = rollTheDice(firstDice);
             number2 = rollTheDice(secondDice);
         }
     }
     private int rollTheDice(ImageView dice){
-        int number = random.nextInt(6) + 1;
+        int number = DiceUtility.rollDie();
         Log.i("ROLLING", String.valueOf(number));
         switch (number) {
             case 1:
@@ -173,7 +185,6 @@ public class PopActivityDice extends PopActivityObjects implements SensorEventLi
 
     @Override
     public void onX(View view) {
-        Log.d("onX", "I am in onX from PopActivityDice");
         Intent resultIntent = new Intent();
 
         if (number1 != 0 && number2 != 0) {

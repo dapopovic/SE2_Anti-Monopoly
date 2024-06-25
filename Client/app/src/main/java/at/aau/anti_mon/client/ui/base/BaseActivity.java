@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import javax.inject.Inject;
 
 import at.aau.anti_mon.client.dependencyinjection.ViewModelFactory;
+import at.aau.anti_mon.client.utilities.UserManager;
 import dagger.android.AndroidInjection;
 import lombok.Getter;
 
@@ -28,6 +29,9 @@ public abstract class BaseActivity <VIEWDATABINDING extends ViewDataBinding, VIE
 
     @Inject
     ViewModelFactory viewModelFactory;
+
+    @Inject
+    public UserManager userManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

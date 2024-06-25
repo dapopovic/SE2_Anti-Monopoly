@@ -41,7 +41,7 @@ public class Game implements Serializable {
      * The players of the game
      */
     @OneToMany(mappedBy = "game")
-    private Set<Player> playerList;
+    private Set<PlayerEntity> playerEntityEntityList;
 
     /**
      * The game fields of the game
@@ -67,7 +67,7 @@ public class Game implements Serializable {
         this.name = builder.name;
         this.roundNumber = builder.roundNumber;
         this.startDate = builder.startDate;
-        this.playerList = builder.playerList;
+        this.playerEntityEntityList = builder.playerEntityEntityList;
     }
 
     /**
@@ -77,7 +77,7 @@ public class Game implements Serializable {
         private String name = Name.randomName().name();  // Standardwert
         private Integer roundNumber = 0;
         private Date startDate = new Date();
-        private final Set<Player> playerList = new HashSet<>();
+        private final Set<PlayerEntity> playerEntityEntityList = new HashSet<>();
 
         public Builder withName(String name) {
             this.name = name;

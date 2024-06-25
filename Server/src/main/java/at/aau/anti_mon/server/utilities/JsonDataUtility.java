@@ -92,7 +92,7 @@ public class JsonDataUtility {
 
 
     public static void sendJoinedUser(WebSocketSession session, User user) {
-        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, user.getName(), usernamestring);
+        JsonDataDTO jsonData = createJsonDataDTO(Commands.NEW_USER, user.getUserName(), usernamestring);
         jsonData.putData("isOwner", String.valueOf(user.isOwner()));
         jsonData.putData("isReady", String.valueOf(user.isReady()));
         send(session, jsonData);

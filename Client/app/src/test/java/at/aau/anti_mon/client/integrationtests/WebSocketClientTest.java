@@ -27,11 +27,15 @@ import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
+import at.aau.anti_mon.client.dependencyinjection.AppModule;
+import at.aau.anti_mon.client.dependencyinjection.DaggerAppComponent;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.enums.Figures;
 import at.aau.anti_mon.client.events.ChangeBalanceEvent;
 import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
+import at.aau.anti_mon.client.networking.WebSocketClientListener;
+import at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel;
 import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.game.User;
@@ -46,16 +50,23 @@ class WebSocketClientTest extends AntiMonopolyApplication {
     WebSocketClient client;
     @Mock
     GlobalEventQueue globalEventQueue;
+
+    @Mock
+    GameBoardViewModel gameBoardViewModel
+            ;
     @Inject
     CreateGameViewModel createGameViewModel;
     @Inject
     LobbyViewModel lobbyViewModel;
+
+    @Inject
+    WebSocketClientListener webSocketClientListener;
+
     @BeforeEach
     void init() {
         openMocks(this);
-        TestComponent testComponent = DaggerTestComponent.builder().networkModule(new NetworkModule(this)).build();
-        setGlobalEventQueue(globalEventQueue);
-        testComponent.inject(this);
+        appComponent = DaggerAppComponent.factory().create(new AppModule(this));
+        appComponent.inject(this);
 
         Map<String, Command> commandMap = new HashMap<>();
         commandMap.put("PIN", new PinCommand(createGameViewModel));
@@ -64,10 +75,9 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         commandMap.put("START_GAME", new StartGameCommand(lobbyViewModel));
         commandMap.put("LEAVE_GAME", new LeaveGameCommand(lobbyViewModel));
         commandMap.put("READY", new OnReadyCommand(lobbyViewModel));
-        commandMap.put("DICENUMBER", new DiceNumberCommand(globalEventQueue));
-        commandMap.put("CHANGE_BALANCE", new ChangeBalanceCommand(globalEventQueue));
-        commandMap.put("CHEATING", new CheatingCommand(globalEventQueue));
-        client.setCommandFactory(new CommandFactory(commandMap));
+        commandMap.put("DICENUMBER", new DiceNumberCommand(gameBoardViewModel));
+        commandMap.put("CHANGE_BALANCE", new ChangeBalanceCommand(gameBoardViewModel));
+        commandMap.put("CHEATING", new CheatingCommand(gameBoardViewModel));
     }
 
     @Test
@@ -77,7 +87,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("pin", "1234");
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
     }
 
     @Test
@@ -87,7 +97,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("msg", "test");
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
         verify(globalEventQueue).enqueueEvent(any(HeartBeatEvent.class));
     }
 
@@ -100,7 +110,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("isReady", "false");
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
     }
 
     @Test
@@ -110,20 +120,27 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("username", "testUser");
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
     }
     @Test
     void testStartGameCommandShouldFireGameStartedEvent() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.START_GAME);
         User[] users = {
-                new User("testUser", false, false, 1000, null, Figures.GREEN_CIRCLE,false,false),
-                new User("testUser2", false, false, 1000, null, Figures.BLUE_CIRCLE,false,false)
+
+                new User.UserBuilder("testUser", false, false)
+                        .playerMoney(1000)
+                        .playerFigure(Figures.GREEN_CIRCLE)
+                        .build(),
+                new User.UserBuilder("testUser2", false, false)
+                        .playerMoney(1000)
+                        .playerFigure(Figures.BLUE_CIRCLE)
+                        .build()
         };
         jsonDataDTO.putData("users", JsonDataUtility.createJsonMessage(users));
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
     }
     @Test
     void testOnReadyCommandShouldFireReadyEvent() {
@@ -133,7 +150,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         jsonDataDTO.putData("isReady", "true");
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
     }
 
     @Test
@@ -147,7 +164,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
         String message = JsonDataUtility.createJsonMessage(jsonDataDTO);
         assertNotNull(message);
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
 
         verify(globalEventQueue).enqueueEvent(any(DiceNumberReceivedEvent.class));
     }
@@ -162,7 +179,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
 
         String message = JsonDataUtility.createJsonMessage(jsonData);
         assert message != null;
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
 
         verify(globalEventQueue).enqueueEvent(any(ChangeBalanceEvent.class));
     }
@@ -175,7 +192,7 @@ class WebSocketClientTest extends AntiMonopolyApplication {
 
         String message = JsonDataUtility.createJsonMessage(jsonData);
         assert message != null;
-        client.getWebSocketListener().onMessage(client.getWebSocket(), message);
+        webSocketClientListener.onMessage(client.getWebSocket(), message);
 
         verify(globalEventQueue).enqueueEvent(any(CheatingEvent.class));
     }

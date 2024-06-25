@@ -32,6 +32,7 @@ public class MessagingUtility {
         return instance;
     }
 
+
     /**
      * Initialisiert den MessagingService und injiziert den WebSocketClient
      * Diese Methode wird einmalig im Konstruktor des WebSocketClients aufgerufen.
@@ -39,6 +40,7 @@ public class MessagingUtility {
      */
     @Inject
     public void initialize(WebSocketClient webSocketClient) {
+        Log.d(DEBUG_TAG, "MessagingUtility initialized");
         MessagingUtility.webSocketClient = webSocketClient;
     }
 
@@ -62,6 +64,7 @@ public class MessagingUtility {
         if (webSocketClient != null) {
             webSocketClient.setUserID(userID);
             webSocketClient.restartConnection();
+            Log.d(DEBUG_TAG, "Connected to server with userID: " + userID);
         } else {
             Log.e("MessagingService", "WebSocketClient is not initialized.");
         }
@@ -69,6 +72,44 @@ public class MessagingUtility {
 
     public static MessageContainer createHeartbeatMessage() {
         return new MessageContainer(new JsonDataDTO.Builder(Commands.HEARTBEAT).addString("msg","PONG").build());
+    }
+
+    public static MessageContainer createPropertyMessage(String username, int lobbyPin, int fieldPosition, Commands command) {
+        JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
+                .addString("username", username)
+                .addInt("pin", lobbyPin)
+                .addInt("fieldPosition", fieldPosition)
+                .build();
+
+        return new MessageContainer(jsonDataDTO);
+    }
+
+
+    public static MessageContainer createDiceNumberMessage(String userName, int dicenumber, int lobbyPin, boolean cheat) {
+
+        Log.d(DEBUG_TAG, " Sending DiceNumber:" + userName + " dicenumber: " + dicenumber + " lobbyPin "+lobbyPin + " cheat: " + cheat);
+
+        JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(Commands.DICENUMBER)
+                .addString("username", userName)
+                .addInt("dicenumber", dicenumber)
+                .addInt("pin", lobbyPin)
+                .addBoolean("cheat", cheat)
+                .build();
+
+        return new MessageContainer(jsonDataDTO);
+
+    }
+
+    public static MessageContainer createChangeBalanceMessage(String username, int balance) {
+
+        Log.d(DEBUG_TAG, " Username sending to new user:" + username + " balance: " + balance);
+
+        JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(Commands.CHANGE_BALANCE)
+                .addString("username", username)
+                .addInt("new_balance", balance)
+                .build();
+
+        return new MessageContainer(jsonDataDTO);
     }
 
     /**

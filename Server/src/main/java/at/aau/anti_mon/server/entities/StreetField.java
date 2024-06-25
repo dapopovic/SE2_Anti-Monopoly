@@ -39,7 +39,7 @@ public class StreetField extends GameField implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private Player owner;
+    private PlayerEntity owner;
 
     /**
      * Needed so the Tables can be automatically created in the DB
@@ -89,7 +89,7 @@ public class StreetField extends GameField implements Serializable {
         private int hotelPrice = 0;
         private int numberOfHouses = 0;
         private int numberOfHotels = 0;
-        private Player owner = null;
+        private PlayerEntity owner = null;
 
         public Builder withName(String name) {
             this.name = name;
@@ -156,7 +156,7 @@ public class StreetField extends GameField implements Serializable {
             return this;
         }
 
-        public Builder withOwner(Player owner) {
+        public Builder withOwner(PlayerEntity owner) {
             this.owner = owner;
             return this;
         }

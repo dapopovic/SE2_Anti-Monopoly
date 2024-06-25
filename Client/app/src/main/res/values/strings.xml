@@ -17,12 +17,41 @@
     <string name="player_info">%1$s: %2$s</string>
     <string name="imagebutton">ImageButton</string>
     <string name="finish">Finish</string>
+
+
     <string name="field_square">field_square</string>
     <string name="start_field">start_field</string>
-    <string name="price_war">price_war</string>
+    <string name="price_war">Preiskrieg</string>
     <string name="sitting">sitting</string>
-    <string name="rom1">Rom</string>
+
     <string name="take">take</string>
+
+    <string name="rom1">Corso Impero</string>
+    <string name="rom2">Via Roma</string>
+    <string name="berlin1">Alexanderplatz</string>
+    <string name="berlin2">Kurfürstendamm</string>
+    <string name="berlin3">Potsdamer Straße</string>
+    <string name="madrid1">Plaza Mayor</string>
+    <string name="madrid2">Gran Via</string>
+    <string name="madrid3">Passeo de la Castellana</string>
+    <string name="amsterdam1">Dam</string>
+    <string name="amsterdam2">Leidsestraat</string>
+    <string name="amsterdam3">Kalverstraat</string>
+    <string name="paris1">Rue la Fayette</string>
+    <string name="paris2">Rue de la Paix</string>
+    <string name="paris3">Champs-Elysees</string>
+    <string name="bruessel1">Grote Markt</string>
+    <string name="bruessel2">Hoogstraat</string>
+    <string name="bruessel3">Nieuwstraat</string>
+    <string name="london1">Park Lane</string>
+    <string name="london2">Picadelly</string>
+    <string name="london3">Oxford Street</string>
+    <string name="athen1">La Plaka</string>
+    <string name="athen2">Syntagma</string>
+
+
+
+
 
     <!-- Field descriptions -->
     <string name="field_square_description">Dies ist ein allgemeines Feld.</string>
@@ -39,6 +68,9 @@
     <string name="berlin1_field_description">Berkin1.</string>
     <string name="berlin2_field_description">Berkin2.</string>
     <string name="berlin3_field_description">Berkin3.</string>
+
+
+
     <string name="todo">TODO</string>
     <string name="rent">Rent:</string>
     <string name="hotel_price">Hotel Price:</string>
@@ -66,6 +98,12 @@
     <string name="Cheating">Cheating</string>
     <string name="figure">Figure</string>
     <string name="pin">Pin:</string>
+    <string name="settings_button">Settings button</string>
+    <string name="bus_operators">Busbetriebe</string>
+    <string name="gaswerk">Gaswerk</string>
+    <string name="train_station">Bahnhof</string>
+    <string name="tram">Straßenbahn</string>
+    <string name="power_station">Elektrizitätswerk</string>
 
 
 </resources>

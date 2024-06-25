@@ -12,6 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * Event-Listener for WebSocket events and sessions
@@ -57,7 +58,7 @@ public class WebSocketEventListener {
     public void handleSessionDisconnected(SessionDisconnectEvent event) {
         WebSocketSession session = event.getSession();
         if (isUriNull(event.getSession())) return;
-        String userID = StringUtility.extractUserID(session.getUri().getQuery());
+        String userID = StringUtility.extractUserID(Objects.requireNonNull(session.getUri()).getQuery());
         if (userID.equals("null")) {
             Logger.error("UserID extraction failed for session: {}", session.getId());
         } else {

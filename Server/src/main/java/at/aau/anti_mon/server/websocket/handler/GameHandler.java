@@ -28,7 +28,6 @@ public class GameHandler implements WebSocketHandler {
     private final  ApplicationEventPublisher eventPublisher;
     private final CommandFactory gameCommandFactory;
     private final SessionManagementService sessionManagementService;
-    String REMOTE_ADDRESS_IS_NULL = "RemoteAddress ist null";
 
     @Autowired
     public GameHandler(

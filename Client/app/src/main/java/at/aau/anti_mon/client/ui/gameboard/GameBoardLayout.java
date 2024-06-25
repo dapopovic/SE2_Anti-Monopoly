@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.ui.gameboard;
 
+import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -12,10 +14,15 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import at.aau.anti_mon.client.R;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class GameBoardLayout extends ConstraintLayout {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
+    private GameBoardViewModel viewModel;
     private float scaleFactor = 1.0f;
     private float previousX;
     private float previousY;
@@ -74,13 +81,10 @@ public class GameBoardLayout extends ConstraintLayout {
 
     }
 
-    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+    private static class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
         }
     }
 }
-
-
-

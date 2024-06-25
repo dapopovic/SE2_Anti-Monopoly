@@ -2,317 +2,165 @@ package at.aau.anti_mon.client.ui.lobby;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.multidex.MultiDex;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.inject.Inject;
-
-import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.BR;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.enums.Commands;
-import at.aau.anti_mon.client.ui.gameboard.GameBoardActivity;
-import at.aau.anti_mon.client.utilities.GlobalEventQueue;
+import at.aau.anti_mon.client.databinding.ActivityLobbyBinding;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
+import at.aau.anti_mon.client.ui.adapter.LobbyUserAdapter;
+import at.aau.anti_mon.client.ui.base.BaseActivity;
+import at.aau.anti_mon.client.ui.gameboard.GameBoardActivity;
 import at.aau.anti_mon.client.game.User;
-import at.aau.anti_mon.client.utilities.JsonDataUtility;
 import at.aau.anti_mon.client.utilities.MessagingUtility;
 
 /**
  * LobbyActivity class to handle the lobby of the game
  */
-public class LobbyActivity extends AppCompatActivity {
+public class LobbyActivity extends BaseActivity<ActivityLobbyBinding, LobbyViewModel> {
 
-
-    TextView textViewPin;
-
-    HashMap<LinearLayout, User> availableUsers = new HashMap<>();
-
-    private String pin;
-    private User currentUser;
-    private boolean leftLobby = false;
-    private boolean gameStarted = false;
-    String usernamestring = "username";
-
-
-    /**
-     * Dependency Injection of GlobalEventQueue
-     */
-    @Inject
-    GlobalEventQueue globalEventQueue ;
-
-    @Inject
-    LobbyViewModel lobbyViewModel;
-
+    private LobbyUserAdapter userAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_lobby);
-
-        // Setup der UI und andere Initialisierungen
-        initializeUI();
-        // Nachdem die UI initialisiert wurde und der EventBus registriert ist, Netzwerkdienste starten
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
-
+        setupRecyclerView();
         setupLiveDataObservers();
+        setupButtonListener();
+        if (viewModel.getUserManager() == null) {
+            Log.e("LobbyActivity", "UserManager wurde nicht injiziert");
+        }
+
+        // Initialisiere AppUser
+        userAdapter.addUser(userManager.getAppUser());
+        viewModel.initAppUser();
     }
 
-    private void initializeUI() {
-        EdgeToEdge.enable(this);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+    private void setupRecyclerView(){
+        userAdapter = new LobbyUserAdapter(getViewModel());
+        RecyclerView recyclerView = viewDataBinding.recyclerViewUsers;
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(userAdapter);
+    }
+
+    private void setupButtonListener() {
+        viewDataBinding.lobbyCancel.setOnClickListener(v -> viewModel.onLeaveButton(this));
+        viewDataBinding.lobbyReady.setOnClickListener(v -> viewModel.onToggleReadyButton());
+        viewDataBinding.lobbyStartGame.setOnClickListener(v -> viewModel.onStartGameButton());
+    }
+
+    private void setupLiveDataObservers() {
+        viewModel.getUserListLiveData().observe(this, users -> {
+            userAdapter.updateUsers(users);
+            userManager.updateUsers(users);
+            Log.d("LobbyActivity", "User list updated: " + users.size());
         });
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        LinearLayout[] userLayoutViews = new LinearLayout[]{
-                findViewById(R.id.user1),
-                findViewById(R.id.user2),
-                findViewById(R.id.user3),
-                findViewById(R.id.user4),
-                findViewById(R.id.user5),
-                findViewById(R.id.user6),
-        };
+        // Enables start game button if all users are ready
+        viewModel.getStartGameEnabled().observe(this, enabled -> {
+            viewDataBinding.lobbyStartGame.setEnabled(enabled);
+            viewDataBinding.lobbyStartGame.setBackground(AppCompatResources.getDrawable(this, enabled ? R.drawable.rounded_btn : R.drawable.rounded_btn_disabled));
+        });
 
-        // Alle TextViews als verfügbar markieren:
-        for (LinearLayout lt : userLayoutViews) {
-            availableUsers.put(lt, null);
-        }
+        viewModel.getErrorLiveData().observe(this, errorMessage ->
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+        );
+        viewModel.getInfoLiveData().observe(this, infoMessage ->
+                Toast.makeText(this, infoMessage, Toast.LENGTH_SHORT).show()
+        );
 
-        textViewPin = findViewById(R.id.Pin);
+        // LiveData from StartNewGameCommand (Event) --> Starts Game
+        viewModel.getStartGameLiveData().observe(this, this::startGame);
 
-        processIntent();
-    }
+        viewModel.getAppUserLiveData().observe(this, user -> {
+            if (user != null) {
+                Log.d(DEBUG_TAG, "AppUserLiveData: " + user.getUserName());
+                userAdapter.updateUser(user);
 
-    private void processIntent() {
-        if (getIntent().hasExtra(usernamestring)) {
-            currentUser = new User(getIntent().getStringExtra(usernamestring), getIntent().getBooleanExtra("isOwner", false), getIntent().getBooleanExtra("isReady", false));
-            addUserToTable(currentUser);
-        } else {
-            Log.e(DEBUG_TAG, "Old Intent has no username");
-            // Todo: Error handling
-        }
-        if (getIntent().hasExtra("pin")) {
-            pin = getIntent().getStringExtra("pin");
-            textViewPin.setText(pin);
-        } else {
-            Log.e(DEBUG_TAG, "Old Intent has no pin");
-            // Todo: Error handling
-        }
-    }
-
-    private void addUserToTable(User user) {
-        if (this.currentUser.equals(user) && !user.isOwner()) {
-            // start game button is only visible for the owner
-            findViewById(R.id.lobby_start_game).setVisibility(View.GONE);
-            findViewById(R.id.lobby_ready).setVisibility(View.VISIBLE);
-        }
-        Log.d(DEBUG_TAG, "User joined: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady());
-        for (Map.Entry<LinearLayout, User> entry : availableUsers.entrySet()) {
-            if (entry.getValue() == null) {  // Prüfe, ob der TextView verfügbar ist
-                // get the first available user layout
-                TextView tv = (TextView) entry.getKey().getChildAt(0);
-                tv.setText(user.getUsername());
-                CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
                 if (user.isOwner()) {
-                    tv.setTextColor(Color.RED);
+                    viewDataBinding.lobbyStartGame.setVisibility(View.VISIBLE);
+                } else {
+                    viewDataBinding.lobbyStartGame.setVisibility(View.GONE);
                 }
-                cb.setChecked(user.isReady());
-                availableUsers.put(entry.getKey(), user);  // Markiere als besetzt
-                int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
-                Log.d(DEBUG_TAG, "Size of available users: " + size);
-                if (size >= 2 && this.currentUser.isOwner()) {
-                    Button startButton = findViewById(R.id.lobby_start_game);
-                    startButton.setEnabled(false);
-                    startButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
+
+                if (user.isReady()) {
+                    viewDataBinding.lobbyReady.setText(R.string.ready);
+                } else {
+                    viewDataBinding.lobbyReady.setText(R.string.unready);
                 }
-                return;
             }
-        }
-        Log.e(DEBUG_TAG, "Kein verfügbarer Platz für neuen Benutzer.");
+        });
+        viewModel.getUserJoinedLiveData().observe(this, user -> {
+            userAdapter.addUser(user);
+            userManager.addUser(user);
+        });
+        viewModel.getReadyUserEvent().observe(this, user -> userAdapter.updateUser(user));
+
+        viewModel.getUserLeftLiveData().observe(this, user -> {
+            userAdapter.removeUser(user);
+            userManager.removeUser(user);
+        });
     }
 
-    private void removeUserFromTable(String username) {
-        // get size of availableUsers
-        for (Map.Entry<LinearLayout, User> entry : availableUsers.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().getUsername().equals(username)) {
-                TextView tv = (TextView) entry.getKey().getChildAt(0);
-                tv.setText("");
-                CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
-                cb.setChecked(false);
-                availableUsers.put(entry.getKey(), null);  // Markiere als verfügbar
-                int size = availableUsers.entrySet().stream().filter(e -> e.getValue() != null).toArray().length;
-                if (size == 2 && currentUser.isOwner()) {
-                    Button startButton = findViewById(R.id.lobby_start_game);
-                    startButton.setEnabled(false);
-                    // make it a little pale
-                    startButton.setBackgroundColor(Color.parseColor("#FFD3D3D3"));
-                }
-                return;
-            }
-        }
-        Log.e(DEBUG_TAG, "Benutzername nicht gefunden.");
+
+    private void startGame(Collection<User> users) {
+        Toast.makeText(this, "Das Spiel wird gestartet.", Toast.LENGTH_SHORT).show();
+        ArrayList<User> userList = new ArrayList<>(users);
+        userManager.initializeUsers(userList);
+        User appUser = users.stream().filter(user -> user.getUserName().equals(userManager.getAppUser().getUserName())).findFirst().orElse(null);
+        userManager.setAppUser(appUser);
+        users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUserName() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getPlayerMoney() + " role: " + user.getPlayerRole()));
+        Intent intent = new Intent(this, GameBoardActivity.class);
+        startActivity(intent);
     }
 
     /**
      * Heartbeat to keep connection alive
-     *
      * @param event HeartBeatEvent
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onHeartBeatEvent(HeartBeatEvent event) {
         Log.d(DEBUG_TAG, "HeartBeatEvent");
         MessagingUtility.createHeartbeatMessage().sendMessage();
     }
 
-    public void onReadyEvent(User eventUser) {
-        AtomicBoolean allReady = new AtomicBoolean(true);
-        availableUsers.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
-            User currentUseronreadyevent = entry.getValue();
-            if (currentUseronreadyevent.getUsername().equals(eventUser.getUsername())) {
-                currentUseronreadyevent.setReady(eventUser.isReady());
-                CheckBox cb = (CheckBox) entry.getKey().getChildAt(1);
-                cb.setChecked(eventUser.isReady());
-                Button readyButton = findViewById(R.id.lobby_ready);
-                if (eventUser.isReady()) {
-                    readyButton.setText(R.string.unready);
-                } else {
-                    readyButton.setText(R.string.ready);
-                }
-                if (!currentUseronreadyevent.isReady()) {
-                    allReady.set(false);
-                }
-            }
-        });
-        Button startButton = findViewById(R.id.lobby_start_game);
-        startButton.setEnabled(currentUser.isOwner() && allReady.get());
-        startButton.setBackground(allReady.get() ? AppCompatResources.getDrawable(this, R.drawable.rounded_btn) : AppCompatResources.getDrawable(this, R.drawable.rounded_btn_disabled));
-    }
-
-    /**
-     * TEST LiveData and Observer Pattern
-     */
-    private void setupLiveDataObservers() {
-
-        // User joined: -> LiveData
-        lobbyViewModel.getUserJoinedLiveData().observe(this, this::addUserToTable);
-
-        // User left: -> LiveData
-        lobbyViewModel.getUserLeftLiveData().observe(this, this::removeUserFromTable);
-
-        // User ready: -> LiveData
-        lobbyViewModel.getReadyUpLiveData().observe(this, this::onReadyEvent);
-
-        // user started game -> LiveData
-        lobbyViewModel.getStartGameLiveData().observe(this, this::startGame);
-    }
-
-    private void removeObservers() {
-        lobbyViewModel.getUserJoinedLiveData().removeObservers(this);
-        lobbyViewModel.getUserLeftLiveData().removeObservers(this);
-        lobbyViewModel.getReadyUpLiveData().removeObservers(this);
-        lobbyViewModel.getStartGameLiveData().removeObservers(this);
-    }
-
-    private void startGame(Collection<User> users) {
-        users.forEach(user -> Log.d(DEBUG_TAG, "User: " + user.getUsername() + " isOwner: " + user.isOwner() + " isReady: " + user.isReady() + " money: " + user.getMoney() + " role: " + user.getRole()));
-        Intent intent = new Intent(this, GameBoardActivity.class);
-        intent.putExtra("users", JsonDataUtility.createJsonMessage(users));
-        intent.putExtra("currentUser", JsonDataUtility.createJsonMessage(currentUser));
-        intent.putExtra("pin", pin);
-        gameStarted = true;
-        startActivity(intent);
-    }
-
-    public void onCancelLobby(View view) {
-        // leave lobby
-        leaveLobby();
-        // Go back to last Activity on Stack (JoinGameActivity)
-        finish();
-    }
-
-    private void leaveLobby() {
-        MessagingUtility.createUserMessage(currentUser.getUsername(),pin,Commands.LEAVE_GAME).sendMessage();
-        leftLobby = true;
-    }
-
-    public void onStartGame(View view) {
-        MessagingUtility.createUserMessage(currentUser.getUsername(),pin,Commands.START_GAME);
-    }
-
-    public void onReady(View view) {
-        MessagingUtility.createUserMessage(currentUser.getUsername(),pin,Commands.READY).sendMessage();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (gameStarted) {
-            finish();
-        }
-        EventBus.getDefault().register(this);
-        Log.d(DEBUG_TAG, "EventBus registered");
-        globalEventQueue.setEventBusReady(true);
-        if (MessagingUtility.getWebSocketConnectionStatus()) {
-            MessagingUtility.connectToServerWithUserID(currentUser.getUsername());
-        }
-        if (!lobbyViewModel.getUserJoinedLiveData().hasActiveObservers()) {
-            setupLiveDataObservers();
-        }
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        removeObservers();
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
-        if (!leftLobby && !gameStarted) {
-            leaveLobby();
-        }
-        if (MessagingUtility.getWebSocketConnectionStatus() && !gameStarted) {
-            MessagingUtility.disconnectFromServer("Stopped LobbyActivity");
-        }
-        EventBus.getDefault().unregister(this);
-        Log.d(DEBUG_TAG, "EventBus unregistered");
-        removeObservers();
+        viewModel.clearObservers(this);
     }
 
     @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
+    public int getBindingVariable() {
+        return BR.viewModel;
     }
 
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_lobby;
+    }
+
+    @Override
+    protected Class<LobbyViewModel> getViewModelClass() {
+        return LobbyViewModel.class;
+    }
 
 }
+
+
+
+

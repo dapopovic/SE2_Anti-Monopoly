@@ -3,7 +3,7 @@ package at.aau.anti_mon.server.service;
 import at.aau.anti_mon.server.dao.GameDao;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.entities.Game;
-import at.aau.anti_mon.server.entities.Player;
+import at.aau.anti_mon.server.entities.PlayerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,8 +62,8 @@ public class GameService {
             Game game = gameOptional.get();
 
             // Neuer Spieler erstellen
-            Player newPlayer = new Player.Builder()
-                    .withName(userDTO.getUsername())
+            PlayerEntity newPlayerEntityEntity = new PlayerEntity.Builder()
+                    .withName(userDTO.getUserName())
                    // .withBalance(playerDTO.getBalance())
                    // .withPosition(playerDTO.getPosition())
                    // .withInJail(playerDTO.isInJail())
@@ -71,7 +71,7 @@ public class GameService {
                     .build();
 
             // Füge den Spieler zum Spieler-Set des Spiels hinzu
-            game.getPlayerList().add(newPlayer);
+            game.getPlayerEntityEntityList().add(newPlayerEntityEntity);
 
             // Schritt 4: Persistiere Änderungen
             gameDAO.save(game);

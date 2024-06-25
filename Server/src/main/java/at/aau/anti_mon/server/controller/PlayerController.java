@@ -1,7 +1,7 @@
 package at.aau.anti_mon.server.controller;
 
 
-import at.aau.anti_mon.server.entities.Player;
+import at.aau.anti_mon.server.entities.PlayerEntity;
 import at.aau.anti_mon.server.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class PlayerController {
      * @return List<Player> - a list of all players
      */
     @GetMapping("")
-    public List<Player> getAllPlayer() {
+    public List<PlayerEntity> getAllPlayer() {
         return playerService.getAllPlayer();
     }
 
@@ -48,29 +48,29 @@ public class PlayerController {
      * @return Player - the player with the given id
      */
     @GetMapping("/{id}")
-        public Player getPlayerById(@PathVariable Integer id) {
+        public PlayerEntity getPlayerById(@PathVariable Integer id) {
         return playerService.getPlayerByID(id);
     }
 
     /**
      * This method maps to the /players endpoint and creates a new player
-     * @param player - the player to be created
+     * @param playerEntity - the player to be created
      * @return Player - the created player
      */
     @PostMapping("")
-    public Player createPlayer(@RequestBody Player player) {
-        return playerService.createPlayer(player);
+    public PlayerEntity createPlayer(@RequestBody PlayerEntity playerEntity) {
+        return playerService.createPlayer(playerEntity);
     }
 
     /**
      * This method maps to the /players/{id} endpoint and updates a player
      * @param id - the id of the player to be updated
-     * @param player - the updated player
+     * @param playerEntity - the updated player
      * @return Player - the updated player
      */
     @PutMapping("/{id}")
-    public Player updatePlayer(@PathVariable Integer id, @RequestBody Player player) {
-        return playerService.updatePlayer(id, player);
+    public PlayerEntity updatePlayer(@PathVariable Integer id, @RequestBody PlayerEntity playerEntity) {
+        return playerService.updatePlayer(id, playerEntity);
     }
 
     /**

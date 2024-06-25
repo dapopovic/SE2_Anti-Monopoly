@@ -13,7 +13,7 @@ import at.aau.anti_mon.client.command.AnswerCommand;
 import at.aau.anti_mon.client.command.ChangeBalanceCommand;
 import at.aau.anti_mon.client.command.CheatingCommand;
 import at.aau.anti_mon.client.command.EndGameCommand;
-import at.aau.anti_mon.client.command.LoseGameCommand;
+import at.aau.anti_mon.client.command.LooseGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
@@ -33,9 +33,10 @@ import at.aau.anti_mon.client.events.CheatingEvent;
 import at.aau.anti_mon.client.events.DiceNumberReceivedEvent;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.events.EndGameEvent;
+import at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel;
 import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
-import at.aau.anti_mon.client.events.LoseGameEvent;
+import at.aau.anti_mon.client.events.LooseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
 import at.aau.anti_mon.client.events.TestEvent;
 import at.aau.anti_mon.client.events.WinGameEvent;
@@ -53,6 +54,8 @@ class CommandsTest {
     LobbyViewModel lobbyViewModel;
     @Mock
     CreateGameViewModel createGameViewModel;
+    @Mock
+    GameBoardViewModel gameBoardViewModel;
 
     @BeforeEach
     public void setUp() {
@@ -66,7 +69,7 @@ class CommandsTest {
         jsonDataDTO.putData("msg", "testMessage");
         assertEquals(Commands.INFO, jsonDataDTO.getCommand());
 
-        InfoCommand infoCommand = new InfoCommand(queue);
+        InfoCommand infoCommand = new InfoCommand();
         infoCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(TestEvent.class));
@@ -91,7 +94,7 @@ class CommandsTest {
         jsonDataDTO.putData("msg", "testMessage");
         assertEquals(Commands.ERROR, jsonDataDTO.getCommand());
 
-        ErrorCommand errorCommand = new ErrorCommand(queue);
+        ErrorCommand errorCommand = new ErrorCommand();
         errorCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(TestEvent.class));
@@ -135,7 +138,7 @@ class CommandsTest {
         PinCommand pinCommand = new PinCommand(createGameViewModel);
         pinCommand.execute(jsonDataDTO);
 
-        verify(createGameViewModel).createGame("1234");
+        verify(createGameViewModel).onPinReceived("1234");
     }
     @Test
     void heartBeatCommandShouldFireHeartBeatEvent() {
@@ -187,15 +190,16 @@ class CommandsTest {
         OnReadyCommand ReadyCommand = new OnReadyCommand(lobbyViewModel);
         ReadyCommand.execute(jsonDataDTO);
 
-        verify(lobbyViewModel).readyUp("testUser", true);
+        verify(lobbyViewModel).onReadyEvent("testUser", true);
     }
     @Test
     void onStartGameCommandShouldFireLobbyViewModelStartGame() {
         JsonDataDTO jsonDataDTO = new JsonDataDTO();
         jsonDataDTO.setCommand(Commands.START_GAME);
         // create users
-        User user = new User("username", true, true );
-        User user2 = new User("username2", false, false);
+
+        User user = new User.UserBuilder("username",true,true).build();
+        User user2 = new User.UserBuilder("username2",false,true).build();
         User[] users = {user, user2};
         jsonDataDTO.putData("users", JsonDataUtility.createJsonMessage(users));
         assertEquals(Commands.START_GAME, jsonDataDTO.getCommand());
@@ -231,7 +235,7 @@ class CommandsTest {
         jsonDataDTO.putData("location", "1");
         assertEquals(Commands.DICENUMBER, jsonDataDTO.getCommand());
 
-        DiceNumberCommand diceNumberCommand = new DiceNumberCommand(queue);
+        DiceNumberCommand diceNumberCommand = new DiceNumberCommand(gameBoardViewModel);
         diceNumberCommand.execute(jsonDataDTO);
 
         verify(queue).enqueueEvent(any(DiceNumberReceivedEvent.class));
@@ -244,7 +248,7 @@ class CommandsTest {
         jsonData.putData("username", "Julia");
         jsonData.putData("new_balance", "1700");
         assertEquals(Commands.CHANGE_BALANCE, jsonData.getCommand());
-        ChangeBalanceCommand changeBalanceCommand = new ChangeBalanceCommand(queue);
+        ChangeBalanceCommand changeBalanceCommand = new ChangeBalanceCommand(gameBoardViewModel);
         changeBalanceCommand.execute(jsonData);
         verify(queue).enqueueEvent(any(ChangeBalanceEvent.class));
     }
@@ -254,7 +258,7 @@ class CommandsTest {
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.CHEATING);
         assertEquals(Commands.CHEATING, jsonData.getCommand());
-        CheatingCommand cheatingCommand = new CheatingCommand(queue);
+        CheatingCommand cheatingCommand = new CheatingCommand(gameBoardViewModel);
         cheatingCommand.execute(jsonData);
         verify(queue).enqueueEvent(any(CheatingEvent.class));
     }
@@ -265,7 +269,7 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.NEXT_PLAYER);
         jsonDataDTO.putData("username", "user1");
         assertEquals(Commands.NEXT_PLAYER, jsonDataDTO.getCommand());
-        NextPlayerCommand nextPlayerCommand = new NextPlayerCommand(queue);
+        NextPlayerCommand nextPlayerCommand = new NextPlayerCommand(gameBoardViewModel);
         nextPlayerCommand.execute(jsonDataDTO);
         verify(queue).enqueueEvent(any(NextPlayerEvent.class));
     }
@@ -287,9 +291,9 @@ class CommandsTest {
         jsonDataDTO.setCommand(Commands.LOSE_GAME);
         jsonDataDTO.putData("username", "user1");
         assertEquals(Commands.LOSE_GAME, jsonDataDTO.getCommand());
-        LoseGameCommand loseGameCommand = new LoseGameCommand(queue);
-        loseGameCommand.execute(jsonDataDTO);
-        verify(queue).enqueueEvent(any(LoseGameEvent.class));
+        LooseGameCommand looseGameCommand = new LooseGameCommand(gameBoardViewModel);
+        looseGameCommand.execute(jsonDataDTO);
+        verify(queue).enqueueEvent(any(LooseGameEvent.class));
     }
 
     @Test

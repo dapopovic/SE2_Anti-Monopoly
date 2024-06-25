@@ -41,6 +41,10 @@ public class CommandFactory {
         commandMap.put(Commands.SELECT_ROLE.getCommand(), null);
         commandMap.put(Commands.FINISHED_ROUND.getCommand(), null);
         commandMap.put(Commands.LOBBY_PLAYERS.getCommand(), null);
+        commandMap.put(Commands.BUY_HOTEL.getCommand(), null);
+        commandMap.put(Commands.BUY_PROPERTY.getCommand(), new BuyPropertyCommand(eventPublisher));
+        commandMap.put(Commands.BUY_HOUSE.getCommand(),new BuyHouseCommand(eventPublisher));
+        commandMap.put(Commands.PAY_RENT.getCommand(),new PayRentCommand(eventPublisher));
         commandMap.put(Commands.HEARTBEAT.getCommand(), new HeartBeatCommand(eventPublisher));
         commandMap.put(Commands.JOIN.getCommand(), new JoinLobbyCommand(eventPublisher));
         commandMap.put(Commands.JOIN_GAME.getCommand(), new JoinLobbyCommand(eventPublisher));

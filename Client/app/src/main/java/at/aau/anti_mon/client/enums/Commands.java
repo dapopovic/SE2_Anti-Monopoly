@@ -27,6 +27,11 @@ public enum Commands {
     CHEATING("CHEATING"),
     WIN_GAME("WIN_GAME"),
     LOSE_GAME("LOSE_GAME"),
+    BUY_HOUSE("BUY_HOUSE"),
+    BUY_HOTEL("BUY_HOTEL"),
+    PAY_RENT("PAY_RENT"),
+    SELL_PROPERTY("SELL_PROPERTY"),
+    BUY_PROPERTY("BUY_PROPERTY"),
     END_GAME("END_GAME");
     // usw
 

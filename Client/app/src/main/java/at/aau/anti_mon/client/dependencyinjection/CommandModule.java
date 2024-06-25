@@ -14,12 +14,11 @@ import at.aau.anti_mon.client.command.CreateGameCommand;
 import at.aau.anti_mon.client.command.DiceNumberCommand;
 import at.aau.anti_mon.client.command.EndGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
-import at.aau.anti_mon.client.command.FirstPlayerCommand;
 import at.aau.anti_mon.client.command.HeartBeatCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.JoinGameCommand;
 import at.aau.anti_mon.client.command.LeaveGameCommand;
-import at.aau.anti_mon.client.command.LoseGameCommand;
+import at.aau.anti_mon.client.command.LooseGameCommand;
 import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
@@ -108,13 +107,6 @@ public abstract class CommandModule {
 
     @Provides
     @IntoMap
-    @StringKey("FIRST_PLAYER")
-    static Command provideFirstPlayerCommand(FirstPlayerCommand command) {
-        return command;
-    }
-
-    @Provides
-    @IntoMap
     @StringKey("INFO")
     static Command provideInfoCommand(InfoCommand command) {
         return command;
@@ -156,7 +148,7 @@ public abstract class CommandModule {
     @Provides
     @IntoMap
     @StringKey("LOSE_GAME")
-    static Command provideLoseGameCommand(LoseGameCommand command) { return command; }
+    static Command provideLoseGameCommand(LooseGameCommand command) { return command; }
 
     @Provides
     @IntoMap

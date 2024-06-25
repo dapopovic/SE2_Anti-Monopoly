@@ -25,7 +25,7 @@ public class DiceNumberCommand implements Command{
                 || jsonData.getData().get("pin") == null
                 || jsonData.getData().get("cheat") == null){
             Logger.error("SERVER: Required data for 'DICE_NUMBER' is missing.");
-            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'DICE_NUMBER' is missing.");
+            throw new CanNotExecuteJsonCommandException("SERVER: Required data for 'DICENUMBER' is missing.");
         }
 
         String username = jsonData.getData().get("username");

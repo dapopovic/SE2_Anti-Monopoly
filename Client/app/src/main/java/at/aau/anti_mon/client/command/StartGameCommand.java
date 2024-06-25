@@ -3,7 +3,7 @@ package at.aau.anti_mon.client.command;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -21,7 +21,10 @@ public class StartGameCommand implements Command {
     @Override
     public void execute(JsonDataDTO data) {
         Log.d("StartGameCommand", "Game started " + data.getData().get("users"));
-        User[] users = JsonDataUtility.parseJsonMessage(data.getData().get("users"), User[].class);
-        lobbyViewModel.startGame(new ArrayList<>(Arrays.asList(users)));
+
+
+        List<User> users = JsonDataUtility.parseUserList(data.getData().get("users"));
+        lobbyViewModel.startGame(new ArrayList<>(users));
     }
+
 }

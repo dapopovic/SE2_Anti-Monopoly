@@ -23,8 +23,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import at.aau.anti_mon.server.commands.JoinLobbyCommand;
 import at.aau.anti_mon.server.commands.LeaveLobbyCommand;
-import at.aau.anti_mon.server.dtos.LobbyDTO;
-import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.events.UserJoinedLobbyEvent;
 import at.aau.anti_mon.server.events.UserLeftLobbyEvent;
@@ -89,8 +87,8 @@ class EventDrivenPatternTest {
 
         user1 = userService.findOrCreateUser("user1", session1);
         user2 = userService.findOrCreateUser("user2", session2);
-        sessionManagementService.registerUserWithSession(user1.getName(), session1);
-        sessionManagementService.registerUserWithSession(user2.getName(), session2);
+        sessionManagementService.registerUserWithSession(user1.getUserName(), session1);
+        sessionManagementService.registerUserWithSession(user2.getUserName(), session2);
         lobby = lobbyService.createLobby(user1);
 
     }
@@ -131,7 +129,7 @@ class EventDrivenPatternTest {
         session1 = mock(WebSocketSession.class);
 
 
-        lobbyService.addUserToLobby( user2.getName(),lobby.getPin());
+        lobbyService.addUserToLobby( user2.getUserName(),lobby.getPin());
         UserLeftLobbyEvent event = new UserLeftLobbyEvent(session1, lobby.getPin(),"user1");
         leaveLobbyCommand = mock(LeaveLobbyCommand.class);
         JsonDataDTO jsonDataDTO = new JsonDataDTO();

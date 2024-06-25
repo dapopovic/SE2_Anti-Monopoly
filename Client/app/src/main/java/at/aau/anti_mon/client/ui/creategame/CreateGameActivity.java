@@ -2,133 +2,76 @@ package at.aau.anti_mon.client.ui.creategame;
 
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.multidex.MultiDex;
-
-import javax.inject.Inject;
-
-import at.aau.anti_mon.client.AntiMonopolyApplication;
+import at.aau.anti_mon.client.BR;
 import at.aau.anti_mon.client.R;
-import at.aau.anti_mon.client.enums.Commands;
-import at.aau.anti_mon.client.utilities.GlobalEventQueue;
+import at.aau.anti_mon.client.databinding.ActivityCreateGameBinding;
+import at.aau.anti_mon.client.ui.base.BaseActivity;
 import at.aau.anti_mon.client.ui.lobby.LobbyActivity;
-import at.aau.anti_mon.client.utilities.MessagingUtility;
 
 /**
- *
+ * Activity to create a new game
  */
-public class CreateGameActivity extends AppCompatActivity {
-
-    EditText usernameEditText;
-
-    String pin;
-
-    @Inject
-    CreateGameViewModel createGameViewModel;
-    /**
-     * Dependency Injection of GlobalEventQueue
-     */
-    @Inject
-    GlobalEventQueue globalEventQueue;
-
+public class CreateGameActivity extends BaseActivity<ActivityCreateGameBinding, CreateGameViewModel> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_create_game);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        usernameEditText = findViewById(R.id.username);
+        viewDataBinding = getViewDataBinding();
+        viewModel = getViewModel();
 
-        ((AntiMonopolyApplication) getApplication()).getAppComponent().inject(this);
+        setupButtonListener();
         setupLiveDataObservers();
     }
 
+    private void setupButtonListener() {
+        viewDataBinding.newGameCreate.setOnClickListener(v -> viewModel.onCreateGameClicked(getViewDataBinding()));
+        viewDataBinding.newGameCancel.setOnClickListener(v -> finish());
+    }
+
     private void setupLiveDataObservers() {
-        createGameViewModel.getPinLiveData().observe(this, this::onPinReceived);
-    }
-    private void removeObservers() {
-        createGameViewModel.getPinLiveData().removeObservers(this);
-        createGameViewModel.getPinLiveData().setPending(false);
-    }
-
-    /**
-     * Event when the button "Create Game" is clicked
-     *
-     * @param view
-     */
-    public void onCreateGameClicked(View view) {
-        String username = usernameEditText.getText().toString();
-        MessagingUtility.connectToServerWithUserID(username);
-        if (username.isEmpty()) {
-            usernameEditText.setError("Please enter a username");
-            return;
-        }
-        MessagingUtility.createUserMessage(username, Commands.CREATE_GAME).sendMessage();
-    }
-
-    public void onPinReceived(String receivedPin) {
-        Log.d(DEBUG_TAG, "Pin received: " + receivedPin);
-        if (isFinishing()) {
-            Log.d(DEBUG_TAG, "Activity is finishing. Cannot set pin.");
-            return;
-        }
-        pin = receivedPin;
-        startLobbyActivity(usernameEditText.getText().toString(), pin);
+        viewModel.getPin().observe(this, receivedPin -> startLobbyActivity(viewModel.getUsername().getValue(), receivedPin));
+        viewModel.getErrorLiveData().observe(this, errorMessage -> Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
+        viewModel.getInfoLiveData().observe(this, infoMessage -> Toast.makeText(this, infoMessage, Toast.LENGTH_SHORT).show());
     }
 
     private void startLobbyActivity(String username, String pin) {
+        userManager.createAppUser(username, Integer.valueOf(pin));
         Intent intent = new Intent(this, LobbyActivity.class);
-        intent.putExtra("username", username);
-        intent.putExtra("pin", pin);
-        intent.putExtra("isOwner", true);
-        intent.putExtra("isReady", true);
         startActivity(intent);
     }
-
-    public void onCancelStartNewGame(View view) {
-        // Go back to last Activity on Stack (StartMenuActivity)
-        removeObservers();
-        finish();
-    }
-
 
     @Override
     protected void onResume() {
         super.onResume();
-        pin = null;
-        if (!createGameViewModel.getPinLiveData().hasActiveObservers()) {
-            setupLiveDataObservers();
-        }
+        viewModel.resetPin();
+        viewDataBinding.username.setText(viewModel.getPreferenceManager().getCurrentUsername());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        pin = null;
-        removeObservers();
+        viewModel.resetPin();
+        viewModel.clearObservers(this);
     }
 
     @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
+    public int getBindingVariable() {
+        return BR.viewModel;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_create_game;
+    }
+
+    @Override
+    protected Class<CreateGameViewModel> getViewModelClass() {
+        return CreateGameViewModel.class;
     }
 
 }

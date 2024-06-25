@@ -1,0 +1,57 @@
+package at.aau.anti_mon.client.ui.popups;
+
+import android.app.Activity;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowMetrics;
+
+import at.aau.anti_mon.client.R;
+
+public class BasePopUp extends Activity {
+    private int layout = R.layout.popup_objects;
+    private static final float POPUP_SIZE = 0.65f;
+
+    public BasePopUp() {
+    }
+
+    public BasePopUp(int layout) {
+        this.layout = layout;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(layout);
+        if (getActionBar() != null) {
+            getActionBar().hide();
+        }
+
+        int width;
+        int height;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics windowMetrics = getWindowManager().getCurrentWindowMetrics();
+            width = windowMetrics.getBounds().width();
+            height = windowMetrics.getBounds().height();
+        } else {
+            // @deprecated used for older versions, but still needed for compatibility
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            width = dm.widthPixels;
+            height = dm.heightPixels;
+        }
+
+        getWindow().setLayout((int) (width * POPUP_SIZE), (int) (height * POPUP_SIZE));
+        processIntent();
+    }
+
+    public void onX(View view) {
+        finish();
+    }
+
+    void processIntent() {
+        Log.d(this.getClass().getName(), "in processIntent");
+    }
+}

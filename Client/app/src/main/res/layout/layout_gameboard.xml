@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
 
     <data>
         <variable name="appUser" type="at.aau.anti_mon.client.game.User"/>
-
-        <variable
-            name="viewModel"
-            type="at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel" />
+        <variable name="viewModel" type="at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/custom_view_gamefield"
+    tools:context=".ui.gameboard.GameBoardActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.Guideline
+<androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,10 +29,8 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.12" />
 
-
-
     <ImageView
-        android:id="@+id/field_square"
+        android:id="@+id/fieldsquare"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -48,8 +46,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:srcCompat="@drawable/start" />
 
@@ -58,8 +56,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
         app:srcCompat="@drawable/price_war" />
 
@@ -68,8 +66,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintTop_toTopOf="@id/field_square"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
         app:srcCompat="@drawable/sitting" />
 
@@ -78,8 +76,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintTop_toTopOf="@id/field_square"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
         app:srcCompat="@drawable/unlucky_field" />
 
@@ -89,9 +87,10 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/rom_1"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field1"
         app:layout_constraintLeft_toRightOf="@id/field3"
+        android:onClick="@{(view) -> viewModel.onImageViewClick(view)}"
         app:layout_constraintHorizontal_chainStyle="spread_inside"/>
 
     <ImageView
@@ -100,7 +99,7 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/take"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field2"
         app:layout_constraintLeft_toRightOf="@id/field4"/>
 
@@ -110,8 +109,9 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/rom_2"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field3"
+        android:onClick="@{viewModel::onImageViewClick}"
         app:layout_constraintLeft_toRightOf="@id/field5"/>
 
     <ImageView
@@ -120,7 +120,7 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/income_tax"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field4"
         app:layout_constraintLeft_toRightOf="@id/field6"/>
 
@@ -130,8 +130,9 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/flughafen"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field5"
+        android:onClick="@{viewModel::onImageViewClick}"
         app:layout_constraintLeft_toRightOf="@id/field7"/>
 
     <ImageView
@@ -140,8 +141,9 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/berlin_1"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field6"
+        android:onClick="@{viewModel::onImageViewClick}"
         app:layout_constraintLeft_toRightOf="@id/field8"/>
 
     <ImageView
@@ -150,7 +152,7 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/take"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field7"
         app:layout_constraintLeft_toRightOf="@id/field9"/>
 
@@ -160,8 +162,9 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/berlin_2"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field8"
+        android:onClick="@{viewModel::onImageViewClick}"
         app:layout_constraintLeft_toRightOf="@id/field10"/>
 
     <ImageView
@@ -170,8 +173,9 @@
         android:layout_height="0dp"
         app:srcCompat="@drawable/berlin_3"
         app:layout_constraintTop_toTopOf="@id/guideline_bottom"
-        app:layout_constraintBottom_toBottomOf="@id/field_square"
+        app:layout_constraintBottom_toBottomOf="@id/fieldsquare"
         app:layout_constraintRight_toLeftOf="@id/field9"
+        android:onClick="@{viewModel::onImageViewClick}"
         app:layout_constraintLeft_toRightOf="@id/field11"/>
 
 
@@ -185,7 +189,7 @@
         app:layout_constraintTop_toBottomOf="@id/field21"
         app:layout_constraintBottom_toTopOf="@id/field19"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -196,7 +200,7 @@
         app:layout_constraintTop_toBottomOf="@id/field20"
         app:layout_constraintBottom_toTopOf="@id/field18"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -207,7 +211,7 @@
         app:layout_constraintTop_toBottomOf="@id/field19"
         app:layout_constraintBottom_toTopOf="@id/field17"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -218,7 +222,7 @@
         app:layout_constraintTop_toBottomOf="@id/field18"
         app:layout_constraintBottom_toTopOf="@id/field16"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -229,7 +233,7 @@
         app:layout_constraintTop_toBottomOf="@id/field17"
         app:layout_constraintBottom_toTopOf="@id/field15"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -240,7 +244,7 @@
         app:layout_constraintTop_toBottomOf="@id/field16"
         app:layout_constraintBottom_toTopOf="@id/field14"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -251,7 +255,7 @@
         app:layout_constraintTop_toBottomOf="@id/field15"
         app:layout_constraintBottom_toTopOf="@id/field13"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -262,7 +266,7 @@
         app:layout_constraintTop_toBottomOf="@id/field14"
         app:layout_constraintBottom_toTopOf="@id/field12"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -273,7 +277,7 @@
         app:layout_constraintTop_toBottomOf="@id/field13"
         app:layout_constraintBottom_toTopOf="@id/field11"
         app:layout_constraintEnd_toEndOf="@id/field21"
-        app:layout_constraintStart_toStartOf="@id/field_square"
+        app:layout_constraintStart_toStartOf="@id/fieldsquare"
         />
 
     <ImageView
@@ -282,7 +286,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/paris_rue"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field23"
         app:layout_constraintLeft_toRightOf="@id/field21"
@@ -294,7 +298,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/take"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field24"
         app:layout_constraintLeft_toRightOf="@id/field22"
@@ -306,7 +310,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/paris_rue2"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field25"
         app:layout_constraintLeft_toRightOf="@id/field23"
@@ -318,7 +322,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/paris_champs"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field26"
         app:layout_constraintLeft_toRightOf="@id/field24"
@@ -330,7 +334,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/train_station"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field27"
         app:layout_constraintLeft_toRightOf="@id/field25"
@@ -342,7 +346,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/brussels_markt"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field28"
         app:layout_constraintLeft_toRightOf="@id/field26"
@@ -354,7 +358,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/brussels_hoogstraat"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field29"
         app:layout_constraintLeft_toRightOf="@id/field27"
@@ -366,7 +370,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/gasworks"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field30"
         app:layout_constraintLeft_toRightOf="@id/field28"
@@ -378,7 +382,7 @@
         android:layout_height="0dp"
         android:rotation="180"
         app:srcCompat="@drawable/brussels_nieuwstraat"
-        app:layout_constraintTop_toTopOf="@id/field_square"
+        app:layout_constraintTop_toTopOf="@id/fieldsquare"
         app:layout_constraintBottom_toTopOf="@id/guideline_top"
         app:layout_constraintRight_toLeftOf="@id/field31"
         app:layout_constraintLeft_toRightOf="@id/field29"
@@ -392,8 +396,9 @@
         app:srcCompat="@drawable/london_parklane"
         app:layout_constraintTop_toBottomOf="@id/field31"
         app:layout_constraintBottom_toTopOf="@id/field33"
-        app:layout_constraintRight_toRightOf="@id/field_square"
+        app:layout_constraintRight_toRightOf="@id/fieldsquare"
         app:layout_constraintLeft_toLeftOf="@id/field1"
+
         app:layout_constraintVertical_chainStyle="spread"
 
         />
@@ -406,7 +411,7 @@
         app:srcCompat="@drawable/london_piccadilly"
         app:layout_constraintTop_toBottomOf="@id/field32"
         app:layout_constraintBottom_toTopOf="@id/field34"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -418,7 +423,7 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/field33"
         app:layout_constraintBottom_toTopOf="@id/field35"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -430,7 +435,7 @@
         app:srcCompat="@drawable/london_oxford"
         app:layout_constraintTop_toBottomOf="@id/field34"
         app:layout_constraintBottom_toTopOf="@id/field36"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -442,7 +447,7 @@
         app:srcCompat="@drawable/bus_operators"
         app:layout_constraintTop_toBottomOf="@id/field35"
         app:layout_constraintBottom_toTopOf="@id/field37"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -454,7 +459,7 @@
         app:srcCompat="@drawable/take_90_grad"
         app:layout_constraintTop_toBottomOf="@id/field36"
         app:layout_constraintBottom_toTopOf="@id/field38"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -466,7 +471,7 @@
         app:srcCompat="@drawable/athen_laplaka"
         app:layout_constraintTop_toBottomOf="@id/field37"
         app:layout_constraintBottom_toTopOf="@id/field39"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -478,7 +483,7 @@
         app:srcCompat="@drawable/additional_tax"
         app:layout_constraintTop_toBottomOf="@id/field38"
         app:layout_constraintBottom_toTopOf="@id/field40"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -490,7 +495,7 @@
         app:srcCompat="@drawable/athen_syntagma"
         app:layout_constraintTop_toBottomOf="@id/field39"
         app:layout_constraintBottom_toTopOf="@id/field1"
-        app:layout_constraintEnd_toEndOf="@id/field_square"
+        app:layout_constraintEnd_toEndOf="@id/fieldsquare"
         app:layout_constraintStart_toStartOf="@id/field1"
         />
 
@@ -502,7 +507,7 @@
         app:layout_constraintBottom_toTopOf="@+id/GREEN_CIRCLE"
         app:layout_constraintStart_toEndOf="@+id/field1"
         app:layout_constraintTop_toBottomOf="@+id/GREEN_SQUARE"
-        app:srcCompat="@drawable/greentriangle" />
+        app:srcCompat="@drawable/gameboard_monopoly_boot" />
 
     <ImageView
         android:id="@+id/GREEN_SQUARE"
@@ -511,7 +516,7 @@
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@+id/field1"
         app:layout_constraintTop_toTopOf="@+id/guideline_bottom"
-        app:srcCompat="@drawable/greensquare" />
+        app:srcCompat="@drawable/gameboard_monopoly_car" />
 
     <ImageView
         android:id="@+id/GREEN_CIRCLE"
@@ -520,7 +525,7 @@
         android:layout_marginStart="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/field1"
-        app:srcCompat="@drawable/greencircle" />
+        app:srcCompat="@drawable/gameboard_monopoly_cat" />
 
     <ImageView
         android:id="@+id/BLUE_SQUARE"
@@ -529,7 +534,7 @@
         android:layout_marginStart="23dp"
         app:layout_constraintStart_toEndOf="@+id/field1"
         app:layout_constraintTop_toTopOf="@+id/guideline_bottom"
-        app:srcCompat="@drawable/bluesquare" />
+        app:srcCompat="@drawable/gameboard_monopoly_hat" />
 
     <ImageView
         android:id="@+id/BLUE_TRIANGLE"
@@ -539,7 +544,7 @@
         app:layout_constraintBottom_toTopOf="@+id/BLUE_CIRCLE"
         app:layout_constraintStart_toEndOf="@+id/field1"
         app:layout_constraintTop_toBottomOf="@+id/BLUE_SQUARE"
-        app:srcCompat="@drawable/bluetriangle" />
+        app:srcCompat="@drawable/gameboard_monopoly_ship" />
 
     <ImageView
         android:id="@+id/BLUE_CIRCLE"
@@ -548,7 +553,7 @@
         android:layout_marginStart="23dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/field1"
-        app:srcCompat="@drawable/bluecircle" />
+        app:srcCompat="@drawable/gameboard_monopoly_wheelbarrow" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,6 +42,8 @@ public class LobbyService {
     private final Random random = new Random();
     private static final String SERVER_PLAYER = "SERVER: Spieler ";
     int sequenceNumber = 0;
+
+
     @Autowired
     public LobbyService(UserService userService
                         //SimpMessagingTemplate messagingTemplate
@@ -70,7 +72,7 @@ public class LobbyService {
      */
     public Lobby createLobby(User user) {
         Lobby newLobby = new Lobby(user);
-        userLobbyMap.put(user.getName(), newLobby.getPin());
+        userLobbyMap.put(user.getUserName(), newLobby.getPin());
 
         Lobby existing = lobbies.putIfAbsent(newLobby.getPin(), newLobby);
         if (existing != null) {
@@ -148,7 +150,7 @@ public class LobbyService {
     public User findUserInAllLobbies(String usrID) throws UserNotFoundException {
         for (Lobby lobby : lobbies.values()) {
             for (User user : lobby.getUsers()) {
-                if (user.getName().equals(usrID)) {
+                if (user.getUserName().equals(usrID)) {
                     return user;
                 }
             }
@@ -158,7 +160,7 @@ public class LobbyService {
 
     public void startGame(Integer pin, String username) {
         Lobby lobby = lobbies.get(pin);
-        if (!lobby.getOwner().getName().equals(username)) {
+        if (!lobby.getOwner().getUserName().equals(username)) {
             Logger.error("SERVER: User " + username + " is not the owner of the lobby.");
             return;
         }
@@ -167,8 +169,8 @@ public class LobbyService {
             Logger.error("SERVER: Not everyone is ready.");
             return;
         }
-        HashSet<User> users = lobby.getUsers();
-        HashSet<Figures> assignedFigures = new HashSet<>();
+        Set<User> users = lobby.getUsers();
+        Set<Figures> assignedFigures = new HashSet<>();
         sequenceNumber = 0;
         lobby.startGame();
 
@@ -192,7 +194,7 @@ public class LobbyService {
             user.setFigure(randomFigure);
             user.setSequence(sequenceNumber);
             sequenceNumber++;
-            user.setLocation(1);
+            user.setPlayerLocation(1);
         });
     }
 }

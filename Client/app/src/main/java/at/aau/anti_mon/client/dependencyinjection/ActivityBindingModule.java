@@ -31,5 +31,5 @@ public abstract class ActivityBindingModule {
     abstract GameInstructionsActivity contributeGameInstructionsActivity();
 
     @ContributesAndroidInjector
-    abstract GameBoardActivity contributeGameFieldActivity();
+    abstract GameBoardActivity contributeGameBoardActivity();
 }

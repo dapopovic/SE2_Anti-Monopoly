@@ -27,7 +27,7 @@ class UserServiceUnitTest {
         User user = userService.findOrCreateUser("user1", session);
 
         assertNotNull(user);
-        assertEquals("user1", user.getName());
+        assertEquals("user1", user.getUserName());
         assertEquals(session, user.getSession());
     }
 
@@ -41,7 +41,7 @@ class UserServiceUnitTest {
         User user = userService.findOrCreateUser("user1", session);
 
         assertNotNull(user);
-        assertEquals("user1", user.getName());
+        assertEquals("user1", user.getUserName());
         assertEquals(session, user.getSession());
     }
 
@@ -64,7 +64,7 @@ class UserServiceUnitTest {
         Optional<User> user = userService.getOptionalUser("user1");
 
         assertTrue(user.isPresent());
-        assertEquals("user1", user.get().getName());
+        assertEquals("user1", user.get().getUserName());
         assertEquals(session, user.get().getSession());
     }
 
@@ -85,7 +85,7 @@ class UserServiceUnitTest {
         User user = userService.getUser("user1");
 
         assertNotNull(user);
-        assertEquals("user1", user.getName());
+        assertEquals("user1", user.getUserName());
         assertEquals(session, user.getSession());
     }
 

@@ -12,6 +12,10 @@ import at.aau.anti_mon.client.networking.WebSocketClient;
 import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.utilities.MessagingUtility;
 import at.aau.anti_mon.client.utilities.PreferenceManager;
+import at.aau.anti_mon.client.utilities.UserManager;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
 import lombok.Getter;
 
 
@@ -20,7 +24,7 @@ import lombok.Getter;
  * It is responsible for creating the Dagger AppComponent and the GlobalEventQueue.
  */
 @Getter
-public class AntiMonopolyApplication extends Application {
+public class AntiMonopolyApplication extends Application implements HasAndroidInjector {
 
     public static final String DEBUG_TAG = "ANTI-MONOPOLY-DEBUG";
     public AppComponent appComponent;
@@ -30,7 +34,8 @@ public class AntiMonopolyApplication extends Application {
     @Inject PreferenceManager preferenceManager;
     @Inject WebSocketClient webSocketClient;
     @Inject MessagingUtility messagingService;
-
+    @Inject DispatchingAndroidInjector<Object> androidInjector;
+    @Inject UserManager userManager;
 
     @Override
     public void onCreate() {
@@ -40,5 +45,11 @@ public class AntiMonopolyApplication extends Application {
         globalEventQueue.setEventBusReady(true);
         webSocketClient.connectToServer();
     }
+
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return androidInjector;
+    }
+
 
 }

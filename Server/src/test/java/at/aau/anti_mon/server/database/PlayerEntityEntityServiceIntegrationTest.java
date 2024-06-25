@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.database;
 
-import at.aau.anti_mon.server.entities.Player;
+import at.aau.anti_mon.server.entities.PlayerEntity;
 import at.aau.anti_mon.server.enums.PlayerFigure;
 import at.aau.anti_mon.server.enums.PlayerRole;
 import at.aau.anti_mon.server.service.PlayerService;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @SpringBootTest
 @ActiveProfiles("databasetests")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class PlayerServiceIntegrationTest extends TestDatabase {
+class PlayerEntityEntityServiceIntegrationTest extends TestDatabase {
 
     @Autowired
     private PlayerService playerService;
@@ -27,7 +27,7 @@ class PlayerServiceIntegrationTest extends TestDatabase {
     @Test
     @Transactional
     void testPlayerCreation() {
-        Player player = new Player.Builder()
+        PlayerEntity playerEntity = new PlayerEntity.Builder()
                 .withName("Player1")
                 .withBalance(777)
                 .withPosition(7)
@@ -36,14 +36,14 @@ class PlayerServiceIntegrationTest extends TestDatabase {
                 .withPlayerRole(PlayerRole.MONOPOLIST)
                 .build();
 
-        playerService.createPlayer(player);
-        List<Player> players = playerService.getAllPlayer();
-        assertThat(players).contains(player);
+        playerService.createPlayer(playerEntity);
+        List<PlayerEntity> playerEntityEntities = playerService.getAllPlayer();
+        assertThat(playerEntityEntities).contains(playerEntity);
     }
 
     @Test
     void updatePlayerSuccessfully() {
-        Player existingPlayer = new Player.Builder()
+        PlayerEntity existingPlayerEntityEntity = new PlayerEntity.Builder()
                 .withName("ExistingPlayer")
                 .withBalance(999)
                 .withPosition(0)
@@ -52,10 +52,10 @@ class PlayerServiceIntegrationTest extends TestDatabase {
                 .withPlayerRole(PlayerRole.ANTI_MONOPOLIST)
                 .build();
 
-        playerService.createPlayer(existingPlayer);
-        Integer existingPlayerID = existingPlayer.getPlayerID();
+        playerService.createPlayer(existingPlayerEntityEntity);
+        Integer existingPlayerID = existingPlayerEntityEntity.getPlayerID();
 
-        Player newPlayer = new Player.Builder()
+        PlayerEntity newPlayerEntityEntity = new PlayerEntity.Builder()
                 .withName("NewPlayer")
                 .withBalance(2000)
                 .withPosition(5)
@@ -64,20 +64,20 @@ class PlayerServiceIntegrationTest extends TestDatabase {
                 .withPlayerRole(PlayerRole.MONOPOLIST)
                 .build();
 
-        Player updatedPlayer = playerService.updatePlayer(existingPlayerID, newPlayer);
+        PlayerEntity updatedPlayerEntityEntity = playerService.updatePlayer(existingPlayerID, newPlayerEntityEntity);
 
-        Assertions.assertEquals(newPlayer.getName(), updatedPlayer.getName());
-        Assertions.assertEquals(newPlayer.getBalance(), updatedPlayer.getBalance());
-        Assertions.assertEquals(newPlayer.getPosition(), updatedPlayer.getPosition());
-        Assertions.assertTrue(updatedPlayer.isInJail());
-        Assertions.assertEquals(PlayerFigure.SHIP, updatedPlayer.getPlayerFigure());
-        Assertions.assertEquals(PlayerRole.MONOPOLIST, updatedPlayer.getPlayerRole());
+        Assertions.assertEquals(newPlayerEntityEntity.getName(), updatedPlayerEntityEntity.getName());
+        Assertions.assertEquals(newPlayerEntityEntity.getBalance(), updatedPlayerEntityEntity.getBalance());
+        Assertions.assertEquals(newPlayerEntityEntity.getPosition(), updatedPlayerEntityEntity.getPosition());
+        Assertions.assertTrue(updatedPlayerEntityEntity.isInJail());
+        Assertions.assertEquals(PlayerFigure.SHIP, updatedPlayerEntityEntity.getPlayerFigure());
+        Assertions.assertEquals(PlayerRole.MONOPOLIST, updatedPlayerEntityEntity.getPlayerRole());
     }
 
 
     @Test
     void updatePlayerWithNonExistingNameReturnsNull() {
-        Player newPlayer = new Player.Builder()
+        PlayerEntity newPlayerEntityEntity = new PlayerEntity.Builder()
                 .withName("NewPlayer")
                 .withBalance(2000)
                 .withPosition(5)
@@ -86,8 +86,8 @@ class PlayerServiceIntegrationTest extends TestDatabase {
                 .withPlayerRole(PlayerRole.MONOPOLIST)
                 .build();
 
-        Player updatedPlayer = playerService.updatePlayer(123, newPlayer);
+        PlayerEntity updatedPlayerEntityEntity = playerService.updatePlayer(123, newPlayerEntityEntity);
 
-        Assertions.assertNull(updatedPlayer);
+        Assertions.assertNull(updatedPlayerEntityEntity);
     }
 }

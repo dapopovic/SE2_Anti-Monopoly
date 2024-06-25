@@ -33,7 +33,7 @@ class GameEntityIntegrationTest {
 
         // Füge einen Spieler hinzu
         UserDTO userDTO = new UserDTO();
-        userDTO.setUsername("TestPlayer");
+        userDTO.setUserName("TestPlayer");
         ResponseEntity<String> response = gameService.addPlayer(newGame.getGameID(), userDTO);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());

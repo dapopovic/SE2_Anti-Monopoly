@@ -1,6 +1,5 @@
 package at.aau.anti_mon.client.ui.joingame;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -8,21 +7,30 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.multidex.MultiDex;
+import androidx.databinding.library.baseAdapters.BR;
+
+import javax.inject.Inject;
 
 import at.aau.anti_mon.client.R;
+import at.aau.anti_mon.client.databinding.ActivityJoinGameBinding;
+import at.aau.anti_mon.client.game.User;
+import at.aau.anti_mon.client.ui.base.BaseActivity;
 import at.aau.anti_mon.client.ui.lobby.LobbyActivity;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.utilities.MessagingUtility;
+import at.aau.anti_mon.client.utilities.PreferenceManager;
+import at.aau.anti_mon.client.utilities.UserManager;
 
-public class JoinGameActivity extends AppCompatActivity {
+public class JoinGameActivity extends BaseActivity<ActivityJoinGameBinding,JoinGameViewModel> {
 
     EditText usernameEditText;
     EditText pinEditText;
+
+    @Inject
+    UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +47,32 @@ public class JoinGameActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.editText_joinGame_Name);
         pinEditText = findViewById(R.id.editText_joinGame_Pin);
 
+        if (PreferenceManager.getInstance().getCurrentUsername() != null) {
+            usernameEditText.setText(PreferenceManager.getInstance().getCurrentUsername());
+        }
+
+    }
+
+    @Override
+    public int getBindingVariable() {
+        return BR.viewModel;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_join_game;
+    }
+
+    @Override
+    protected Class<JoinGameViewModel> getViewModelClass() {
+        return JoinGameViewModel.class;
     }
 
     public void onJoinGameClicked(View view) {
         String username = usernameEditText.getText().toString();
         String pin = pinEditText.getText().toString();
+        PreferenceManager.getInstance().setCurrentUsername(username);
+        PreferenceManager.getInstance().setCurrentPIN(pin);
 
         // add Name to Websocket URI
         MessagingUtility.connectToServerWithUserID(username);
@@ -55,10 +84,9 @@ public class JoinGameActivity extends AppCompatActivity {
         }
 
         MessagingUtility.createUserMessage(username,pin,Commands.JOIN_GAME).sendMessage();
+        userManager.setAppUser(new User.UserBuilder(username, false ,false).lobbyPin(Integer.valueOf(pin)).build());
 
         Intent intent = new Intent(this, LobbyActivity.class);
-        intent.putExtra("username", username);
-        intent.putExtra("pin", pin);
         startActivity(intent);
     }
 
@@ -67,9 +95,4 @@ public class JoinGameActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
 }

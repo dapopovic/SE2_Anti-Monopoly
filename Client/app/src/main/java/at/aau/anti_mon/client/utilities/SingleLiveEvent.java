@@ -26,4 +26,8 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
     public void setPending(boolean pending) {
         this.pending.set(pending);
     }
+
+    public void trigger() {
+        postValue(null);
+    }
 }

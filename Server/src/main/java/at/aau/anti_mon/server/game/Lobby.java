@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Represents a lobby in the game
@@ -20,32 +21,31 @@ import java.util.*;
 public class Lobby {
 
     private final Integer pin;
-    private final HashSet<User> users;
+    private final Set<User> users;
     private User owner;
-    private static final int MAX_USERS = 6;
+    private static final Integer MAX_USERS = 6;
     private GameStateEnum gameState;
-
-    private Random random;
+    private SecureRandom secureRandom;
 
     public Lobby() {
-        SecureRandom secureRandom = new SecureRandom();
-        this.pin = secureRandom.nextInt(9000) + 1000;
-        this.users = new HashSet<>();
-        this.gameState = GameStateEnum.LOBBY;
-        this.owner = null;
+        this(null);
     }
 
     public Lobby(User user) {
-        SecureRandom secureRandom = new SecureRandom();
+        secureRandom = new SecureRandom();
         this.pin = secureRandom.nextInt(9000) + 1000;
-        this.users = new HashSet<>();
+        this.users = new CopyOnWriteArraySet<>(); // Thread-sicheres Set
         this.gameState = GameStateEnum.LOBBY;
-        user.setReady(true);
-        this.users.add(user);
-        this.owner = user;
+
+        if (user != null) {
+            user.setReady(true);
+            this.users.add(user);
+            this.owner = user;
+            user.setOwner(true);
+        }
     }
 
-    public void addUser(User user) throws LobbyIsFullException {
+    public synchronized void addUser(User user) throws LobbyIsFullException {
         if (users.size() >= MAX_USERS) {
             throw new LobbyIsFullException("Lobby is full. Cannot add more players.");
         } else if (users.contains(user)) {
@@ -54,11 +54,11 @@ public class Lobby {
         users.add(user);
     }
 
-    public void readyUser(User user) {
+    public synchronized void readyUser(User user) {
         user.setReady(!user.isReady());
     }
 
-    public void removeUser(User user) throws UserNotFoundException {
+    public synchronized void removeUser(User user) throws UserNotFoundException {
         if (!users.contains(user)) throw new UserNotFoundException("User not found in lobby");
         if (user.equals(owner) && users.size() > 1) {
             for (User next : users) {
@@ -70,6 +70,7 @@ public class Lobby {
                     }
 
                     setOwner(next);
+                    next.setOwner(true);
                     break;
                 }
             }
@@ -77,44 +78,49 @@ public class Lobby {
         if (user.isReady()){
             readyUser(user);
         }
-        user.setLocation(1);
-        user.setRole(null);
+        user.clear();
         users.remove(user);
     }
 
     /**
-     * 
      * @param session The session to search for
      * @return The player with the given session
      */
-    public User getUserWithSession(WebSocketSession session) {
-        return users.stream().filter(player -> player.getSession().getId().equals(session.getId())).findFirst()
-                .orElse(null);
+    public synchronized Optional<User> getUserWithSession(WebSocketSession session) {
+        return users.stream()
+                .filter(user -> user.getSession().getId().equals(session.getId()))
+                .findFirst();
     }
 
-    public boolean isPlayerInLobby(User user) {
+    public synchronized boolean isPlayerInLobby(User user) {
         return users.contains(user);
     }
 
-    public boolean isFull() {
-        return this.users.size() < MAX_USERS;
+    public synchronized boolean isFull() {
+        return this.users.size() == MAX_USERS;
     }
 
-    public void startGame() {
+    public synchronized void startGame() {
         ArrayList<User> userList = new ArrayList<>(users);
-        random = new Random();
-        Collections.shuffle(userList, random);
+        Collections.shuffle(userList, secureRandom);
         users.forEach(user ->
             user.setRole(userList.indexOf(user) < userList.size() / 2 ? Roles.MONOPOLIST : Roles.COMPETITOR)
         );
         this.gameState = GameStateEnum.INGAME;
     }
 
-    public boolean isEveryoneReady() {
+    public synchronized boolean isEveryoneReady() {
         return users.stream().allMatch(User::isReady);
     }
 
-    public boolean hasUser(String username) {
-        return users.stream().anyMatch(user -> user.getName().equals(username));
+    public synchronized boolean hasUser(String username) {
+        return users.stream().anyMatch(user -> user.getUserName().equals(username));
     }
+
+    public synchronized void clear() {
+        users.clear();
+        owner = null;
+        gameState = GameStateEnum.LOBBY;
+    }
+
 }

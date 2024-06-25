@@ -78,6 +78,12 @@ public enum Commands {
     WIN_GAME("WIN_GAME"),
     END_GAME("END_GAME"),
 
+    BUY_HOUSE("BUY_HOUSE"),
+    BUY_HOTEL("BUY_HOTEL"),
+    PAY_RENT("PAY_RENT"),
+    BUY_PROPERTY("BUY_PROPERTY"),
+    SELL_PROPERTY("SELL_PROPERTY"),
+
     ///////////////////////////////////////////////// NEW COMMANDS //////////////////////////////////////////////////
 
     /**

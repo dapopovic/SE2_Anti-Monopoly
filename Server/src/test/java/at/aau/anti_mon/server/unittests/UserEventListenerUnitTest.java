@@ -4,7 +4,6 @@ import at.aau.anti_mon.server.dtos.LobbyDTO;
 import at.aau.anti_mon.server.dtos.UserDTO;
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.events.*;
-import at.aau.anti_mon.server.exceptions.LobbyIsFullException;
 import at.aau.anti_mon.server.exceptions.LobbyNotFoundException;
 import at.aau.anti_mon.server.exceptions.UserNotFoundException;
 import at.aau.anti_mon.server.game.Lobby;
@@ -18,13 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -132,7 +128,7 @@ class UserEventListenerUnitTest {
         UserReadyLobbyEvent event = new UserReadyLobbyEvent(session, lobbyDTO, userDTO);
 
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user1");
+        Mockito.when(user.getUserName()).thenReturn("user1");
         Mockito.when(user.isReady()).thenReturn(false);
         Mockito.when(user.isReady()).thenReturn(false);
 
@@ -164,7 +160,7 @@ class UserEventListenerUnitTest {
         UserStartedGameEvent event = new UserStartedGameEvent(session, lobbyDTO, userDTO);
 
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user1");
+        Mockito.when(user.getUserName()).thenReturn("user1");
         Mockito.when(user.isReady()).thenReturn(false);
         Mockito.when(user.isReady()).thenReturn(false);
 
@@ -194,9 +190,9 @@ class UserEventListenerUnitTest {
         Mockito.when(lobby.hasUser("testuser")).thenReturn(true);
 
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("testuser");
+        Mockito.when(user.getUserName()).thenReturn("testuser");
         Mockito.when(user.getFigure()).thenReturn(Figures.GREEN_CIRCLE);
-        Mockito.when(user.getLocation()).thenReturn(0);
+        Mockito.when(user.getPlayerLocation()).thenReturn(0);
 
         HashSet<User> users = new HashSet<>();
         users.add(user);
@@ -217,7 +213,7 @@ class UserEventListenerUnitTest {
         ChangeBalanceEvent event = new ChangeBalanceEvent(session, "Julia", 1700);
         Lobby lobby = Mockito.mock(Lobby.class);
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("Julia");
+        Mockito.when(user.getUserName()).thenReturn("Julia");
         Mockito.when(user.getLobby()).thenReturn(lobby);
         HashSet<User> users = new HashSet<>();
         users.add(user);
@@ -303,7 +299,7 @@ class UserEventListenerUnitTest {
         FirstPlayerEvent event = new FirstPlayerEvent(session, "user0");
         Lobby lobby = Mockito.mock(Lobby.class);
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user0");
+        Mockito.when(user.getUserName()).thenReturn("user0");
         Mockito.when(user.getLobby()).thenReturn(lobby);
         HashSet<User> users = new HashSet<>();
         users.add(user);
@@ -323,11 +319,11 @@ class UserEventListenerUnitTest {
         NextPlayerEvent event = new NextPlayerEvent(session, "user1");
         Lobby lobby = Mockito.mock(Lobby.class);
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user1");
+        Mockito.when(user.getUserName()).thenReturn("user1");
         Mockito.when(user.getLobby()).thenReturn(lobby);
         Mockito.when(user.getUnavailableRounds()).thenReturn(0);
         User user2 = Mockito.mock(User.class);
-        Mockito.when(user2.getName()).thenReturn("user2");
+        Mockito.when(user2.getUserName()).thenReturn("user2");
         Mockito.when(user2.getUnavailableRounds()).thenReturn(0);
 
         HashSet<User> users = new HashSet<>();
@@ -351,10 +347,10 @@ class UserEventListenerUnitTest {
         LooseGameEvent event = new LooseGameEvent(session, "user1");
         Lobby lobby = Mockito.mock(Lobby.class);
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user1");
+        Mockito.when(user.getUserName()).thenReturn("user1");
         Mockito.when(user.getLobby()).thenReturn(lobby);
         User user2 = Mockito.mock(User.class);
-        Mockito.when(user2.getName()).thenReturn("user2");
+        Mockito.when(user2.getUserName()).thenReturn("user2");
 
         HashSet<User> users = new HashSet<>();
         users.add(user);
@@ -377,7 +373,7 @@ class UserEventListenerUnitTest {
         WebSocketSession session = Mockito.mock(WebSocketSession.class);
 
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user1");
+        Mockito.when(user.getUserName()).thenReturn("user1");
         Mockito.when(user.getUnavailableRounds()).thenReturn(0);
 
         HashSet<User> users = new HashSet<>();
@@ -419,7 +415,7 @@ class UserEventListenerUnitTest {
         for (int i = 0; i < AMOUNT_PLAYERS; i++) {
             WebSocketSession session = Mockito.mock(WebSocketSession.class);
             User user = Mockito.mock(User.class);
-            Mockito.when(user.getName()).thenReturn("user" + i);
+            Mockito.when(user.getUserName()).thenReturn("user" + i);
             Mockito.when(user.getSequence()).thenReturn(sequence);
             Mockito.when(user.isHasPlayed()).thenReturn(true);
             Mockito.when(sessionManagementService.getSessionForUser("user" + i)).thenReturn(session);
@@ -433,7 +429,7 @@ class UserEventListenerUnitTest {
         Mockito.when(user.getLobby()).thenReturn(lobby);
         Mockito.when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user);
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
-        Mockito.verify(userList.get(0), Mockito.times(3 + AMOUNT_PLAYERS)).getName();
+        Mockito.verify(userList.get(0), Mockito.times(3 + AMOUNT_PLAYERS)).getUserName();
     }
     @Test
     void onNextPlayerEventAllPlayersPlayedButOneHasUnavailableRounds() {
@@ -444,7 +440,7 @@ class UserEventListenerUnitTest {
         for (int i = 0; i < AMOUNT_PLAYERS; i++) {
             WebSocketSession session = Mockito.mock(WebSocketSession.class);
             User user = Mockito.mock(User.class);
-            Mockito.when(user.getName()).thenReturn("user" + i);
+            Mockito.when(user.getUserName()).thenReturn("user" + i);
             Mockito.when(user.getSequence()).thenReturn(sequence);
             Mockito.when(user.isHasPlayed()).thenReturn(true);
             if (i == 0) {
@@ -461,7 +457,7 @@ class UserEventListenerUnitTest {
         Mockito.when(user.getLobby()).thenReturn(lobby);
         Mockito.when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user);
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
-        Mockito.verify(userList.get(1), Mockito.times(3 + AMOUNT_PLAYERS)).getName();
+        Mockito.verify(userList.get(1), Mockito.times(3 + AMOUNT_PLAYERS)).getUserName();
     }
 
 
@@ -474,7 +470,7 @@ class UserEventListenerUnitTest {
             Mockito.when(session.isOpen()).thenReturn(true);
             Mockito.when(sessionManagementService.getSessionForUser("user"+i)).thenReturn(session);
             User user = Mockito.mock(User.class);
-            Mockito.when(user.getName()).thenReturn("user" + i);
+            Mockito.when(user.getUserName()).thenReturn("user" + i);
             Mockito.when(user.getSequence()).thenReturn(sequence);
             Mockito.when(user.getUnavailableRounds()).thenReturn(i == unavailableUserIndex ? unavailableRounds : 0);
             users.add(user);
@@ -532,7 +528,7 @@ class UserEventListenerUnitTest {
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
 
         int nextUser = (userIndex == 3) ? 1 : (userIndex + 2 == 4) ? 0 : userIndex + 2;
-        Mockito.verify(userList.get(nextUser), Mockito.times(3 + AMOUNT_PLAYERS)).getName();
+        Mockito.verify(userList.get(nextUser), Mockito.times(3 + AMOUNT_PLAYERS)).getUserName();
     }
 
     /*
@@ -685,7 +681,7 @@ class UserEventListenerUnitTest {
         Mockito.when(lobby.getUsers()).thenReturn(users);
         WebSocketSession session = Mockito.mock(WebSocketSession.class);
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user0");
+        Mockito.when(user.getUserName()).thenReturn("user0");
         Mockito.when(user.getUnavailableRounds()).thenReturn(2);
         Mockito.when(sessionManagementService.getSessionForUser("user0")).thenReturn(session);
         users.add(user);
@@ -695,7 +691,7 @@ class UserEventListenerUnitTest {
         Mockito.when(user.getLobby()).thenReturn(lobby);
         Mockito.when(assertDoesNotThrow(() -> userService.getUser("user0"))).thenReturn(user);
         assertDoesNotThrow(() -> userEventListener.onNextPlayerEvent(event));
-        Mockito.verify(user, Mockito.times(2)).getName();
+        Mockito.verify(user, Mockito.times(2)).getUserName();
     }
 
     @Test
@@ -705,7 +701,7 @@ class UserEventListenerUnitTest {
         WebSocketSession session = Mockito.mock(WebSocketSession.class);
 
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getName()).thenReturn("user1");
+        Mockito.when(user.getUserName()).thenReturn("user1");
         Mockito.when(user.getMoney()).thenReturn(1500);
 
         Lobby lobby = Mockito.mock(Lobby.class);

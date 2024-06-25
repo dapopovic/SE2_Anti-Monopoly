@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.enums.Roles;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -19,21 +20,31 @@ public class UserDTO implements Serializable {
 
     @NotBlank(message = "Benutzername darf nicht leer sein")
     @Size(min = 3, max = 20, message = "Benutzername muss zwischen 3 und 20 Zeichen lang sein")
-    private String username;
-    private boolean isOwner;
-    private boolean isReady;
-    @NotBlank(message = "Money darf nicht leer sein")
-    private int money;
-    private Roles role;
-    private Figures figure;
+    @JsonProperty("userName")
+    private String userName;
 
-    public UserDTO(String username, boolean isOwner, boolean isReady, Roles role, Figures figure) {
-        this.username = username;
+    @JsonProperty("isOwner")
+    private boolean isOwner;
+
+    @JsonProperty("isReady")
+    private boolean isReady;
+
+    @NotBlank(message = "Money darf nicht leer sein")
+    @JsonProperty("playerMoney")
+    private int money;
+
+    @JsonProperty("playerRole")
+    private Roles playerRole;
+
+    @JsonProperty("playerFigure")
+    private Figures playerFigure;
+
+    public UserDTO(String userName, boolean isOwner, boolean isReady, Roles playerRole, Figures playerFigure) {
+        this.userName = userName;
         this.isOwner = isOwner;
         this.isReady = isReady;
         this.money = 1500;
-        this.role = role;
-        this.figure = figure;
+        this.playerRole = playerRole;        this.playerFigure = playerFigure;
     }
 
 }

@@ -24,6 +24,7 @@ import at.aau.anti_mon.client.ui.startmenu.StartMenuViewModel;
 import at.aau.anti_mon.client.utilities.GlobalEventQueue;
 import at.aau.anti_mon.client.utilities.MessagingUtility;
 import at.aau.anti_mon.client.utilities.PreferenceManager;
+import at.aau.anti_mon.client.utilities.UserManager;
 import dagger.Module;
 import dagger.Provides;
 
@@ -81,6 +82,12 @@ public class AppModule {
     @Singleton
     PreferenceManager providePreferenceManager(Application application) {
         return PreferenceManager.getInstance(application);
+    }
+
+    @Provides
+    @Singleton
+    UserManager provideUserManager() {
+        return UserManager.getInstance();
     }
 
     /////////////////////////////////////////////////////////////////////////// ViewModels

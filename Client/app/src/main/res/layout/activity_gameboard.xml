@@ -5,10 +5,7 @@
 
     <data>
         <variable name="appUser" type="at.aau.anti_mon.client.game.User"/>
-
-        <variable
-            name="viewModel"
-            type="at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel" />
+        <variable name="viewModel" type="at.aau.anti_mon.client.ui.gameboard.GameBoardViewModel" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,10 +26,11 @@
         android:id="@+id/btndice"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="Button for Dice"
         android:elevation="1dp"
-        android:onClick="onFigureMove"
         android:src="@drawable/dice"
-
+        android:onClick="@{() -> viewModel.onFigureMove()}"
+        android:enabled="@{viewModel.appUsersTurn}"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
@@ -42,25 +40,27 @@
         android:id="@+id/btnobjects"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:onClick="onObjects"
-        android:src="@drawable/objects0"
-        android:scaleType="fitCenter"
         android:backgroundTint="@color/blau"
+        android:contentDescription="Button for Objects"
+        android:elevation="1dp"
+        android:onClick="@{() -> viewModel.onObjectsClick()}"
+        android:scaleType="fitCenter"
+        android:src="@drawable/objects0"
         app:layout_constraintBottom_toTopOf="@+id/guideline17"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline13"
-        app:layout_constraintTop_toTopOf="@+id/guideline18"
-        android:elevation="1dp"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline18" />
 
     <ImageButton
         android:id="@+id/btnhandel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:onClick="onHandel"
+        android:contentDescription="Button for Handel"
         android:src="@drawable/handel0"
         android:scaleType="fitCenter"
         android:backgroundTint="@color/orange"
+        android:onClick="@{() -> viewModel.onHandelClick()}"
         app:layout_constraintBottom_toTopOf="@+id/guideline16"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -72,10 +72,11 @@
         android:id="@+id/btnsettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:onClick="onSettings"
+        android:contentDescription="@string/settings_button"
         android:src="@drawable/settings0"
         android:scaleType="fitCenter"
         android:backgroundTint="@color/grau"
+        android:onClick="@{() -> viewModel.onSettingsClick()}"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -88,8 +89,9 @@
         android:id="@+id/btnfinish"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:onClick="onEndGame"
-        android:text="Finish"
+        android:text="@string/finish"
+        android:onClick="@{() -> viewModel.onFinishRound()}"
+        android:enabled="@{viewModel.appUsersTurn}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintHorizontal_bias="0.0"
@@ -132,7 +134,7 @@
         android:elevation="1dp"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline18"
-        app:layout_constraintStart_toStartOf="@+id/game_field"
+        app:layout_constraintStart_toStartOf="@+id/game_board_layout"
         app:layout_constraintTop_toTopOf="@+id/guideline17" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -143,12 +145,12 @@
         app:layout_constraintGuide_percent="0.2" />
 
     <at.aau.anti_mon.client.ui.gameboard.GameBoardLayout
-        android:id="@+id/game_field"
+        android:id="@+id/game_board_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="-28dp">
-    </at.aau.anti_mon.client.ui.gameboard.GameBoardLayout>
+        tools:layout_editor_absoluteY="-28dp"
+        app:viewModel="@{viewModel}" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -47,7 +47,7 @@ class LobbyServiceIntegrationTest {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
         User newUser = userService.findOrCreateUser("userToJoin", mock(WebSocketSession.class));
-        lobbyService.joinLobby(lobby.getPin(), newUser.getName());
+        lobbyService.joinLobby(lobby.getPin(), newUser.getUserName());
         assertTrue(lobby.getUsers().contains(newUser));
     }
 
@@ -57,8 +57,8 @@ class LobbyServiceIntegrationTest {
         User user = userService.findOrCreateUser("newUser", mock(WebSocketSession.class));
         Lobby lobby = lobbyService.createLobby(user);
         User newUser = userService.findOrCreateUser("userToLeave", mock(WebSocketSession.class));
-        lobbyService.joinLobby(lobby.getPin(), newUser.getName());
-        lobbyService.leaveLobby(lobby.getPin(), newUser.getName());
+        lobbyService.joinLobby(lobby.getPin(), newUser.getUserName());
+        lobbyService.leaveLobby(lobby.getPin(), newUser.getUserName());
         assertFalse(lobby.getUsers().contains(newUser));
     }
 

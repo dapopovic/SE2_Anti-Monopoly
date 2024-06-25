@@ -37,8 +37,6 @@ public interface AppComponent {
         AppComponent create(AppModule module);
     }
 
-    ActivityComponent.Factory activityComponentFactory();
-
     void inject(AntiMonopolyApplication antiMonopolyApplication);
     void inject(JoinGameActivity joinGameActivity);
     void inject(GameBoardActivity gameBoardActivity);
@@ -46,6 +44,7 @@ public interface AppComponent {
     void inject(StartMenuActivity startMenuActivity);
     void inject(CreateGameActivity createGameActivity);
 
+    ActivityComponent.Factory activityComponentFactory();
     WebSocketClient getWebSocketClient();
     PreferenceManager getPreferenceManager();
     GlobalEventQueue getGlobalEventQueue();

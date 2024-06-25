@@ -1,6 +1,6 @@
 package at.aau.anti_mon.server.entitytests;
 
-import at.aau.anti_mon.server.entities.Player;
+import at.aau.anti_mon.server.entities.PlayerEntity;
 import at.aau.anti_mon.server.enums.PlayerFigure;
 import at.aau.anti_mon.server.enums.PlayerRole;
 import at.aau.anti_mon.server.service.PlayerService;
@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class PlayerEntityIntegrationTest {
+class PlayerEntityEntityEntityIntegrationTest {
 
     @Autowired
     private PlayerService playerService;
 
     @Test
     void testCreatePlayer() {
-        Player player = new Player.Builder()
+        PlayerEntity playerEntity = new PlayerEntity.Builder()
                 .withName("TestPlayer")
                 .withBalance(2000)
                 .withPosition(5)
@@ -30,20 +30,20 @@ class PlayerEntityIntegrationTest {
                 .withPlayerRole(PlayerRole.MONOPOLIST)
                 .build();
 
-        Player savedPlayer = playerService.createPlayer(player);
+        PlayerEntity savedPlayerEntityEntity = playerService.createPlayer(playerEntity);
 
-        assertNotNull(savedPlayer);
-        assertEquals("TestPlayer", savedPlayer.getName());
-        assertEquals(2000, savedPlayer.getBalance());
-        assertEquals(5, savedPlayer.getPosition());
-        assertTrue(savedPlayer.isInJail());
-        assertEquals(PlayerFigure.SHIP, savedPlayer.getPlayerFigure());
-        assertEquals(PlayerRole.MONOPOLIST, savedPlayer.getPlayerRole());
+        assertNotNull(savedPlayerEntityEntity);
+        assertEquals("TestPlayer", savedPlayerEntityEntity.getName());
+        assertEquals(2000, savedPlayerEntityEntity.getBalance());
+        assertEquals(5, savedPlayerEntityEntity.getPosition());
+        assertTrue(savedPlayerEntityEntity.isInJail());
+        assertEquals(PlayerFigure.SHIP, savedPlayerEntityEntity.getPlayerFigure());
+        assertEquals(PlayerRole.MONOPOLIST, savedPlayerEntityEntity.getPlayerRole());
     }
 
     @Test
     void createPlayerThrowsConstrainedValidationViolationException() {
-        Player player = new Player.Builder()
+        PlayerEntity playerEntity = new PlayerEntity.Builder()
                 .withName("IntegrationTestPlayer")
                 .withBalance(2000)
                 .withPosition(5)
@@ -52,7 +52,7 @@ class PlayerEntityIntegrationTest {
                 .withPlayerRole(PlayerRole.MONOPOLIST)
                 .build();
 
-        assertThrows(ConstraintViolationException.class, () -> playerService.createPlayer(player));
+        assertThrows(ConstraintViolationException.class, () -> playerService.createPlayer(playerEntity));
     }
 
 }

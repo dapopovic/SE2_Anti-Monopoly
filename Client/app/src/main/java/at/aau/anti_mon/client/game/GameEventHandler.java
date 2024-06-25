@@ -21,7 +21,7 @@ public class GameEventHandler {
      * Observer für die LiveData-Objekte.
      */
     public void setupObservers(LifecycleOwner lifecycleOwner) {
-        gameBoardViewModel.getGameState().observe(lifecycleOwner, this::handleGameStateChange);
+        /*gameBoardViewModel.getGameState().observe(lifecycleOwner, this::handleGameStateChange);
 
         gameBoardViewModel.getCurrentPlayer().observe(lifecycleOwner, player -> {
             // Handle current player change
@@ -36,6 +36,8 @@ public class GameEventHandler {
         });
 
         gameBoardViewModel.getDiceNumberData().observe(lifecycleOwner, this::onDiceNumberReceivedEvent);
+        
+         */
     }
 
     private void handleGameStateChange(GameState gameState) {

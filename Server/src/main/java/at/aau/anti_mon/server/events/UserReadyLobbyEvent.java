@@ -19,7 +19,7 @@ public class UserReadyLobbyEvent extends Event {
         }
 
         public String getUsername(){
-            return userDTO.getUsername();
+            return userDTO.getUserName();
         }
         public Integer getPin(){
             return lobbyDTO.getPin();

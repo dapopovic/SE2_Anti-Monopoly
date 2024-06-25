@@ -1,5 +1,7 @@
 package at.aau.anti_mon.client.ui.popups;
 
+import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +12,7 @@ import android.widget.Button;
 
 import at.aau.anti_mon.client.R;
 
-public class PopActivitySettings extends PopActivityObjects {
+public class PopActivitySettings extends BasePopUp {
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -19,16 +21,15 @@ public class PopActivitySettings extends PopActivityObjects {
         setContentView(R.layout.popup_settings);
 
         Intent intent = getIntent();
-        boolean isOwner = intent.getBooleanExtra("isOwner", false);
-        String setting = "setting";
+        boolean isOwner = intent.getBooleanExtra("at.aau.anti_mon.client.isOwner", false);
 
         Button endgame = findViewById(R.id.btnendgame);
         if(isOwner){
-            Log.d("PopActivitySettings","We are the Owner");
+            Log.d(DEBUG_TAG,"PopUpActivitySettings - Owner is true");
             endgame.setVisibility(View.VISIBLE);
             endgame.setOnClickListener(v -> {
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(setting, "endgame");
+                resultIntent.putExtra("at.aau.anti_mon.client.setting", "endgame");
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             });
@@ -41,7 +42,7 @@ public class PopActivitySettings extends PopActivityObjects {
 
         surrender.setOnClickListener(v ->{
             Intent resultIntent = new Intent();
-            resultIntent.putExtra(setting, "surrender");
+            resultIntent.putExtra("at.aau.anti_mon.client.setting", "surrender");
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         });
@@ -50,7 +51,7 @@ public class PopActivitySettings extends PopActivityObjects {
 
         exitgame.setOnClickListener(v -> {
             Intent resultIntent = new Intent();
-            resultIntent.putExtra(setting, "exitgame");
+            resultIntent.putExtra("at.aau.anti_mon.client.setting", "exitgame");
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         });
@@ -58,7 +59,7 @@ public class PopActivitySettings extends PopActivityObjects {
         Button x = findViewById(R.id.X);
         x.setOnClickListener(v ->{
             Intent resultIntent = new Intent();
-            resultIntent.putExtra(setting, "x");
+            resultIntent.putExtra("at.aau.anti_mon.client.setting", "x");
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         });

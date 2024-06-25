@@ -18,16 +18,16 @@ public class Player extends GameComponent {
 
 
     public Player(User user) {
-        super(user.hashCode(), user.getLocation());
+        super(user.hashCode(), user.playerLocation);
 
         this.user = user;
-        this.userName = user.getUsername();
-        this.role = user.getRole();
-        this.figure = user.getFigure();
+        this.userName = user.getUserName();
+        this.role = user.getPlayerRole();
+        this.figure = user.getPlayerFigure();
         this.money = DEFAULT_MONEY;
 
         // Initialisiere die Spielerrolle basierend auf der Benutzerrolle
-        if (user.getRole().equals(Roles.COMPETITOR)) {
+        if (user.getPlayerRole().equals(Roles.COMPETITOR)) {
             this.gameRole = new AntiMonopolyst();
         } else {
             this.gameRole = new Monopolyst();
@@ -70,7 +70,7 @@ public class Player extends GameComponent {
     }
 
     public String getName() {
-        return user.getUsername();
+        return user.getUserName();
     }
 
     public boolean isActive() {

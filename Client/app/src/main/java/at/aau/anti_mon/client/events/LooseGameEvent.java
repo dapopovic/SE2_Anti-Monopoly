@@ -3,9 +3,9 @@ package at.aau.anti_mon.client.events;
 import lombok.Getter;
 
 @Getter
-public class LoseGameEvent {
+public class LooseGameEvent {
     private final String username;
-    public LoseGameEvent(String username){
+    public LooseGameEvent(String username){
         this.username = username;
     }
 }

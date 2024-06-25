@@ -6,6 +6,7 @@ import at.aau.anti_mon.server.enums.Commands;
 import at.aau.anti_mon.server.enums.Figures;
 import at.aau.anti_mon.server.game.User;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.tinylog.Logger;
@@ -17,13 +18,11 @@ import java.util.Collection;
  * Mediator class to reduce the complexity between JsonDataManager and WebSocketClient.
  * This class is responsible for creating and sending messages
  */
+@Component
 public class MessagingUtility {
 
-    private MessagingUtility() {
-    }
-
-    public static MessageSender createHeartbeatMessage() {
-        return new MessageSender(new JsonDataDTO.Builder(Commands.HEARTBEAT).addString("msg","PING").build());
+    public static MessageContainer createHeartbeatMessage() {
+        return new MessageContainer(new JsonDataDTO.Builder(Commands.HEARTBEAT).addString("msg","PING").build());
     }
 
     /**
@@ -33,14 +32,16 @@ public class MessagingUtility {
      * @param dice the dice number
      * @return the JSON message as a string
      */
-    public static MessageSender createGameMessage(String username, Integer dice, Commands command) {
+    public static MessageContainer createGameMessage(String username, Integer dice, Commands command) {
+
+        Logger.info("Creating game message with username: " + username + " and dice: " + dice);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
                 .addString("username", username)
                 .addInt("dicenumber", dice)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
     /**
@@ -50,7 +51,9 @@ public class MessagingUtility {
      * @param dice the dice number
      * @return the JSON message as a string
      */
-    public static MessageSender createGameMessage(String username, Integer dice, Figures figure, Integer location, Commands command) {
+    public static MessageContainer createGameMessage(String username, Integer dice, Figures figure, Integer location, Commands command) {
+
+        Logger.info("Creating game message with username: " + username + " and dice: " + dice + " and figure: " + figure + " and location: " + location);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
                 .addString("username", username)
@@ -59,7 +62,7 @@ public class MessagingUtility {
                 .addInt("location", location)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
     /**
@@ -70,55 +73,64 @@ public class MessagingUtility {
      * @param command the command to be executed
      * @return the JSON message as a string
      */
-    public static MessageSender createUserMessage(String username, String pin, Commands command) {
+    public static MessageContainer createUserMessage(String username, String pin, Commands command) {
+
+        Logger.info("Creating user message with username: " + username + " and pin: " + pin);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
                 .addString("username", username)
                 .addString("pin", pin)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
-    public static MessageSender createUserMessage(User user, Commands command) {
+    public static MessageContainer createUserMessage(User user, Commands command) {
+
+        Logger.info("Creating user message with object: " + user.toString());
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
-                .addString("username", user.getName())
+                .addString("username", user.getUserName())
                 .addBoolean("isReady", user.isReady())
                 .addBoolean("isOwner", user.isOwner())
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
-    public static MessageSender createUsernameMessage(String username, Commands command) {
+    public static MessageContainer createUsernameMessage(String username, Commands command) {
+
+        Logger.info("Creating username message with username: " + username);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
                 .addString("username", username)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
-    public static MessageSender createJoinedUserMessage(User user) {
+    public static MessageContainer createJoinedUserMessage(User user) {
+
+        Logger.info("Creating joined user message with object: " + user.toString());
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(Commands.NEW_USER)
-                .addString("username", user.getName())
+                .addString("username", user.getUserName())
                 .addBoolean("isOwner", user.isOwner())
                 .addBoolean("isReady", user.isReady())
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
-    public static MessageSender createUserCollectionMessage(Commands command, Collection<UserDTO> userDTOS) {
+    public static MessageContainer createUserCollectionMessage(Commands command, Collection<UserDTO> userDTOS) {
+
+        Logger.info("Creating user collection message with object: " + userDTOS.toString());
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(Commands.START_GAME)
                 .addUserCollection("users", userDTOS)
                 .build();
 
-
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
 
@@ -129,13 +141,15 @@ public class MessagingUtility {
      * @param command the command to be executed
      * @return the JSON message as a string
      */
-    public static MessageSender createMessage(String key, String value, Commands command) {
+    public static MessageContainer createMessage(String key, String value, Commands command) {
+
+        Logger.info("Creating message with key: " + key + " and value: " + value);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
                 .addString(key, value)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
     /**
@@ -146,13 +160,15 @@ public class MessagingUtility {
      * @param command the command to be executed
      * @return the JSON message as a string
      */
-    public static MessageSender createMessage(String objectName, Object object, Commands command) {
+    public static MessageContainer createMessage(String objectName, Object object, Commands command) {
+
+        Logger.info("Creating message with objectname: " + objectName + " and object: " + object.toString() + " and command: " + command.toString());
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(command)
                 .addObject(objectName, object)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
     /**
@@ -162,14 +178,16 @@ public class MessagingUtility {
        @param context the context of the message
      * @return the JSON message as a string
      */
-    public static MessageSender createErrorMessage(String msg, String context) {
+    public static MessageContainer createErrorMessage(String msg, String context) {
+
+        Logger.info("Creating error message with msg: " + msg + " and context: " + context);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(Commands.ERROR)
                 .addString("msg", msg)
                 .addString("context", context)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
     /**
@@ -179,21 +197,23 @@ public class MessagingUtility {
      @param context the context of the message
       * @return the JSON message as a string
      */
-    public static MessageSender createInfoMessage(String msg, String context) {
+    public static MessageContainer createInfoMessage(String msg, String context) {
+
+        Logger.info("Creating info message with msg: " + msg + " and context: " + context);
 
         JsonDataDTO jsonDataDTO = new JsonDataDTO.Builder(Commands.INFO)
                 .addString("msg", msg)
                 .addString("context", context)
                 .build();
 
-        return new MessageSender(jsonDataDTO);
+        return new MessageContainer(jsonDataDTO);
     }
 
     @Getter
-    public static class MessageSender {
+    public static class MessageContainer {
         private final String message;
 
-        private MessageSender(JsonDataDTO jsonDataDTO) {
+        private MessageContainer(JsonDataDTO jsonDataDTO) {
             this.message = JsonDataUtility.createStringFromJsonMessage(jsonDataDTO);
             if (this.message == null) {
                 throw new IllegalArgumentException("Message must not be null");

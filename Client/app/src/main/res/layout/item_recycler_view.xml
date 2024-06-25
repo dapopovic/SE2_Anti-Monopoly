@@ -39,7 +39,7 @@
             app:layout_constraintStart_toEndOf="@+id/item_imageView"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@{user.username}"
+            android:text="@{user.userName}"
             app:layout_constraintBottom_toTopOf="@+id/item_descr_textView" />
 
         <TextView
@@ -61,7 +61,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="240dp"
             android:checked="@{user.ready}"
-            app:jumpToState="@{user.ready}"
             android:clickable="false"
             android:enabled="true"
             android:text="@string/ready"

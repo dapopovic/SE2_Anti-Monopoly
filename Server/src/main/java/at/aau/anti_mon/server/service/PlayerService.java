@@ -2,7 +2,7 @@ package at.aau.anti_mon.server.service;
 
 
 import at.aau.anti_mon.server.dao.PlayerDAO;
-import at.aau.anti_mon.server.entities.Player;
+import at.aau.anti_mon.server.entities.PlayerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tinylog.Logger;
@@ -19,28 +19,28 @@ public class PlayerService {
         this.playerDAO = playerDAO;
     }
 
-    public List<Player> getAllPlayer() {
+    public List<PlayerEntity> getAllPlayer() {
         return playerDAO.findAll();
     }
 
-    public Player getPlayerByID(Integer id) {
+    public PlayerEntity getPlayerByID(Integer id) {
         return playerDAO.findById(id).orElse(null);
     }
 
-    public Player createPlayer(Player player) {
-        return playerDAO.save(player);
+    public PlayerEntity createPlayer(PlayerEntity playerEntity) {
+        return playerDAO.save(playerEntity);
     }
 
-    public Player updatePlayer(Integer id, Player player) {
-        Player existingPlayer = playerDAO.findById(id).orElse(null);
-        if (existingPlayer != null) {
-            existingPlayer.setName(player.getName());
-            existingPlayer.setBalance(player.getBalance());
-            existingPlayer.setPosition(player.getPosition());
-            existingPlayer.setInJail(player.isInJail());
-            existingPlayer.setPlayerFigure(player.getPlayerFigure());
-            existingPlayer.setPlayerRole(player.getPlayerRole());
-            return playerDAO.save(existingPlayer);
+    public PlayerEntity updatePlayer(Integer id, PlayerEntity playerEntity) {
+        PlayerEntity existingPlayerEntityEntity = playerDAO.findById(id).orElse(null);
+        if (existingPlayerEntityEntity != null) {
+            existingPlayerEntityEntity.setName(playerEntity.getName());
+            existingPlayerEntityEntity.setBalance(playerEntity.getBalance());
+            existingPlayerEntityEntity.setPosition(playerEntity.getPosition());
+            existingPlayerEntityEntity.setInJail(playerEntity.isInJail());
+            existingPlayerEntityEntity.setPlayerFigure(playerEntity.getPlayerFigure());
+            existingPlayerEntityEntity.setPlayerRole(playerEntity.getPlayerRole());
+            return playerDAO.save(existingPlayerEntityEntity);
         } else {
             Logger.debug("Player with name {} not found", id);
             return null;

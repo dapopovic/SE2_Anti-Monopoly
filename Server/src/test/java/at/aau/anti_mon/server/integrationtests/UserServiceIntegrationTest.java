@@ -29,7 +29,7 @@ class UserServiceIntegrationTest {
         WebSocketSession session = mock(WebSocketSession.class);
         User user = userService.findOrCreateUser("newUser", session);
         assertNotNull(user);
-        assertEquals("newUser", user.getName());
+        assertEquals("newUser", user.getUserName());
     }
 
     @Test
@@ -38,7 +38,7 @@ class UserServiceIntegrationTest {
         userService.findOrCreateUser("existingUser", session);
         User user = userService.findOrCreateUser("existingUser", session);
         assertNotNull(user);
-        assertEquals("existingUser", user.getName());
+        assertEquals("existingUser", user.getUserName());
     }
 
     @Test
@@ -53,7 +53,7 @@ class UserServiceIntegrationTest {
         userService.findOrCreateUser("existingUser", session);
         Optional<User> user = userService.getOptionalUser("existingUser");
         assertTrue(user.isPresent());
-        assertEquals("existingUser", user.get().getName());
+        assertEquals("existingUser", user.get().getUserName());
     }
 
     @Test
