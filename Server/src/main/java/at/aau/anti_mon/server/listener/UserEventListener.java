@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Event-Listener for user interactions
@@ -211,6 +214,7 @@ public class UserEventListener {
         // suggest cheating with probability of 50% when it was not cheated till now
         if (!canCheat) {
             user.setCheating(true);
+            startTimerForCatchingCheater(user);
             return;
         }
         if (user.getUnavailableRounds() > 0) {
@@ -227,9 +231,12 @@ public class UserEventListener {
         }
     }
 
-    private void startTimerForCatchingCheater() {
-
+    // it is only possible to catch a cheater within 2 Minutes
+    private void startTimerForCatchingCheater(User user) {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.schedule(() -> user.setCheating(false), 2, TimeUnit.MINUTES);
     }
+
 
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
