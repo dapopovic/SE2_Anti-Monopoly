@@ -119,6 +119,7 @@ public class ActivityGameField extends AppCompatActivity {
     }
 
     private void handleReportCheatingResult(ActivityResult result) {
+        Log.d("ReportCheating", "Report cheating was pressed");
         Intent data = result.getData();
         if (result.getResultCode() == RESULT_OK && data != null) {
             String resultData = data.getStringExtra("resultKey");
@@ -203,7 +204,7 @@ public class ActivityGameField extends AppCompatActivity {
 
                         Log.d("RecyclerClickListener", "Recycler CLick Listener works, position " + position + " Name: " + name.getText());
                         // start intent pop activity blame for cheating here
-                        startBlameForCheatingPopActivity(name.getText().toString());
+                        startBlameForCheatingPopActivity(name.getText().toString().split(":")[0]);
                     }
                 })
         );
@@ -212,7 +213,7 @@ public class ActivityGameField extends AppCompatActivity {
     private void startBlameForCheatingPopActivity(String name) {
         Intent cheating = new Intent(this, PopActivityBlameForCheating.class);
         cheating.putExtra("PLAYER_NAME", name);
-        activityResultLauncher.launch(cheating);
+        reportCheatingActivityResultLauncher.launch(cheating);
     }
 
     private void processIntent() {

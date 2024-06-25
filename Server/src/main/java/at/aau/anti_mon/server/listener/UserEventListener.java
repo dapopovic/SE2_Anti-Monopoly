@@ -227,6 +227,10 @@ public class UserEventListener {
         }
     }
 
+    private void startTimerForCatchingCheater() {
+
+    }
+
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
         String username = event.getUsername();
@@ -246,6 +250,7 @@ public class UserEventListener {
         String cheating_username = event.getCheating_username();
         User cheater = userService.getUser(cheating_username);
         // report to the Reporter that the suggestion about cheating was in/correct
+        System.out.println("Sending report about the cheating");
         JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(username), username, username, cheater.isCheating());
         if (cheater.isCheating()) {
             // report to the Cheater that s/he was caught by cheating
@@ -258,7 +263,10 @@ public class UserEventListener {
             for (User u : users) {
                 JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheating_username, newBalance);
             }
+            // set cheating back to false - a cheater can be caught only one time
+            cheater.setCheating(false);
         }
+
     }
 
     @EventListener
