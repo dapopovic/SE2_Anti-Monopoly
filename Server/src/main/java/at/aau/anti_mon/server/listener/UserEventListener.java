@@ -31,6 +31,7 @@ import java.util.Set;
 @Component
 public class UserEventListener {
     private static final String PLAYER_TAG = "Spieler ";
+    private final double decreasePercentOfMoneyForCheating = 0.2;
 
     private final SecureRandom random;
     @Setter
@@ -244,8 +245,19 @@ public class UserEventListener {
         String username = event.getUsername();
         String cheating_username = event.getCheating_username();
         User cheater = userService.getUser(cheating_username);
+        // report to the Reporter that the suggestion about cheating was in/correct
+        JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(username), username, username, cheater.isCheating());
         if (cheater.isCheating()) {
-
+            // report to the Cheater that s/he was caught by cheating
+            JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(cheating_username), cheating_username, username, true);
+            // reduce money of the cheater on 20% as a punishment for the cheating
+            // update balance by all the players
+            User user = userService.getUser(username);
+            int newBalance = (int) (cheater.getMoney() - cheater.getMoney() * decreasePercentOfMoneyForCheating);
+            HashSet<User> users = user.getLobby().getUsers();
+            for (User u : users) {
+                JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheating_username, newBalance);
+            }
         }
     }
 

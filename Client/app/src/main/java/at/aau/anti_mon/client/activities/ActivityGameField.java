@@ -50,6 +50,7 @@ import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
+import at.aau.anti_mon.client.events.ReportCheatingEvent;
 import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
 import at.aau.anti_mon.client.json.JsonDataDTO;
@@ -363,6 +364,26 @@ public class ActivityGameField extends AppCompatActivity {
         Log.d("Cheating", "Cheating event received!");
         Intent cheating = new Intent(this, PopActivityCheating.class);
         activityResultLauncher.launch(cheating);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReportCheatingReceivedEvent(ReportCheatingEvent event) {
+        Log.d("ReportCheating", "Report about the cheating!");
+        String reporter = event.getReporterName();
+        String current_user = event.getUsername();
+        Boolean wasCheating = event.getIsCheater();
+        String report = "";
+        if (reporter.equals(current_user)) {
+            // show result to the reporter
+            report = "The suggestion about cheating was " + wasCheating;
+        }
+        else {
+            // show result to the cheater
+            report = "Oh no... :( You have been caught by cheating! Your balance is reduced on 20% as punishment!";
+        }
+        Intent reportCheating = new Intent(this, PopActivityReportCheating.class);
+        reportCheating.putExtra("Report", report);
+        startActivity(reportCheating);
     }
 
     private void moveFigure(int location, int diceNumber, ImageView figure) {

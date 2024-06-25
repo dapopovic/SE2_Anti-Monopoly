@@ -28,6 +28,7 @@ import at.aau.anti_mon.client.command.NewUserCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
 import at.aau.anti_mon.client.command.OnReadyCommand;
 import at.aau.anti_mon.client.command.PinCommand;
+import at.aau.anti_mon.client.command.ReportCheatingCommand;
 import at.aau.anti_mon.client.command.StartGameCommand;
 import at.aau.anti_mon.client.command.WinGameCommand;
 import at.aau.anti_mon.client.events.GlobalEventQueue;
@@ -204,6 +205,13 @@ public class NetworkModule {
     @IntoMap
     @StringKey("CHEATING")
     Command cheatingCommand(CheatingCommand command) {
+        return command;
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("REPORT_CHEATING")
+    Command reportCheatingCommand(ReportCheatingCommand command) {
         return command;
     }
 
