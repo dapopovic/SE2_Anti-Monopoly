@@ -13,10 +13,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -59,6 +61,7 @@ public class ActivityGameField extends AppCompatActivity {
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityResultLauncher<Intent> diceActivityResultLauncher;
     private ActivityResultLauncher<Intent> settingsActivityResultLauncher;
+    private ActivityResultLauncher<Intent> reportCheatingActivityResultLauncher;
     ArrayList<User> users;
     UserAdapter userAdapter;
     RecyclerView recyclerView;
@@ -107,6 +110,25 @@ public class ActivityGameField extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 this::handleSettingsActivityResult
         );
+        reportCheatingActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::handleReportCheatingResult
+
+        );
+    }
+
+    private void handleReportCheatingResult(ActivityResult result) {
+        Intent data = result.getData();
+        if (result.getResultCode() == RESULT_OK && data != null) {
+            String resultData = data.getStringExtra("resultKey");
+            if (resultData != null && resultData.equals("yes")) {
+                // send command to server with a report that the user is cheating
+                JsonDataDTO jsonData = new JsonDataDTO(Commands.REPORT_CHEATING, new HashMap<>());
+                jsonData.putData(USERNAME_STRING, currentUser.getUsername());
+                jsonData.putData("cheating_user", data.getStringExtra("cheating_player_name"));
+                webSocketClient.sendJsonData(jsonData);
+            }
+        }
     }
 
     private void handleSettingsActivityResult(ActivityResult result) {
@@ -173,6 +195,23 @@ public class ActivityGameField extends AppCompatActivity {
     private void initUI() {
         recyclerView = findViewById(R.id.players_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerView , new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        TextView name = view.findViewById(R.id.player_name);
+
+                        Log.d("RecyclerClickListener", "Recycler CLick Listener works, position " + position + " Name: " + name.getText());
+                        // start intent pop activity blame for cheating here
+                        startBlameForCheatingPopActivity(name.getText().toString());
+                    }
+                })
+        );
+    }
+
+    private void startBlameForCheatingPopActivity(String name) {
+        Intent cheating = new Intent(this, PopActivityBlameForCheating.class);
+        cheating.putExtra("PLAYER_NAME", name);
+        activityResultLauncher.launch(cheating);
     }
 
     private void processIntent() {

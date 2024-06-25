@@ -122,7 +122,8 @@ public enum Commands {
     START_GAME("START_GAME"),
     CHANGE_BALANCE("CHANGE_BALANCE"),
 
-    CHEATING("CHEATING");
+    CHEATING("CHEATING"),
+    REPORT_CHEATING("REPORT_CHEATING");
 
     // usw
 

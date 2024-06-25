@@ -17,13 +17,17 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.PopActivityBlameForCheating"
+            android:exported="false"
+            android:theme="@style/AppTheme_PopUp" />
+        <activity
             android:name=".activities.PopActivityCheating"
             android:exported="false"
             android:theme="@style/AppTheme_PopUp" />
         <activity
             android:name=".activities.PopActivityDice"
             android:exported="false"
-            android:theme="@style/AppTheme_PopUp"/>
+            android:theme="@style/AppTheme_PopUp" />
         <activity
             android:name=".activities.PopActivityObjects"
             android:exported="false"

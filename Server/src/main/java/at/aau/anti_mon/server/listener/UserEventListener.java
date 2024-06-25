@@ -208,7 +208,11 @@ public class UserEventListener {
 
     public void checkCheating(boolean canCheat, User user) {
         // suggest cheating with probability of 50% when it was not cheated till now
-        if (!canCheat || user.getUnavailableRounds() > 0) {
+        if (!canCheat) {
+            user.setCheating(true);
+            return;
+        }
+        if (user.getUnavailableRounds() > 0) {
             return;
         }
         int probability = fixProbabilityForCheating;
@@ -232,6 +236,16 @@ public class UserEventListener {
         HashSet<User> users = user.getLobby().getUsers();
         for (User u : users) {
             JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, newBalance);
+        }
+    }
+
+    @EventListener
+    public void onReportCheatingEvent(ReportCheatingEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        String cheating_username = event.getCheating_username();
+        User cheater = userService.getUser(cheating_username);
+        if (cheater.isCheating()) {
+
         }
     }
 
