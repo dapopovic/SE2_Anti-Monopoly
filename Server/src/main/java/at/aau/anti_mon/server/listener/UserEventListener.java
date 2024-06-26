@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Event-Listener for user interactions
@@ -31,6 +34,7 @@ import java.util.Set;
 @Component
 public class UserEventListener {
     private static final String PLAYER_TAG = "Spieler ";
+    private static final double decreasePercentOfMoneyForCheating = 0.2;
 
     private final SecureRandom random;
     @Setter
@@ -208,7 +212,12 @@ public class UserEventListener {
 
     public void checkCheating(boolean canCheat, User user) {
         // suggest cheating with probability of 50% when it was not cheated till now
-        if (!canCheat || user.getUnavailableRounds() > 0) {
+        if (!canCheat) {
+            user.setCheating(true);
+            startTimerForCatchingCheater(user);
+            return;
+        }
+        if (user.getUnavailableRounds() > 0) {
             return;
         }
         int probability = fixProbabilityForCheating;
@@ -222,6 +231,13 @@ public class UserEventListener {
         }
     }
 
+    // it is only possible to catch a cheater within 2 Minutes
+    private void startTimerForCatchingCheater(User user) {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.schedule(() -> user.setCheating(false), 2, TimeUnit.MINUTES);
+    }
+
+
     @EventListener
     public void balanceChangedEvent(ChangeBalanceEvent event) throws UserNotFoundException {
         String username = event.getUsername();
@@ -233,6 +249,31 @@ public class UserEventListener {
         for (User u : users) {
             JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), username, newBalance);
         }
+    }
+
+    @EventListener
+    public void onReportCheatingEvent(ReportCheatingEvent event) throws UserNotFoundException {
+        String username = event.getUsername();
+        String cheatingUsername = event.getCheatingUsername();
+        User cheater = userService.getUser(cheatingUsername);
+        // report to the Reporter that the suggestion about cheating was in/correct
+        boolean isCheating = cheater.isCheating();
+        JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(username), username, username, isCheating);
+        if (isCheating) {
+            // report to the Cheater that s/he was caught by cheating
+            JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(cheatingUsername), cheatingUsername, username, true);
+            // reduce money of the cheater on 20% as a punishment for the cheating
+            // update balance by all the players
+            User user = userService.getUser(username);
+            int newBalance = (int) (cheater.getMoney() - cheater.getMoney() * decreasePercentOfMoneyForCheating);
+            HashSet<User> users = user.getLobby().getUsers();
+            for (User u : users) {
+                JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheatingUsername, newBalance);
+            }
+            // set cheating back to false - a cheater can be caught only one time
+            cheater.setCheating(false);
+        }
+
     }
 
     @EventListener

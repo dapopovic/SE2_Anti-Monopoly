@@ -17,6 +17,7 @@ import at.aau.anti_mon.client.command.LoseGameCommand;
 import at.aau.anti_mon.client.command.ErrorCommand;
 import at.aau.anti_mon.client.command.InfoCommand;
 import at.aau.anti_mon.client.command.NextPlayerCommand;
+import at.aau.anti_mon.client.command.ReportCheatingCommand;
 import at.aau.anti_mon.client.command.WinGameCommand;
 import at.aau.anti_mon.client.enums.Commands;
 import at.aau.anti_mon.client.command.CreateGameCommand;
@@ -37,6 +38,7 @@ import at.aau.anti_mon.client.events.GlobalEventQueue;
 import at.aau.anti_mon.client.events.HeartBeatEvent;
 import at.aau.anti_mon.client.events.LoseGameEvent;
 import at.aau.anti_mon.client.events.NextPlayerEvent;
+import at.aau.anti_mon.client.events.ReportCheatingEvent;
 import at.aau.anti_mon.client.events.TestEvent;
 import at.aau.anti_mon.client.events.WinGameEvent;
 import at.aau.anti_mon.client.game.User;
@@ -257,6 +259,19 @@ class CommandsTest {
         CheatingCommand cheatingCommand = new CheatingCommand(queue);
         cheatingCommand.execute(jsonData);
         verify(queue).enqueueEvent(any(CheatingEvent.class));
+    }
+
+    @Test
+    void reportCheatingCommandEnqueueEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.REPORT_CHEATING);
+        jsonData.putData("username", "SomeReporter");
+        jsonData.putData("reporter_name", "SomeCheater");
+        jsonData.putData("is_cheater", "true");
+        assertEquals(Commands.REPORT_CHEATING, jsonData.getCommand());
+        ReportCheatingCommand reportCheatingCommand = new ReportCheatingCommand(queue);
+        reportCheatingCommand.execute(jsonData);
+        verify(queue).enqueueEvent(any(ReportCheatingEvent.class));
     }
 
     @Test

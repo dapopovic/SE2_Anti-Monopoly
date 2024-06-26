@@ -211,6 +211,44 @@ class UserEventListenerUnitTest {
     }
 
     @Test
+    void onReportCheatingEventTest() throws UserNotFoundException {
+        MockedStatic<JsonDataUtility> mockedStatic = mockStatic(JsonDataUtility.class);
+
+        WebSocketSession session = mock(WebSocketSession.class);
+
+        User reporter = mock(User.class);
+        User cheater = mock(User.class);
+        Lobby lobby = mock(Lobby.class);
+
+        // Mock method returns
+        when(reporter.getName()).thenReturn("Reporter");
+        when(cheater.getName()).thenReturn("Cheater");
+        when(userService.getUser("Cheater")).thenReturn(cheater);
+        when(userService.getUser("Reporter")).thenReturn(reporter);
+        when(cheater.isCheating()).thenReturn(true);
+        when(sessionManagementService.getSessionForUser("Cheater")).thenReturn(session);
+        when(sessionManagementService.getSessionForUser("Reporter")).thenReturn(session);
+        when(reporter.getLobby()).thenReturn(lobby);
+
+        HashSet<User> users = new HashSet<>();
+        users.add(reporter);
+        users.add(cheater);
+        when(lobby.getUsers()).thenReturn(users);
+        when(cheater.getMoney()).thenReturn(1500);
+
+        ReportCheatingEvent event = new ReportCheatingEvent(session, "Reporter", "Cheater");
+
+        // Invoke the method under test
+        userEventListener.onReportCheatingEvent(event);
+
+        // Verify interactions
+        mockedStatic.verify(() -> JsonDataUtility.sendResultOfReportCheating(session, "Reporter", "Reporter", true), times(1));
+        mockedStatic.verify(() -> JsonDataUtility.sendResultOfReportCheating(session, "Cheater", "Reporter", true), times(1));
+        mockedStatic.verify(() -> JsonDataUtility.sendNewBalance(session, "Cheater", 1200), times(users.size()));
+        mockedStatic.close();
+    }
+
+    @Test
     void testCheckCheatingCanNotCheat() {
         //Setup rng, server should not offer cheating despite good rng value(rngvalue>50)
         userEventListener.setFixProbabilityForCheating(65);

@@ -166,6 +166,14 @@ public class JsonDataUtility {
         send(session, jsonData);
     }
 
+    public static void sendResultOfReportCheating(WebSocketSession session, String username, String reporterName, Boolean isCheater) {
+        JsonDataDTO jsonData = new JsonDataDTO(Commands.REPORT_CHEATING, new HashMap<>());
+        jsonData.putData(usernamestring,username);
+        jsonData.putData("reporter_name", reporterName);
+        jsonData.putData("is_cheater", String.valueOf(isCheater));
+        send(session, jsonData);
+    }
+
     public static void sendNextPlayer(WebSocketSession session, String username){
         JsonDataDTO jsonData = new JsonDataDTO(Commands.NEXT_PLAYER, new HashMap<>());
         jsonData.putData(usernamestring,username);

@@ -20,4 +20,5 @@
     <string name="your_role_is">You are a %1$s, your username is %2$s \n and you have the %3$s figure!</string>
     <string name="Cheating">You have a possibility to cheat now! You can go to the next field. Do you want to use this possibility?</string>
     <string name="figure">figure of player</string>
+    <string name="ReportCheating">If you think that this player is cheating, you can report it here!</string>
 </resources>

@@ -318,6 +318,17 @@ class CommandsUnitTest {
     }
 
     @Test
+    void reportCheatingCommandShouldPublishEvent() {
+        JsonDataDTO jsonData = new JsonDataDTO();
+        jsonData.setCommand(Commands.REPORT_CHEATING);
+        jsonData.putData("username", "Julia");
+        jsonData.putData("cheating_user", "SuperTrickyCheater");
+        ReportCheatingCommand reportCheatingCommand = new ReportCheatingCommand(eventPublisher);
+        reportCheatingCommand.execute(session, jsonData);
+        verify(eventPublisher, times(1)).publishEvent(any(ReportCheatingEvent.class));
+    }
+
+    @Test
     void nextPlayerCommandShouldPublishEvent(){
         JsonDataDTO jsonData = new JsonDataDTO();
         jsonData.setCommand(Commands.NEXT_PLAYER);
