@@ -267,6 +267,7 @@ public class UserEventListener {
             User user = userService.getUser(username);
             int newBalance = (int) (cheater.getMoney() - cheater.getMoney() * DECREASE_PERCENT_OF_MONEY_FOR_CHEATING);
             HashSet<User> users = user.getLobby().getUsers();
+            user.setMoney(newBalance);
             for (User u : users) {
                 JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheatingUsername, newBalance);
             }

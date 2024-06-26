@@ -45,7 +45,7 @@ public class WebSocketClient implements AutoCloseable{
     private static final String[] WEBSOCKET_URIS = {
             "ws://10.0.2.2:8080/game?userID=",
             "ws://10.0.2.2:53215/game?userID=",
-            "ws://192.168.31.176:53215/game",
+            "ws://143.205.184.74:53215/game?userID=",
             "ws://se2-demo.aau.at:53215/game?userID="};
 
     @Getter
@@ -83,7 +83,7 @@ public class WebSocketClient implements AutoCloseable{
         }
 
         // Um Sessions besser zu speicher wird die Base URI mit der User ID erweitert:
-        String urlWithUserId = WEBSOCKET_URIS[1] + userID;
+        String urlWithUserId = WEBSOCKET_URIS[3] + userID;
         Request request = new Request.Builder().url(urlWithUserId).build();
         webSocket = client.newWebSocket(request, createWebSocketListener());
     }
