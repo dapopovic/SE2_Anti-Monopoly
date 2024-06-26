@@ -375,7 +375,7 @@ public class ActivityGameField extends AppCompatActivity {
         }
         else {
             // show result to the cheater
-            report = "Oh no... :( You have been caught by cheating! Your balance is reduced on 20% as punishment!";
+            report = "You have been caught cheating! As a punishment, your balance has been reduced by 20%.";
         }
         Intent reportCheating = new Intent(this, PopActivityReportCheating.class);
         reportCheating.putExtra("Report", report);
