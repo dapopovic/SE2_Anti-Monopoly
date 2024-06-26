@@ -258,8 +258,9 @@ public class UserEventListener {
         User cheater = userService.getUser(cheating_username);
         // report to the Reporter that the suggestion about cheating was in/correct
         System.out.println("Sending report about the cheating");
-        JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(username), username, username, cheater.isCheating());
-        if (cheater.isCheating()) {
+        boolean isCheating = cheater.isCheating();
+        JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(username), username, username, isCheating);
+        if (isCheating) {
             // report to the Cheater that s/he was caught by cheating
             JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(cheating_username), cheating_username, username, true);
             // reduce money of the cheater on 20% as a punishment for the cheating

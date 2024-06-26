@@ -219,8 +219,6 @@ class UserEventListenerUnitTest {
         User reporter = mock(User.class);
         User cheater = mock(User.class);
         Lobby lobby = mock(Lobby.class);
-        UserService userService = mock(UserService.class);
-        SessionManagementService sessionManagementService = mock(SessionManagementService.class);
 
         // Mock method returns
         when(reporter.getName()).thenReturn("Reporter");
