@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class UserEventListener {
     private static final String PLAYER_TAG = "Spieler ";
-    private static final double decreasePercentOfMoneyForCheating = 0.2;
+    private static final double DECREASE_PERCENT_OF_MONEY_FOR_CHEATING = 0.2;
 
     private final SecureRandom random;
     @Setter
@@ -265,7 +265,7 @@ public class UserEventListener {
             // reduce money of the cheater on 20% as a punishment for the cheating
             // update balance by all the players
             User user = userService.getUser(username);
-            int newBalance = (int) (cheater.getMoney() - cheater.getMoney() * decreasePercentOfMoneyForCheating);
+            int newBalance = (int) (cheater.getMoney() - cheater.getMoney() * DECREASE_PERCENT_OF_MONEY_FOR_CHEATING);
             HashSet<User> users = user.getLobby().getUsers();
             for (User u : users) {
                 JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheatingUsername, newBalance);
