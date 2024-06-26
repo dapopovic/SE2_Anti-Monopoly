@@ -166,10 +166,10 @@ public class JsonDataUtility {
         send(session, jsonData);
     }
 
-    public static void sendResultOfReportCheating(WebSocketSession session, String username, String reporter_name, Boolean isCheater) {
+    public static void sendResultOfReportCheating(WebSocketSession session, String username, String reporterName, Boolean isCheater) {
         JsonDataDTO jsonData = new JsonDataDTO(Commands.REPORT_CHEATING, new HashMap<>());
         jsonData.putData(usernamestring,username);
-        jsonData.putData("reporter_name", reporter_name);
+        jsonData.putData("reporter_name", reporterName);
         jsonData.putData("is_cheater", String.valueOf(isCheater));
         send(session, jsonData);
     }

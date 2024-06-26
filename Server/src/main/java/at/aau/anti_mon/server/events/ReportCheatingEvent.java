@@ -7,10 +7,10 @@ public class ReportCheatingEvent extends Event {
     @Getter
     private final String username;
     @Getter
-    private final String cheating_username;
-    public ReportCheatingEvent(WebSocketSession session, String username, String cheating_username) {
+    private final String cheatingUsername;
+    public ReportCheatingEvent(WebSocketSession session, String username, String cheatingUsername) {
         super(session);
         this.username = username;
-        this.cheating_username = cheating_username;
+        this.cheatingUsername = cheatingUsername;
     }
 }

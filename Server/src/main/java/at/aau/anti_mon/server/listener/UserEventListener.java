@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class UserEventListener {
     private static final String PLAYER_TAG = "Spieler ";
-    private final double decreasePercentOfMoneyForCheating = 0.2;
+    private static final double decreasePercentOfMoneyForCheating = 0.2;
 
     private final SecureRandom random;
     @Setter
@@ -254,22 +254,21 @@ public class UserEventListener {
     @EventListener
     public void onReportCheatingEvent(ReportCheatingEvent event) throws UserNotFoundException {
         String username = event.getUsername();
-        String cheating_username = event.getCheating_username();
-        User cheater = userService.getUser(cheating_username);
+        String cheatingUsername = event.getCheatingUsername();
+        User cheater = userService.getUser(cheatingUsername);
         // report to the Reporter that the suggestion about cheating was in/correct
-        System.out.println("Sending report about the cheating");
         boolean isCheating = cheater.isCheating();
         JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(username), username, username, isCheating);
         if (isCheating) {
             // report to the Cheater that s/he was caught by cheating
-            JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(cheating_username), cheating_username, username, true);
+            JsonDataUtility.sendResultOfReportCheating(sessionManagementService.getSessionForUser(cheatingUsername), cheatingUsername, username, true);
             // reduce money of the cheater on 20% as a punishment for the cheating
             // update balance by all the players
             User user = userService.getUser(username);
             int newBalance = (int) (cheater.getMoney() - cheater.getMoney() * decreasePercentOfMoneyForCheating);
             HashSet<User> users = user.getLobby().getUsers();
             for (User u : users) {
-                JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheating_username, newBalance);
+                JsonDataUtility.sendNewBalance(sessionManagementService.getSessionForUser(u.getName()), cheatingUsername, newBalance);
             }
             // set cheating back to false - a cheater can be caught only one time
             cheater.setCheating(false);

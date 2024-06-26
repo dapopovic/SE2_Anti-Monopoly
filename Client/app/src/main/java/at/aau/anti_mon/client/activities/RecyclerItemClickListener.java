@@ -3,11 +3,7 @@ package at.aau.anti_mon.client.activities;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector;
-import android.widget.AdapterView;
 import android.content.Context;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +14,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         void onItemClick(View view, int position);
     }
 
-    public RecyclerItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
+    public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
         itemClickListener = listener;
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -40,11 +36,13 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     @Override
     public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-
+        // this method has to be overwritten, because RecyclerItemClickListener implements
+        // RecyclerView.OnItemTouchListener, which requires to implement this method
     }
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
+        // this method has to be overwritten, because RecyclerItemClickListener implements
+        // RecyclerView.OnItemTouchListener, which requires to implement this method
     }
 }

@@ -29,7 +29,7 @@ public class PopActivityBlameForCheating extends PopActivityObjects {
         // You can use playerName if needed within this activity
     }
 
-    public void reportCheating(View view) {
+    public void reportCheating() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("resultKey", "yes");
         returnIntent.putExtra("cheating_player_name", cheatingPlayerName);
@@ -37,7 +37,7 @@ public class PopActivityBlameForCheating extends PopActivityObjects {
         finish();
     }
 
-    public void notReportCheating(View view) {
+    public void notReportCheating() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("resultKey", "no");
         setResult(RESULT_OK, returnIntent);

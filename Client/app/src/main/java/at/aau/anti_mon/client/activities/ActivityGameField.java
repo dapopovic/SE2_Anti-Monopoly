@@ -3,8 +3,6 @@ package at.aau.anti_mon.client.activities;
 import static at.aau.anti_mon.client.AntiMonopolyApplication.DEBUG_TAG;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -198,14 +195,12 @@ public class ActivityGameField extends AppCompatActivity {
         recyclerView = findViewById(R.id.players_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(this, recyclerView , new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        TextView name = view.findViewById(R.id.player_name);
+                new RecyclerItemClickListener(this, (view, position) -> {
+                    TextView name = view.findViewById(R.id.player_name);
 
-                        Log.d("RecyclerClickListener", "Recycler CLick Listener works, position " + position + " Name: " + name.getText());
-                        // start intent pop activity blame for cheating here
-                        startBlameForCheatingPopActivity(name.getText().toString().split(":")[0]);
-                    }
+                    Log.d("RecyclerClickListener", "Recycler CLick Listener works, position " + position + " Name: " + name.getText());
+                    // start intent pop activity blame for cheating here
+                    startBlameForCheatingPopActivity(name.getText().toString().split(":")[0]);
                 })
         );
     }
@@ -371,10 +366,10 @@ public class ActivityGameField extends AppCompatActivity {
     public void onReportCheatingReceivedEvent(ReportCheatingEvent event) {
         Log.d("ReportCheating", "Report about the cheating!");
         String reporter = event.getReporterName();
-        String current_user = event.getUsername();
+        String currentUser = event.getUsername();
         Boolean wasCheating = event.getIsCheater();
         String report = "";
-        if (reporter.equals(current_user)) {
+        if (reporter.equals(currentUser)) {
             // show result to the reporter
             report = "The suggestion about cheating was " + wasCheating;
         }
